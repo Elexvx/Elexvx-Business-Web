@@ -11,6 +11,7 @@ import Metadata from '~/components/common/Metadata.astro';
 import SiteVerification from '~/components/common/SiteVerification.astro';
 import Analytics from '~/components/common/Analytics.astro';
 import VercelAnalytics from '@vercel/analytics/astro';
+import SpeedInsights from '@vercel/speed-insights/astro';
 import BasicScripts from '~/components/common/BasicScripts.astro';
 import CookieNotice from '~/components/common/CookieNotice.astro';
 import BackToTop from '~/components/common/BackToTop.astro';
@@ -50,5 +51,6 @@ const { language, textDirection } = I18N;
     <BackToTop />
     <BasicScripts />
     <VercelAnalytics />
+    <SpeedInsights />
   </body>
 </html>
