@@ -1,0 +1,207 @@
+---
+// *******************************************
+// 页面内容：人力资源服务                      **
+// *******************************************
+// 创建时间：2025-08-23                       **
+// 最后修改：2025-08-26                       **
+// *******************************************
+
+import Layout from '~/layouts/PageLayout.astro';
+import Hero2 from '~/components/widgets/Hero2.astro';
+import Content from '~/components/widgets/Content.astro';
+import FeatureSet from '~/components/widgets/FeatureSet.astro';
+import Stats from '~/components/widgets/Stats.astro';
+import CardSwitcherImage from '~/components/widgets/CardSwitcherImage.astro';
+import { getPermalink } from '~/utils/permalinks';
+
+// Hero2组件图片引入
+import heroImage from '~/assets/images/idea.jpg';
+// 营业执照图片引入
+import licenseImage from '~/assets/images/service/servicehr-services/license.png';
+// 许可证图片引入
+import licenseLaborImage from '~/assets/images/service/servicehr-services/license-labor.png';
+// 许可证图片引入
+import licenseHrImage from '~/assets/images/service/servicehr-services/license-hr.png';
+
+const metadata = {
+  title: '人力资源服务 - 专业劳务派遣解决方案 | 宏翔商道',
+  description: '宏翔商道提供专业的人力资源服务，包括劳务派遣、招聘背调、人才培训等全方位HR解决方案。拥有完整资质认证，服务企业500+，客户满意度99%。立即咨询获取定制化人力资源方案！',
+  canonical: getPermalink('/service/hr-services'),
+  robots: {
+    index: true,
+    follow: true,
+  },
+};
+---
+
+<Layout metadata={metadata}>
+  <!-- Hero2 小部件 ******************* -->
+  <Hero2
+    tagline="专业人力资源服务"
+    title="全方位人力资源解决方案"
+    subtitle="宏翔商道专注于为企业提供专业、高效的人力资源服务。从劳务派遣到人才招聘，从背景调查到人事代理，我们拥有完整的资质认证和丰富的服务经验，致力于成为您最可靠的HR合作伙伴。"
+    actions={[
+      {
+        variant: 'primary',
+        text: '免费咨询方案',
+        href: '/company/contact',
+        icon: 'tabler:message-circle',
+      },
+      {
+        variant: 'secondary',
+        text: '查看服务详情',
+        href: '#services',
+        icon: 'tabler:arrow-down',
+      },
+    ]}
+    image={{
+      src: heroImage,
+      alt: '人力资源服务',
+    }}
+  />
+
+  <!-- Content 介绍小部件 **************** -->
+  <Content
+    id="services"
+    title="核心服务优势"
+    subtitle="宏翔商道人力资源服务部门拥有多年行业经验，为企业提供专业、高效、定制化的人才解决方案，已成功服务500+企业客户。"
+    items={[
+      {
+        title: '劳务派遣服务',
+        description: '提供灵活的用工解决方案，有效降低企业用工成本，提高人力资源管理效率，帮助企业专注核心业务发展。',
+        icon: 'tabler:users',
+      },
+      {
+        title: '人才招聘背调',
+        description: '提供专业的人才招聘和全面的背景调查服务，确保企业招到适合的人才，降低招聘风险。',
+        icon: 'tabler:search',
+      },
+      {
+        title: '人才培训发展',
+        description: '提供定制化的员工培训和职业发展方案，全面提升团队整体素质和专业技能，增强企业竞争力。',
+        icon: 'tabler:school',
+      },
+      {
+        title: '人事代理服务',
+        description: '提供全方位的人事外包和代理服务，包括薪酬管理、社保公积金等，让企业专注于核心业务发展。',
+        icon: 'tabler:briefcase',
+      },
+    ]}
+    image={{
+      src: 'https://images.unsplash.com/photo-1600880292203-757bb62b4baf?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80',
+      alt: '人力资源服务',
+    }}
+  />
+
+  <!-- Apple风格图片轮播组件 ******************* -->
+  <CardSwitcherImage
+    title="权威资质认证，"
+    subtitle="专业服务品质。"
+    description="我们拥有完整的人力资源服务资质认证，严格遵循国家相关法规，\n确保为客户提供合规、专业、可靠的HR服务。"
+    cards={[
+      {
+        id: 'innovation',
+        title: '营业执照',
+        subtitle: '',
+        image: licenseImage,
+        alt: '营业执照',
+      },
+      {
+        id: 'community',
+        title: '劳务派遣许可证',
+        subtitle: '',
+        image: licenseLaborImage,
+        alt: '劳务派遣许可证',
+      },
+      {
+        id: 'innovation',
+        title: '人力资源许可证',
+        subtitle: '',
+        image: licenseHrImage,
+        alt: '人力资源许可证',
+      },
+    ]}
+  />
+
+  <!-- 服务特色 FeatureSet 小部件 *************** -->
+  <FeatureSet
+    title="为什么选择宏翔商道"
+    subtitle="专业资质 · 丰富经验 · 定制服务 · 全程支持"
+    columns={2}
+    items={[
+      {
+        title: '权威资质认证',
+        description: '拥有完整的人力资源服务相关资质证书，包括劳务派遣许可证等，严格遵循国家法规，确保服务合规性和专业性。',
+        icon: 'tabler:certificate',
+        classes: {
+          icon: 'text-white bg-blue-500 rounded-full w-10 h-10 p-2 md:w-12 md:h-12 md:p-3 mr-4 rtl:ml-4 rtl:mr-0',
+        },
+      },
+      {
+        title: '丰富行业经验',
+        description: '深耕人力资源服务领域多年，成功服务过众多知名企业，在劳务派遣、人才招聘等方面积累了丰富的实战经验。',
+        icon: 'tabler:award',
+        classes: {
+          icon: 'text-white bg-green-500 rounded-full w-10 h-10 p-2 md:w-12 md:h-12 md:p-3 mr-4 rtl:ml-4 rtl:mr-0',
+        },
+      },
+      {
+        title: '定制化方案',
+        description: '根据企业实际需求和行业特点，提供量身定制的人力资源解决方案，确保服务的针对性和有效性。',
+        icon: 'tabler:settings',
+        classes: {
+          icon: 'text-white bg-purple-500 rounded-full w-10 h-10 p-2 md:w-12 md:h-12 md:p-3 mr-4 rtl:ml-4 rtl:mr-0',
+        },
+      },
+      {
+        title: '全程专业支持',
+        description: '提供7×24小时客户服务支持，配备专业的服务团队，及时响应客户需求，保障服务连续性和可靠性。',
+        icon: 'tabler:headset',
+        classes: {
+          icon: 'text-white bg-orange-500 rounded-full w-10 h-10 p-2 md:w-12 md:h-12 md:p-3 mr-4 rtl:ml-4 rtl:mr-0',
+        },
+      },
+    ]}
+  />
+
+  <!-- 服务数据统计 Stats 小部件 ****************** -->
+  <Stats
+    title="服务数据证明实力"
+    subtitle="用数据证明专业实力，用成果见证服务品质"
+    stats={[
+      { title: '服务客户', amount: 1, endValue: 15, suffix: '+' },
+      { title: '临时用工', amount: 1, endValue: 58, suffix: '+' },
+      { title: '合作案例', amount: 1, endValue: 32, suffix: '+' },
+      { title: '客户满意度', amount: 99, endValue: 99, suffix: '%' },
+    ]}
+  />
+
+  <!-- 详细服务内容 Content 小部件 **************** -->
+  <Content
+    isReversed
+    title="专业劳务派遣服务"
+    subtitle="为企业提供全面、专业、合规的劳务派遣解决方案"
+    items={[
+      {
+        title: '合规安全操作',
+        description: '严格遵循《劳动法》《劳务派遣暂行规定》等法规执行，全程合规操作，确保企业用工安全。',
+        icon: 'tabler:shield-check',
+      },
+      {
+        title: '专业风险管控',
+        description: '配备专业的风险评估和管控体系，从法律、税务、社保等多维度降低企业用工风险。',
+        icon: 'tabler:shield',
+      },
+      {
+        title: '成本精准优化',
+        description: '通过专业的人力资源管理和精细化运营，帮助企业显著降低用工成本，提高人力资源效率。',
+        icon: 'tabler:coins',
+      },
+    ]}
+    image={{
+      src: 'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1684&q=80',
+      alt: '劳务派遣服务',
+    }}
+  />
+
+</Layout>

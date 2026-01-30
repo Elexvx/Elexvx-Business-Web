@@ -1,0 +1,78 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import Headline from '~/components/blog/Headline.astro';
+import { fetchPosts } from '~/utils/blog';
+import { getPermalink } from '~/utils/permalinks';
+
+const posts = await fetchPosts();
+
+// 收集所有分类
+const categories = {};
+posts.forEach((post) => {
+  if (post.category?.slug) {
+    if (!categories[post.category.slug]) {
+      categories[post.category.slug] = {
+        ...post.category,
+        count: 0
+      };
+    }
+    categories[post.category.slug].count++;
+  }
+});
+
+const categoryList = Object.values(categories).sort((a, b) => b.count - a.count);
+
+const metadata = {
+  title: '文章分类',
+  description: '浏览所有文章分类，发现您感兴趣的内容',
+};
+---
+
+<Layout metadata={metadata}>
+  <section class="px-4 md:px-6 py-12 sm:py-16 lg:py-20 mx-auto max-w-4xl">
+    <Headline
+      subtitle="浏览所有文章分类，发现您感兴趣的内容"
+    >
+      文章分类
+    </Headline>
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
+      {
+        categoryList.map((category) => (
+          <a 
+            href={getPermalink(category.slug, 'category')}
+            class="group block p-6 bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-slate-700 hover:border-primary dark:hover:border-primary transition-colors duration-200 hover:shadow-lg"
+          >
+            <div class="flex items-center justify-between mb-3">
+              <h3 class="text-xl font-semibold text-gray-900 dark:text-white group-hover:text-primary transition-colors duration-200">
+                {category.title}
+              </h3>
+              <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary/10 text-primary">
+                {category.count} 篇
+              </span>
+            </div>
+            {category.description && (
+              <p class="text-gray-600 dark:text-slate-400 text-sm leading-relaxed">
+                {category.description}
+              </p>
+            )}
+            <div class="mt-4 flex items-center text-primary text-sm font-medium">
+              查看文章
+              <svg class="ml-1 w-4 h-4 group-hover:translate-x-1 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+              </svg>
+            </div>
+          </a>
+        ))
+      }
+    </div>
+    
+    {categoryList.length === 0 && (
+      <div class="text-center py-12">
+        <p class="text-gray-500 dark:text-slate-400 text-lg">
+          暂无分类内容
+        </p>
+      </div>
+    )}
+  </section>
+</Layout>

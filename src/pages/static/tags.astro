@@ -1,0 +1,70 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import Headline from '~/components/blog/Headline.astro';
+import { fetchPosts } from '~/utils/blog';
+import { getPermalink } from '~/utils/permalinks';
+
+const posts = await fetchPosts();
+
+// 收集所有标签
+const tags = {};
+posts.forEach((post) => {
+  if (Array.isArray(post.tags)) {
+    post.tags.forEach((tag) => {
+      if (!tags[tag.slug]) {
+        tags[tag.slug] = {
+          ...tag,
+          count: 0
+        };
+      }
+      tags[tag.slug].count++;
+    });
+  }
+});
+
+const tagList = Object.values(tags).sort((a, b) => b.count - a.count);
+
+const metadata = {
+  title: '文章标签',
+  description: '浏览所有文章标签，快速找到相关内容',
+};
+---
+
+<Layout metadata={metadata}>
+  <section class="px-4 md:px-6 py-12 sm:py-16 lg:py-20 mx-auto max-w-4xl">
+    <Headline
+      subtitle="浏览所有文章标签，快速找到相关内容"
+    >
+      文章标签
+    </Headline>
+    
+    <div class="mt-8">
+      {
+        tagList.length > 0 ? (
+          <div class="flex flex-wrap gap-4 md:gap-6">
+            {
+              tagList.map((tag) => (
+                <a 
+                  href={getPermalink(tag.slug, 'tag')}
+                  class="group inline-flex items-center px-4 py-3 bg-gray-100 dark:bg-slate-700 hover:bg-primary hover:text-white dark:hover:bg-primary rounded-full text-sm font-medium text-gray-700 dark:text-slate-300 transition-all duration-200 hover:shadow-md hover:scale-105 mb-2"
+                >
+                  <span class="mr-2">#</span>
+                  {tag.title}
+                  <span class="ml-3 px-2.5 py-0.5 bg-white/20 rounded-full text-xs">
+                    {tag.count}
+                  </span>
+                </a>
+              ))
+            }
+          </div>
+        ) : (
+          <div class="text-center py-12">
+            <p class="text-gray-500 dark:text-slate-400 text-lg">
+              暂无标签内容
+            </p>
+          </div>
+        )
+      }
+    </div>
+  </section>
+</Layout>

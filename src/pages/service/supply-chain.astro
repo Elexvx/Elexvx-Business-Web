@@ -1,0 +1,214 @@
+---
+// *******************************************
+// 页面内容：供应链服务                        **
+// *******************************************
+// 创建时间：2025-08-23                       **
+// *******************************************
+
+import Layout from '~/layouts/PageLayout.astro';
+import Hero2 from '~/components/widgets/Hero2.astro';
+import Content from '~/components/widgets/Content.astro';
+import FeatureSet from '~/components/widgets/FeatureSet.astro';
+import Steps from '~/components/widgets/Steps.astro';
+import Stats from '~/components/widgets/Stats.astro';
+
+// Hero2组件图片引入
+import heroImage from '~/assets/images/idea.jpg';
+
+import { getPermalink } from '~/utils/permalinks';
+
+const metadata = {
+  title: '供应链管理服务 - 智慧供应链解决方案 | 宏翔商道',
+  description: '宏翔商道提供专业的供应链管理服务，运用数字化技术优化采购、生产、仓储、物流全链条。已服务200+企业，平均降本25%，效率提升40%。立即咨询获取定制化供应链优化方案！',
+  canonical: getPermalink('/service/supply-chain'),
+  robots: {
+    index: true,
+    follow: true,
+  },
+};
+---
+
+<Layout metadata={metadata}>
+
+  <!-- Hero2 小部件 ******************* -->
+  <Hero2
+    tagline="专业供应链管理服务"
+    title="数字化供应链，驱动企业增长"
+    subtitle="宏翔商道运用AI技术和数字化工具，为企业打造智慧供应链体系。从采购到交付的全链条优化，帮助企业降低运营成本25%，提升运营效率40%，构建敏捷、透明、可持续的供应链竞争优势。"
+    actions={[
+      {
+        variant: 'primary',
+        text: '免费评估方案',
+        href: '/company/contact',
+        icon: 'tabler:chart-line',
+      },
+      {
+        variant: 'secondary',
+        text: '查看服务详情',
+        href: '#services',
+        icon: 'tabler:arrow-down',
+      },
+    ]}
+    image={{
+      src: heroImage,
+      alt: '智慧供应链解决方案',
+    }}
+  />
+
+  <!-- Content 介绍小部件 **************** -->
+  <Content
+    id="services"
+    title="核心服务优势"
+    subtitle="宏翔商道供应链团队融合AI技术与行业专业经验，为企业打造端到端的智慧供应链解决方案，已成功服务200+企业客户。"
+    items={[
+      {
+        title: '智能供应链规划',
+        description: '运用大数据分析制定科学的供应链战略规划，优化网络布局，提升整体效率和韧性。',
+        icon: 'tabler:brain',
+      },
+      {
+        title: '数字化采购管理',
+        description: '构建智能采购平台，优化供应商选择与管理，实现采购成本平均降低15-25%。',
+        icon: 'tabler:shopping-cart-plus',
+      },
+      {
+        title: 'AI库存优化',
+        description: '部署智能库存管理系统，实现需求预测、自动补货，有效减少库存积压30%，提高资金周转率。',
+        icon: 'tabler:package',
+      },
+      {
+        title: '智慧物流配送',
+        description: '构建智能物流网络，优化路线规划和载重分配，确保货物及时准确送达，降低物流成本20%。',
+        icon: 'tabler:truck-delivery',
+      },
+    ]}
+    image={{
+      src: 'https://images.unsplash.com/photo-1566228015668-4c45dbc4e2f5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80',
+      alt: '供应链服务',
+    }}
+  />
+
+  <!-- 供应链优化流程 Steps 小部件 ****************** -->
+  <Steps
+    title="智慧供应链构建流程"
+    subtitle="科学的数字化构建流程，确保供应链智能化转型成功"
+    items={[
+      {
+        title: '深度现状诊断',
+        description: '运用数字化工具全面分析企业供应链现状，精准识别痛点、风险点和改进机会，建立数据基线。',
+        icon: 'tabler:search',
+      },
+      {
+        title: '定制化方案设计',
+        description: '基于诊断结果和企业战略目标，设计个性化的智慧供应链优化方案，包括技术架构、业务流程和实施路径。',
+        icon: 'tabler:layout',
+      },
+      {
+        title: '智能系统部署',
+        description: '部署先进的供应链管理系统，集成AI算法和数据分析功能，建立标准化作业流程和智能决策机制。',
+        icon: 'tabler:robot',
+      },
+      {
+        title: '团队赋能培训',
+        description: '对相关人员进行系统性培训，包括系统操作、数据分析和新流程执行，确保数字化转型有效落地。',
+        icon: 'tabler:school',
+      },
+      {
+        title: '实时监控与调优',
+        description: '建立7x24小时智能监控体系，实时跟踪供应链运行状况，通过AI算法持续优化和改进，确保系统高效运行。',
+        icon: 'tabler:dashboard',
+      },
+      {
+        title: '效果评估与迭代',
+        description: '定期评估优化效果，通过KPI仪表盘跟踪关键指标，确保达到预期目标，并持续迭代优化方案。',
+        icon: 'tabler:chart-bar',
+      },
+    ]}
+    image={{
+      src: heroImage,
+      alt: '智慧供应链构建流程',
+    }}
+  />
+
+  <!-- 服务优势 FeatureSet 小部件 *************** -->
+  <FeatureSet
+    title="为什么选择宏翔商道"
+    subtitle="专业技术 · 数据驱动 · 显著成效 · 全程保障"
+    columns={2}
+    items={[
+      {
+        title: '深厚专业经验',
+        description: '拥有200+成功案例的供应链优化经验，服务跨越制造、零售、电商等多个行业，对不同行业特点和痛点有深刻理解。',
+        icon: 'tabler:award',
+        classes: {
+          icon: 'text-white bg-blue-500 rounded-full w-10 h-10 p-2 md:w-12 md:h-12 md:p-3 mr-4 rtl:ml-4 rtl:mr-0'
+        }
+      },
+      {
+        title: '领先数字化技术',
+        description: '融合AI人工智能、大数据分析、物联网等先进技术，打造智能化供应链管理平台，实现预测性分析和智能决策。',
+        icon: 'tabler:robot',
+        classes: {
+          icon: 'text-white bg-green-500 rounded-full w-10 h-10 p-2 md:w-12 md:h-12 md:p-3 mr-4 rtl:ml-4 rtl:mr-0'
+        }
+      },
+      {
+        title: '显著成本优化',
+        description: '通过智能化流程优化和资源配置，平均帮助企业降低供应链总成本25%，其中采购成本降低15-25%，库存成本降低30%。',
+        icon: 'tabler:trending-down',
+        classes: {
+          icon: 'text-white bg-purple-500 rounded-full w-10 h-10 p-2 md:w-12 md:h-12 md:p-3 mr-4 rtl:ml-4 rtl:mr-0'
+        }
+      },
+      {
+        title: '全方位风险管控',
+        description: '建立完善的风险识别、评估和应对机制，包括供应商风险、市场风险和操作风险，确保供应链稳定运行。',
+        icon: 'tabler:shield-check',
+        classes: {
+          icon: 'text-white bg-orange-500 rounded-full w-10 h-10 p-2 md:w-12 md:h-12 md:p-3 mr-4 rtl:ml-4 rtl:mr-0'
+        }
+      },
+    ]}
+  />
+
+  <!-- 服务数据统计 Stats 小部件 ****************** -->
+  <Stats
+    title="服务数据证明专业实力"
+    subtitle="用数据证明专业能力，用成果证明服务价值"
+    stats={[
+      { title: '服务企业客户', amount: 200, endValue: 200, suffix: '+' },
+      { title: '成功优化项目', amount: 150, endValue: 150, suffix: '+' },
+      { title: '平均成本降低', amount: 25, endValue: 25, suffix: '%' },
+      { title: '平均效率提升', amount: 40, endValue: 40, suffix: '%' },
+    ]}
+  />
+
+  <!-- 行业解决方案 Content 小部件 **************** -->
+  <Content
+    isReversed
+    title="行业专业解决方案"
+    subtitle="深度理解不同行业特点，提供针对性的智慧供应链解决方案"
+    items={[
+      {
+        title: '智能制造业',
+        description: '为制造企业提供精益生产、JIT交付、智能质控等解决方案，实现从原材料到成品的全流程数字化管理。',
+        icon: 'tabler:tools',
+      },
+      {
+        title: '智慧零售业',
+        description: '针对零售企业提供智能库存优化、快速补货、多渠道配送等服务，提升商品周转率和客户满意度。',
+        icon: 'tabler:shopping-bag',
+      },
+      {
+        title: '电商物流业',
+        description: '为电商企业打造仓储自动化、快递配送优化、逆向物流等一体化解决方案，支持业务快速增长。',
+        icon: 'tabler:truck-delivery',
+      },
+    ]}
+    image={{
+      src: 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80',
+      alt: '行业解决方案',
+    }}
+  />
+
+</Layout>

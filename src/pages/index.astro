@@ -1,0 +1,420 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import Hero from '~/components/widgets/Hero.astro';
+import FeatureSet from '~/components/widgets/FeatureSet.astro';
+import BlogLatestPosts from '~/components/widgets/BlogLatestPosts.astro';
+import FAQs from '~/components/widgets/FAQs.astro';
+import Stats from '~/components/widgets/Stats.astro';
+import CallToAction from '~/components/widgets/CallToAction.astro';
+import Testimonials from '~/components/widgets/Testimonials.astro';
+
+const metadata = {
+  title: '宏翔商道 - AI驱动的综合性企业服务平台',
+  description:
+    '宏翔商道是一家集AI技术、人力资源、供应链管理、知识产权服务于一体的综合性企业，为客户提供数字化转型和智能化解决方案。',
+  ignoreTitleTemplate: true,
+};
+---
+
+<Layout metadata={metadata}>
+  <!-- 顶部图像页 按钮 ******************* -->
+  <Hero
+    actions={[
+      {
+        variant: 'custom',
+        text: '探索产品',
+        href: '/service/ai-design',
+        // icon: 'tabler:download',
+      },
+    ]}
+  >
+    <!-- Hero组件的标题插槽 -->
+    <Fragment slot="title">
+      <!-- "AI" 文字：移动端使用蓝色，桌面端亮色模式使用强调色，暗色模式使用白色 -->
+      <span class="text-blue-600 md:text-accent md:dark:text-white font-bold"> AI </span>
+      <span class="font-bold">改变世界</span></Fragment
+    >
+
+    <Fragment slot="subtitle">
+      <!-- 小屏幕及以上(sm断点640px以上)显示的副标题内容 -->
+      <span class="hidden sm:inline">
+        <!-- "AI" 文字加粗显示 -->
+        <!-- <span class="font-semibold"> </span> -->
+        <!-- 移动端专用副标题：只在小屏幕以下显示，使用蓝色加粗样式突出显示 -->
+        <!-- <span class="block mb-1 sm:hidden font-bold text-blue-600">改变世界</span> -->
+        <!-- 产品描述文字：在所有屏幕尺寸都显示，介绍网站适用场景 -->
+        集合了 <span class="font-semibold">科技发展、劳务服务、供应链管理等服务</span> 的综合性企业，我们为企业提供全面、多元化的解决方案。助力企业高效运营，推动创新与可持续发展。
+      </span>
+    </Fragment>
+  </Hero>
+
+  <!-- Features 小部件 *************** -->
+  <!-- 核心业务模块 ******************* -->
+  <!-- 查询图标：https://tabler.io/icons -->
+  <FeatureSet
+    id="Service"
+    tagline="Service"
+    title="核心业务"
+    subtitle="人工智能驱动创新、知产、人才、供应链，面向全球企业提供数字化增长动力"
+    classes={{ container: 'max-w-6xl' }}
+    items={[
+      {
+        title: 'AI设计与训练',
+        description: '借助大模型、机器视觉，帮我我们快速孵化可落地的 AI 产品，助力客户实现数字化转型与智能决策。',
+        icon: 'tabler:server-2',
+      },
+      {
+        title: '知识产权设计',
+        description: '包括设计、开发、商标注册、专利授权等，确保您的产品或服务在知识产权法律方面得到保护。',
+        icon: 'tabler:microscope',
+      },
+      {
+        title: '人力资源服务',
+        description: '包括劳务派遣、招聘背调、人才测评与职业发展平台，打造合规、高效、灵活的人才体系。',
+        icon: 'tabler:users',
+      },
+      {
+        title: '供应链服务',
+        description: '打通采购、生产、仓储、物流与贸易金融，全程可视化与预测性分析，帮助企业降本增效、优化库存。',
+        icon: 'tabler:trolley',
+      },
+    ]}
+  />
+
+  <!-- Content 小部件 **************** -->
+
+  <!-- <Content
+    isReversed
+    tagline="模板内部"
+    title="AstroWind 的蓝图：乐趣与功能相遇！"
+    items={[
+      {
+        title: '基于 Astro 5.0 构建',
+        description: '受益于这个现代静态站点生成器的性能和开发人员友好的功能。',
+      },
+      {
+        title: '使用 Tailwind CSS 设计样式',
+        description: '使用这个非常流行的实用程序优先的 CSS 框架，促进快速设计和一致的样式。',
+      },
+      {
+        title: '跨浏览器兼容性',
+        description: '确保您的网站在各种网络浏览器中外观和功能一致，为所有用户提供无缝体验。',
+      },
+    ]}
+    image={{
+      src: 'https://images.unsplash.com/photo-1519389950473-47ba0277781c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
+      alt: 'Colorful Image',
+    }}
+  >
+    <Fragment slot="content">
+      <h3 class="text-2xl font-bold tracking-tight dark:text-white sm:text-3xl mb-2">建立在现代基础上</h3>
+      通过结合行业领先的实践获得竞争优势
+    </Fragment>
+
+    <Fragment slot="bg">
+      <div class="absolute inset-0 bg-blue-50 dark:bg-transparent"></div>
+    </Fragment>
+  </Content> -->
+
+  <!-- Content 小部件 **************** -->
+
+  <!-- <Content
+    isAfterContent
+    items={[
+      {
+        title: '高度定制化',
+        description: `轻松定制模板以匹配您的品牌标识和要求，使您的网站与众不同并节省您的时间。`,
+      },
+      {
+        title: '多种布局可能性',
+        description: '探索各种布局选项，以找到最能呈现您内容的结构，从而增强用户参与度和导航。',
+      },
+      {
+        title: '完全响应式设计',
+        description: '确保您的网站在各种设备和屏幕尺寸上都能获得最佳性能，提供一致且愉快的用户体验。',
+      },
+      {
+        title: '媒体整合',
+        description: '无缝地整合图像、视频和多媒体元素，以增强您的内容并有效地吸引访问者。',
+      },
+    ]}
+    image={{
+      src: 'https://images.unsplash.com/photo-1600132806370-bf17e65e942f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2194&q=80',
+      alt: 'Blueprint Image',
+    }}
+  >
+    <Fragment slot="content">确保您的在线形象真正代表您。</Fragment>
+
+    <Fragment slot="bg">
+      <div class="absolute inset-0 bg-blue-50 dark:bg-transparent"></div>
+    </Fragment>
+  </Content> -->
+
+  <!-- Content 小部件 **************** -->
+
+  <!-- <Content
+    isReversed
+    isAfterContent
+    items={[
+      {
+        title: '增强用户参与度',
+        description: '通过互动元素、直观的导航和视觉上吸引人的布局吸引您的观众，鼓励他们更长时间地访问。',
+      },
+      {
+        title: '持续改进',
+        description: '通过定期更新和增强，确保您的网站与最新趋势和技术保持一致。',
+      },
+      {
+        title: '时间和资源效率',
+        description: '跳过从头开始构建网站的耗时过程，使用 AstroWind 更快地启动您的在线业务。',
+      },
+      {
+        title: '社区支持',
+        description: `加入不断壮大的 AstroWind 社区，获取见解、资源和帮助，确保您在 Web 开发之旅中永不孤单。`,
+      },
+    ]}
+    image={{
+      src: 'https://images.unsplash.com/photo-1611462985358-60d3498e0364?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
+      alt: 'Astronauts Image',
+    }}
+  >
+    <Fragment slot="content">旨在促进增长和成功。</Fragment>
+
+    <Fragment slot="bg">
+      <div class="absolute inset-0 bg-blue-50 dark:bg-transparent"></div>
+    </Fragment>
+  </Content> -->
+
+  <!-- Steps 小部件 ****************** -->
+
+  <!-- <Steps
+    title="使用 AstroWind 快速启动并运行您的梦想网站。"
+    items={[
+      {
+        title: '第 1 步：<span class="font-medium">下载</span>',
+        description:
+          '从 GitHub 开始！可以 fork AstroWind 模板，或者直接点击“使用此模板”。您的画布正等待着您，为您的数字杰作做好准备。只需点击几下，您就已经奠定了基础。',
+        icon: 'tabler:package',
+      },
+      {
+        title: '第 2 步：<span class="font-medium">添加内容</span>',
+        description:
+          '将您的愿景倾注其中。添加图片、文字和所有元素，为您的数字空间注入活力。请记住，内容是讲述您故事的关键，因此请使其引人入胜。',
+        icon: 'tabler:letter-case',
+      },
+      {
+        title: '第 3 步：<span class="font-medium">自定义样式</span>',
+        description:
+          '赋予它您的个人风格。调整颜色、字体和布局，直到感觉恰到好处。您独特的才华，由 AstroWind 放大！精确的设计可确保无缝的用户体验。',
+        icon: 'tabler:paint',
+      },
+      {
+        title: '准备就绪！',
+        icon: 'tabler:check',
+      },
+    ]}
+    image={{
+      src: 'https://images.unsplash.com/photo-1616198814651-e71f960c3180?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=987&q=80',
+      alt: 'Steps image',
+    }}
+  /> -->
+
+  <!-- Features2 小部件 ************** -->
+  <!-- 图标来源：https://icon-sets.iconify.design/flat-color-icons/ -->
+  <FeatureSet
+    variant="detailed"
+    tagline="service coverage"
+    title="服务范围"
+    subtitle="包括但不限于"
+    columns={3}
+    classes={{ container: 'max-w-6xl' }}
+    items={[
+      {
+        title: 'AI 算法设计',
+        description: '专业的 AI 算法设计确保您的业务逻辑精准。',
+        icon: 'flat-color-icons:template',
+      },
+      {
+        title: '知识产权设计',
+        description: '确保知识产权得到保护，防止潜在的法律问题。',
+        icon: 'flat-color-icons:gallery',
+      },
+      {
+        title: '企业管理',
+        description: '专业的企业管理确保您的业务成功。',
+        icon: 'flat-color-icons:approval',
+      },
+      {
+        title: '人力资源服务',
+        description: '专业的人力资源服务确保您的团队高效稳定。',
+        icon: 'flat-color-icons:voice-presentation',
+      },
+      {
+        title: '劳务派遣服务',
+        description: '专业的劳务派遣服务确保您的员工安全稳定。',
+        icon: 'flat-color-icons:business-contact',
+      },
+      {
+        title: '商贸零售',
+        description: '专业的商贸零售确保您的销售成功。',
+        icon: 'flat-color-icons:currency-exchange',
+      },
+    ]}
+  />
+
+  <!-- 文章部件 ********************** -->
+  <BlogLatestPosts title="最新动态" information={``} count={4} classes={{ container: 'max-w-6xl mx-auto' }} />
+
+  <!-- 备受好评小部件 ****************** -->
+  <Testimonials
+    tagline="Evaluate"
+    title="我们的服务备受信赖"
+    subtitle="众多公司使用产品后赞不绝口"
+    testimonials={[
+      {
+        testimonial: `宏翔商道的 AI 质检系统让我们的产线缺陷率直降 25%，数据说话最有说服力。`,
+        name: 'Li Wei',
+        job: '智慧制造部经理',
+        image: {
+          src: '~/assets/images/evaluate/1.jpg',
+          alt: 'Emily Kennedy Image',
+        },
+      },
+      {
+        testimonial: `整合采购平台上线后，周转资金周期缩短一半，供应链韧性明显提升。`,
+        name: 'Chen Rui',
+        job: '供应链总监',
+        image: {
+          src: '~/assets/images/evaluate/2.jpg',
+          alt: 'Sarah Hansen Image',
+        },
+      },
+      {
+        testimonial: `宏翔商道 HR SaaS 帮助我们一次性通过用工合规审计，员工满意度同步提升。`,
+        name: 'Sun Mei',
+        job: '人力资源 VP',
+        image: {
+          src: '~/assets/images/evaluate/3.jpg',
+          alt: 'Mark Wilkinson Image',
+        },
+      },
+      {
+        testimonial: `AI 视频分析方案在万人演唱会中实时预警，大幅降低现场安全风险。`,
+        name: 'Zhang Qiang',
+        job: '活动项目负责人',
+        image: {
+          src: '~/assets/images/evaluate/4.jpg',
+          alt: 'Mark Wilkinson Image',
+        },
+      },
+      {
+        testimonial: `数字孪生仓储系统运行三个月后，库存准确率已提升至 99.2%，超出预期。`,
+        name: 'Wang Jing',
+        job: '物流运营经理',
+        image: {
+          src: '~/assets/images/evaluate/5.jpg',
+          alt: 'Mark Wilkinson Image',
+        },
+      },
+      {
+        testimonial: `他们的交付团队专业且高效，难题从不隔夜，我们从未如此放心过技术外包。`,
+        name: 'Liu Hao',
+        job: '信息化总监',
+        image: {
+          src: '~/assets/images/evaluate/6.jpg',
+          alt: 'Mark Wilkinson Image',
+        },
+      },
+    ]}
+  />
+
+  <!-- Stats 小部件 ****************** -->
+
+  <Stats
+    tagline="Success"
+    title="我们的成就"
+    stats={[
+      {
+        amount: 132,
+        title: '服务客户',
+        icon: 'tabler:mood-smile',
+        startValue: 0,
+        endValue: 132,
+        duration: 2500,
+        suffix: 'K+',
+      },
+      {
+        amount: 54,
+        title: '带动就业',
+        icon: 'tabler:school',
+        startValue: 0,
+        endValue: 54,
+        duration: 2000,
+      },
+      {
+        amount: 48,
+        title: '活动数',
+        icon: 'tabler:bulb',
+        startValue: 0,
+        endValue: 48,
+        duration: 1800,
+      },
+      {
+        amount: 6,
+        title: '知识产权',
+        icon: 'tabler:copyright',
+        startValue: 0,
+        endValue: 6,
+        duration: 2200,
+      },
+    ]}
+  />
+
+  <!-- FAQs 小部件 ******************* -->
+
+  <FAQs
+    tagline="FAQs"
+    title="常见问题"
+    subtitle="深入研究以下问题，以深入了解为什么选择我们。"
+    classes={{ container: 'max-w-6xl' }}
+    items={[
+      {
+        title: '为什么选择 Elexvx® ？',
+        description: 'Elexvx® 的团队成员均在25周岁左右。年轻，是一种敢闯敢拼的态度；年轻，更是一种不断进化的战斗力。',
+      },
+      {
+        title: '有哪些知识产权服务 ？',
+        description:
+          '宏翔商道® 提供知识产权咨询、软件著作权申请、专利申请指导等服务，帮助企业保护创新成果和核心技术资产。',
+      },
+      {
+        title: '企业有哪些核心优势？',
+        description:
+          '宏翔商道® 拥有专业的AI技术团队和丰富的行业经验，在人工智能、人力资源、供应链管理等领域为客户提供一站式解决方案，助力企业数字化转型。',
+      },
+    ]}
+  />
+
+  <!-- CallToAction 小部件 *********** -->
+
+  <CallToAction
+    actions={[
+      // {
+      //   variant: 'primary',
+      //   target: '_blank',
+      //   text: '获取模板',
+      //   href: 'https://github.com/onwidget/astrowind',
+      //   icon: 'tabler:download',
+      // },
+      {
+        text: '工作机会',
+        href: '/company/careers',
+        variant: 'uiverse',
+      },
+    ]}
+  >
+    <Fragment slot="title">成为我们愿景的一部分</Fragment>
+
+    <Fragment slot="subtitle">发现一个充满活力的工作环境，无与伦比的成长机会，以及创造有意义影响的机会。</Fragment>
+  </CallToAction>
+</Layout>

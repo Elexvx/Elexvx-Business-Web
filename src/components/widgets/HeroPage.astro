@@ -1,0 +1,36 @@
+---
+import type { HTMLAttributes } from 'astro/types';
+
+interface Props extends HTMLAttributes<'div'> {
+  title?: string;
+  subtitle?: string;
+  tagline?: string;
+  backgroundImage?: string;
+}
+
+const { title, subtitle, tagline, backgroundImage, ...attrs } = Astro.props;
+---
+
+<section class="relative h-64 md:h-80 bg-cover bg-center" style={`background-image: url(${backgroundImage})`}>
+  <!-- 蒙版调整
+      opacity-30 - 30%透明度（更亮的蒙版）
+      opacity-60 - 60%透明度（更深的蒙版）
+      opacity-70 - 70%透明度（非常深的蒙版）
+  -->
+  <div class="absolute inset-0 bg-black opacity-60"></div>
+  <div class="relative z-10 flex items-center justify-center h-full">
+    <div class="text-center text-white max-w-4xl mx-auto px-4 sm:px-6">
+      {tagline && (
+        <p class="text-base text-blue-200 font-bold tracking-wide uppercase mb-2">
+          {tagline}
+        </p>
+      )}
+      {title && <h1 class="text-4xl md:text-5xl font-bold mb-4">{title}</h1>}
+      {subtitle && (
+        <p class="text-lg md:text-xl text-gray-200 max-w-2xl mx-auto">
+          {subtitle}
+        </p>
+      )}
+    </div>
+  </div>
+</section>

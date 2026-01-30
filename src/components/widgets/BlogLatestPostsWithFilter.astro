@@ -1,0 +1,153 @@
+---
+import { APP_BLOG } from 'astrowind:config';
+
+import Grid from '~/components/blog/Grid.astro';
+
+import { getBlogPermalink } from '~/utils/permalinks';
+import { findLatestPostsByCategory, getAllCategories } from '~/utils/blog';
+import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
+import type { Widget } from '~/types';
+import Button from '~/components/ui/Button.astro';
+
+export interface Props extends Widget {
+  title?: string;
+  linkText?: string;
+  linkUrl?: string | URL;
+  information?: string;
+  count?: number;
+}
+
+const {
+  title = await Astro.slots.render('title'),
+  linkText = '查看全部文章',
+  linkUrl = getBlogPermalink(),
+  information = await Astro.slots.render('information'),
+  count = 4,
+
+  id,
+  isDark = false,
+  classes = {},
+  bg = await Astro.slots.render('bg'),
+} = Astro.props;
+
+const posts = APP_BLOG.isEnabled ? await findLatestPostsByCategory({ count }) : [];
+const categories = APP_BLOG.isEnabled ? await getAllCategories() : [];
+---
+
+{
+  APP_BLOG.isEnabled ? (
+    <WidgetWrapper id={id} isDark={isDark} containerClass={classes?.container as string} bg={bg}>
+      <div class="flex flex-col lg:justify-between lg:flex-row mb-8">
+        {title && (
+          <div class="md:max-w-sm">
+            <h2
+              class="text-3xl font-bold tracking-tight sm:text-4xl sm:leading-none group font-heading mb-2"
+              set:html={title}
+            />
+            {APP_BLOG.list.isEnabled && linkText && linkUrl && (
+              <Button variant="link" href={linkUrl}>
+                {' '}
+                {linkText} »
+              </Button>
+            )}
+          </div>
+        )}
+
+        {information && <p class="text-muted dark:text-slate-400 lg:text-sm lg:max-w-md" set:html={information} />}
+      </div>
+
+      <!-- 分类过滤器 -->
+      <div class="mb-6">
+        <div class="flex flex-wrap gap-2 items-center">
+          <span class="text-sm font-medium text-gray-700 dark:text-slate-300 mr-2">按分类过滤:</span>
+          <button 
+            class="category-filter-btn px-3 py-1 text-sm rounded-full border border-gray-300 dark:border-slate-600 bg-primary text-white transition-all duration-200"
+            data-category=""
+          >
+            全部
+          </button>
+          {
+            categories.map((category) => (
+              <button 
+                class="category-filter-btn px-3 py-1 text-sm rounded-full border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-gray-700 dark:text-slate-300 hover:bg-primary hover:text-white transition-all duration-200"
+                data-category={category.slug}
+              >
+                {category.title} ({category.count})
+              </button>
+            ))
+          }
+        </div>
+      </div>
+
+      <!-- 文章网格 -->
+      <div id="posts-container">
+        <Grid posts={posts} />
+      </div>
+      
+      <!-- 加载状态 -->
+      <div id="loading-indicator" class="hidden text-center py-8">
+        <div class="inline-flex items-center px-4 py-2 font-semibold leading-6 text-sm shadow rounded-md text-primary bg-white dark:bg-slate-800 transition ease-in-out duration-150">
+          <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-primary" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+          加载中...
+        </div>
+      </div>
+    </WidgetWrapper>
+  ) : (
+    <Fragment />
+  )
+}
+
+<script>
+  // 分类过滤功能
+  document.addEventListener('DOMContentLoaded', function() {
+    const filterButtons = document.querySelectorAll('.category-filter-btn');
+    const postsContainer = document.getElementById('posts-container');
+    const loadingIndicator = document.getElementById('loading-indicator');
+    
+    filterButtons.forEach(button => {
+      button.addEventListener('click', async function() {
+        const categorySlug = this.getAttribute('data-category');
+        
+        // 更新按钮状态
+        filterButtons.forEach(btn => {
+          btn.classList.remove('bg-primary', 'text-white');
+          btn.classList.add('bg-white', 'dark:bg-slate-700', 'text-gray-700', 'dark:text-slate-300');
+        });
+        this.classList.add('bg-primary', 'text-white');
+        this.classList.remove('bg-white', 'dark:bg-slate-700', 'text-gray-700', 'dark:text-slate-300');
+        
+        // 显示加载状态
+        loadingIndicator.classList.remove('hidden');
+        postsContainer.style.opacity = '0.5';
+        
+        try {
+          // 构建API请求URL
+          const apiUrl = `/api/posts${categorySlug ? `?category=${categorySlug}` : ''}`;
+          const response = await fetch(apiUrl);
+          const data = await response.json();
+          
+          // 更新文章内容
+          if (data.html) {
+            postsContainer.innerHTML = data.html;
+          }
+        } catch (error) {
+          console.error('加载文章失败:', error);
+        } finally {
+          // 隐藏加载状态
+          loadingIndicator.classList.add('hidden');
+          postsContainer.style.opacity = '1';
+        }
+      });
+    });
+  });
+  
+  // 支持 Astro 的客户端路由
+  document.addEventListener('astro:page-load', function() {
+    // 重新初始化过滤功能
+    const event = new Event('DOMContentLoaded');
+    document.dispatchEvent(event);
+  });
+</script>

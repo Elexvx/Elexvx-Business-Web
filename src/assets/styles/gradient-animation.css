@@ -1,0 +1,133 @@
+/* 渐变动画背景样式 */
+.gradient-container {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  z-index: 1;
+}
+
+/* 亮色主题样式 */
+:root:not(.dark) .gradient-container {
+  background: radial-gradient(
+    circle,
+    rgba(255, 255, 255, 0.2),
+    rgba(0, 0, 0, 0.1)
+  );
+}
+
+:root:not(.dark) .gradient-container::before,
+:root:not(.dark) .gradient-container::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 200%;
+  height: 200%;
+  background: conic-gradient(
+    from 0deg,
+    rgba(255, 154, 162, 0.5),
+    rgba(255, 183, 178, 0.5),
+    rgba(255, 218, 193, 0.5),
+    rgba(226, 240, 203, 0.5),
+    rgba(162, 228, 255, 0.5),
+    rgba(201, 175, 255, 0.5),
+    rgba(255, 183, 178, 0.5),
+    rgba(255, 154, 162, 0.5)
+  );
+  transform: translate(-50%, -50%);
+  animation: rotate 8s linear infinite;
+  filter: blur(50px);
+  opacity: 0.4;
+}
+
+:root:not(.dark) .gradient-container::after {
+  width: 180%;
+  height: 180%;
+  animation: rotate-reverse 10s linear infinite;
+  opacity: 0.3;
+}
+
+/* 暗色主题样式 */
+.dark .gradient-container {
+  background-color: #000;
+  background-image: 
+    radial-gradient(
+      circle at 50% 50%,
+      #0000 1.5px,
+      #000 0 7px,
+      #0000 7px
+    ),
+    radial-gradient(
+      circle at 50% 50%,
+      #0000 1.5px,
+      #000 0 7px,
+      #0000 7px
+    ),
+    radial-gradient(circle at 50% 50%, #f00, #f000 60%),
+    radial-gradient(circle at 50% 50%, #ff0, #ff00 60%),
+    radial-gradient(circle at 50% 50%, #0f0, #0f00 60%),
+    radial-gradient(ellipse at 50% 50%, #00f, #00f0 60%);
+  background-size: 
+    12px 20.7846097px,
+    12px 20.7846097px,
+    200% 200%,
+    200% 200%,
+    200% 200%,
+    200% 20.7846097px;
+  --p: 0px 0px, 6px 10.39230485px;
+  background-position: 
+    var(--p),
+    0% 0%,
+    0% 0%,
+    0% 0px;
+  animation: 
+    wee 40s linear infinite,
+    filt 6s linear infinite;
+}
+
+@keyframes rotate {
+  0% {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+  100% {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+}
+
+@keyframes rotate-reverse {
+  0% {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+  100% {
+    transform: translate(-50%, -50%) rotate(-360deg);
+  }
+}
+
+@keyframes filt {
+  0% {
+    filter: hue-rotate(0deg);
+  }
+  to {
+    filter: hue-rotate(360deg);
+  }
+}
+
+@keyframes wee {
+  0% {
+    background-position:
+      var(--p),
+      800% 400%,
+      1000% -400%,
+      -1200% -600%,
+      400% 41.5692194px;
+  }
+  to {
+    background-position:
+      var(--p),
+      0% 0%,
+      0% 0%,
+      0% 0%,
+      0% 0%;
+  }
+}

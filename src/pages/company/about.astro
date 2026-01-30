@@ -1,0 +1,193 @@
+---
+// *******************************************
+// 页面内容：关于我们                          **
+// *******************************************
+// 重构时间：2025-08-26 00:27                **
+// ************* ******************************
+
+import Content from '~/components/widgets/Content.astro';
+import HeroPage from '~/components/widgets/HeroPage.astro';
+import ContentWithImage from '~/components/widgets/ContentWithImage.astro';
+import Stats from '~/components/widgets/Stats.astro';
+import Steps from '~/components/widgets/Steps.astro';
+import Steps2 from '~/components/widgets/Steps2.astro';
+import Layout from '~/layouts/PageLayout.astro';
+
+// 顶部图片引入
+import shgfImage from '~/assets/images/shgf.jpg';
+// 时间轴图片引入
+import timelineImage from '~/assets/images/idea.jpg';
+
+// 未使用的
+// import FeatureSet from '~/components/widgets/FeatureSet.astro';
+ 
+
+const metadata = {
+  title: '关于我们',
+};
+---
+
+<Layout metadata={metadata}>
+
+  <!-- Hero 小部件 ******************* -->
+  <HeroPage
+    tagline="about"
+    title="关于我们"
+    subtitle="集科技研发、劳务服务与供应链管理于一体，面向企业提供一站式、全链路的数字化解决方案。"
+    backgroundImage={shgfImage.src}
+  />
+
+  <!--  我们是谁区块  ************************************ -->
+    <ContentWithImage
+    id="about"
+    title="我们是谁？"
+    subtitle="宏翔商道（Elexvx Inc）是一家以人工智能为核心驱动力的全球化科技企业。<br />我们跨越产品研发、人才赋能、智能制造、职业发展与创新创业五大领域，用 <b>共享 · 普惠 · 包容 · 可持续</b> 的价值观，将前沿 AI 能力转化为触手可及的业务价值。"
+    tagline=""
+    image={{
+      src: '~/assets/images/idea.jpg',
+      alt: 'Colorful Image',
+    }}
+    overlayContent="我们坚信：技术的价值在于<br />让每个人、每家企业都能平等迈向数字化未来"
+  />
+  
+  <!-- Steps 时间轴小部件 ****************** -->
+  <Steps
+    title="发展历程"
+    subtitle="从初创到成长，我们的每一步都沉淀为独特的价值。"
+    items={[
+      {
+        title: '2020年 - 初遇比赛',
+        description: '以“起重设备智能化”项目首次踏入创新创业赛场，系统化接触工程实践与商业落地。',
+        icon: 'tabler:rocket',
+      },
+      {
+        title: '2021年 - 协作共建',
+        description: '携手产业伙伴共研项目，探索从原型到可交付的协同机制与质量标准。',
+        icon: 'tabler:users',
+      },
+      {
+        title: '2022年 - 业务延展',
+        description: '落地商贸与电商试点，验证供应链和履约体系，为多业务协同奠基。',
+        icon: 'tabler:cpu',
+      },
+      {
+        title: '2023年 - AI 融入',
+        description: '引入大模型及自动化，全面启动“流程重构 + 数据闭环”的智能升级。',
+        icon: 'tabler:settings',
+      },
+      {
+        title: '2024年 - 形成矩阵',
+        description: '业务矩阵覆盖人工智能、人力资源、知识产权、供应链管理四大板块，跃升为综合性科技企业。',
+        icon: 'tabler:trophy',
+      },
+      {
+        title: '2025年 - 未来展望',
+        description: '加速 AI 场景渗透，布局全球市场，立志成为领先的智能商务解决方案提供商。',
+        icon: 'tabler:target-arrow',
+      },
+    ]}
+    image={{
+      src: timelineImage,
+      alt: '企业发展历程',
+    }}
+  />
+
+  <!-- Content 小部件 **************** -->
+  <Content
+    isReversed
+    items={[
+      {
+        title: 'AI 产品创造',
+        description: '从基础大模型到垂直行业 SaaS，快速孵化可落地的智能产品与服务。',
+        icon: 'tabler:wand',
+      },
+      {
+        title: '人力资源服务',
+        description: '职业中介、劳务派遣、招聘背调、人才发展平台，打造灵活且合规的一站式人力生态。',
+        icon: 'tabler:settings',
+      },
+      {
+        title: '知识产权服务',
+        description: '提供著作权、商标、专利全链路代理，帮助客户用专业视角将创意沉淀为可防御的资产。',
+        icon: 'tabler:template',
+      },
+      {
+        title: '供应链管理',
+        description: '打通采购—仓储—物流全链路，构建数据看板与预警机制，实现成本、时效、合规的最优平衡。',
+        icon: 'tabler:carousel-horizontal',
+      },
+    ]}
+    image={{
+      src: 'https://images.unsplash.com/photo-1576153192621-7a3be10b356e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1674&q=80',
+      alt: 'Colorful Image',
+    }}
+  >
+    <Fragment slot="content">
+
+      <h3 class="text-2xl font-bold tracking-tight dark:text-white sm:text-3xl mb-2">我们沉淀下来的能力</h3>
+    </Fragment>
+  </Content>
+
+  <!-- Steps2 小部件 ****************** -->
+  <Steps2
+    title="价值观"
+    subtitle="秉持以下价值观，我们与客户携手共创未来。"
+    items={[
+      {
+        title: '共享',
+        description: '与客户、伙伴共建标准与知识资产；在合规框架内共享过程数据与最佳实践，让经验沉淀为可复用的模板与工具。',
+      },
+      {
+        title: '普惠',
+        description: '以可负担的成本交付可用的智能能力，让中小企业同样享有与大型组织一致的工程质量与服务保障。',
+      },
+      {
+        title: '包容',
+        description: '尊重行业差异与现场复杂度；保持开放架构，支持混合部署，与既有系统无缝衔接，不盲目推翻重构。',
+      },
+      {
+        title: '可持续',
+        description: '少承诺、快验证、持续迭代；把隐私合规、可维护性、可靠性纳入核心指标，用数据驱动复盘让系统越用越好。',
+      },
+    ]}
+  />
+  
+
+  <!-- Steps2 小部件 ****************** -->
+  <Steps2
+    title="成就"
+    subtitle="我们为取得的成就感到自豪，并将继续努力创造更多辉煌。"
+    isReversed={true}
+    items={[
+      {
+        title: '全球覆盖',
+        description: '服务网络遍及五大洲，为来自不同文化与规模的客户创造价值。',
+        icon: 'tabler:globe',
+      },
+      {
+        title: '积极的客户反馈和评论',
+        description: '收获全球用户的高度评价与信任，客户满意度持续领先同行。',
+        icon: 'tabler:message-star',
+      },
+      // {
+      //   title: '作为行业专家的奖项和认可',
+      //   description: '我们荣获多项行业大奖，是公认的行业专家。',
+      //   icon: 'tabler:award',
+      // },
+    ]}
+  />
+
+  <!-- Stats 小部件  ****************** -->
+  <Stats
+    title="统计数据"
+    stats={[
+      { title: '办公点', amount: 3, endValue: 3 },
+      { title: '员工人数', amount: 32, endValue: 32 },
+      { title: '服务客户', amount: 12, endValue: 12 },
+      { title: '知识产权', amount: 5, endValue: 5 },
+    ]}
+  />
+
+
+
+</Layout>

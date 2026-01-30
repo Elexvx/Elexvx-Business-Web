@@ -1,0 +1,48 @@
+---
+import { Icon } from 'astro-icon/components';
+import type { Brands as Props } from '~/types';
+
+import Image from '~/components/common/Image.astro';
+import Headline from '~/components/ui/Headline.astro';
+import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
+const {
+  title = '',
+  subtitle = '',
+  tagline = '',
+  icons = [],
+  images = [],
+  id,
+  isDark = false,
+  classes = {},
+  bg = await Astro.slots.render('bg'),
+} = Astro.props;
+---
+
+<WidgetWrapper id={id} isDark={isDark} containerClass={`max-w-6xl mx-auto ${classes?.container ?? ''}`} bg={bg}>
+  <Headline title={title} subtitle={subtitle} tagline={tagline} />
+
+    <div class="flex flex-wrap justify-center gap-8">
+    {
+      images &&
+        images.map((image) => (
+          <div class="card-container flex items-center justify-center">
+            {image.src && <Image src={image.src} alt={image.alt || ''} class="object-contain w-full h-full p-4" />}
+          </div>
+        ))
+    }
+  </div>
+</WidgetWrapper>
+
+<style>
+  .card-container {
+    position: relative;
+    width: 240px;
+    height: 240px;
+    background: linear-gradient(135deg, #e0e0e000, #c0c0c000);
+    border-radius: 30px;
+    box-shadow: 6px 6px 12px rgba(0, 0, 0, 0.3), -6px -6px 12px rgba(255, 255, 255, 0.3),
+      inset 2px 2px 4px rgba(255, 255, 255, 0.4), inset -2px -2px 4px rgba(0, 0, 0, 0.5);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+</style>

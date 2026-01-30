@@ -1,0 +1,166 @@
+---
+// *******************************************
+// 页面内容：联系我们                         **
+// *******************************************
+// 重构时间：2025-07-05 01:44                 **
+// *******************************************
+import Layout from '~/layouts/PageLayout.astro';
+import HeroPage from '~/components/widgets/HeroPage.astro';
+import FeatureSet from '~/components/widgets/FeatureSet.astro';
+import CallToAction from '~/components/widgets/CallToAction.astro';
+
+// 顶部图片引入
+import shgfImage from '~/assets/images/shgf.jpg';
+
+const metadata = {
+  title: '联系我们',
+};
+---
+
+<Layout metadata={metadata}>
+  <!-- Hero 小部件 ******************* -->
+
+  <HeroPage
+    tagline="contact"
+    title="联系我们"
+    subtitle="让我们建立联系！我们随时为您提供帮助，无论您有任何问题或需要支持。"
+    backgroundImage={shgfImage.src}
+  />
+
+  <!-- 联系我们按钮 **************** -->
+  <div class="mx-auto max-w-3xl px-6 py-12 text-center">
+    <h2 class="text-3xl sm:text-4xl font-bold mb-4">现在就与我们沟通</h2>
+    <p class="text-lg text-muted mb-8">常见问题可先查看 FAQ，若仍有疑问，请随时来信，我们将在 1 个工作日内回复。</p>
+    <a href="mailto:elexvx@elexvx.com" class="btn btn-primary">发送邮件</a>
+  </div>
+
+  <!-- FeatureSet 小部件 ************** -->
+  <FeatureSet
+    title="我们的位置"
+    tagline="address"
+    subtitle="欢迎预约到访，或通过下方链接了解更多信息"
+    columns={3}
+    variant="detailed"
+    items={[
+      {
+        title: '研发中心',
+        description: '中国 · 江苏 · 南京 · 建邺区<br>平良大街89号负一层韶华工坊773号',
+        icon: 'tabler:users',
+        callToActions: [
+          {
+            text: '查看地图',
+            href: 'https://ditu.amap.com/search?query=%E9%9F%B6%E5%8D%8E%E5%B7%A5%E5%9D%8A',
+            variant: 'primary',
+            icon: 'tabler:map-pin',
+            target: '_blank',
+          },
+          {
+            text: '企业信用',
+            href: 'https://aiqicha.baidu.com/company_detail_56215758055636',
+            variant: 'secondary',
+            icon: 'tabler:shield-check',
+            target: '_blank',
+          },
+        ],
+      },
+      {
+        title: '人力资源',
+        description: '中国 · 江苏 · 南京 · 六合区<br>金牛湖街道八百桥社区青龙市场街109号1928室',
+        icon: 'tabler:building',
+        callToActions: [
+          {
+            text: '查看地图',
+            href: 'https://ditu.amap.com/place/B0GKJ5ZNLU',
+            variant: 'primary',
+            icon: 'tabler:map-pin',
+            target: '_blank',
+          },
+          {
+            text: '企业信用',
+            href: 'https://aiqicha.baidu.com/company_detail_56910435771118',
+            variant: 'secondary',
+            icon: 'tabler:shield-check',
+            target: '_blank',
+          },
+        ],
+      },
+      {
+        title: '商贸零售',
+        description: '中国 · 江苏 · 镇江 · 句容市<br>宝华镇开发区121号',
+        icon: 'tabler:shopping-bag',
+        callToActions: [
+          {
+            text: '查看地图',
+            href: 'https://ditu.amap.com/place/BZAQQH007U',
+            variant: 'primary',
+            icon: 'tabler:map-pin',
+            target: '_blank',
+          },
+          {
+            text: '企业信用',
+            href: 'https://aiqicha.baidu.com/company_detail_51228677772700',
+            variant: 'secondary',
+            icon: 'tabler:shield-check',
+            target: '_blank',
+          },
+        ],
+      },
+    ]}
+  />
+
+  <!-- FeatureSet 小部件 ************** -->
+  <FeatureSet
+    tagline="email"
+    title="我们随时为您提供帮助！"
+    subtitle="通过邮件联系我们"
+    columns={3}
+    variant="default"
+    items={[
+      {
+        title: '股东会',
+        description: 'elexvx@elexvx.com',
+        icon: 'tabler:mail',
+      },
+      {
+        title: '投资发展部',
+        description: 'vc@elexvx.com',
+        icon: 'tabler:mail',
+      },
+      {
+        title: '人事部',
+        description: 'hr@elexvx.com',
+        icon: 'tabler:mail',
+      },
+      {
+        title: '产品支持',
+        description: 'support@elexvx.com',
+        icon: 'tabler:mail',
+      },
+      {
+        title: '软件技术部',
+        description: 'it@elexvx.com',
+        icon: 'tabler:mail',
+      },
+      {
+        title: '支部纪检组',
+        description: 'jw@elexvx.com',
+        icon: 'tabler:mail',
+      },
+    ]}
+  />
+
+  <CallToAction
+    actions={[
+      {
+        text: '在线对话',
+        href: 'https://work.weixin.qq.com/kfid/kfc5efca4c28472ff7b',
+        variant: 'discover',
+        target: '_blank',
+      },
+    ]}
+  >
+    <Fragment slot="title">需要即时服务？</Fragment>
+
+    <Fragment slot="subtitle"> 点击下方按钮，进入在线客服服务。（工作日9:00~17:00） </Fragment>
+  </CallToAction>
+</Layout>

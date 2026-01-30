@@ -1,0 +1,151 @@
+---
+import Headline from '~/components/ui/Headline.astro';
+import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
+import { Icon } from 'astro-icon/components';
+import type { Faqs as Props } from '~/types';
+
+const {
+  title = '',
+  subtitle = '',
+  tagline = '',
+  items = [],
+  iconUp = 'tabler:chevron-up',
+  iconDown = 'tabler:chevron-down',
+
+  id,
+  isDark = false,
+  classes = {},
+  bg = await Astro.slots.render('bg'),
+} = Astro.props;
+---
+
+<WidgetWrapper id={id} isDark={isDark} containerClass={`max-w-7xl mx-auto ${classes?.container ?? ''}`} bg={bg}>
+  <!-- 防止FAQ内容被搜索引擎作为页面描述索引 -->
+  <div data-nosnippet role="complementary" aria-label="常见问题">
+    <Headline title={title} subtitle={subtitle} tagline={tagline} />
+  
+  <div class="w-full">
+    {items && items.length > 0 && (
+      <div class="space-y-4">
+        {items.map((item, index) => (
+           <div class="faq-card border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+             <button 
+               type="button"
+               id={`faq-button-${index}`}
+               class="faq-toggle w-full px-6 py-4 text-left bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200 flex items-center justify-between focus:outline-none focus:ring-2 focus:ring-primary focus:ring-inset"
+               data-target={`faq-content-${index}`}
+               aria-expanded="false"
+               aria-controls={`faq-content-${index}`}
+             >
+               <h3 class="text-lg font-semibold text-gray-900 dark:text-white pr-4">
+                 {item.title}
+               </h3>
+               <div class="flex-shrink-0">
+                  <Icon 
+                    name={iconDown} 
+                    class="faq-icon w-5 h-5 text-gray-500 dark:text-gray-400 transition-transform duration-200" 
+                  />
+                </div>
+             </button>
+             <div 
+               id={`faq-content-${index}`}
+               class="faq-content hidden px-6 py-4 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700"
+               role="region"
+               aria-labelledby={`faq-button-${index}`}
+             >
+               <div class="text-gray-600 dark:text-gray-300 leading-relaxed" set:html={item.description} />
+             </div>
+           </div>
+         ))}
+      </div>
+    )}
+  </div>
+  </div> <!-- 关闭 data-nosnippet -->
+</WidgetWrapper>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const toggleButtons = document.querySelectorAll('.faq-toggle');
+    
+    function collapseContent(content, button, icon) {
+      content.classList.add('hidden');
+      button.setAttribute('aria-expanded', 'false');
+      icon.style.transform = 'rotate(0deg)';
+    }
+    
+    function expandContent(content, button, icon) {
+      content.classList.remove('hidden');
+      button.setAttribute('aria-expanded', 'true');
+      icon.style.transform = 'rotate(180deg)';
+    }
+    
+    toggleButtons.forEach(button => {
+      button.addEventListener('click', function(event) {
+        event.preventDefault();
+        event.stopPropagation();
+        
+        const targetId = this.getAttribute('data-target');
+        const content = document.getElementById(targetId);
+        const icon = this.querySelector('.faq-icon');
+        const isExpanded = this.getAttribute('aria-expanded') === 'true';
+        
+        if (!content || !icon) return;
+        
+        // 关闭其他所有打开的FAQ项目
+        toggleButtons.forEach(otherButton => {
+          if (otherButton !== this && otherButton.getAttribute('aria-expanded') === 'true') {
+            const otherTargetId = otherButton.getAttribute('data-target');
+            const otherContent = document.getElementById(otherTargetId);
+            const otherIcon = otherButton.querySelector('.faq-icon');
+            
+            if (otherContent && otherIcon) {
+              collapseContent(otherContent, otherButton, otherIcon);
+            }
+          }
+        });
+        
+        // 切换当前FAQ项目
+        if (isExpanded) {
+          collapseContent(content, this, icon);
+        } else {
+          expandContent(content, this, icon);
+        }
+      });
+    });
+  });
+</script>
+
+<style>
+  .faq-card {
+    transition: box-shadow 0.2s ease;
+  }
+  
+  .faq-card:hover {
+    box-shadow: 0 4px 12px -2px rgba(0, 0, 0, 0.1);
+  }
+  
+  .faq-toggle:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+  }
+  
+  .faq-icon {
+    transition: transform 0.2s ease;
+  }
+  
+  /* 响应式动画优化 */
+  @media (prefers-reduced-motion: reduce) {
+    .faq-card,
+    .faq-toggle,
+    .faq-icon {
+      transition: none !important;
+    }
+  }
+  
+  /* 移动端优化 */
+  @media (max-width: 768px) {
+    .faq-card:hover {
+      box-shadow: none;
+    }
+  }
+</style>

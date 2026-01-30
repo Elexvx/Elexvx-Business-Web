@@ -1,0 +1,72 @@
+site:
+  name: 宏翔商道 ® - Elexvx ® Inc
+  site: 'https://www.elexvx.com' # 您的网站域名
+  base: '/'
+  trailingSlash: false
+
+  googleSiteVerificationId:  # 谷歌网站验证ID
+
+# 默认SEO元数据
+metadata:
+  title:
+    default: 宏翔商道
+    template: '%s — 企业官网'
+  description: "宏翔商道是一家AI驱动的综合性企业，专注于人工智能、人力资源、供应链管理和知识产权服务，为客户提供数字化转型解决方案"
+  robots:
+    index: true
+    follow: true
+  openGraph:
+    site_name: 企业官网
+    images:
+      - url: '~/assets/images/favicon.png'
+        width: 1500
+        height: 1500
+    type: website
+  twitter:
+    handle: '@onwidget'
+    site: '@onwidget'
+    cardType: summary_large_image
+
+i18n:
+  language: zh-CN # 语言设置为中文
+  textDirection: ltr
+
+apps:
+  blog:
+    isEnabled: true
+    postsPerPage: 6
+
+    post:
+      isEnabled: true
+      permalink: '/%slug%' # Variables: %slug%, %year%, %month%, %day%, %hour%, %minute%, %second%, %category%
+      robots:
+        index: true
+
+    list:
+      isEnabled: true
+      pathname: 'blog' # Blog main path, you can change this to "articles" (/articles)
+      robots:
+        index: true
+
+    category:
+      isEnabled: true
+      pathname: 'category' # Category main path /category/some-category, you can change this to "group" (/group/some-category)
+      robots:
+        index: true
+
+    tag:
+      isEnabled: true
+      pathname: 'tag' # Tag main path /tag/some-tag, you can change this to "topics" (/topics/some-category)
+      robots:
+        index: false
+
+    isRelatedPostsEnabled: true
+    relatedPostsCount: 4
+
+analytics:
+  vendors:
+    googleAnalytics:
+      id: null # or "G-XXXXXXXXXX"
+
+ui:
+  theme: 'system' # Values: "system" | "light" | "dark" | "light:only" | "dark:only"

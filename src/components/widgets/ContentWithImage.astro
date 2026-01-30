@@ -1,0 +1,55 @@
+---
+import Headline from '~/components/ui/Headline.astro';
+import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
+import Image from '~/components/common/Image.astro';
+import type { Features as Props } from '~/types';
+
+const {
+  title = await Astro.slots.render('title'),
+  subtitle = await Astro.slots.render('subtitle'),
+  tagline = await Astro.slots.render('tagline'),
+  image,
+  overlayContent,
+  id,
+  isDark = false,
+  classes = {},
+  bg = await Astro.slots.render('bg'),
+} = Astro.props;
+---
+
+<WidgetWrapper
+  id={id}
+  isDark={isDark}
+  containerClass={`${classes?.container ?? ''}`}
+  bg={bg}
+>
+  <Headline title={title} subtitle={subtitle} tagline={tagline} classes={classes?.headline as Record<string, string>} />
+
+  {
+    image && (
+            <div class="w-full max-w-5xl mx-auto">
+        <div class="relative">
+          {typeof image === 'string' ? (
+            <Fragment set:html={image} />
+          ) : (
+            <Image
+              class="w-full h-auto object-cover rounded-xl shadow-lg"
+              width="auto"
+              height={384}
+              widths={[400, 768, 1024]}
+              layout="fullWidth"
+              {...image}
+            />
+          )}
+          {overlayContent && (
+            <div class="absolute inset-0 bg-black bg-opacity-50 rounded-xl flex items-center justify-center text-white text-center px-4 py-8">
+              <div class="text-lg sm:text-xl md:text-2xl lg:text-3xl font-medium leading-relaxed max-w-4xl">
+                <Fragment set:html={overlayContent} />
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    )
+  }
+</WidgetWrapper>

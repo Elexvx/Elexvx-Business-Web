@@ -1,0 +1,171 @@
+---
+/**
+ * 懒加载图片组件
+ * 支持原生 loading="lazy" 和 Intersection Observer API
+ * 提供渐进式增强和降级方案
+ */
+import type { HTMLAttributes } from 'astro/types';
+import { findImage } from '~/utils/images';
+import {
+  getImagesOptimized,
+  astroAssetsOptimizer,
+  unpicOptimizer,
+  isUnpicCompatible,
+  type ImageProps,
+} from '~/utils/images-optimization';
+
+interface Props extends ImageProps {
+  // 模糊占位符 (BlurHash 或 LQIP)
+  placeholder?: string;
+  // 是否使用渐进式加载
+  progressive?: boolean;
+  // 是否使用 Intersection Observer
+  useIntersectionObserver?: boolean;
+}
+
+type ImageType = {
+  src: string;
+  attributes: HTMLAttributes<'img'>;
+};
+
+const {
+  alt,
+  placeholder,
+  progressive = true,
+  useIntersectionObserver = true,
+  ...props
+} = Astro.props;
+
+if (!alt) {
+  throw new Error('LazyImage 组件需要提供 alt 属性');
+}
+
+if (typeof props.width === 'string') {
+  props.width = parseInt(props.width);
+}
+
+if (typeof props.height === 'string') {
+  props.height = parseInt(props.height);
+}
+
+if (!props.loading) {
+  props.loading = 'lazy';
+}
+
+if (!props.decoding) {
+  props.decoding = 'async';
+}
+
+const _image = await findImage(props.src);
+
+let image: ImageType | undefined = undefined;
+
+if (
+  typeof _image === 'string' &&
+  (_image.startsWith('http://') || _image.startsWith('https://')) &&
+  isUnpicCompatible(_image)
+) {
+  image = await getImagesOptimized(_image, { alt, ...props }, unpicOptimizer);
+} else if (_image) {
+  image = await getImagesOptimized(_image, { alt, ...props }, astroAssetsOptimizer);
+}
+
+const imageId = `lazy-img-${Math.random().toString(36).substr(2, 9)}`;
+---
+
+{
+  !image ? (
+    <Fragment />
+  ) : (
+    <>
+      {placeholder && progressive && (
+        <div class="lazy-image-wrapper relative overflow-hidden bg-gray-200 dark:bg-gray-700">
+          <img
+            src={placeholder}
+            alt={alt}
+            class="lazy-image-placeholder absolute inset-0 w-full h-full blur-md"
+            aria-hidden="true"
+            decoding="async"
+          />
+          <img
+            id={imageId}
+            src={image.src}
+            alt={alt}
+            crossorigin="anonymous"
+            referrerpolicy="no-referrer"
+            class="lazy-image-main relative w-full h-full transition-opacity duration-300"
+            {...image.attributes}
+          />
+        </div>
+      )}
+
+      {!placeholder && (
+        <img
+          id={imageId}
+          src={image.src}
+          alt={alt}
+          crossorigin="anonymous"
+          referrerpolicy="no-referrer"
+          class="lazy-image-main"
+          {...image.attributes}
+        />
+      )}
+
+      {useIntersectionObserver && (
+        <script is:inline define:vars={{ imageId }}>
+          {
+            // 使用 Intersection Observer API 实现更高级的懒加载
+            if ('IntersectionObserver' in window) {
+              const image = document.getElementById(imageId);
+              if (image && image.dataset.src === undefined) {
+                const observer = new IntersectionObserver(
+                  (entries) => {
+                    entries.forEach((entry) => {
+                      if (entry.isIntersecting) {
+                        const img = entry.target;
+                        img.classList.add('lazy-loading');
+                        observer.unobserve(img);
+                      }
+                    });
+                  },
+                  {
+                    rootMargin: '50px', // 提前 50px 加载
+                  }
+                );
+                observer.observe(image);
+              }
+            }
+          }
+        </script>
+      )}
+    </>
+  )
+}
+
+<style>
+  .lazy-image-main {
+    animation: fadeIn 0.3s ease-in-out;
+  }
+
+  .lazy-image-main.lazy-loading {
+    animation: fadeInLoad 0.5s ease-in-out forwards;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes fadeInLoad {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+</style>

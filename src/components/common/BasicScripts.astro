@@ -1,0 +1,368 @@
+---
+import { UI } from 'astrowind:config';
+---
+
+<script is:inline define:vars={{ defaultTheme: UI.theme }}>
+  if (window.basic_script) {
+    return;
+  }
+
+  window.basic_script = true;
+
+  function applyTheme(theme) {
+    if (theme === 'dark') {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }
+
+  const initTheme = function () {
+    if ((defaultTheme && defaultTheme.endsWith(':only')) || (!localStorage.theme && defaultTheme !== 'system')) {
+      applyTheme(defaultTheme.replace(':only', ''));
+    } else if (
+      localStorage.theme === 'dark' ||
+      (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)
+    ) {
+      applyTheme('dark');
+    } else {
+      applyTheme('light');
+    }
+  };
+  initTheme();
+
+  function attachEvent(selector, event, fn) {
+    const matches = typeof selector === 'string' ? document.querySelectorAll(selector) : selector;
+    if (matches && matches.length) {
+      matches.forEach((elem) => {
+        elem.addEventListener(event, (e) => fn(e, elem), false);
+      });
+    }
+  }
+
+  const onLoad = function () {
+    let lastKnownScrollPosition = window.scrollY;
+    let ticking = true;
+    
+    // 确保桌面端导航栏正确显示
+    function ensureDesktopNavVisibility() {
+      if (window.innerWidth > 767) {
+        const nav = document.querySelector('#header nav');
+        const rightSection = document.querySelector('#header > div > div:last-child');
+        nav?.classList.remove('hidden');
+        rightSection?.classList.remove('hidden');
+      }
+    }
+    
+    // 页面加载时立即执行
+    ensureDesktopNavVisibility();
+    
+    // 监听窗口大小变化
+    window.addEventListener('resize', ensureDesktopNavVisibility);
+
+    function closeMenuWithAnimation() {
+      const nav = document.querySelector('#header nav');
+      const toggleButton = document.querySelector('[data-aw-toggle-menu]');
+      
+      if (nav && !nav.classList.contains('hidden')) {
+        nav.classList.add('closing');
+        
+        setTimeout(() => {
+          toggleButton?.classList.remove('expanded');
+          document.body.classList.remove('overflow-hidden');
+          document.getElementById('header')?.classList.remove('h-screen');
+          document.getElementById('header')?.classList.remove('expanded');
+          document.getElementById('header')?.classList.remove('bg-page');
+          
+          // 只在移动端隐藏导航栏
+          if (window.innerWidth <= 767) {
+            nav?.classList.add('hidden');
+            document.querySelector('#header > div > div:last-child')?.classList.add('hidden');
+          }
+          
+          nav?.classList.remove('closing');
+          
+          // 重置移动端下拉菜单状态
+          const allDropdowns = document.querySelectorAll('.mobile-dropdown');
+          allDropdowns.forEach(dropdown => {
+            dropdown.classList.remove('expanded');
+          });
+        }, 300);
+      }
+    }
+
+    attachEvent('#header nav', 'click', function () {
+      closeMenuWithAnimation();
+    });
+
+    attachEvent('[data-aw-toggle-menu]', 'click', function (_, elem) {
+      const isExpanded = elem.classList.contains('expanded');
+      
+      if (isExpanded) {
+        // 关闭菜单时使用动画
+        closeMenuWithAnimation();
+      } else {
+        // 打开菜单
+        elem.classList.add('expanded');
+        document.body.classList.add('overflow-hidden');
+        document.getElementById('header')?.classList.add('h-screen');
+        document.getElementById('header')?.classList.add('expanded');
+        document.getElementById('header')?.classList.add('bg-page');
+        document.querySelector('#header nav')?.classList.remove('hidden');
+        document.querySelector('#header > div > div:last-child')?.classList.remove('hidden');
+      }
+    });
+
+    // 移动端下拉菜单交互
+    attachEvent('[data-mobile-dropdown-toggle]', 'click', function (e, elem) {
+      e.preventDefault();
+      e.stopPropagation();
+      
+      // 获取当前下拉菜单的父级li元素
+      const dropdownItem = elem.closest('.mobile-dropdown');
+      if (!dropdownItem) return;
+      
+      // 检查当前屏幕是否为移动端
+      const isMobile = window.innerWidth < 768;
+      if (!isMobile) return;
+      
+      // 关闭其他已展开的下拉菜单
+      const allDropdowns = document.querySelectorAll('.mobile-dropdown');
+      allDropdowns.forEach(dropdown => {
+        if (dropdown !== dropdownItem) {
+          dropdown.classList.remove('expanded');
+        }
+      });
+      
+      // 切换当前下拉菜单的展开状态
+      dropdownItem.classList.toggle('expanded');
+    });
+    
+    // 点击移动端下拉菜单项时关闭菜单
+    attachEvent('.mobile-dropdown-menu a', 'click', function (e, elem) {
+      // 仅在移动端处理
+      const isMobile = window.innerWidth < 768;
+      if (!isMobile) return;
+      
+      // 关闭当前下拉菜单
+      const dropdownItem = elem.closest('.mobile-dropdown');
+      if (dropdownItem) {
+        setTimeout(() => {
+          dropdownItem.classList.remove('expanded');
+        }, 100);
+      }
+    });
+
+    attachEvent('[data-aw-toggle-color-scheme]', 'click', function () {
+      if (defaultTheme.endsWith(':only')) {
+        return;
+      }
+      document.documentElement.classList.toggle('dark');
+      localStorage.theme = document.documentElement.classList.contains('dark') ? 'dark' : 'light';
+    });
+
+    attachEvent('[data-aw-social-share]', 'click', function (_, elem) {
+      const network = elem.getAttribute('data-aw-social-share');
+      const url = encodeURIComponent(elem.getAttribute('data-aw-url'));
+      const text = encodeURIComponent(elem.getAttribute('data-aw-text'));
+
+      let href;
+      switch (network) {
+        case 'facebook':
+          href = `https://www.facebook.com/sharer.php?u=${url}`;
+          break;
+        case 'twitter':
+          href = `https://twitter.com/intent/tweet?url=${url}&text=${text}`;
+          break;
+        case 'linkedin':
+          href = `https://www.linkedin.com/shareArticle?mini=true&url=${url}&title=${text}`;
+          break;
+        case 'whatsapp':
+          href = `https://wa.me/?text=${text}%20${url}`;
+          break;
+        case 'mail':
+          href = `mailto:?subject=%22${text}%22&body=${text}%20${url}`;
+          break;
+
+        default:
+          return;
+      }
+
+      const newlink = document.createElement('a');
+      newlink.target = '_blank';
+      newlink.href = href;
+      newlink.click();
+    });
+
+    const screenSize = window.matchMedia('(max-width: 767px)');
+    screenSize.addEventListener('change', function () {
+      document.querySelector('[data-aw-toggle-menu]')?.classList.remove('expanded');
+      document.body.classList.remove('overflow-hidden');
+      document.getElementById('header')?.classList.remove('h-screen');
+      document.getElementById('header')?.classList.remove('expanded');
+      document.getElementById('header')?.classList.remove('bg-page');
+      
+      // 只在移动端隐藏导航栏，桌面端保持显示
+      const nav = document.querySelector('#header nav');
+      const rightSection = document.querySelector('#header > div > div:last-child');
+      
+      if (window.innerWidth <= 767) {
+        // 移动端：隐藏导航栏和右侧区域
+        nav?.classList.add('hidden');
+        rightSection?.classList.add('hidden');
+      } else {
+        // 桌面端：确保导航栏和右侧区域显示
+        nav?.classList.remove('hidden');
+        rightSection?.classList.remove('hidden');
+      }
+      
+      // 重置移动端下拉菜单状态
+      const allDropdowns = document.querySelectorAll('.mobile-dropdown');
+      allDropdowns.forEach(dropdown => {
+        dropdown.classList.remove('expanded');
+      });
+    });
+
+    function applyHeaderStylesOnScroll() {
+      const header = document.querySelector('#header[data-aw-sticky-header]');
+      if (!header) return;
+      if (lastKnownScrollPosition > 60 && !header.classList.contains('scroll')) {
+        header.classList.add('scroll');
+      } else if (lastKnownScrollPosition <= 60 && header.classList.contains('scroll')) {
+        header.classList.remove('scroll');
+      }
+      ticking = false;
+    }
+    applyHeaderStylesOnScroll();
+
+    attachEvent([document], 'scroll', function () {
+      lastKnownScrollPosition = window.scrollY;
+
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          applyHeaderStylesOnScroll();
+        });
+        ticking = true;
+      }
+    });
+  };
+  const onPageShow = function () {
+    document.documentElement.classList.add('motion-safe:scroll-smooth');
+    const elem = document.querySelector('[data-aw-toggle-menu]');
+    if (elem) {
+      elem.classList.remove('expanded');
+    }
+    document.body.classList.remove('overflow-hidden');
+    document.getElementById('header')?.classList.remove('h-screen');
+    document.getElementById('header')?.classList.remove('expanded');
+    document.querySelector('#header nav')?.classList.add('hidden');
+    
+    // 重置移动端下拉菜单状态
+    const allDropdowns = document.querySelectorAll('.mobile-dropdown');
+    allDropdowns.forEach(dropdown => {
+      dropdown.classList.remove('expanded');
+    });
+  };
+
+  window.onload = onLoad;
+  window.onpageshow = onPageShow;
+
+  document.addEventListener('astro:after-swap', () => {
+    initTheme();
+    onLoad();
+    onPageShow();
+  });
+</script>
+
+<script is:inline>
+  /* Inspired by: https://github.com/heidkaemper/tailwindcss-intersect */
+  const Observer = {
+    observer: null,
+    delayBetweenAnimations: 100,
+    animationCounter: 0,
+
+    start() {
+      const selectors = [
+        '[class*=" intersect:"]',
+        '[class*=":intersect:"]',
+        '[class^="intersect:"]',
+        '[class="intersect"]',
+        '[class*=" intersect "]',
+        '[class^="intersect "]',
+        '[class$=" intersect"]',
+      ];
+
+      const elements = Array.from(document.querySelectorAll(selectors.join(',')));
+
+      const getThreshold = (element) => {
+        if (element.classList.contains('intersect-full')) return 0.99;
+        if (element.classList.contains('intersect-half')) return 0.5;
+        if (element.classList.contains('intersect-quarter')) return 0.25;
+        return 0;
+      };
+
+      elements.forEach((el) => {
+        el.setAttribute('no-intersect', '');
+        el._intersectionThreshold = getThreshold(el);
+      });
+
+      const callback = (entries) => {
+        entries.forEach((entry) => {
+          requestAnimationFrame(() => {
+            const target = entry.target;
+            const intersectionRatio = entry.intersectionRatio;
+            const threshold = target._intersectionThreshold;
+
+            if (target.classList.contains('intersect-no-queue')) {
+              if (entry.isIntersecting) {
+                target.removeAttribute('no-intersect');
+                if (target.classList.contains('intersect-once')) {
+                  this.observer.unobserve(target);
+                }
+              } else {
+                target.setAttribute('no-intersect', '');
+              }
+              return;
+            }
+
+            if (intersectionRatio >= threshold) {
+              if (!target.hasAttribute('data-animated')) {
+                target.removeAttribute('no-intersect');
+                target.setAttribute('data-animated', 'true');
+
+                const delay = this.animationCounter * this.delayBetweenAnimations;
+                this.animationCounter++;
+
+                target.style.transitionDelay = `${delay}ms`;
+                target.style.animationDelay = `${delay}ms`;
+
+                if (target.classList.contains('intersect-once')) {
+                  this.observer.unobserve(target);
+                }
+              }
+            } else {
+              target.setAttribute('no-intersect', '');
+              target.removeAttribute('data-animated');
+              target.style.transitionDelay = '';
+              target.style.animationDelay = '';
+
+              this.animationCounter = 0;
+            }
+          });
+        });
+      };
+
+      this.observer = new IntersectionObserver(callback.bind(this), { threshold: [0, 0.25, 0.5, 0.99] });
+
+      elements.forEach((el) => {
+        this.observer.observe(el);
+      });
+    },
+  };
+
+  Observer.start();
+
+  document.addEventListener('astro:after-swap', () => {
+    Observer.start();
+  });
+</script>

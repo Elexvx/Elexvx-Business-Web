@@ -1,0 +1,275 @@
+---
+// Cookie Notice Component
+// 首次访问时显示Cookie通知弹窗
+---
+
+<div id="cookie-notice" class="cookie-notice-overlay">
+  <div class="cookie-card">
+    <span class="title">🍪 Cookie 提示</span>
+    <p class="description">
+       我们使用 cookie 来确保在我们的网站上为您提供最佳体验。 
+      <a href="/privacy">隐私政策</a>.
+    </p>
+    <div class="actions">
+      <button class="pref" id="cookie-preferences">
+        <!-- 左侧按钮内容 -->
+      </button>
+      <button class="accept" id="cookie-accept">
+        我同意
+      </button>
+    </div>
+  </div>
+</div>
+
+<style>
+  /* Cookie Notice Overlay */
+  .cookie-notice-overlay {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 9999;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease-in-out;
+  }
+
+  .cookie-notice-overlay.show {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  /* From Uiverse.io by Yaya12085 */
+  .cookie-card {
+    max-width: 320px;
+    padding: 1rem;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 20px 20px 30px rgba(0, 0, 0, .05);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+  }
+
+  .title {
+    font-weight: 600;
+    color: rgb(31 41 55);
+    display: block;
+    font-size: 1rem;
+  }
+
+  .description {
+    margin-top: 1rem;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    color: rgb(75 85 99);
+  }
+
+  .description a {
+    --tw-text-opacity: 1;
+    color: rgb(59 130 246);
+    text-decoration: none;
+  }
+
+  .description a:hover {
+    -webkit-text-decoration-line: underline;
+    text-decoration-line: underline;
+  }
+
+  .actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 1rem;
+    -moz-column-gap: 1rem;
+    column-gap: 1rem;
+    flex-shrink: 0;
+  }
+
+  .pref {
+    font-size: 0.75rem;
+    line-height: 1rem;
+    color: rgb(31 41 55);
+    -webkit-text-decoration-line: underline;
+    text-decoration-line: underline;
+    transition: all .3s cubic-bezier(0.4, 0, 0.2, 1);
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+  }
+
+  .pref:hover {
+    color: rgb(156 163 175);
+  }
+
+  .pref:focus {
+    outline: 2px solid transparent;
+    outline-offset: 2px;
+  }
+
+  .accept {
+    font-size: 0.75rem;
+    line-height: 1rem;
+    background-color: rgb(17 24 39);
+    font-weight: 500;
+    border-radius: 0.5rem;
+    color: #fff;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    padding-top: 0.625rem;
+    padding-bottom: 0.625rem;
+    border: none;
+    transition: all .15s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+  }
+
+  .accept:hover {
+    background-color: rgb(55 65 81);
+  }
+
+  .accept:focus {
+    outline: 2px solid transparent;
+    outline-offset: 2px;
+  }
+
+  /* 深色模式适配 */
+  .dark .cookie-card {
+    background-color: rgb(31 41 55);
+    border-color: rgba(255, 255, 255, 0.1);
+  }
+
+  .dark .title {
+    color: rgb(243 244 246);
+  }
+
+  .dark .description {
+    color: rgb(203 213 225); /* 使用高对比度颜色 */
+  }
+
+  .dark .pref {
+    color: rgb(229 231 235); /* 提高对比度 */
+  }
+
+  .dark .pref:hover {
+    color: rgb(203 213 225); /* 悬停时仍保持可读性 */
+  }
+
+  /* 移动端适配 */
+  @media (max-width: 640px) {
+    .cookie-notice-overlay {
+      bottom: 10px;
+      right: 10px;
+      left: 10px;
+    }
+
+    .cookie-card {
+      max-width: none;
+      width: 100%;
+    }
+
+    .actions {
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .accept {
+      width: 100%;
+      text-align: center;
+    }
+  }
+</style>
+
+<script>
+  // Cookie Notice 功能实现
+  (function() {
+    const COOKIE_NAME = 'cookie_consent';
+    const COOKIE_EXPIRY_DAYS = 365;
+    
+    // 检查是否已经同意过Cookie
+    function getCookie(name) {
+      const value = `; ${document.cookie}`;
+      const parts = value.split(`; ${name}=`);
+      if (parts.length === 2) return parts.pop().split(';').shift();
+      return null;
+    }
+    
+    // 设置Cookie
+    function setCookie(name, value, days) {
+      const expires = new Date();
+      expires.setTime(expires.getTime() + (days * 24 * 60 * 60 * 1000));
+      document.cookie = `${name}=${value};expires=${expires.toUTCString()};path=/`;
+    }
+    
+    // 显示Cookie通知
+    function showCookieNotice() {
+      const notice = document.getElementById('cookie-notice');
+      if (notice) {
+        setTimeout(() => {
+          notice.classList.add('show');
+        }, 1000); // 延迟1秒显示
+      }
+    }
+    
+    // 隐藏Cookie通知
+    function hideCookieNotice() {
+      const notice = document.getElementById('cookie-notice');
+      if (notice) {
+        notice.classList.remove('show');
+        setTimeout(() => {
+          notice.style.display = 'none';
+        }, 300);
+      }
+    }
+    
+    // 接受Cookie
+    function acceptCookies() {
+      setCookie(COOKIE_NAME, 'accepted', COOKIE_EXPIRY_DAYS);
+      hideCookieNotice();
+      
+      // 触发自定义事件，其他脚本可以监听
+      window.dispatchEvent(new CustomEvent('cookiesAccepted'));
+    }
+    
+    // 管理偏好设置（可以根据需要扩展）
+    function managePreferences() {
+      // 这里可以打开偏好设置弹窗或跳转到设置页面
+      alert('Cookie偏好设置功能可以根据需要进一步开发');
+    }
+    
+    // 初始化
+    function init() {
+      // 检查是否已经同意过Cookie
+      const consent = getCookie(COOKIE_NAME);
+      
+      if (!consent) {
+        // 如果没有同意过，显示通知
+        showCookieNotice();
+      } else {
+        // 如果已经同意过，隐藏通知
+        const notice = document.getElementById('cookie-notice');
+        if (notice) {
+          notice.style.display = 'none';
+        }
+      }
+      
+      // 绑定事件监听器
+      const acceptBtn = document.getElementById('cookie-accept');
+      const prefBtn = document.getElementById('cookie-preferences');
+      
+      if (acceptBtn) {
+        acceptBtn.addEventListener('click', acceptCookies);
+      }
+      
+      if (prefBtn) {
+        prefBtn.addEventListener('click', managePreferences);
+      }
+    }
+    
+    // 页面加载完成后初始化
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', init);
+    } else {
+      init();
+    }
+    
+    // 为Astro页面切换提供重新初始化功能
+    document.addEventListener('astro:after-swap', init);
+  })();
+</script>

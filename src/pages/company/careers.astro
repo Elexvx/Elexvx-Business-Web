@@ -1,0 +1,138 @@
+---
+// *******************************************
+// 页面内容：招贤纳士                          **
+// *******************************************
+// 创建时间：2025-01-27                      **
+// *******************************************
+
+import Layout from '~/layouts/PageLayout.astro';
+import HeroPage from '~/components/widgets/HeroPage.astro';
+import JobGrid from '~/components/widgets/JobGrid.astro';
+import Content from '~/components/widgets/Content.astro';
+import FeatureSet from '~/components/widgets/FeatureSet.astro';
+import TextSection from '~/components/widgets/TextSection.astro'; 
+
+// 顶部图片引入
+import shgfImage from '~/assets/images/shgf.jpg';
+
+// 导入统一的招聘数据
+import { getAllJobs } from '~/data/jobs';
+
+// 获取招聘信息
+const jobs = getAllJobs();
+
+const metadata = {
+  title: '招贤纳士',
+  description: '加入多元团队，与我们一起用技术与专业驱动未来。',
+};
+---
+
+<Layout metadata={metadata}>
+  <!-- Hero 区域 -->
+  <HeroPage
+    tagline="careers"
+    title="招贤纳士"
+    subtitle="加入宏翔商道，与我们一起用AI技术改变世界。我们提供有竞争力的薪酬、完善的福利和广阔的发展空间。"
+    backgroundImage={shgfImage.src}
+  />
+
+  <!-- 招聘岗位网格展示 -->
+  <JobGrid
+    jobs={jobs}
+    tagline="opportunities"
+    title="热招职位"
+    subtitle="我们正在寻找志同道合的伙伴，一起创造AI驱动的未来。"
+  />
+
+  <!-- 公司文化与福利 -->
+  <Content
+    tagline="Culture"
+    title="为什么选择我们"
+    subtitle="在宏翔商道，你不仅获得一份工作，而是与志同道合者共创价值的旅程。"
+    items={[
+      {
+        title: '技术驱动',
+        description: '前沿AI技术栈，与行业顶尖专家共事，持续提升技术能力。',
+        icon: 'tabler:code',
+      },
+      {
+        title: '成长空间',
+        description: '完善的培训体系和晋升通道，支持个人职业发展规划。',
+        icon: 'tabler:trending-up',
+      },
+      {
+        title: '工作环境',
+        description: '现代化办公环境，弹性工作制度，注重工作与生活平衡。',
+        icon: 'tabler:home',
+      },
+      {
+        title: '团队氛围',
+        description: '开放包容的团队文化，鼓励创新思维和跨部门协作。',
+        icon: 'tabler:users',
+      },
+    ]}
+    image={{
+      src: 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
+      alt: '团队工作',
+    }}
+  />
+
+  <!-- 企业行为准则 -->
+  <FeatureSet
+    id="code-of-conduct"
+    tagline="Dos and Don'ts"
+    title="我们禁止以下行为"
+    subtitle="请遵守以下准则，共塑健康、诚信的职场环境"
+    columns={2}
+    items={[
+      //**************************不要 **********************************//
+      {
+        title: '内部不良竞争',
+        description: '禁止中伤同事、排挤团队或恶意夺取资源；鼓励正面沟通与合作共赢。',
+        icon: 'tabler:x',
+        classes: {
+          icon: 'text-white bg-red-500 rounded-full w-10 h-10 p-2 md:w-12 md:h-12 md:p-3 mr-4 rtl:ml-4 rtl:mr-0',
+        },
+      },
+      {
+        title: '行贿 / 受贿',
+        description: '零容忍任何形式的贿赂、回扣或利益输送；违者将依法严惩并通报。',
+        icon: 'tabler:x',
+        classes: {
+          icon: 'text-white bg-red-500 rounded-full w-10 h-10 p-2 md:w-12 md:h-12 md:p-3 mr-4 rtl:ml-4 rtl:mr-0',
+        },
+      },
+      {
+        title: '强制超时加班',
+        description: '倡导高效与成果导向，非紧急情况不得要求或暗示员工无偿加班。',
+        icon: 'tabler:x',
+        classes: {
+          icon: 'text-white bg-red-500 rounded-full w-10 h-10 p-2 md:w-12 md:h-12 md:p-3 mr-4 rtl:ml-4 rtl:mr-0',
+        },
+      },
+      {
+        title: '歧视与不公平对待',
+        description: '严禁因性别、年龄、种族、宗教、身份等进行歧视；坚持平等机会与尊重。',
+        icon: 'tabler:x',
+        classes: {
+          icon: 'text-white bg-red-500 rounded-full w-10 h-10 p-2 md:w-12 md:h-12 md:p-3 mr-4 rtl:ml-4 rtl:mr-0',
+        },
+      },
+    ]}
+  />
+
+    <!-- 纯文字组件 **************** -->
+  <TextSection title="价值观" >
+    <p>
+      <b>Elexvx ® 坚信机会平等，致力于营造兼具包容与多元的职场环境。</b> <br />
+      我们始终以 <b>公平、公正的态度</b> 对待每一位应聘者，欢迎各界人才加入。<br />
+    </p>
+  </TextSection>
+
+
+
+
+
+
+
+</Layout>
