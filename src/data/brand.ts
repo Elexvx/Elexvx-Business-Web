@@ -28,18 +28,18 @@ export interface BrandGuideline {
 
 export const brandLogos: BrandAsset[] = [
   {
-    src: '~/assets/images/brand/1.png',
-    alt: '宏翔商道品牌标志',
-    description: '标准版：全彩渐变，仅限白底或亮度 >95% 的浅色背景',
+    src: '~/assets/images/brand/elexvx-logo.svg',
+    alt: 'Elexvx 主品牌标志',
+    description: '标准版：品牌蓝单色，用于白色或浅色背景',
   },
   {
-    src: '~/assets/images/brand/2.png',
-    alt: '宏翔商道品牌标志反白',
-    description: '反白版：用于深色背景',
+    src: '~/assets/images/brand/elexvx-logo-reverse.svg',
+    alt: 'Elexvx 反白标志',
+    description: '反白版：用于深色背景与数字界面',
   },
   {
-    src: '~/assets/images/brand/3.png',
-    alt: '宏翔商道品牌标志单色',
+    src: '~/assets/images/brand/elexvx-logo-black.svg',
+    alt: 'Elexvx 单色黑标志',
     description: '单色版：用于限制颜色印刷或黑白媒体',
   },
 ];
@@ -47,15 +47,15 @@ export const brandLogos: BrandAsset[] = [
 export const brandColors: BrandColor[] = [
   {
     name: '品牌蓝',
-    hex: '#0066FF',
-    rgb: 'rgb(0, 102, 255)',
-    usage: '主色调，用于主要界面元素',
+    hex: '#0B3EA8',
+    rgb: 'rgb(11, 62, 168)',
+    usage: '主标识与重点品牌触点',
   },
   {
-    name: '辅助绿',
-    hex: '#00CC99',
-    rgb: 'rgb(0, 204, 153)',
-    usage: '成功状态、强调色',
+    name: '纯黑',
+    hex: '#111111',
+    rgb: 'rgb(17, 17, 17)',
+    usage: '单色印刷与正文',
   },
   {
     name: '中性灰',
@@ -72,17 +72,17 @@ export const brandColors: BrandColor[] = [
 export const brandGuidelines: BrandGuideline[] = [
   {
     title: '标志使用',
-    content: '标志应始终以原始纵横比显示，最小尺寸为 80px × 80px',
-    examples: ['Web: 最小 40px', 'Print: 最小 1cm'],
+    content: '主标志应始终保持原始比例；小于 96px 时改用独立图形标志',
+    examples: ['主标志：Web 最小宽度 96px', '图形标志：Web 最小 16px / Print 最小 6mm'],
   },
   {
     title: '清晰空间',
-    content: '标志周围必须保持清晰空间，距离至少为标志高度的 25%',
+    content: '标志四周至少保留图形标志中一条横杠高度的清晰空间',
     examples: ['标志周围不应放置其他元素', '保持足够的视觉距离'],
   },
   {
     title: '颜色应用',
-    content: '优先使用全彩版本。在限制颜色的情况下，使用单色版本',
+    content: '优先使用品牌蓝单色版本；深色背景使用反白版本',
     examples: ['深色背景：使用反白版本', '黑白印刷：使用单色版本'],
   },
   {

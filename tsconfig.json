@@ -1,13 +1,56 @@
 {
-  "extends": "astro/tsconfigs/base",
   "compilerOptions": {
-    "strictNullChecks": true,
-    "allowJs": true,
-    "baseUrl": ".",
-    "paths": {
-      "~/*": ["src/*"]
-    }
+    "target": "ES2022",
+    "useDefineForClassFields": true,
+    "lib": [
+      "ES2022",
+      "DOM",
+      "DOM.Iterable"
+    ],
+    "allowJs": false,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "jsx": "react-jsx",
+    "types": [
+      "vite/client",
+      "node"
+    ],
+    "incremental": true,
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ]
   },
-  "include": [".astro/types.d.ts", "**/*"],
-  "exclude": ["dist/"]
+  "include": [
+    "next-env.d.ts",
+    ".next/types/**/*.ts",
+    "src/app",
+    "src/content",
+    "src/data/site.ts",
+    "src/main.tsx",
+    "src/ssg",
+    "scripts",
+    "tests",
+    "vite.config.ts",
+    "next.config.mjs",
+    ".next/dev/types/**/*.ts",
+    "dist/types/**/*.ts",
+    "dist/dev/types/**/*.ts"
+  ],
+  "exclude": [
+    "dist",
+    "node_modules",
+    ".astro",
+    "vendor",
+    "src/content/config.ts"
+  ]
 }

@@ -1,6 +1,8 @@
 # build output
 dist/
 .output/
+.next/
+*.tsbuildinfo
 
 # dependencies
 node_modules/

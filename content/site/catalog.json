@@ -1,0 +1,186 @@
+{
+  "identity": {
+    "companyName": "宏翔商道 / Elexvx",
+    "researchName": "Elexvx Research",
+    "researchNameNote": "工作名称，可替换",
+    "description": "面向真实世界复杂问题的 AI 与数据智能研发门户。",
+    "canonicalOrigin": "https://www.elexvx.com"
+  },
+  "researchDirections": [
+    {
+      "slug": "ai-data",
+      "title": "AI 与数据智能",
+      "englishTitle": "AI & DATA INTELLIGENCE",
+      "question": "如何让数据从被记录，走向可理解、可判断、可行动？",
+      "summary": "围绕数据理解、模型构建与系统反馈，探索能够进入真实工作流的智能能力。",
+      "methods": ["数据采集与治理", "模型设计与评估", "人机协作反馈"],
+      "outputSlugs": [],
+      "accent": "light",
+      "image": "/visuals/ai-data-gradient.jpg",
+      "imageAlt": "蓝色、青色、紫色与珊瑚色交融的抽象渐变色域"
+    },
+    {
+      "slug": "industrial-intelligence",
+      "title": "工业智能与安全",
+      "englishTitle": "INDUSTRIAL INTELLIGENCE & SAFETY",
+      "question": "如何让设备、环境与人的现场状态被连续理解？",
+      "summary": "面向设备、作业和环境的变化，研究可感知、可预警、可追溯的工业系统。",
+      "methods": ["多传感器融合", "边云协同与工业协议", "风险识别与预测维护"],
+      "outputSlugs": ["industrial-safety"],
+      "accent": "dark",
+      "image": "/visuals/industrial-intelligence-gradient.jpg",
+      "imageAlt": "矿物绿、琥珀色与灰蓝色交叠的抽象渐变色域"
+    },
+    {
+      "slug": "llm-ai-safety",
+      "title": "LLM / AI 安全",
+      "englishTitle": "LLM / AI SAFETY",
+      "question": "如何让模型能力在复杂系统中保持可控、可解释、可追踪？",
+      "summary": "关注大模型应用中的安全边界、工程基础设施与面向人的责任设计。",
+      "methods": ["安全边界设计", "评测与可观测性", "模型应用基础设施"],
+      "outputSlugs": [],
+      "accent": "parchment",
+      "image": "/visuals/ai-safety-gradient.jpg",
+      "imageAlt": "靛蓝、紫色与浅蓝色柔和交叠的抽象渐变色域"
+    }
+  ],
+  "capabilities": [
+    {
+      "index": "01",
+      "title": "从问题出发",
+      "englishTitle": "FRAME THE QUESTION",
+      "summary": "把行业现场中的模糊问题，转化为可研究、可验证的技术问题。"
+    },
+    {
+      "index": "02",
+      "title": "建立数据与模型",
+      "englishTitle": "BUILD THE SYSTEM",
+      "summary": "将数据、算法、硬件和软件组织为可以持续迭代的系统原型。"
+    },
+    {
+      "index": "03",
+      "title": "进入真实场景",
+      "englishTitle": "TEST IN CONTEXT",
+      "summary": "在真实约束中验证可用性，把实验结论沉淀成可复用的研发资产。"
+    },
+    {
+      "index": "04",
+      "title": "形成长期能力",
+      "englishTitle": "MAKE IT LAST",
+      "summary": "通过文档、评测、知识产权与产品化，让一次项目成为下一次研发的起点。"
+    }
+  ],
+  "projects": [
+    {
+      "slug": "industrial-safety",
+      "title": "起重设备智能安全管理",
+      "englishTitle": "INTELLIGENT SAFETY FOR LIFTING EQUIPMENT",
+      "directionSlug": "industrial-intelligence",
+      "scenarioSlug": "industrial-operations",
+      "problem": "多设备、多工况下，现场数据分散在不同设备与管理环节，风险很难被持续理解。",
+      "approach": "以多传感器数据、工业物联网与云端系统为基础，构建监测、预警、管理和反馈之间的闭环。",
+      "output": "一套面向起重设备全生命周期的智能安全管理系统原型。",
+      "status": "prototype",
+      "evidence": [{ "label": "现有技术项目材料", "kind": "internal", "verified": true }],
+      "image": "/visuals/system-gradient.jpg",
+      "featured": true
+    }
+  ],
+  "scenarios": [
+    {
+      "slug": "industrial-operations",
+      "title": "工业现场与设备运营",
+      "englishTitle": "INDUSTRIAL OPERATIONS",
+      "summary": "当设备、环境和人员同时变化，系统需要持续感知并帮助人做出判断。",
+      "projectSlugs": ["industrial-safety"]
+    },
+    {
+      "slug": "knowledge-work",
+      "title": "知识工作与复杂决策",
+      "englishTitle": "KNOWLEDGE WORK",
+      "summary": "将分散的信息组织成清晰的上下文，让人和智能系统共同推进工作。",
+      "projectSlugs": []
+    },
+    {
+      "slug": "responsible-ai",
+      "title": "负责任的 AI 应用",
+      "englishTitle": "RESPONSIBLE AI",
+      "summary": "在能力、可解释性、安全边界与人的控制之间建立可被理解的关系。",
+      "projectSlugs": []
+    }
+  ],
+  "businessLines": [
+    {
+      "slug": "human-resources",
+      "title": "人力资源服务",
+      "englishTitle": "HUMAN RESOURCES",
+      "summary": "与组织和人才相关的服务能力，作为公司并行业务独立呈现。",
+      "href": "/business/human-resources"
+    },
+    {
+      "slug": "intellectual-property",
+      "title": "知识产权服务",
+      "englishTitle": "INTELLECTUAL PROPERTY",
+      "summary": "围绕品牌与知识产权资产的专业服务。",
+      "href": "/business/intellectual-property"
+    },
+    {
+      "slug": "supply-chain",
+      "title": "供应链服务",
+      "englishTitle": "SUPPLY CHAIN",
+      "summary": "面向商贸与供应链流程的业务能力。",
+      "href": "/business/supply-chain"
+    }
+  ],
+  "companyPrinciples": [
+    "以真实问题决定技术方向。",
+    "以可验证的过程建立信任。",
+    "让研究成果能够被理解、被使用、被继续发展。"
+  ],
+  "footerColumns": [
+    {
+      "title": "Research",
+      "links": [
+        { "label": "研究方向", "href": "/research" },
+        { "label": "AI 与数据智能", "href": "/research/ai-data" },
+        { "label": "工业智能与安全", "href": "/research/industrial-intelligence" },
+        { "label": "LLM / AI 安全", "href": "/research/llm-ai-safety" }
+      ]
+    },
+    {
+      "title": "Build",
+      "links": [
+        { "label": "研发能力", "href": "/capabilities" },
+        { "label": "产品与成果", "href": "/projects" },
+        { "label": "行业场景", "href": "/scenarios" }
+      ]
+    },
+    {
+      "title": "Business",
+      "links": [
+        { "label": "并行业务总览", "href": "/business" },
+        { "label": "人力资源服务", "href": "/business/human-resources" },
+        { "label": "知识产权服务", "href": "/business/intellectual-property" },
+        { "label": "供应链服务", "href": "/business/supply-chain" }
+      ]
+    },
+    {
+      "title": "Company",
+      "links": [
+        { "label": "关于公司", "href": "/company" },
+        { "label": "团队", "href": "/company/team" },
+        { "label": "品牌使用", "href": "/company/brand" },
+        { "label": "加入我们", "href": "/careers" }
+      ]
+    },
+    {
+      "title": "More",
+      "links": [
+        { "label": "技术文章", "href": "/insights" },
+        { "label": "最新动态", "href": "/news" },
+        { "label": "旧文归档", "href": "/archive" },
+        { "label": "开放合作", "href": "/contact" }
+      ]
+    }
+  ]
+}

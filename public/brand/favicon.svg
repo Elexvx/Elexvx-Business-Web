@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 134 128" role="img" aria-label="Elexvx">
+  <rect width="134" height="128" rx="22" fill="#000000"/>
+  <g fill="#FFFFFF" transform="translate(10 14) scale(.86)">
+    <path d="M8 26h48l14 14H8V26Zm0 31h42l14 14H8V57Zm0 31h48l14 14H8V88Z"/>
+    <path d="M56 26h19l16 21 16-21h19l-26 38 26 38h-19L91 80l-16 22H56l26-38-26-38Z"/>
+  </g>
+</svg>
