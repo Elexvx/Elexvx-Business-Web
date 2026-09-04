@@ -1758,6 +1758,10 @@ img {
     grid-template-columns: 1fr auto;
   }
 
+  .site-shell-openai .nav-actions {
+    margin-left: auto;
+  }
+
   .desktop-nav,
   .desktop-menu-panel,
   .nav-utility-link,
@@ -4591,6 +4595,7 @@ img {
   bottom: 36px;
   left: 40px;
   max-width: 560px;
+  text-align: left;
 }
 
 .home-latest-activity-head {
@@ -4652,6 +4657,22 @@ img {
   }
 }
 
+@media (min-width: 721px) and (max-width: 900px) {
+  .home-latest-activity-media {
+    min-height: 360px;
+    aspect-ratio: auto;
+  }
+
+  .home-latest-activity-media img {
+    position: absolute;
+    inset: 0;
+  }
+
+  .home-latest-activity-copy {
+    max-width: 520px;
+  }
+}
+
 @media (max-width: 720px) {
   .site-shell-home .home-content-section,
   .site-shell-home .home-content-section-alt {
@@ -4672,9 +4693,14 @@ img {
   }
 
   .home-latest-activity-media {
-    min-height: 380px;
+    min-height: 340px;
     aspect-ratio: auto;
     border-radius: 6px;
+  }
+
+  .home-latest-activity-media img {
+    position: absolute;
+    inset: 0;
   }
 
   .home-latest-activity-scrim {
@@ -4688,14 +4714,13 @@ img {
   }
 
   .home-latest-activity-head {
-    align-items: flex-start;
-    flex-direction: column;
-    gap: 10px;
+    align-items: center;
+    gap: 12px;
     margin-bottom: 14px;
   }
 
   .home-latest-activity-copy h2 {
-    font-size: 34px;
+    font-size: clamp(28px, 8vw, 34px);
   }
 
   .home-latest-activity-copy > p {

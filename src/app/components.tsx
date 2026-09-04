@@ -26,6 +26,7 @@ export const GlobalNav = ({ activePath = '/', tone = 'light' }: { activePath?: s
   const { locale, t, href, switchHref } = useI18n();
   const [menuOpen, setMenuOpen] = useState(false);
   const [openGroup, setOpenGroup] = useState<string | null>(null);
+  const [mobileOpenGroup, setMobileOpenGroup] = useState<string | null>(navigationGroups[0]?.id ?? null);
   const [panelGroup, setPanelGroup] = useState<NavigationGroup | null>(null);
   const [panelContentVisible, setPanelContentVisible] = useState(true);
   const navRef = useRef<HTMLElement>(null);
@@ -253,9 +254,14 @@ export const GlobalNav = ({ activePath = '/', tone = 'light' }: { activePath?: s
             </button>
           </div>
           <nav className="mobile-navigation-groups" aria-label={t('移动端主导航')}>
-            {navigationGroups.map((group, index) => (
-              <details className="mobile-navigation-group" key={group.id} open={index === 0}>
-                <summary>
+            {navigationGroups.map((group) => (
+              <details className="mobile-navigation-group" key={group.id} open={mobileOpenGroup === group.id}>
+                <summary
+                  onClick={(event) => {
+                    event.preventDefault();
+                    setMobileOpenGroup((currentGroup) => (currentGroup === group.id ? null : group.id));
+                  }}
+                >
                   <span>{t(group.label)}</span>
                   <span className="mobile-summary-chevron" aria-hidden="true" />
                 </summary>
