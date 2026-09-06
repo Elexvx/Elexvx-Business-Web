@@ -112,6 +112,7 @@ const navigationDefinitions: NavigationGroup[] = [
           { label: '关于公司', href: '/company' },
           { label: '团队', href: '/company/team' },
           { label: '品牌使用', href: '/company/brand' },
+          { label: '设计规范', href: '/company/design' },
         ],
       },
       {

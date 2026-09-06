@@ -1,4 +1,5 @@
 import { publishedResearch } from '../../data/research-articles';
+import { DesignPage } from '../pages/design';
 import { homeContent } from '../../data/page-content';
 import { jobs } from '../../data/jobs';
 import { publishedActivities } from '../../data/activities';
@@ -107,6 +108,11 @@ const staticRoutes: SiteRoute[] = [
     path: '/company/team',
     meta: { title: titleFor('团队'), description: 'Elexvx Research 的研究与工程协作结构。' },
     render: () => <TeamPage />,
+  },
+  {
+    path: '/company/design',
+    meta: { title: titleFor('设计规范'), description: 'Elexvx 官网的标题、页面布局、间距与响应式设计规范，提供 design.md 下载。' },
+    render: () => <DesignPage />,
   },
   {
     path: '/company/brand',

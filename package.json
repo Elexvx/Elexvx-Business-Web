@@ -15,7 +15,10 @@
     "content:check": "tsx scripts/content-check.ts",
     "content:new": "tsx scripts/create-insight.ts",
     "test": "vitest run",
-    "check": "npm run typecheck && npm run lint && npm run format:check && npm run content:check && npm test && npm run build"
+    "check": "npm run typecheck && npm run lint && npm run format:check && npm run content:check && npm test && npm run build",
+    "design:sync": "node scripts/sync-design.mjs",
+    "prebuild": "npm run design:sync",
+    "predev": "npm run design:sync"
   },
   "dependencies": {
     "@ant-design/icons": "^6.0.0",
