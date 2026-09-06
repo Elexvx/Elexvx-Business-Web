@@ -179,7 +179,7 @@ export const GlobalNav = ({ activePath = '/', tone = 'light' }: { activePath?: s
 
           <div className="nav-actions">
             {/* Temporarily hidden; keep both action links available for restoration. */}
-            {false && (
+            {/*
               <>
                 <a className="nav-utility-link" href={href('/company')}>
                   {t('关于公司')}
@@ -188,7 +188,7 @@ export const GlobalNav = ({ activePath = '/', tone = 'light' }: { activePath?: s
                   {t('开放合作')}
                 </a>
               </>
-            )}
+            */}
             <button
               className="mobile-menu-button"
               type="button"
