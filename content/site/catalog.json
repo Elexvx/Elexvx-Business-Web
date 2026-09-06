@@ -4,7 +4,11 @@
     "researchName": "Elexvx Research",
     "researchNameNote": "工作名称，可替换",
     "description": "面向真实世界复杂问题的 AI 与数据智能研发门户。",
-    "canonicalOrigin": "https://www.elexvx.com"
+    "canonicalOrigin": "https://www.elexvx.com",
+    "registrations": {
+      "icp": { "number": "苏ICP备2025160017号", "url": "https://beian.miit.gov.cn/" },
+      "publicSecurity": { "number": "", "url": "" }
+    }
   },
   "retiredResearchDirectionSlugs": ["ai-data", "industrial-intelligence"],
   "researchDirections": [

@@ -52,7 +52,7 @@ const server = createServer((request, response) => {
     return;
   }
 
-  response.writeHead(200, {
+  response.writeHead(file === join(distRoot, '404.html') ? 404 : 200, {
     'Cache-Control': 'no-cache',
     'Content-Type': contentTypes[extname(file)] ?? 'application/octet-stream',
   });

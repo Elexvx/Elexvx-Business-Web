@@ -1,4 +1,5 @@
 import { publishedResearch } from '../../data/research-articles';
+import { QualificationsPage } from '../pages/qualifications';
 import { DesignPage } from '../pages/design';
 import { homeContent } from '../../data/page-content';
 import { jobs } from '../../data/jobs';
@@ -113,6 +114,11 @@ const staticRoutes: SiteRoute[] = [
     path: '/company/design',
     meta: { title: titleFor('设计规范'), description: 'Elexvx 官网的标题、页面布局、间距与响应式设计规范，提供 design.md 下载。' },
     render: () => <DesignPage />,
+  },
+  {
+    path: '/company/qualifications',
+    meta: { title: titleFor('企业资质'), description: '宏翔商道 / Elexvx 企业资质与证书展示。' },
+    render: () => <QualificationsPage />,
   },
   {
     path: '/company/brand',

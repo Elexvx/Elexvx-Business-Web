@@ -159,15 +159,6 @@ html[data-theme='light'] .cookie-button-primary:focus-visible {
   background: #d2d2d7;
 }
 
-.footer-legal-meta .footer-theme-toggle {
-  width: auto;
-  min-width: 28px;
-  height: 28px;
-  flex-basis: auto;
-  white-space: nowrap;
-  color: inherit;
-}
-
 @media (max-width: 720px) {
   .cookie-consent-inner {
     grid-template-columns: 1fr;

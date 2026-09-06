@@ -1,13 +1,14 @@
 'use client';
 
+import { ErrorPage } from '../components/error-page';
 import { SiteImage } from '../components/site-image';
 import { ArrowRightOutlined } from '@ant-design/icons';
 
 import { getDirection } from '../../data/site';
-import { pageContent, type PageHeroContent } from '../../data/page-content';
+import { type PageHeroContent } from '../../data/page-content';
 
 import type { BusinessLine, Insight, NewsItem, Project, ResearchDirection, Scenario } from '../../content/types';
-import { ActionButton, classNames, Eyebrow, SiteShell } from '../components/index';
+import { ActionButton, classNames, Eyebrow } from '../components/index';
 
 import { LocalizedText as T, LocalizedTitle as Title, useI18n } from '../providers/i18n';
 
@@ -23,7 +24,12 @@ export const DirectionCard = ({ direction, index }: { direction: ResearchDirecti
     >
       {direction.image && (
         <div className="direction-card-media">
-          <SiteImage src={direction.image} alt={t(direction.imageAlt ?? direction.title)} loading="lazy" decoding="async" />
+          <SiteImage
+            src={direction.image}
+            alt={t(direction.imageAlt ?? direction.title)}
+            loading="lazy"
+            decoding="async"
+          />
         </div>
       )}
       <Eyebrow onDark={direction.accent === 'dark'}>{`RESEARCH ${String(index + 1).padStart(2, '0')}`}</Eyebrow>
@@ -124,9 +130,7 @@ export const HomeMediaCard = ({
         <SiteImage src={image} alt={t(imageAlt)} loading="lazy" decoding="async" />
       </div>
       <div className="home-media-card-body">
-        <h3>
-          {naturalTitle ? t(title) : <Title text={title} />}
-        </h3>
+        <h3>{naturalTitle ? t(title) : <Title text={title} />}</h3>
         <Eyebrow>{eyebrow}</Eyebrow>
         {description && <p>{t(description)}</p>}
       </div>
@@ -309,19 +313,4 @@ export const EmptyState = ({ text }: { text: string }) => (
   </div>
 );
 
-export const NotFoundPage = () => (
-  <SiteShell>
-    <section className="not-found">
-      <Eyebrow>{pageContent.notFound.eyebrow}</Eyebrow>
-      <h1>
-        <Title text={pageContent.notFound.title} />
-      </h1>
-      <p>
-        <T text={pageContent.notFound.description} />
-      </p>
-      <div className="page-hero-actions">
-        <ActionButton href={pageContent.notFound.action.href}>{pageContent.notFound.action.label}</ActionButton>
-      </div>
-    </section>
-  </SiteShell>
-);
+export const NotFoundPage = () => <ErrorPage code={404} />;

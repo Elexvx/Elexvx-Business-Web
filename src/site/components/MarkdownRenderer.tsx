@@ -1,5 +1,4 @@
-
-import { SiteImage } from './site-image';
+import { ArticleImage } from './article-gallery';
 import katex from 'katex';
 import { createElement, type ReactNode } from 'react';
 import { parseMarkdown, type BlockNode, type InlineNode } from '../../content/markdown';
@@ -39,7 +38,13 @@ const renderInline = (
       case 'link':
         if (node.href.startsWith('#reference-')) {
           const number = node.href.slice('#reference-'.length);
-          return <sup className="paper-citation" key={key}><a href={node.href} aria-label={`参考文献 ${number}`}>[{number}]</a></sup>;
+          return (
+            <sup className="paper-citation" key={key}>
+              <a href={node.href} aria-label={`参考文献 ${number}`}>
+                [{number}]
+              </a>
+            </sup>
+          );
         }
         return (
           <a href={href(node.href)} key={key} rel={node.href.startsWith('http') ? 'noreferrer' : undefined}>
@@ -47,7 +52,7 @@ const renderInline = (
           </a>
         );
       case 'image':
-        return <SiteImage key={key} src={node.href} alt={t(node.alt ?? '')} loading="lazy" decoding="async" />;
+        return <ArticleImage key={key} src={node.href} alt={t(node.alt ?? '')} />;
       default:
         return null;
     }
@@ -71,7 +76,11 @@ const renderBlocks = (
         const caption = /^(图|表)\s*\d+\s+/.test(label);
         const note = /^(注[：:]|说明[：:]|数据来源[：:])/.test(label);
         return (
-          <p id={reference ? `reference-${reference[1]}` : undefined} className={reference ? 'paper-reference' : caption ? 'paper-caption' : note ? 'paper-note' : undefined} key={key}>
+          <p
+            id={reference ? `reference-${reference[1]}` : undefined}
+            className={reference ? 'paper-reference' : caption ? 'paper-caption' : note ? 'paper-note' : undefined}
+            key={key}
+          >
             {renderInline(block.children, t, href, key)}
           </p>
         );

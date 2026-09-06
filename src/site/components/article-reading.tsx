@@ -2,6 +2,7 @@
 
 import { SiteImage } from './site-image';
 import { useEffect, useRef, useState, type ReactNode } from 'react';
+import { ArticleGallery } from './article-gallery';
 import { MarkdownRenderer } from './MarkdownRenderer';
 import { useI18n } from '../providers/i18n';
 
@@ -40,24 +41,26 @@ export const ArticleBody = ({ source, children }: { source: string; children?: R
     return () => window.removeEventListener('scroll', update);
   }, [source, locale]);
   return (
-    <div className="article-reading-layout">
-      <aside className="article-toc">
-        <nav aria-label={locale === 'en' ? 'Table of contents' : '文章目录'}>
-          <p>{locale === 'en' ? 'Contents' : '目录'}</p>
-          {(headings.length ? headings : [{ id: 'article-content', text: locale === 'en' ? 'Article' : '正文' }]).map(
-            (entry) => (
-              <a key={entry.id} href={`#${entry.id}`} aria-current={active === entry.id ? 'location' : undefined}>
-                {entry.text}
-              </a>
-            )
-          )}
-        </nav>
-      </aside>
-      <div className="article-body" id="article-content" ref={ref}>
-        <MarkdownRenderer source={source} />
-        {children}
+    <ArticleGallery>
+      <div className="article-reading-layout">
+        <aside className="article-toc">
+          <nav aria-label={locale === 'en' ? 'Table of contents' : '文章目录'}>
+            <p>{locale === 'en' ? 'Contents' : '目录'}</p>
+            {(headings.length ? headings : [{ id: 'article-content', text: locale === 'en' ? 'Article' : '正文' }]).map(
+              (entry) => (
+                <a key={entry.id} href={`#${entry.id}`} aria-current={active === entry.id ? 'location' : undefined}>
+                  {entry.text}
+                </a>
+              )
+            )}
+          </nav>
+        </aside>
+        <div className="article-body" id="article-content" ref={ref}>
+          <MarkdownRenderer source={source} />
+          {children}
+        </div>
       </div>
-    </div>
+    </ArticleGallery>
   );
 };
 

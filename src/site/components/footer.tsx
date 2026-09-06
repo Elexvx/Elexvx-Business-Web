@@ -14,6 +14,7 @@ export const Footer = () => {
   const { locale, t, href, switchHref } = useI18n();
   const { theme, toggleTheme } = useTheme();
   const isAvailableLink = useAvailableLink();
+  const registrations = Object.entries(siteIdentity.registrations ?? {}).filter(([, entry]) => entry.number.trim());
   const visibleFooterColumns = navigationGroups
     .filter((group) => isAvailableLink(group.href))
     .map((group) => ({
@@ -41,10 +42,23 @@ export const Footer = () => {
         <div className="footer-legal">
           <div className="footer-identity">
             <span>© 2026 {t(siteIdentity.companyName)}</span>
+            {registrations.length > 0 && (
+              <div className="footer-registrations" aria-label="网站备案信息">
+                {registrations.map(([kind, entry]) =>
+                  /^https:\/\//.test(entry.url.trim()) ? (
+                    <a key={kind} href={entry.url.trim()} target="_blank" rel="noopener noreferrer">
+                      {entry.number}
+                    </a>
+                  ) : (
+                    <span key={kind}>{entry.number}</span>
+                  ),
+                )}
+              </div>
+            )}
           </div>
           <div className="footer-legal-meta">
             <Switch.Root
-              className="theme-toggle footer-theme-toggle"
+              className="footer-cookie-settings"
               type="button"
               aria-label={(locale === 'en' ? (theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode') : (theme === 'dark' ? '切换到浅色模式' : '切换到深色模式'))}
               checked={theme === 'dark'}

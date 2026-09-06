@@ -13,6 +13,10 @@ type SiteCatalog = {
     researchNameNote: string;
     description: string;
     canonicalOrigin: string;
+    registrations?: {
+      icp: { number: string; url: string };
+      publicSecurity: { number: string; url: string };
+    };
   };
   researchDirections: ResearchDirection[];
   retiredResearchDirectionSlugs?: string[];

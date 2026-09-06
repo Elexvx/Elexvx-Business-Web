@@ -60,6 +60,7 @@ const english: Record<string, string> = {
     'A full case study is published only after the partner, scope, delivery, and disclosure boundaries are confirmed.',
   品牌: 'Brand',
   品牌使用: 'Brand use',
+  企业资质: 'Company qualifications',
   '品牌页使用 Elexvx 的黑白单色版本作为网页默认；全站采用黑色画布、深灰内容区和白色高对比的 OpenAI 式视觉系统。':
     'The website uses Elexvx monochrome marks with a black canvas, dark content surfaces, and high-contrast editorial typography.',
   回到研究首页: 'Back to research home',
@@ -435,8 +436,19 @@ const I18nContext = createContext<I18nContextValue>({
 
 const isInternalHref = (value: string) => value.startsWith('/') && !value.startsWith('//');
 
-export const LanguageProvider = ({ locale, path, children }: { locale: Locale; path: string; children: ReactNode }) => {
+export const LanguageProvider = ({
+  locale,
+  path,
+  children,
+  autoRedirect = true,
+}: {
+  locale: Locale;
+  path: string;
+  children: ReactNode;
+  autoRedirect?: boolean;
+}) => {
   useEffect(() => {
+    if (!autoRedirect) return;
     let preferredLocale: Locale;
 
     try {
@@ -455,7 +467,7 @@ export const LanguageProvider = ({ locale, path, children }: { locale: Locale; p
 
     const targetPath = preferredLocale === 'en' ? (path === '/' ? '/en' : `/en${path}`) : path;
     window.location.replace(`${targetPath}${window.location.search}${window.location.hash}`);
-  }, [locale, path]);
+  }, [locale, path, autoRedirect]);
 
   const href = (value: string) => {
     if (locale !== 'en' || !isInternalHref(value)) return value;
