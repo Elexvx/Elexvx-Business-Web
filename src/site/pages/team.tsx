@@ -36,24 +36,25 @@ export const TeamMemberPage = ({ id }: { id: string }) => {
   if (!member) return <NotFoundPage />;
   return (
     <SiteShell activePath="/company">
-      <article className="team-profile">
+      <article className="team-profile team-member-profile">
         <a className="team-back" href={href('/company/team')}>
           ← {locale === 'en' ? 'All team members' : '全部团队成员'}
         </a>
-        <div className="team-profile-layout">
-          <SiteImage className="team-portrait" src={member.image} alt={member.name} width="600" height="600" />
-          <div className="team-biography">
-            <header>
-              <h1>{member.name}</h1>
-              <p className="team-position">{member.position}</p>
-            </header>
-            <div className="team-biography-text">
-              {member.bio.split(/\n\s*\n/).map((paragraph, index) => (
-                <p key={index}>{paragraph}</p>
-              ))}
-            </div>
+        <header className="team-member-header">
+          <SiteImage className="team-portrait" src={member.image} alt={member.name} width="600" height="600" loading="eager" />
+          <div>
+            <h1>{member.name}</h1>
+            <p className="team-position">{member.position}</p>
           </div>
-        </div>
+        </header>
+        <section className="team-member-resume" aria-label={locale === 'en' ? 'Biography' : '个人简历'}>
+          <h2>{locale === 'en' ? 'Biography' : '个人简历'}</h2>
+          <div className="team-biography-text">
+            {member.bio.split(/\n\s*\n/).map((paragraph, index) => (
+              <p key={index}>{paragraph}</p>
+            ))}
+          </div>
+        </section>
       </article>
     </SiteShell>
   );
