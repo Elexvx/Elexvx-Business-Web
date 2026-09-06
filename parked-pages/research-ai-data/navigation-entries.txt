@@ -1,0 +1,6 @@
+          { label: 'AI 与数据智能', href: '/research/ai-data' },
+          { label: '建立数据与模型', href: '/research/ai-data' },
+          { label: '数据智能', href: '/research/ai-data' },
+          { label: 'AI 与数据智能', href: '/research/ai-data' },
+Footer: AI 与数据智能 → /research/ai-data
+Legacy: /service/ai-design → /research/ai-data

@@ -1,0 +1,16 @@
+{
+  "slug": "ai-data",
+  "title": "AI 与数据智能",
+  "englishTitle": "AI & DATA INTELLIGENCE",
+  "question": "如何让数据从被记录，走向可理解、可判断、可行动？",
+  "summary": "围绕数据理解、模型构建与系统反馈，探索能够进入真实工作流的智能能力。",
+  "methods": [
+    "数据采集与治理",
+    "模型设计与评估",
+    "人机协作反馈"
+  ],
+  "outputSlugs": [],
+  "accent": "light",
+  "image": "/visuals/ai-data-gradient.jpg",
+  "imageAlt": "蓝色、青色、紫色与珊瑚色交融的抽象渐变色域"
+}

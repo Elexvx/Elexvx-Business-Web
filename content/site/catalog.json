@@ -6,31 +6,8 @@
     "description": "面向真实世界复杂问题的 AI 与数据智能研发门户。",
     "canonicalOrigin": "https://www.elexvx.com"
   },
+  "retiredResearchDirectionSlugs": ["ai-data", "industrial-intelligence"],
   "researchDirections": [
-    {
-      "slug": "ai-data",
-      "title": "AI 与数据智能",
-      "englishTitle": "AI & DATA INTELLIGENCE",
-      "question": "如何让数据从被记录，走向可理解、可判断、可行动？",
-      "summary": "围绕数据理解、模型构建与系统反馈，探索能够进入真实工作流的智能能力。",
-      "methods": ["数据采集与治理", "模型设计与评估", "人机协作反馈"],
-      "outputSlugs": [],
-      "accent": "light",
-      "image": "/visuals/ai-data-gradient.jpg",
-      "imageAlt": "蓝色、青色、紫色与珊瑚色交融的抽象渐变色域"
-    },
-    {
-      "slug": "industrial-intelligence",
-      "title": "工业智能与安全",
-      "englishTitle": "INDUSTRIAL INTELLIGENCE & SAFETY",
-      "question": "如何让设备、环境与人的现场状态被连续理解？",
-      "summary": "面向设备、作业和环境的变化，研究可感知、可预警、可追溯的工业系统。",
-      "methods": ["多传感器融合", "边云协同与工业协议", "风险识别与预测维护"],
-      "outputSlugs": ["industrial-safety"],
-      "accent": "dark",
-      "image": "/visuals/industrial-intelligence-gradient.jpg",
-      "imageAlt": "矿物绿、琥珀色与灰蓝色交叠的抽象渐变色域"
-    },
     {
       "slug": "llm-ai-safety",
       "title": "LLM / AI 安全",
@@ -81,7 +58,13 @@
       "approach": "以多传感器数据、工业物联网与云端系统为基础，构建监测、预警、管理和反馈之间的闭环。",
       "output": "一套面向起重设备全生命周期的智能安全管理系统原型。",
       "status": "prototype",
-      "evidence": [{ "label": "现有技术项目材料", "kind": "internal", "verified": true }],
+      "evidence": [
+        {
+          "label": "现有技术项目材料",
+          "kind": "internal",
+          "verified": true
+        }
+      ],
       "image": "/visuals/system-gradient.jpg",
       "featured": true
     }
@@ -139,47 +122,123 @@
   ],
   "footerColumns": [
     {
+      "title": "Products",
+      "links": [
+        {
+          "label": "Lumira",
+          "href": "/products/lumira"
+        },
+        {
+          "label": "BookKin",
+          "href": "/products/bookkin"
+        }
+      ]
+    },
+    {
       "title": "Research",
       "links": [
-        { "label": "研究方向", "href": "/research" },
-        { "label": "AI 与数据智能", "href": "/research/ai-data" },
-        { "label": "工业智能与安全", "href": "/research/industrial-intelligence" },
-        { "label": "LLM / AI 安全", "href": "/research/llm-ai-safety" }
+        {
+          "label": "研究方向",
+          "href": "/research"
+        },
+        {
+          "label": "LLM / AI 安全",
+          "href": "/research/llm-ai-safety"
+        }
+      ]
+    },
+    {
+      "title": "Activities",
+      "links": [
+        {
+          "label": "活动",
+          "href": "/activities"
+        }
+      ]
+    },
+    {
+      "title": "News",
+      "links": [
+        {
+          "label": "最近新闻",
+          "href": "/news"
+        }
       ]
     },
     {
       "title": "Build",
       "links": [
-        { "label": "研发能力", "href": "/capabilities" },
-        { "label": "产品与成果", "href": "/projects" },
-        { "label": "行业场景", "href": "/scenarios" }
+        {
+          "label": "研发能力",
+          "href": "/capabilities"
+        },
+        {
+          "label": "产品与成果",
+          "href": "/projects"
+        },
+        {
+          "label": "行业场景",
+          "href": "/scenarios"
+        }
       ]
     },
     {
       "title": "Business",
       "links": [
-        { "label": "并行业务总览", "href": "/business" },
-        { "label": "人力资源服务", "href": "/business/human-resources" },
-        { "label": "知识产权服务", "href": "/business/intellectual-property" },
-        { "label": "供应链服务", "href": "/business/supply-chain" }
+        {
+          "label": "并行业务总览",
+          "href": "/business"
+        },
+        {
+          "label": "人力资源服务",
+          "href": "/business/human-resources"
+        },
+        {
+          "label": "知识产权服务",
+          "href": "/business/intellectual-property"
+        },
+        {
+          "label": "供应链服务",
+          "href": "/business/supply-chain"
+        }
       ]
     },
     {
       "title": "Company",
       "links": [
-        { "label": "关于公司", "href": "/company" },
-        { "label": "团队", "href": "/company/team" },
-        { "label": "品牌使用", "href": "/company/brand" },
-        { "label": "加入我们", "href": "/careers" }
+        {
+          "label": "关于公司",
+          "href": "/company"
+        },
+        {
+          "label": "团队",
+          "href": "/company/team"
+        },
+        {
+          "label": "品牌使用",
+          "href": "/company/brand"
+        },
+        {
+          "label": "加入我们",
+          "href": "/careers"
+        }
       ]
     },
     {
       "title": "More",
       "links": [
-        { "label": "技术文章", "href": "/insights" },
-        { "label": "最新动态", "href": "/news" },
-        { "label": "旧文归档", "href": "/archive" },
-        { "label": "开放合作", "href": "/contact" }
+        {
+          "label": "技术文章",
+          "href": "/insights"
+        },
+        {
+          "label": "旧文归档",
+          "href": "/archive"
+        },
+        {
+          "label": "开放合作",
+          "href": "/contact"
+        }
       ]
     }
   ]

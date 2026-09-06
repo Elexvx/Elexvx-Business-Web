@@ -1,5 +1,5 @@
 import { notFound } from 'next/navigation';
-import { redirectRoutes } from '../routes';
+import { redirectRoutes } from '../../site/routing/routes';
 
 export const dynamicParams = false;
 

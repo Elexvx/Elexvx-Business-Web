@@ -1,6 +1,5 @@
-import 'antd/dist/reset.css';
 import { createRoot, hydrateRoot } from 'react-dom/client';
-import { App } from './app/App';
+import { App } from './site/App';
 import { browserInsights, browserNews } from './content/browser';
 import './styles/apple-system.css';
 

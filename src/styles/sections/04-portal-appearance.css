@@ -1,0 +1,460 @@
+/* Shared portal surfaces use semantic tokens in both day and night themes. */
+.site-shell-openai {
+  min-height: 100vh;
+  color: var(--color-ink);
+  background: var(--color-canvas);
+}
+
+.site-shell-openai main {
+  min-height: 1px;
+  padding-top: 64px;
+  color: var(--color-ink);
+  background: var(--color-canvas);
+}
+
+.site-shell-openai.site-shell-has-subnav main {
+  padding-top: 0;
+}
+
+.site-shell-openai .global-nav {
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+}
+
+.site-shell-openai .page-hero {
+  min-height: 480px;
+  color: var(--color-ink);
+  background: var(--color-canvas);
+}
+
+.site-shell-openai .page-hero-inner {
+  text-align: center;
+}
+
+.site-shell-openai .page-hero h1 {
+  max-width: 900px;
+  margin-inline: auto;
+  color: var(--color-ink);
+}
+
+.site-shell-openai .page-hero p {
+  margin-inline: auto;
+  color: var(--color-ink-muted);
+}
+
+.site-shell-openai .page-hero-actions {
+  justify-content: center;
+}
+
+.site-shell-openai .research-tile-light,
+.site-shell-openai .research-tile-dark {
+  color: var(--color-ink);
+  background: var(--color-canvas);
+}
+
+.site-shell-openai .research-tile-parchment {
+  color: var(--color-ink);
+  background: var(--color-parchment);
+}
+
+.site-shell-openai .section-heading h2,
+.site-shell-openai .tile-copy > h1,
+.site-shell-openai .tile-copy > h2,
+.site-shell-openai .home-section-topline h2 {
+  color: var(--color-ink);
+}
+
+.site-shell-openai .section-heading p,
+.site-shell-openai .tile-description {
+  color: var(--color-ink-muted);
+}
+
+.site-shell-openai .action-button:not(.action-button-secondary) {
+  color: var(--color-button-text);
+  border-color: var(--color-button-surface);
+  background: var(--color-button-surface);
+}
+
+.site-shell-openai .action-button:not(.action-button-secondary):hover,
+.site-shell-openai .action-button:not(.action-button-secondary):focus-visible {
+  color: var(--color-button-text);
+  border-color: var(--color-button-hover);
+  background: var(--color-button-hover);
+}
+
+.site-shell-openai .action-button-secondary {
+  color: var(--color-ink);
+  border-color: var(--color-hairline);
+  background: var(--color-tile-dark-2);
+}
+
+.site-shell-openai .action-button-secondary:hover,
+.site-shell-openai .action-button-secondary:focus {
+  color: var(--color-ink);
+  border-color: var(--color-hairline);
+  background: var(--color-pearl);
+}
+
+.site-shell-openai .text-link,
+.site-shell-openai .card-link,
+.site-shell-openai .article-body a {
+  color: var(--color-ink);
+}
+
+.site-shell-openai .text-link-on-dark {
+  color: var(--color-ink-muted);
+}
+
+.site-shell-openai .text-link:hover,
+.site-shell-openai .card-link:hover,
+.site-shell-openai .article-body a:hover {
+  color: var(--color-ink-muted);
+}
+
+.site-shell-openai .direction-card,
+.site-shell-openai .project-card,
+.site-shell-openai .business-card,
+.site-shell-openai .scenario-card {
+  color: var(--color-ink);
+  background: var(--color-tile-dark-2);
+  border-color: var(--color-hairline);
+}
+
+.site-shell-openai .direction-card-dark,
+.site-shell-openai .direction-card-parchment {
+  color: var(--color-ink);
+  background: var(--color-tile-dark-2);
+  border-color: var(--color-hairline);
+}
+
+.site-shell-openai .direction-card h2,
+.site-shell-openai .project-card h2,
+.site-shell-openai .business-card h2,
+.site-shell-openai .scenario-card h2,
+.site-shell-openai .process-row h2,
+.site-shell-openai .insight-list-item strong,
+.site-shell-openai .insight-list-item h2,
+.site-shell-openai .article-header h1,
+.site-shell-openai .article-body h1,
+.site-shell-openai .article-body h2,
+.site-shell-openai .article-body h3,
+.site-shell-openai .article-body h4,
+.site-shell-openai .delivery-item h2,
+.site-shell-openai .method-item strong,
+.site-shell-openai .principle-row strong,
+.site-shell-openai .empty-state strong,
+.site-shell-openai .not-found h1 {
+  color: var(--color-ink);
+}
+
+.site-shell-openai .direction-card p,
+.site-shell-openai .project-card p,
+.site-shell-openai .business-card p,
+.site-shell-openai .scenario-card p,
+.site-shell-openai .process-row p,
+.site-shell-openai .insight-list-item p,
+.site-shell-openai .insight-list-meta,
+.site-shell-openai .article-excerpt,
+.site-shell-openai .article-meta,
+.site-shell-openai .article-body p,
+.site-shell-openai .article-body li,
+.site-shell-openai .delivery-item p,
+.site-shell-openai .empty-state p,
+.site-shell-openai .not-found p {
+  color: var(--color-ink-muted);
+}
+
+.site-shell-openai .card-english,
+.site-shell-openai .card-index,
+.site-shell-openai .insight-list-date,
+.site-shell-openai .project-card-detail-label,
+.site-shell-openai .method-item span,
+.site-shell-openai .delivery-item .eyebrow,
+.site-shell-openai .empty-state span {
+  color: var(--color-ink-muted) !important;
+}
+
+.site-shell-openai .project-card-details,
+.site-shell-openai .process-row,
+.site-shell-openai .insight-list-item,
+.site-shell-openai .method-item,
+.site-shell-openai .delivery-item,
+.site-shell-openai .principle-row,
+.site-shell-openai .evidence-list,
+.site-shell-openai .evidence-row,
+.site-shell-openai .article-evidence,
+.site-shell-openai .home-rail-links,
+.site-shell-openai .home-company-links,
+.site-shell-openai .business-strip-links a {
+  border-color: var(--color-hairline);
+}
+
+.site-shell-openai .technical-figure {
+  color: var(--color-ink);
+  background: var(--color-pearl);
+  border-color: var(--color-hairline);
+}
+
+.site-shell-openai .technical-figure-head,
+.site-shell-openai .technical-figure-facts,
+.site-shell-openai .technical-figure-facts > div {
+  border-color: var(--color-hairline);
+}
+
+.site-shell-openai .technical-figure-eyebrow,
+.site-shell-openai .technical-figure-state-label {
+  color: var(--color-ink-muted);
+}
+
+.site-shell-openai .technical-figure-status,
+.site-shell-openai .technical-figure-state p,
+.site-shell-openai .technical-figure-facts dt,
+.site-shell-openai .featured-project-note,
+.site-shell-openai .featured-project-note small {
+  color: var(--color-ink-muted);
+}
+
+.site-shell-openai .featured-project-note strong,
+.site-shell-openai .technical-figure-facts dd,
+.site-shell-openai .technical-figure-state strong {
+  color: var(--color-ink);
+}
+
+.site-shell-openai .article-body code {
+  color: var(--color-ink);
+  background: var(--color-tile-dark-2);
+}
+
+.site-shell-openai .article-body pre {
+  color: var(--color-ink);
+  background: var(--color-parchment);
+}
+
+.site-shell-openai .article-body th {
+  color: var(--color-ink);
+  background: var(--color-tile-dark-2);
+}
+
+.site-shell-openai .article-body td {
+  color: var(--color-ink-muted);
+  border-color: var(--color-hairline);
+}
+
+.site-shell-openai .empty-state {
+  color: var(--color-ink);
+  border-color: var(--color-hairline);
+}
+
+.site-shell-openai .business-strip {
+  color: var(--color-ink);
+}
+
+.site-shell-openai .business-strip-heading h2,
+.site-shell-openai .home-company-copy h2,
+.site-shell-openai .home-explore-rail h3 {
+  color: var(--color-ink);
+}
+
+.site-shell-openai .home-explore-rail > p,
+.site-shell-openai .home-company-links a,
+.site-shell-openai .home-rail-links a {
+  color: var(--color-ink-muted);
+}
+
+.site-shell-openai .home-company-section {
+  color: var(--color-ink);
+  background: var(--color-parchment);
+}
+
+.site-shell-openai .brand-showcase img:first-child {
+  background: #fff;
+}
+
+.site-shell-openai .brand-showcase img:last-child {
+  background: #000;
+}
+
+.site-shell-openai .site-footer {
+  color: var(--color-ink-muted);
+  background: var(--color-canvas);
+}
+
+.site-shell-openai .footer-intro .footer-brand,
+.site-shell-openai .footer-column h2 {
+  color: var(--color-ink);
+}
+
+.site-shell-openai .footer-column a,
+.site-shell-openai .footer-legal {
+  color: var(--color-ink-muted);
+}
+
+.site-shell-openai .footer-column a:hover {
+  color: var(--color-ink);
+}
+
+.site-shell-openai .footer-legal {
+  border-top-color: var(--color-hairline);
+}
+
+@media (max-width: 640px) {
+  .site-shell-openai .page-hero {
+    min-height: 420px;
+    padding-inline: 20px;
+  }
+
+  .site-shell-openai .page-hero h1 {
+    font-size: 38px;
+  }
+
+  .site-shell-openai .page-hero p {
+    font-size: 18px;
+  }
+
+  .site-shell-openai .tile-inner {
+    padding-inline: 20px;
+  }
+
+  .site-shell-openai .article-layout {
+    padding-inline: 20px;
+  }
+}
+
+.site-shell-openai .desktop-nav {
+  gap: 12px;
+}
+
+.site-shell-openai .nav-link {
+  position: relative;
+  min-height: 44px;
+  gap: 7px;
+  padding: 0 11px;
+  border-radius: var(--radius-pill);
+  transition:
+    color 160ms ease,
+    background-color 160ms ease;
+}
+
+.site-shell-openai .global-nav-dark .nav-language-link {
+  color: var(--color-ink-muted);
+}
+
+.site-shell-openai .global-nav-dark .nav-language-link:hover,
+.site-shell-openai .global-nav-dark .nav-language-link:focus-visible {
+  color: var(--color-ink);
+}
+
+.site-shell-openai .nav-link::after {
+  position: absolute;
+  right: 12px;
+  bottom: 5px;
+  left: 12px;
+  height: 1px;
+  background: currentColor;
+  content: '';
+  opacity: 0;
+  transform: scaleX(0.25);
+  transform-origin: center;
+  transition:
+    opacity 160ms ease,
+    transform var(--motion-duration-nav-swap) var(--motion-ease-out);
+}
+
+.site-shell-openai .nav-link:hover,
+.site-shell-openai .nav-link:focus-visible,
+.site-shell-openai .nav-link.is-open {
+  color: var(--color-ink);
+  background: var(--color-parchment);
+  transform: translateY(-1px);
+}
+
+.site-shell-openai .nav-link.is-active::after,
+.site-shell-openai .nav-link.is-open::after {
+  opacity: 0.72;
+  transform: scaleX(1);
+}
+
+.site-shell-openai .nav-link.is-open::after {
+  opacity: 1;
+}
+
+.site-shell-openai .nav-chevron {
+  transition: transform var(--motion-duration-nav-swap) var(--motion-ease-in-out);
+}
+
+.site-shell-openai .desktop-menu-panel {
+  display: block;
+  overflow: hidden;
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+  transform-origin: top center;
+  transition:
+    opacity var(--motion-duration-nav) var(--motion-ease-out),
+    visibility 0s linear var(--motion-duration-nav);
+}
+
+.site-shell-openai .desktop-menu-panel.is-open {
+  visibility: visible;
+  opacity: 1;
+  pointer-events: auto;
+  transition-delay: 0s;
+}
+
+.site-shell-openai .desktop-menu-panel-inner {
+  display: block;
+  min-height: 292px;
+}
+
+.site-shell-openai .desktop-menu-panel-content {
+  display: grid;
+  grid-template-columns: minmax(240px, 0.78fr) 2fr;
+  gap: 64px;
+  opacity: 1;
+  transition: opacity var(--motion-duration-nav-swap) var(--motion-ease-out);
+  will-change: opacity;
+}
+
+.site-shell-openai .desktop-menu-panel-content.is-content-hidden {
+  opacity: 0;
+}
+
+.site-shell-openai .nav-utility-link,
+.site-shell-openai .nav-primary-link {
+  transition:
+    color 180ms ease,
+    background-color 180ms ease,
+    transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.site-shell-openai .nav-utility-link:hover,
+.site-shell-openai .nav-primary-link:hover,
+.site-shell-openai .nav-primary-link:focus-visible {
+  transform: translateY(-1px);
+}
+
+.site-shell-openai .mobile-navigation-inner {
+  opacity: 0;
+  transform: translate3d(22px, 0, 0) scale(0.985);
+  transition:
+    opacity 220ms ease,
+    transform 320ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.site-shell-openai .mobile-navigation.is-open .mobile-navigation-inner {
+  opacity: 1;
+  transform: translate3d(0, 0, 0) scale(1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .site-shell-openai .desktop-menu-panel,
+  .site-shell-openai .desktop-menu-panel-content,
+  .site-shell-openai .desktop-menu-panel-content > .desktop-menu-lead,
+  .site-shell-openai .desktop-menu-panel-content .desktop-menu-column,
+  .site-shell-openai .mobile-navigation-inner {
+    animation: none;
+    transform: none;
+  }
+}

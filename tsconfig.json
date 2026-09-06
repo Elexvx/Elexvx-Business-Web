@@ -32,25 +32,25 @@
   },
   "include": [
     "next-env.d.ts",
-    ".next/types/**/*.ts",
     "src/app",
     "src/content",
-    "src/data/site.ts",
     "src/main.tsx",
     "src/ssg",
     "scripts",
     "tests",
     "vite.config.ts",
     "next.config.mjs",
-    ".next/dev/types/**/*.ts",
     "dist/types/**/*.ts",
-    "dist/dev/types/**/*.ts"
+    "dist/dev/types/**/*.ts",
+    "src/site",
+    "src/data",
+    ".next/types/**/*.ts",
+    ".next/dev/types/**/*.ts"
   ],
   "exclude": [
     "dist",
     "node_modules",
     ".astro",
-    "vendor",
-    "src/content/config.ts"
+    "archive"
   ]
 }

@@ -15,6 +15,7 @@ type SiteCatalog = {
     canonicalOrigin: string;
   };
   researchDirections: ResearchDirection[];
+  retiredResearchDirectionSlugs?: string[];
   capabilities: Capability[];
   projects: Project[];
   scenarios: Scenario[];
@@ -40,7 +41,10 @@ export const validateSiteCatalog = () => {
   assertUniqueSlugs('scenarios', siteCatalog.scenarios);
   assertUniqueSlugs('businessLines', siteCatalog.businessLines);
 
-  const directions = new Set(siteCatalog.researchDirections.map((item) => item.slug));
+  const directions = new Set([
+    ...siteCatalog.researchDirections.map((item) => item.slug),
+    ...(siteCatalog.retiredResearchDirectionSlugs ?? []),
+  ]);
   const scenarios = new Set(siteCatalog.scenarios.map((item) => item.slug));
   for (const project of siteCatalog.projects) {
     if (!directions.has(project.directionSlug)) {
@@ -63,7 +67,16 @@ export const projects = siteCatalog.projects;
 export const scenarios = siteCatalog.scenarios;
 export const businessLines = siteCatalog.businessLines;
 export const companyPrinciples = siteCatalog.companyPrinciples;
-export const footerColumns = siteCatalog.footerColumns;
+export const footerColumns = siteCatalog.footerColumns.map((column) => ({
+  ...column,
+  links:
+    column.title === 'Research'
+      ? [
+          ...column.links.filter((link) => !link.href.startsWith('/research/')),
+          ...researchDirections.map((direction) => ({ label: direction.title, href: `/research/${direction.slug}` })),
+        ]
+      : column.links,
+}));
 
 export const getDirection = (slug: string) => researchDirections.find((direction) => direction.slug === slug);
 export const getProject = (slug: string) => projects.find((project) => project.slug === slug);

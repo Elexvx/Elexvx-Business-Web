@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation';
 import { businessLines } from '../../../data/site';
-import { NextSitePage } from '../../NextSitePage';
-import { nextMetadata } from '../../next-metadata';
+import { NextSitePage } from '../../../site/NextSitePage';
+import { nextMetadata } from '../../../site/routing/metadata';
 
 export const dynamicParams = false;
 

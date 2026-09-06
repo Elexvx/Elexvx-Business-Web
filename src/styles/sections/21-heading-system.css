@@ -1,0 +1,83 @@
+/* Shared hierarchy: page title, section title, card title. */
+:root {
+  --page-title-size: clamp(36px, 4.8vw, 64px);
+  --section-title-size: clamp(24px, 2.4vw, 32px);
+  --card-title-size: 20px;
+  --page-entry-space: 64px;
+}
+.site-shell-openai.site-shell-openai.site-shell-openai main h1 {
+  font-size: var(--page-title-size);
+  font-weight: 500;
+  line-height: 1.15;
+  letter-spacing: -0.035em;
+}
+.site-shell-openai.site-shell-openai.site-shell-openai main :is(.home-section-topline h2, .tile-copy h2, .section-heading h2,
+.careers-editorial h3, .careers-roles h2, .careers-closing h2, .lumira-section > h2, .lumira-closing h2) {
+  font-size: var(--section-title-size);
+  font-weight: 500;
+  line-height: 1.3;
+  letter-spacing: -0.02em;
+}
+.site-shell-openai.site-shell-openai.site-shell-openai main :is(.home-media-card-body h3, .home-product-copy h3,
+.article-continue-grid h3, .company-content-row h3, .careers-value h4,
+.careers-job-row h3, .lumira-grid h3, .team-card h3) {
+  font-size: var(--card-title-size);
+  font-weight: 400;
+  line-height: 1.45;
+  letter-spacing: normal;
+}
+.site-shell-openai .activities-page-inner,
+.site-shell-openai .research-index { padding-top: var(--page-entry-space); }
+.site-shell-openai .activities-page-inner .home-section-topline { margin: 0 0 32px; padding: 0; }
+.site-shell-openai .activities-page-inner h1 { margin: 0; }
+.site-shell-openai .research-index-header h1 { margin: 0; }
+.site-shell-openai .research-index-toolbar { margin-top: 32px; }
+.site-shell-openai .product-catalog-title { padding-top: var(--page-entry-space); margin-top: 0; }
+@media (max-width: 720px) {
+  :root { --page-entry-space: 40px; --card-title-size: 18px; }
+}
+
+.site-shell-openai .home-welcome-inner { padding-top: 32px; }
+.home-hero-banner {
+  position: relative; isolation: isolate; width: 100%; min-height: 360px;
+  display: grid; place-items: center; overflow: hidden; border-radius: 20px;
+  padding: 56px 32px; background: color-mix(in srgb, var(--color-ink) 5%, var(--color-canvas));
+}
+.home-hero-banner .home-hero-background { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: -2; }
+.home-hero-banner.has-image::before { content: ''; position: absolute; inset: 0; background: rgb(0 0 0 / 48%); z-index: -1; }
+.home-hero-content { width: 100%; text-align: center; }
+.site-shell-openai .home-hero-content h1 { margin: 0 auto; max-width: none; }
+.site-shell-openai .home-hero-content .home-welcome-description { margin: 24px auto 0; max-width: 880px; }
+.site-shell-openai .home-hero-banner.has-image :is(h1, .home-welcome-description, a) { color: #fff; }
+.home-hero-content > a { margin-top: 24px; }
+@media (max-width: 720px) {
+  .site-shell-openai .home-welcome-inner { padding-top: 20px; }
+  .home-hero-banner { min-height: 320px; padding: 40px 24px; border-radius: 16px; }
+}
+
+/* The activity index already receives the shared page entry spacing. */
+.site-shell-openai .activities-page-inner > .home-latest-activity {
+  margin-top: 0;
+}
+
+.site-shell-openai .news-index-section {
+  padding: var(--page-entry-space) var(--page-gutter) 64px;
+}
+.site-shell-openai .news-index-section .news-list-heading {
+  width: 100%; max-width: none; margin: 0 0 32px; padding: 0; text-align: left;
+}
+.site-shell-openai .news-index-section .news-list-heading h1 { margin: 0; }
+.site-shell-openai .news-index-section .news-list-grid {
+  width: 100%; max-width: none; margin: 0; padding: 0;
+}
+
+.site-shell-openai .product-index { padding: var(--page-entry-space) var(--page-gutter) 64px; }
+.site-shell-openai .product-index > h1 { margin: 0 0 32px; }
+.site-shell-openai .product-index > .research-index-tabs { margin-bottom: 32px; flex-wrap: wrap; }
+
+/* Avoid stacking section padding with the legacy tile's vertical padding. */
+.site-shell-openai.company-overview .research-tile { padding-block: 24px; }
+.site-shell-openai.company-overview .research-tile .tile-inner { padding-block: 0; min-height: 0; }
+.site-shell-openai.company-overview .tile-copy { margin-bottom: 24px; }
+
+.news-category-tabs { margin-bottom: 32px; flex-wrap: wrap; }

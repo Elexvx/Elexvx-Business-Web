@@ -1,0 +1,355 @@
+/* OpenAI homepage correction: editorial rows, image-led cards, and a compact left-aligned header. */
+.site-shell-openai .global-nav {
+  border-bottom-color: transparent;
+}
+
+.site-shell-openai .global-nav-inner {
+  display: flex;
+}
+
+.site-shell-openai .brand-lockup {
+  flex: 0 0 auto;
+  gap: 0;
+}
+
+.site-shell-openai .brand-divider,
+.site-shell-openai .research-wordmark {
+  display: none;
+}
+
+.site-shell-openai .desktop-nav {
+  justify-content: flex-start;
+  margin-right: auto;
+  margin-left: 28px;
+  gap: 12px;
+}
+
+.site-shell-openai .nav-link {
+  min-height: 44px;
+  padding: 0 10px;
+  border-radius: 0;
+}
+
+.site-shell-openai .nav-link:hover,
+.site-shell-openai .nav-link:focus-visible,
+.site-shell-openai .nav-link.is-open {
+  background: transparent;
+  transform: none;
+}
+
+.site-shell-openai .nav-link::after {
+  right: 10px;
+  bottom: 6px;
+  left: 10px;
+}
+
+.site-shell-openai .desktop-menu-lead,
+.site-shell-openai .desktop-menu-column a + a {
+  border-color: transparent;
+}
+
+.site-shell-openai .desktop-menu-column {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.site-shell-home .home-welcome-inner {
+  width: 100%;
+  max-width: none;
+  box-sizing: border-box;
+  padding: 168px 32px 0;
+}
+
+.site-shell-home .home-welcome h1 {
+  max-width: 760px;
+  font-size: clamp(32px, 3vw, 40px);
+  letter-spacing: -0.035em;
+}
+
+.site-shell-home .home-welcome-description {
+  max-width: 720px;
+  margin-top: 20px;
+  font-size: 17px;
+}
+
+.site-shell-home .home-hero-media {
+  aspect-ratio: 1.92 / 1;
+  margin-top: 64px;
+  border-radius: 8px;
+}
+
+.site-shell-home .home-content-section,
+.site-shell-home .home-content-section-alt {
+  padding: 92px 32px 116px;
+  background: #000;
+}
+
+.site-shell-home .home-section-topline,
+.article-continue .home-section-topline {
+  align-items: center;
+  padding: 0 0 20px;
+}
+
+.site-shell-home .home-section-topline .eyebrow {
+  display: none;
+}
+
+.site-shell-home .home-section-topline h2,
+.article-continue .home-section-topline h2 {
+  margin: 0;
+  font-size: clamp(22px, 2vw, 28px);
+  letter-spacing: -0.025em;
+  line-height: 1.2;
+}
+
+.site-shell-home .home-section-topline .text-link,
+.article-continue .home-section-topline .text-link,
+.site-shell-home .home-section-status {
+  min-height: 44px;
+  padding: 0;
+  color: #d0d0d0;
+  font-size: 14px;
+  letter-spacing: 0;
+}
+
+.site-shell-home .home-direction-grid,
+.site-shell-home .home-media-grid {
+  gap: 24px;
+  margin-top: 0;
+}
+
+.site-shell-home .home-direction-card,
+.site-shell-home .home-media-card {
+  min-height: 0;
+  overflow: visible;
+  background: transparent;
+  border-radius: 0;
+  transform: none;
+}
+
+.site-shell-home .home-direction-card:hover,
+.site-shell-home .home-direction-card:focus-visible,
+.site-shell-home .home-media-card:hover,
+.site-shell-home .home-media-card:focus-visible {
+  background: transparent;
+  transform: none;
+}
+
+.site-shell-home .home-media-card-media {
+  aspect-ratio: 1 / 1;
+  border-radius: 8px;
+}
+
+.site-shell-home .home-media-card-body {
+  min-height: 0;
+  padding: 16px 0 0;
+}
+
+.site-shell-home .home-media-card-body h3 {
+  font-size: clamp(18px, 1.6vw, 21px);
+  letter-spacing: -0.02em;
+  line-height: 1.25;
+}
+
+.site-shell-home .home-media-card-body .eyebrow {
+  order: 2;
+  margin: 12px 0 0;
+  color: #9b9b9b;
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.site-shell-home .home-media-card-body p {
+  order: 3;
+  display: -webkit-box;
+  margin: 10px 0 0;
+  overflow: hidden;
+  color: #b3b3b3;
+  font-size: 14px;
+  line-height: 1.45;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.site-shell-home .home-media-card-link {
+  display: none;
+}
+
+.site-shell-home .home-product-feature {
+  display: block;
+  min-height: 0;
+  margin-top: 0;
+  overflow: visible;
+  background: transparent;
+  border-radius: 0;
+}
+
+.site-shell-home .home-product-media {
+  min-height: 0;
+  aspect-ratio: 1.92 / 1;
+  border-radius: 8px;
+}
+
+.site-shell-home .home-product-media-label {
+  display: none;
+}
+
+.site-shell-home .home-product-copy {
+  min-height: 0;
+  padding: 18px 0 0;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+}
+
+.site-shell-home .home-product-copy h3 {
+  order: 1;
+  font-size: clamp(22px, 2.2vw, 30px);
+  letter-spacing: -0.025em;
+  line-height: 1.2;
+}
+
+.site-shell-home .home-product-copy .eyebrow {
+  order: 2;
+  margin: 10px 0 0;
+  color: #9b9b9b;
+  font-weight: 400;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.site-shell-home .home-product-copy > p {
+  order: 3;
+  max-width: 720px;
+  margin-top: 12px;
+  font-size: 15px;
+}
+
+.site-shell-home .home-product-copy .text-link {
+  order: 4;
+  align-self: flex-start;
+  margin-top: 18px;
+  padding: 0;
+  font-size: 14px;
+}
+
+.site-shell-home .home-company-section {
+  padding: 0 32px 32px;
+  background: #000;
+}
+
+.site-shell-home .home-company-inner {
+  display: flex;
+  min-height: 360px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 30px;
+  padding: 48px;
+  overflow: hidden;
+  border: 0;
+  border-radius: 8px;
+  background: #1f1f1f;
+  text-align: center;
+}
+
+.site-shell-home .home-company-inner h2 {
+  max-width: 720px;
+  margin: 0;
+  color: #fff;
+  font-size: clamp(38px, 4.2vw, 52px);
+  font-weight: 400;
+  letter-spacing: -0.045em;
+  line-height: 1.05;
+}
+
+.site-shell-home .home-company-cta {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  gap: 10px;
+  padding: 0 18px;
+  color: #fff;
+  border-radius: var(--radius-pill);
+  background: #383838;
+  font-size: 15px;
+  font-weight: 500;
+  transition: background-color 160ms ease;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .site-shell-home .home-company-cta:hover {
+    background: #464646;
+  }
+}
+
+@media (max-width: 1068px) {
+  .site-shell-openai .desktop-nav {
+    margin-left: 14px;
+    gap: 6px;
+  }
+
+  .site-shell-openai .nav-link {
+    padding-inline: 7px;
+  }
+
+  .site-shell-home .home-hero-media {
+    margin-top: 56px;
+  }
+}
+
+@media (max-width: 720px) {
+  .site-shell-home .home-welcome-inner {
+    padding: 112px 20px 0;
+  }
+
+  .site-shell-home .home-welcome h1 {
+    font-size: 32px;
+  }
+
+  .site-shell-home .home-hero-media {
+    aspect-ratio: 1.15 / 1;
+    margin-top: 48px;
+    border-radius: 6px;
+  }
+
+  .site-shell-home .home-content-section,
+  .site-shell-home .home-content-section-alt {
+    padding: 68px 20px 88px;
+  }
+
+  .site-shell-home .home-section-topline,
+.article-continue .home-section-topline {
+    align-items: flex-start;
+  }
+
+  .site-shell-home .home-media-card-media,
+  .site-shell-home .home-product-media {
+    border-radius: 6px;
+  }
+
+  .site-shell-home .home-product-media {
+    aspect-ratio: 1.15 / 1;
+  }
+
+  .site-shell-home .home-product-copy {
+    padding: 16px 0 0;
+  }
+
+  .site-shell-home .home-company-section {
+    padding: 0 20px 20px;
+  }
+
+  .site-shell-home .home-company-inner {
+    min-height: 320px;
+    padding: 28px;
+    border-radius: 6px;
+  }
+
+  .site-shell-home .home-company-inner h2 {
+    font-size: 38px;
+  }
+}

@@ -1,0 +1,5 @@
+          { label: '工业智能与安全', href: '/research/industrial-intelligence' },
+          { label: '工业物联与设备', href: '/research/industrial-intelligence' },
+          { label: '工业智能与安全', href: '/research/industrial-intelligence' },
+          { label: '工业智能与安全', href: '/research/industrial-intelligence' },
+Footer: 工业智能与安全 → /research/industrial-intelligence

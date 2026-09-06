@@ -10,8 +10,8 @@
     "build": "next build && tsx scripts/generate-site.tsx",
     "preview": "tsx scripts/preview-static.ts",
     "typecheck": "tsc --noEmit",
-    "lint": "eslint src/app src/content src/data/site.ts src/main.tsx src/ssg scripts tests vite.config.ts next.config.mjs next-env.d.ts",
-    "format:check": "prettier --check index.html vite.config.ts next.config.mjs next-env.d.ts src/app src/content/browser.ts src/content/frontmatter.ts src/content/loader.ts src/content/markdown.ts src/content/normalize.ts src/content/types.ts src/data/site.ts src/main.tsx src/ssg scripts/content-check.ts scripts/create-insight.ts scripts/generate-site.tsx tests",
+    "lint": "eslint src/app src/site src/content src/data src/main.tsx src/ssg scripts tests vite.config.ts next.config.mjs next-env.d.ts",
+    "format:check": "prettier --check src/app src/site src/content src/data src/styles scripts tests package.json tsconfig.json next.config.mjs vite.config.ts",
     "content:check": "tsx scripts/content-check.ts",
     "content:new": "tsx scripts/create-insight.ts",
     "test": "vitest run",
@@ -19,13 +19,15 @@
   },
   "dependencies": {
     "@ant-design/icons": "^6.0.0",
-    "antd": "^6.0.0",
+    "katex": "^0.18.6",
     "next": "^16.3.4",
+    "radix-ui": "^1.6.7",
     "react": "^19.1.0",
     "react-dom": "^19.1.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.24.0",
+    "@types/katex": "^0.16.8",
     "@types/node": "^22.15.0",
     "@types/react": "^19.1.0",
     "@types/react-dom": "^19.1.0",

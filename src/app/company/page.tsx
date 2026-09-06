@@ -1,5 +1,5 @@
-import { NextSitePage } from '../NextSitePage';
-import { nextMetadata } from '../next-metadata';
+import { NextSitePage } from '../../site/NextSitePage';
+import { nextMetadata } from '../../site/routing/metadata';
 
 export const metadata = nextMetadata('/company');
 

@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 128" role="img" aria-labelledby="title desc">
+  <title id="title">Elexvx 单色黑标志</title>
+  <desc id="desc">适用于单色印刷的 Elexvx 标志</desc>
+  <g fill="#111111">
+    <path d="M8 26h48l14 14H8V26Zm0 31h42l14 14H8V57Zm0 31h48l14 14H8V88Z"/>
+    <path d="M56 26h19l16 21 16-21h19l-26 38 26 38h-19L91 80l-16 22H56l26-38-26-38Z"/>
+    <path d="M162 25h58v14h-42v18h36v14h-36v18h42v14h-58V25Zm72-4h16v82h-16V21Z"/>
+    <path fill-rule="evenodd" d="M294 39c22 0 37 15 37 37v8h-58c3 13 12 19 24 19 10 0 19-4 27-10l7 10c-9 8-21 12-35 12-23 0-39-16-39-38 0-22 16-38 37-38Zm-20 33h41c-2-12-10-19-21-19-10 0-18 7-20 19Z"/>
+    <path d="M338 41h19l15 21 15-21h19l-25 36 26 36h-19l-16-22-16 22h-19l26-36-25-36Zm70 0h18l21 51 21-51h18l-31 72h-16l-31-72Zm78 0h19l15 21 15-21h19l-25 36 26 36h-19l-16-22-16 22h-19l26-36-25-36Z"/>
+  </g>
+</svg>

@@ -2,7 +2,7 @@ import { mkdir, writeFile } from 'node:fs/promises';
 import { dirname, join, resolve } from 'node:path';
 import { loadInsights } from '../src/content/loader';
 import { loadNews } from '../src/content/news-loader';
-import { getStaticRoutes, redirectRoutes } from '../src/app/routes';
+import { getStaticRoutes, redirectRoutes } from '../src/site/routing/routes';
 import { siteIdentity } from '../src/data/site';
 
 const distRoot = resolve(process.cwd(), 'dist');
@@ -67,8 +67,11 @@ const sitemap = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://w
   .join('')}</urlset>\n`;
 await writeFile(join(distRoot, 'sitemap.xml'), sitemap, 'utf8');
 
-const published = insights.filter((insight) => insight.status === 'published');
-const publishedNews = news.filter((item) => item.status === 'published');
+const activePaths = new Set(routes.map((route) => route.path));
+const published = insights.filter(
+  (insight) => insight.status === 'published' && activePaths.has(`/insights/${insight.slug}`)
+);
+const publishedNews = news.filter((item) => item.status === 'published' && activePaths.has(`/news/${item.slug}`));
 const feedItems = [
   ...published.map((insight) => ({ ...insight, href: `/insights/${insight.slug}/` })),
   ...publishedNews.map((item) => ({ ...item, href: `/news/${item.slug}/` })),

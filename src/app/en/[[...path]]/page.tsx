@@ -1,9 +1,9 @@
 import { notFound } from 'next/navigation';
 import { loadInsights } from '../../../content/loader';
 import { loadNews } from '../../../content/news-loader';
-import { NextSitePage } from '../../NextSitePage';
-import { nextMetadata } from '../../next-metadata';
-import { getStaticRoutes, normalizeRoutePath } from '../../routes';
+import { NextSitePage } from '../../../site/NextSitePage';
+import { nextMetadata } from '../../../site/routing/metadata';
+import { getStaticRoutes, normalizeRoutePath } from '../../../site/routing/routes';
 
 export const dynamicParams = false;
 

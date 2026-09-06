@@ -1,7 +1,7 @@
 import { renderToStaticMarkup } from 'react-dom/server';
 import type { Insight, NewsItem } from '../content/types';
-import { App } from '../app/App';
-import { resolveRoute } from '../app/routes';
+import { App } from '../site/App';
+import { resolveRoute } from '../site/routing/routes';
 import { siteIdentity } from '../data/site';
 
 const escapeHtml = (value: string) =>
@@ -47,6 +47,6 @@ export const renderRedirectDocument = (template: string, target: string) => {
     '<meta name="robots" content="noindex,nofollow" />',
     `<meta http-equiv="refresh" content="0;url=${safeTarget}" />`,
   ].join('\n    ');
-  const body = `<main style="font-family:system-ui,sans-serif;padding:48px"><p>页面已移动到 <a href="${safeTarget}">${safeTarget}</a>。</p></main>`;
+  const body = `<main style="font-family:var(--font-system),sans-serif;padding:48px"><p>页面已移动到 <a href="${safeTarget}">${safeTarget}</a>。</p></main>`;
   return template.replace(/<title>.*?<\/title>/s, redirectHead).replace('<div id="app"><!--app--></div>', body);
 };

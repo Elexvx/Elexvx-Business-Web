@@ -4,8 +4,8 @@
 
 ## 1. 页面模板
 
-- `src/app/pages.tsx`：只负责页面结构与组件组合。
-- `src/app/components.tsx`：全局导航、Hero、内容区块、卡片和页脚等共享组件。
+- `src/site/pages/`：只负责页面结构与组件组合。
+- `src/site/components/`：全局导航、Hero、内容区块、卡片和页脚等共享组件。
 - `src/styles/apple-system.css`：全站统一的 OpenAI 式视觉和响应式规则。
 
 总览页、详情页和文章页共用固定进入节奏：全局导航 → 居中标题与动作 → 主视觉 → 页面正文。

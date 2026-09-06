@@ -1,3 +1,7 @@
+import { publishedResearch } from './research-articles';
+import { publishedActivities } from './activities';
+import { homeContent } from './page-content';
+
 export type NavigationLink = { label: string; href: string };
 
 export type NavigationGroup = {
@@ -11,7 +15,7 @@ export type NavigationGroup = {
   columns: Array<{ title: string; links: NavigationLink[] }>;
 };
 
-export const navigationGroups: NavigationGroup[] = [
+const navigationDefinitions: NavigationGroup[] = [
   {
     id: 'research',
     label: '研究',
@@ -22,13 +26,14 @@ export const navigationGroups: NavigationGroup[] = [
     paths: ['/research'],
     columns: [
       {
-        title: '研究方向',
-        links: [
-          { label: '研究方向总览', href: '/research' },
-          { label: 'AI 与数据智能', href: '/research/ai-data' },
-          { label: '工业智能与安全', href: '/research/industrial-intelligence' },
-          { label: 'LLM / AI 安全', href: '/research/llm-ai-safety' },
-        ],
+        title: '研究',
+        links: [{ label: '总览', href: '/research' }],
+      },
+      {
+        title: '研究分类',
+        links: Array.from(new Map(publishedResearch.map((item) => [item.categorySlug, item.category])).entries()).map(
+          ([slug, label]) => ({ label: label || '研究', href: `/research?category=${slug}` })
+        ),
       },
       {
         title: '研究入口',
@@ -42,9 +47,76 @@ export const navigationGroups: NavigationGroup[] = [
         title: '继续阅读',
         links: [
           { label: '技术文章', href: '/insights' },
-          { label: '最新动态', href: '/news' },
           { label: '旧文归档', href: '/archive' },
         ],
+      },
+    ],
+  },
+  {
+    id: 'activities',
+    label: '活动',
+    englishTitle: 'ACTIVITIES',
+    title: '探索活动',
+    intro: '活动记录与交流。',
+    href: '/activities',
+    paths: ['/activities'],
+    columns: [
+      {
+        title: '活动',
+        links: [
+          { label: '总览', href: '/activities' },
+          ...Array.from(new Map(publishedActivities.map((item) => [item.categorySlug, item.category])).entries()).map(
+            ([slug, label]) => ({ label: label || '活动', href: `/activities?category=${slug}` })
+          ),
+        ],
+      },
+    ],
+  },
+  {
+    id: 'news',
+    label: '最近新闻',
+    englishTitle: 'NEWS',
+    title: '探索新闻',
+    intro: '公司公告与最新新闻。',
+    href: '/news',
+    paths: ['/news'],
+    columns: [{ title: '新闻', links: [{ label: '总览', href: '/news' }] }],
+  },
+  {
+    id: 'products',
+    label: '产品',
+    englishTitle: 'PRODUCTS',
+    title: '探索产品',
+    intro: '了解我们的产品。',
+    href: '/products',
+    paths: ['/products'],
+    columns: [
+      {
+        title: '产品',
+        links: homeContent.product.items.map((product) => ({ label: product.name, href: product.href })),
+      },
+    ],
+  },
+  {
+    id: 'company',
+    label: 'Elexvx',
+    englishTitle: 'ELEXVX',
+    title: '了解公司与研究主体',
+    intro: '宏翔商道 / Elexvx 是公司主体，Elexvx Research 是可替换的研究工作名称。',
+    href: '/company',
+    paths: ['/company', '/business', '/careers', '/contact'],
+    columns: [
+      {
+        title: '公司',
+        links: [
+          { label: '关于公司', href: '/company' },
+          { label: '团队', href: '/company/team' },
+          { label: '品牌使用', href: '/company/brand' },
+        ],
+      },
+      {
+        title: '联系 Elexvx',
+        links: [{ label: '加入我们', href: '/careers' }],
       },
     ],
   },
@@ -60,19 +132,14 @@ export const navigationGroups: NavigationGroup[] = [
       {
         title: '研发方法',
         links: [
-          { label: '研发能力总览', href: '/capabilities' },
+          { label: '总览', href: '/capabilities' },
           { label: '从问题出发', href: '/capabilities' },
-          { label: '建立数据与模型', href: '/research/ai-data' },
           { label: '进入真实场景', href: '/scenarios' },
         ],
       },
       {
         title: '系统基础',
-        links: [
-          { label: '数据智能', href: '/research/ai-data' },
-          { label: '工业物联与设备', href: '/research/industrial-intelligence' },
-          { label: '模型安全与评测', href: '/research/llm-ai-safety' },
-        ],
+        links: [{ label: '模型安全与评测', href: '/research/llm-ai-safety' }],
       },
       {
         title: '面向合作',
@@ -95,7 +162,7 @@ export const navigationGroups: NavigationGroup[] = [
       {
         title: '项目与产品',
         links: [
-          { label: '产品与成果总览', href: '/projects' },
+          { label: '总览', href: '/projects' },
           { label: '起重设备智能安全管理', href: '/projects/industrial-safety' },
         ],
       },
@@ -129,7 +196,7 @@ export const navigationGroups: NavigationGroup[] = [
       {
         title: '行业场景',
         links: [
-          { label: '行业场景总览', href: '/scenarios' },
+          { label: '总览', href: '/scenarios' },
           { label: '工业现场与设备运营', href: '/scenarios/industrial-operations' },
           { label: '知识工作与复杂决策', href: '/scenarios/knowledge-work' },
           { label: '负责任的 AI 应用', href: '/scenarios/responsible-ai' },
@@ -137,10 +204,7 @@ export const navigationGroups: NavigationGroup[] = [
       },
       {
         title: '对应研究',
-        links: [
-          { label: '工业智能与安全', href: '/research/industrial-intelligence' },
-          { label: 'LLM / AI 安全', href: '/research/llm-ai-safety' },
-        ],
+        links: [{ label: 'LLM / AI 安全', href: '/research/llm-ai-safety' }],
       },
       {
         title: '对应成果',
@@ -163,22 +227,18 @@ export const navigationGroups: NavigationGroup[] = [
       {
         title: '技术文章',
         links: [
-          { label: '文章总览', href: '/insights' },
+          { label: '总览', href: '/insights' },
           { label: '先定义问题，再选择模型', href: '/insights/question-before-model' },
           { label: '让设备数据回到现场', href: '/insights/industrial-safety-data' },
         ],
       },
       {
         title: '最新动态',
-        links: [{ label: '动态总览', href: '/news' }],
+        links: [{ label: '总览', href: '/news' }],
       },
       {
         title: '按主题阅读',
-        links: [
-          { label: 'AI 与数据智能', href: '/research/ai-data' },
-          { label: '工业智能与安全', href: '/research/industrial-intelligence' },
-          { label: 'LLM / AI 安全', href: '/research/llm-ai-safety' },
-        ],
+        links: [{ label: 'LLM / AI 安全', href: '/research/llm-ai-safety' }],
       },
       {
         title: '历史内容',
@@ -189,39 +249,17 @@ export const navigationGroups: NavigationGroup[] = [
       },
     ],
   },
-  {
-    id: 'company',
-    label: 'Elexvx',
-    englishTitle: 'ELEXVX',
-    title: '了解公司与研究主体',
-    intro: '宏翔商道 / Elexvx 是公司主体，Elexvx Research 是可替换的研究工作名称。',
-    href: '/company',
-    paths: ['/company', '/business', '/careers', '/contact'],
-    columns: [
-      {
-        title: '公司',
-        links: [
-          { label: '关于公司', href: '/company' },
-          { label: '团队', href: '/company/team' },
-          { label: '品牌使用', href: '/company/brand' },
-        ],
-      },
-      {
-        title: '并行业务',
-        links: [
-          { label: '并行业务总览', href: '/business' },
-          { label: '人力资源服务', href: '/business/human-resources' },
-          { label: '知识产权服务', href: '/business/intellectual-property' },
-          { label: '供应链服务', href: '/business/supply-chain' },
-        ],
-      },
-      {
-        title: '联系 Elexvx',
-        links: [
-          { label: '开放合作', href: '/contact' },
-          { label: '加入我们', href: '/careers' },
-        ],
-      },
-    ],
-  },
 ];
+
+// Every menu uses the same hierarchy: one overview, then its child destinations.
+export const navigationGroups: NavigationGroup[] = navigationDefinitions.map((group) => {
+  const children = group.columns.flatMap((column) => column.links).filter((link) => link.href !== group.href);
+  const uniqueChildren = [...new Map(children.map((link) => [link.href, link])).values()];
+  return {
+    ...group,
+    columns: [
+      { title: '总览', links: [{ label: '总览', href: group.href }] },
+      ...(uniqueChildren.length ? [{ title: group.id === 'research' || group.id === 'activities' ? '分类' : '了解更多', links: uniqueChildren }] : []),
+    ],
+  };
+});

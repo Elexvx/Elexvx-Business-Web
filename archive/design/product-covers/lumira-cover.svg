@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1600" viewBox="0 0 1600 1600" role="img" aria-label="Lumira">
+<defs>
+<linearGradient id="base" x1="0" y1="1" x2=".8" y2="0"><stop stop-color="#20215a"/><stop offset="1" stop-color="#4d64be"/></linearGradient>
+<radialGradient id="light" cx="95%" cy="0%" r="110%"><stop stop-color="#ae94c9"/><stop offset="1" stop-color="#ae94c9" stop-opacity="0"/></radialGradient>
+</defs>
+<path fill="url(#base)" d="M0 0h1600v1600H0z"/>
+<path fill="url(#light)" d="M0 0h1600v1600H0z"/>
+<text x="800" y="800" fill="#fff" font-family="Arial, Helvetica, sans-serif" font-size="128" font-weight="400" letter-spacing="-4" text-anchor="middle" dominant-baseline="middle">Lumira</text>
+</svg>

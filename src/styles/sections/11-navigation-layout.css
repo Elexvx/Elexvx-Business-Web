@@ -1,0 +1,99 @@
+/* Desktop navigation hierarchy: OpenAI-like primary index plus compact secondary links. */
+@media (min-width: 901px) {
+  html[data-theme] .site-shell-openai .global-nav {
+    border-bottom: 0;
+  }
+
+  html[data-theme] .site-shell-openai .global-nav .nav-link::after {
+    display: none;
+  }
+
+  html[data-theme] .site-shell-openai .global-nav .desktop-menu-panel {
+    border-top: 0;
+    border-bottom: 0;
+  }
+
+  .site-shell-openai .desktop-menu-panel-inner {
+    display: block;
+    min-height: 336px;
+    padding-top: 34px;
+    padding-bottom: 36px;
+  }
+
+  .site-shell-openai .desktop-menu-panel-content {
+    display: grid;
+    grid-template-columns: minmax(320px, 350px) minmax(0, 1fr);
+    align-items: start;
+    gap: clamp(28px, 3vw, 44px);
+  }
+
+  .site-shell-openai .desktop-menu-lead,
+  .site-shell-openai .desktop-menu-secondary-group {
+    min-width: 0;
+  }
+
+  .site-shell-openai .desktop-menu-group-label {
+    margin: 0 0 18px;
+    color: #8e8e93;
+    font-size: 15px;
+    font-weight: 500;
+    letter-spacing: 0;
+    line-height: 1.35;
+  }
+
+  .site-shell-openai .desktop-menu-primary-links,
+  .site-shell-openai .desktop-menu-secondary-links {
+    display: grid;
+    align-content: start;
+  }
+
+  .site-shell-openai .desktop-menu-primary-links {
+    gap: 18px;
+  }
+
+  .site-shell-openai .desktop-menu-primary-links a {
+    width: min(100%, max-content);
+    max-width: 100%;
+    color: inherit;
+    font-family: var(--font-display);
+    font-size: clamp(29px, 2.4vw, 34px);
+    font-weight: 500;
+    letter-spacing: -0.04em;
+    line-height: 1.08;
+    overflow-wrap: anywhere;
+    white-space: normal;
+  }
+
+  .site-shell-openai .desktop-menu-secondary-links {
+    gap: 8px;
+  }
+
+  .site-shell-openai .desktop-menu-secondary-links a {
+    width: fit-content;
+    color: inherit;
+    font-size: 17px;
+    font-weight: 500;
+    line-height: 1.35;
+  }
+
+  .site-shell-openai .desktop-menu-primary-links a:hover,
+  .site-shell-openai .desktop-menu-primary-links a:focus-visible,
+  .site-shell-openai .desktop-menu-secondary-links a:hover,
+  .site-shell-openai .desktop-menu-secondary-links a:focus-visible {
+    color: var(--color-ink-muted);
+  }
+
+  html[data-theme='light'] .site-shell-openai .desktop-menu-group-label {
+    color: #6e6e73;
+  }
+}
+
+/* Homepage direction cards keep only the title and research index. */
+.site-shell-home .home-direction-card .home-media-card-body > p:not(.eyebrow) {
+  display: none;
+}
+
+.site-shell-home .home-insight-card .home-media-card-body > p:not(.eyebrow),
+.site-shell-home #cooperation-cases .home-media-card-body > p:not(.eyebrow) {
+  display: none;
+}

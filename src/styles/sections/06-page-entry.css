@@ -1,0 +1,182 @@
+/* OpenAI-aligned page entry system: one global nav, centered copy, then media. */
+.site-shell-openai .page-hero {
+  min-height: 0;
+  padding: 0 32px 104px;
+}
+
+.site-shell-openai .page-hero-inner {
+  width: min(100%, 1120px);
+  padding-top: 156px;
+}
+
+.site-shell-openai .page-hero-copy {
+  width: min(100%, 980px);
+  margin: 0 auto;
+  text-align: center;
+  animation: page-content-fade 520ms ease-out both;
+}
+
+.site-shell-openai .page-hero h1 {
+  max-width: 980px;
+  font-size: clamp(48px, 5.6vw, 72px);
+  font-weight: 500;
+  letter-spacing: -0.045em;
+  line-height: 0.98;
+}
+
+.site-shell-openai .page-hero p {
+  max-width: 700px;
+  margin-top: 28px;
+  font-size: 20px;
+  line-height: 1.45;
+}
+
+.site-shell-openai .page-hero-actions {
+  margin-top: 34px;
+}
+
+.site-shell-openai .page-hero-media {
+  width: 100%;
+  aspect-ratio: 16 / 8.8;
+  overflow: hidden;
+  margin: 72px auto 0;
+  border-radius: 8px;
+  background: #151515;
+  animation: page-content-fade 560ms 80ms ease-out both;
+}
+
+.site-shell-openai .page-hero-media img,
+.site-shell-openai .article-cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.site-shell-openai .article-layout {
+  width: 100%;
+  padding: 156px 32px 128px;
+}
+
+.site-shell-openai .article-header {
+  max-width: 1000px;
+  margin-bottom: 0;
+  animation: page-content-fade 520ms ease-out both;
+}
+
+.site-shell-openai .article-kicker {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px 18px;
+  margin-bottom: 28px;
+  color: #a7a7a7;
+  font-size: 14px;
+}
+
+.site-shell-openai .article-kicker .eyebrow {
+  margin: 0;
+}
+
+.site-shell-openai .article-header h1 {
+  max-width: 980px;
+  margin-inline: auto;
+  font-size: clamp(48px, 5.6vw, 72px);
+  font-weight: 500;
+  letter-spacing: -0.045em;
+  line-height: 0.98;
+}
+
+.site-shell-openai .article-excerpt {
+  max-width: 720px;
+  margin-top: 28px;
+  font-size: 20px;
+  line-height: 1.45;
+}
+
+.site-shell-openai .article-cover {
+  width: min(100%, 1120px);
+  aspect-ratio: 16 / 8.8;
+  overflow: hidden;
+  margin: 72px auto 96px;
+  border-radius: 8px;
+  background: #151515;
+  animation: page-content-fade 560ms 80ms ease-out both;
+}
+
+@keyframes page-content-fade {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@media (max-width: 720px) {
+  .site-shell-openai .page-hero {
+    padding: 0 20px 72px;
+  }
+
+  .site-shell-openai .page-hero-inner {
+    padding-top: 116px;
+  }
+
+  .site-shell-openai .page-hero h1,
+  .site-shell-openai .article-header h1 {
+    font-size: 42px;
+    line-height: 1.02;
+  }
+
+  .site-shell-openai .page-hero p,
+  .site-shell-openai .article-excerpt {
+    margin-top: 22px;
+    font-size: 18px;
+  }
+
+  .site-shell-openai .page-hero-media {
+    aspect-ratio: 1.2 / 1;
+    margin-top: 48px;
+    border-radius: 6px;
+  }
+
+  .site-shell-openai .article-layout {
+    padding: 116px 20px 96px;
+  }
+
+  .site-shell-openai .article-cover {
+    aspect-ratio: 1.2 / 1;
+    margin: 48px auto 64px;
+    border-radius: 6px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .site-shell-openai .page-hero-copy,
+  .site-shell-openai .page-hero-media,
+  .site-shell-openai .article-header,
+  .site-shell-openai .article-cover {
+    animation: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-direction-card,
+  .home-media-card,
+  .home-company-links a,
+  .home-media-card-media img,
+  .home-product-media img,
+  .direction-card-media img,
+  .project-card-media img,
+  .home-media-card-link .anticon {
+    transition: none;
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .home-hero-media-caption,
+  .home-product-media-label {
+    background: #000;
+  }
+}

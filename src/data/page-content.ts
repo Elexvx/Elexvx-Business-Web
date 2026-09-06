@@ -59,7 +59,10 @@ const visuals = {
 
 export const homeContent = {
   hero: {
-    title: '我们研究真实世界的复杂问题。',
+    // Set enabled to true and fill in the priority message to replace the default hero.
+    important: { enabled: false, title: '', description: '', image: '', action: { label: '', href: '' } },
+    image: '/visuals/research-gradient.jpg',
+    title: '想象力没有边界',
     description:
       '宏翔商道 / Elexvx 是一家跨行业研发公司，以 AI 与数据智能为核心，面向工业现场、知识工作与负责任的 AI 应用，构建可验证的技术系统。',
   },
@@ -74,12 +77,12 @@ export const homeContent = {
   } satisfies LatestActivityContent,
   directions: {
     eyebrow: 'RESEARCH DIRECTIONS',
-    title: '三个方向，面对三类真实约束。',
+    title: '研究方向，面向真实约束。',
     action: { label: '查看研究总览', href: '/research' },
   },
   publications: {
     eyebrow: 'RESEARCH NOTES',
-    title: '研究记录与技术文章',
+    title: '研究与技术',
     action: { label: '查看全部发布', href: '/insights' },
     standard: {
       image: visuals.research,
@@ -91,7 +94,7 @@ export const homeContent = {
   },
   news: {
     eyebrow: 'NEWSROOM',
-    title: '最新动态',
+    title: '最近新闻',
     action: { label: '查看更多', href: '/news' },
     cards: [
       {
@@ -133,16 +136,27 @@ export const homeContent = {
   },
   product: {
     eyebrow: 'PRODUCTS',
-    title: '产品展示',
-    action: { label: '全部产品与成果', href: '/projects' },
-    href: '/projects/industrial-safety',
-    ariaLabel: '查看起重设备智能安全管理产品',
-    media: visuals.system,
-    mediaLabel: 'CONCEPT VISUAL',
-    name: '起重设备智能安全管理',
-    status: 'PRODUCT / PROTOTYPE',
-    description: '面向多设备、多工况的工业现场，构建从感知、预警到管理反馈的安全判断闭环。',
-    detailLabel: '查看产品详情',
+    title: '主要产品',
+    action: { label: '全部产品', href: '/products' },
+    items: [
+      {
+        name: 'Lumira',
+        slug: 'lumira',
+        image: '/products/lumira-cover-textured.png',
+        href: '/products/lumira',
+        category: '企业管理平台',
+        description: '面向企业管理场景的 SaaS 平台，支持本地部署与容器化部署。',
+      },
+      {
+        name: 'BookKin',
+        slug: 'bookkin',
+        image: '/products/bookkin-cover-textured.png',
+        href: '/products/bookkin',
+        category: '家庭电子书库',
+        description:
+          '开源、自托管的家庭电子书库与个人藏书管理平台，支持 EPUB / PDF 阅读、藏书整理，以及独立的阅读进度与私人笔记。',
+      },
+    ],
   },
   closing: {
     title: '开始与 Elexvx 合作',
@@ -155,7 +169,7 @@ export const pageContent = {
     hero: {
       eyebrow: 'ELEXVX RESEARCH',
       title: '我们研究什么，决定我们如何研发。',
-      description: '三个并列方向，共同构成 Elexvx Research 面向真实世界的技术问题地图。',
+      description: '研究方向共同构成 Elexvx Research 面向真实世界的技术问题地图。',
       primaryAction: { label: '查看技术成果', href: '/projects' },
       secondaryAction: { label: '了解研发能力', href: '/capabilities' },
       media: visuals.research,
@@ -288,7 +302,7 @@ export const pageContent = {
   news: {
     hero: {
       eyebrow: 'LATEST UPDATES',
-      title: '记录公司正在发生的事。',
+      title: '最近新闻',
       description: '公司公告、业务动态与阶段性记录统一收录在这里，并按发布时间持续更新。',
       primaryAction: { label: '回到首页', href: '/' },
       secondaryAction: { label: '技术文章', href: '/insights' },
@@ -299,8 +313,8 @@ export const pageContent = {
   company: {
     hero: {
       eyebrow: 'ELEXVX COMPANY',
-      title: '公司是主体，研究是我们理解未来的一种方式。',
-      description: '宏翔商道 / Elexvx 保留多元业务，同时以 Elexvx Research 对外呈现技术研发主线。',
+      title: '关于我们',
+      description: '集科技研发、劳务服务与供应链管理于一体，面向企业提供一站式、全链路的数字化解决方案。',
       primaryAction: { label: '查看并行业务', href: '/business' },
       secondaryAction: { label: '了解团队', href: '/company/team' },
       media: visuals.research,
@@ -398,9 +412,9 @@ export const pageContent = {
   brand: {
     hero: {
       eyebrow: 'ELEXVX BRAND',
-      title: '一个清晰的标志，服务于更清晰的技术叙事。',
+      title: '商标品牌',
       description:
-        '品牌页使用 Elexvx 的黑白单色版本作为网页默认；全站采用黑色画布、深灰内容区和白色高对比的 OpenAI 式视觉系统。',
+        '欢迎访问 Elexvx 品牌中心。此处汇集了 logo 规范、品牌语言与市场传播资源，确保全球传播的一致性与专业度。',
       primaryAction: { label: '回到研究首页', href: '/' },
       secondaryAction: { label: '关于公司', href: '/company' },
       media: visuals.research,

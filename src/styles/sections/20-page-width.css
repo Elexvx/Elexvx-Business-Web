@@ -1,0 +1,35 @@
+/* One route width and one gutter for all page-level modules. */
+:root { --page-max-width: 1440px; --page-gutter: 32px; }
+@media (max-width: 720px) { :root { --page-gutter: 20px; } }
+.site-shell-openai > main {
+  width: 100%; max-width: var(--page-max-width); margin-inline: auto;
+}
+.site-shell-openai :is(.global-nav-inner, .footer-inner, .desktop-menu-panel-inner, .cookie-consent-inner) {
+  width: 100%; max-width: var(--page-max-width); margin-inline: auto;
+  padding-inline: var(--page-gutter);
+}
+.site-shell-openai :is(.home-welcome-inner, .home-content-inner, .home-company-inner,
+.page-hero, .article-layout, .team-page, .team-profile, .careers-page, .job-detail,
+.lumira-product, .research-tile) {
+  width: 100%; max-width: none; margin-inline: auto; padding-inline: var(--page-gutter);
+}
+.site-shell-openai :is(.page-hero-inner, .tile-inner, .article-continue,
+.company-introduction, .company-content-list, .company-stats, .careers-culture) {
+  width: 100%; max-width: none; margin-inline: 0; padding-inline: 0;
+}
+.site-shell-openai .research-index-inner {
+  width: 100%; max-width: none; margin-inline: auto; padding-inline: var(--page-gutter);
+}
+.site-shell-openai .article-reading-layout {
+  width: 100%; grid-template-columns: 180px minmax(0, 1fr);
+}
+@media (max-width: 720px) {
+  .site-shell-openai .article-reading-layout { grid-template-columns: 1fr; }
+}
+/* Card padding remains internal to the full-width module. */
+.site-shell-openai.company-overview .company-introduction { padding: clamp(24px, 4vw, 48px); }
+.site-shell-openai .home-content-section { padding-inline: 0; }
+.site-shell-openai.brand-overview .page-hero-inner { width: 100%; max-width: none; margin-inline: 0; }
+.site-shell-openai :is(.news-index-section .section-heading, .news-index-section .news-list-grid, .activities-page-inner) {
+  width: 100%; max-width: none; padding-inline: var(--page-gutter); margin-inline: auto;
+}

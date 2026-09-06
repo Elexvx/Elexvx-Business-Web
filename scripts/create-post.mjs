@@ -48,16 +48,7 @@ const nextIndex = (dateString, files = []) => {
   return (found.length ? Math.max(...found) : 0) + 1;
 };
 
-const writeFrontmatter = ({
-  publishDate,
-  title,
-  author,
-  excerpt,
-  category,
-  tags,
-  image,
-  draft,
-}) => {
+const writeFrontmatter = ({ publishDate, title, author, excerpt, category, tags, image, draft }) => {
   const body = [
     '---',
     `publishDate: ${publishDate}`,
@@ -114,7 +105,13 @@ const main = async () => {
 
   const category = args.category || 'latest-news';
   const categoryName = args.categoryName || category;
-  const tags = typeof args.tags === 'string' ? args.tags.split(',').map((t) => t.trim()).filter(Boolean) : [];
+  const tags =
+    typeof args.tags === 'string'
+      ? args.tags
+          .split(',')
+          .map((t) => t.trim())
+          .filter(Boolean)
+      : [];
 
   await fs.mkdir(POSTS_DIR, { recursive: true });
 

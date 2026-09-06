@@ -1,7 +1,7 @@
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { loadInsights, contentPath } from '../src/content/loader';
-import { getStaticRoutes } from '../src/app/routes';
+import { getStaticRoutes } from '../src/site/routing/routes';
 import { loadNews, newsContentPath } from '../src/content/news-loader';
 import { staticPageHeroByPath } from '../src/data/page-content';
 import { validateSiteCatalog } from '../src/data/site';

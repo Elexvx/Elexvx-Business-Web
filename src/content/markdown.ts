@@ -1,4 +1,5 @@
 export type InlineNode =
+  | { type: 'math'; value: string }
   | { type: 'text'; value: string }
   | { type: 'strong' | 'emphasis' | 'code'; children: InlineNode[]; value?: string }
   | { type: 'link' | 'image'; children: InlineNode[]; href: string; alt?: string };
@@ -41,6 +42,15 @@ export const parseInline = (source: string): InlineNode[] => {
 
     if (rest.startsWith('\\') && source[index + 1]) {
       index += 2;
+      continue;
+    }
+
+    const mathMatch = rest.match(/^\$([^$\n]+)\$/);
+    if (mathMatch) {
+      flushText(index);
+      nodes.push({ type: 'math', value: mathMatch[1] });
+      index += mathMatch[0].length;
+      textStart = index;
       continue;
     }
 

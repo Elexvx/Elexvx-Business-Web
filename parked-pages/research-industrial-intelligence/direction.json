@@ -1,0 +1,18 @@
+{
+  "slug": "industrial-intelligence",
+  "title": "工业智能与安全",
+  "englishTitle": "INDUSTRIAL INTELLIGENCE & SAFETY",
+  "question": "如何让设备、环境与人的现场状态被连续理解？",
+  "summary": "面向设备、作业和环境的变化，研究可感知、可预警、可追溯的工业系统。",
+  "methods": [
+    "多传感器融合",
+    "边云协同与工业协议",
+    "风险识别与预测维护"
+  ],
+  "outputSlugs": [
+    "industrial-safety"
+  ],
+  "accent": "dark",
+  "image": "/visuals/industrial-intelligence-gradient.jpg",
+  "imageAlt": "矿物绿、琥珀色与灰蓝色交叠的抽象渐变色域"
+}

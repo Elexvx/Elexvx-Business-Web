@@ -1,11 +1,12 @@
 {
+  "framework": null,
   "cleanUrls": true,
-  "trailingSlash": false,
+  "trailingSlash": true,
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
   "installCommand": "npm install",
   "redirects": [
-    { "source": "/service/ai-design", "destination": "/research/ai-data", "permanent": true },
+    { "source": "/service/ai-design", "destination": "/research", "permanent": true },
     { "source": "/service/hr-services", "destination": "/business/human-resources", "permanent": true },
     { "source": "/service/trademark-agency", "destination": "/business/intellectual-property", "permanent": true },
     { "source": "/service/supply-chain", "destination": "/business/supply-chain", "permanent": true },
@@ -13,7 +14,7 @@
     { "source": "/company/leadership", "destination": "/company/team", "permanent": true },
     { "source": "/company/contact", "destination": "/contact", "permanent": true },
     { "source": "/company/careers", "destination": "/careers", "permanent": true },
-    { "source": "/blog", "destination": "/insights", "permanent": true },
+    { "source": "/blog", "destination": "/research", "permanent": true },
     { "source": "/technology", "destination": "/news", "permanent": true },
     { "source": "/stories", "destination": "/news", "permanent": true },
     { "source": "/latest-news", "destination": "/news", "permanent": true },

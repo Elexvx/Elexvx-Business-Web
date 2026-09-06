@@ -3,7 +3,7 @@ import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { loadInsights } from '../src/content/loader';
 import { loadNews } from '../src/content/news-loader';
-import { getStaticRoutes, resolveRoute } from '../src/app/routes';
+import { getStaticRoutes, resolveRoute } from '../src/site/routing/routes';
 import { homeContent, staticPageHeroByPath } from '../src/data/page-content';
 import { validateSiteCatalog } from '../src/data/site';
 
@@ -18,11 +18,12 @@ describe('content publication gates', () => {
     ).toBe(true);
   });
 
-  it('creates static routes for published insights but not drafts', () => {
+  it('publishes active content routes and excludes the parked insights section', () => {
     const insights = loadInsights();
     const news = loadNews();
     const routes = getStaticRoutes(insights, news).map((route) => route.path);
-    expect(routes).toContain('/insights/question-before-model');
+    expect(routes.some((path) => path === '/insights' || path.startsWith('/insights/'))).toBe(false);
+    expect(routes).toContain('/research/moe-chiplet-expert-reuse');
     expect(routes).not.toContain('/insights/llm-safety-boundaries');
     expect(routes).toContain('/news/2026-06-09-01');
     expect(resolveRoute('/missing', insights).meta.robots).toBe('noindex,nofollow');
