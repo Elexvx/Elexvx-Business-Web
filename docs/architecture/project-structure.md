@@ -24,13 +24,13 @@ apple-system.css 是唯一导入入口。sections/01 到 15 依次为基础、�
 
 ## 历史和资源
 
-archive/astro 保存旧 Astro 源码和配置，不参与现行 TypeScript、Lint 或构建。posts 保留为迁移脚本输入，articles 是现行内容。Vite、src/main.tsx、src/ssg 保留为兼容工具，主开发入口是 Next.js。
+旧 Astro 站点源码和配置已删除，历史版本可通过 Git 历史查看。posts 保留为迁移脚本输入，articles 是现行内容。Vite、src/main.tsx、src/ssg 保留为兼容工具，主开发入口是 Next.js。
 
 public/brand 放品牌，public/visuals 放配图，public/products 放正式 PNG。旧封面源码在 archive/design/product-covers。不要将内部草稿放进 public。保持历史静态 URL，避免文章引用失效。
 
 ## 团队维护
 
-团队资料集中在 src/data/team.ts，照片在 public/team。保留原站人物 ID，列表与中英文详情路由由同一份资料生成；新增成员后需构建静态页面。列表桌面三列，照片固定正方形；简介保留完整段落，不设置固定高度或省略行数。样式位于 sections/16-team.css。原始介绍迁自 archive/astro/data/leaders.ts，职务和履历更新请直接核对并修改现行数据。
+团队资料集中在 src/data/team.ts，照片在 public/team。保留原站人物 ID，列表与中英文详情路由由同一份资料生成；新增成员后需构建静态页面。列表桌面三列，照片固定正方形；简介保留完整段落，不设置固定高度或省略行数。样式位于 sections/16-team.css。原始介绍已从旧站迁入，职务和履历更新请直接核对并修改现行数据。
 
 ## 验证
 

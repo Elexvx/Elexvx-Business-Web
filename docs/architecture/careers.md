@@ -1,6 +1,6 @@
 # 工作机会
 
-设计参考 https://openai.com/careers/ ：居中首屏、充足留白、分栏文化说明与清晰的职位入口。内容来源为 archive/astro/src/pages/company/careers.astro 和 archive/astro/data/jobs.ts；原有职位、薪资、福利文案与投递地址原样迁入，未重新确认招聘状态。
+设计参考 https://openai.com/careers/ ：居中首屏、充足留白、分栏文化说明与清晰的职位入口。内容已从旧 Astro 站点的招聘页面和职位数据迁入（旧版源码已删除，可通过 Git 历史查看）；原有职位、薪资、福利文案与投递地址原样迁入，未重新确认招聘状态。
 
 现行入口：src/site/pages/careers.tsx；职位：src/data/jobs.ts；文化与准则：src/data/careers.ts；样式：src/styles/sections/18-careers.css。
 
