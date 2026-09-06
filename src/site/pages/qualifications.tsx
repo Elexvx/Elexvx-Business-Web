@@ -71,6 +71,8 @@ export const QualificationsPage = () => {
               </a>
               <figcaption>
                 <h2>{english ? item.englishTitle : item.title}</h2>
+                {item.registration && <p>{english ? 'Registration: ' : '登记号：'}{item.registration}</p>}
+                {item.registeredAt && <p>{english ? 'Registered: ' : '登记日期：'}{item.registeredAt}</p>}
               </figcaption>
             </figure>
           ))}

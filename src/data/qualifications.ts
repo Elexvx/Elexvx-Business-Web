@@ -16,12 +16,24 @@ type Qualification = {
   title: string;
   englishTitle: string;
   image: string;
+  registration?: string;
+  registeredAt?: string;
   category: (typeof qualificationCategories)[number]['id'];
   subtype?: (typeof intellectualPropertyCategories)[number]['id'];
 };
 
 // User-supplied materials; preserve original images without modifying certificate content.
 export const qualifications: Qualification[] = [
+  {
+    id: 'software-2026SR0501747',
+    title: '起重机械工业物联网预警运维平台 V1.0',
+    englishTitle: 'Lifting Machinery Industrial IoT Early Warning and Maintenance Platform V1.0',
+    image: '/company/qualifications/software-2026SR0501747.png',
+    category: 'ip',
+    subtype: 'software',
+    registration: '2026SR0501747',
+    registeredAt: '2026-03-27',
+  },
   {
     id: 'technology-sme',
     title: '国家级科技型中小企业',
