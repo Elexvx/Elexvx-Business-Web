@@ -62,7 +62,7 @@ export const homeContent = {
     // Set enabled to true and fill in the priority message to replace the default hero.
     important: { enabled: false, title: '', description: '', image: '', action: { label: '', href: '' } },
     image: '/visuals/research-gradient.jpg',
-    title: '想象力没有边界',
+    title: '想象力，真的没有边界',
     description:
       '宏翔商道 / Elexvx 是一家跨行业研发公司，以 AI 与数据智能为核心，面向工业现场、知识工作与负责任的 AI 应用，构建可验证的技术系统。',
   },

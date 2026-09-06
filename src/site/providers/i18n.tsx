@@ -102,7 +102,7 @@ const english: Record<string, string> = {
   '我们正在建立以研究方向、工程实践和真实场景为中心的团队。':
     'We are building a team around research directions, engineering practice, and real-world contexts.',
   '我们研究什么，决定我们如何研发。': 'What we research shapes how we build.',
-  '想象力没有边界': 'Imagination has no boundaries.',
+  '想象力，真的没有边界': 'Imagination truly has no boundaries.',
   '宏翔商道 / Elexvx 是一家跨行业研发公司，以 AI 与数据智能为核心，面向工业现场、知识工作与负责任的 AI 应用，构建可验证的技术系统。':
     'Hongxiang Business / Elexvx is a cross-industry R&D company building verifiable technical systems for industrial operations, knowledge work, and responsible AI.',
   技术文章: 'Insights',

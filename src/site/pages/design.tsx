@@ -13,7 +13,7 @@ export const DesignPage = () => (
         <a className="design-download" href="/company/design/design.md" download="design.md">下载 design.md ↓</a>
       </header>
       <section className="design-specimens" aria-label="标题实际字号示例">
-        <div><span>01 · 主标题</span><p className="design-sample-large">想象力没有边界</p><small>36–64px · 字重 500 · 行高 1.15</small></div>
+        <div><span>01 · 主标题</span><p className="design-sample-large">想象力，真的没有边界</p><small>36–64px · 字重 500 · 行高 1.15</small></div>
         <div><span>02 · 中标题</span><p className="design-sample-medium">探索研究与产品</p><small>24–32px · 字重 500 · 行高 1.3</small></div>
         <div><span>03 · 小标题</span><p className="design-sample-small">从问题出发，清晰表达</p><small>20px / 手机 18px · 行高 1.45</small></div>
       </section>
