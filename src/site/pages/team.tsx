@@ -55,6 +55,16 @@ export const TeamMemberPage = ({ id }: { id: string }) => {
             ))}
           </div>
         </section>
+        {member.sections?.map((section) => (
+          <section className="team-member-resume" key={section.title} aria-label={section.title}>
+            <h2>{section.title}</h2>
+            <div className="team-biography-text">
+              {section.list ? (
+                <ul>{section.paragraphs.map((paragraph) => <li key={paragraph}>{paragraph}</li>)}</ul>
+              ) : section.paragraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
+            </div>
+          </section>
+        ))}
       </article>
     </SiteShell>
   );

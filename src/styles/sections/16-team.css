@@ -126,3 +126,5 @@
   .team-member-resume { margin-top: 32px; padding-top: 24px; }
   .team-member-resume .team-biography-text { columns: 1; font-size: 17px; }
 }
+.team-member-resume .team-biography-text ul { margin: 0; padding-left: 1.25em; }
+.team-member-resume .team-biography-text li { margin: 0 0 1.5em; break-inside: avoid; overflow-wrap: anywhere; }
