@@ -41,22 +41,28 @@
   :root { --page-entry-space: 40px; --card-title-size: 18px; }
 }
 
-.site-shell-openai .home-welcome-inner { padding-top: 32px; }
+.site-shell-openai.site-shell-home > main { max-width: none; }
+.site-shell-home > main > section:not(.home-welcome) { max-width: var(--page-max-width); margin-inline: auto; }
+.site-shell-openai .home-welcome-inner { padding: 0; }
+.site-shell-home .home-welcome-inner > .home-latest-activity {
+  max-width: var(--page-max-width);
+  margin-inline: auto;
+  padding-inline: var(--page-gutter);
+}
 .home-hero-banner {
-  position: relative; isolation: isolate; width: 100%; min-height: 360px;
-  display: grid; place-items: center; overflow: hidden; border-radius: 20px;
-  padding: 56px 32px; background: color-mix(in srgb, var(--color-ink) 5%, var(--color-canvas));
+  position: relative; isolation: isolate; width: 100%; min-height: clamp(520px, 76svh, 820px);
+  display: grid; align-items: end; justify-items: center; overflow: hidden; border-radius: 0;
+  padding: 80px 32px; background: color-mix(in srgb, var(--color-ink) 5%, var(--color-canvas));
 }
 .home-hero-banner .home-hero-background { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: -2; }
-.home-hero-banner.has-image::before { content: ''; position: absolute; inset: 0; background: rgb(0 0 0 / 48%); z-index: -1; }
-.home-hero-content { width: 100%; text-align: center; }
+.home-hero-banner.has-image::before { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, rgb(0 0 0 / 8%), rgb(0 0 0 / 24%) 40%, rgb(0 0 0 / 65%)); z-index: -1; }
+.home-hero-content { width: 100%; max-width: 1040px; text-align: center; }
 .site-shell-openai .home-hero-content h1 { margin: 0 auto; max-width: none; }
 .site-shell-openai .home-hero-content .home-welcome-description { margin: 24px auto 0; max-width: 880px; }
 .site-shell-openai .home-hero-banner.has-image :is(h1, .home-welcome-description, a) { color: #fff; }
 .home-hero-content > a { margin-top: 24px; }
 @media (max-width: 720px) {
-  .site-shell-openai .home-welcome-inner { padding-top: 20px; }
-  .home-hero-banner { min-height: 320px; padding: 40px 24px; border-radius: 16px; }
+  .home-hero-banner { min-height: 520px; padding: 56px 24px; border-radius: 0; }
 }
 
 /* The activity index already receives the shared page entry spacing. */
