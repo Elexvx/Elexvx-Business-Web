@@ -22,6 +22,7 @@
   gap: 48px 32px;
 }
 .team-card {
+  text-decoration: none;
   display: block;
   min-width: 0;
   color: var(--color-ink);
@@ -50,8 +51,7 @@
   line-height: 1.6;
 }
 .team-card:hover h2 {
-  text-decoration: underline;
-  text-underline-offset: 5px;
+  text-decoration: none;
 }
 .team-card:focus-visible,
 .team-back:focus-visible {
