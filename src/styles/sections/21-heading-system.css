@@ -12,11 +12,15 @@
   letter-spacing: -0.035em;
 }
 .site-shell-openai.site-shell-openai.site-shell-openai main :is(.home-section-topline h2, .tile-copy h2, .section-heading h2,
-.careers-editorial h3, .careers-roles h2, .careers-closing h2, .lumira-section > h2, .lumira-closing h2) {
+.careers-editorial h3, .careers-roles h2, .careers-closing h2, .lumira-section > h2, .lumira-closing h2, .home-company-inner h2) {
   font-size: var(--section-title-size);
   font-weight: 500;
   line-height: 1.3;
   letter-spacing: -0.02em;
+}
+.site-shell-home .home-company-inner h2 {
+  word-break: keep-all;
+  text-wrap: balance;
 }
 .site-shell-openai.site-shell-openai.site-shell-openai main :is(.home-media-card-body h3, .home-product-copy h3,
 .article-continue-grid h3, .company-content-row h3, .careers-value h4,
