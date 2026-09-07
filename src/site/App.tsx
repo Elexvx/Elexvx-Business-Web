@@ -1,3 +1,4 @@
+import { english } from './translation';
 import type { Insight, NewsItem } from '../content/types';
 import { ContentProvider } from './providers/content-context';
 import { LanguageProvider, type Locale } from './providers/i18n';
@@ -16,7 +17,7 @@ export const App = ({
 }) => {
   const route = resolveRoute(path, insights, news);
   return (
-    <LanguageProvider locale={locale} path={path}>
+    <LanguageProvider locale={locale} path={path} translations={locale === 'en' ? english : undefined}>
       <ContentProvider
         insights={insights}
         news={news}

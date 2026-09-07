@@ -3,7 +3,7 @@
 import { Translated } from '../providers/i18n';
 import { CompanyIntro } from '../components/company-intro';
 import { SiteShell } from '../components/index';
-import { MarkdownRenderer } from '../components/MarkdownRenderer';
+import { MarkdownRenderer } from '../components/lazy-markdown-renderer';
 import document from '../../data/design-document.json';
 
 const sections = document.source.replace(/^# .*\n/, '').split(/^## /m);

@@ -4,7 +4,7 @@ import { ArticleShare } from './article-share';
 import { SiteImage } from './site-image';
 import { ArticleGallery } from './article-gallery';
 import { useEffect, useRef, useState, type ReactNode } from 'react';
-import { MarkdownRenderer } from './MarkdownRenderer';
+import { MarkdownRenderer } from './lazy-markdown-renderer';
 import { useI18n } from '../providers/i18n';
 
 type ReadingItem = {

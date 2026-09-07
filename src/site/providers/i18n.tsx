@@ -2,7 +2,7 @@
 
 import { createContext, Fragment, useContext, useEffect, type ReactNode } from 'react';
 
-import { translateEnglish } from '../translation';
+import { existingEnglish, translateWithDictionary } from '../translation-base';
 
 export type Locale = 'zh-CN' | 'en';
 
@@ -13,6 +13,7 @@ type I18nContextValue = {
   t: (value: string) => string;
   href: (value: string) => string;
   switchHref: string;
+  dictionary?: Record<string, string>;
 };
 
 const I18nContext = createContext<I18nContextValue>({
@@ -29,12 +30,16 @@ export const LanguageProvider = ({
   path,
   children,
   autoRedirect = false,
+  translations,
 }: {
   locale: Locale;
   path: string;
   children: ReactNode;
   autoRedirect?: boolean;
+  translations?: Record<string, string>;
 }) => {
+  const parent = useContext(I18nContext);
+  const dictionary = translations ?? parent.dictionary ?? existingEnglish;
   useEffect(() => {
     if (!autoRedirect || locale === 'en' || path !== '/') return;
     let preferredLocale: Locale;
@@ -68,10 +73,10 @@ export const LanguageProvider = ({
     return value === '/' ? '/en' : `/en${value}`;
   };
   const switchHref = locale === 'en' ? path : path === '/' ? '/en' : `/en${path}`;
-  const t = (value: string) => (locale === 'en' ? translateEnglish(value) : value);
+  const t = (value: string) => (locale === 'en' ? translateWithDictionary(value, dictionary) : value);
 
   return (
-    <I18nContext.Provider value={{ locale, t, href, switchHref }}>
+    <I18nContext.Provider value={{ locale, t, href, switchHref, dictionary }}>
       <div className="locale-root" lang={locale}>
         {children}
       </div>
@@ -105,8 +110,6 @@ export const LocalizedTitle = ({ children, text }: { children?: string; text?: s
     </>
   );
 };
-
-export const translateText = (value: string, locale: Locale) => (locale === 'en' ? translateEnglish(value) : value);
 
 /** Localize content values at their rendering boundary, including arrays of text. */
 export const Translated = ({ children }: { children: ReactNode }) => {

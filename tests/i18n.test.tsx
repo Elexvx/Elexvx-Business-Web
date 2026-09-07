@@ -40,6 +40,17 @@ describe('English publishing', () => {
     expect(html).toContain('A question, a clear answer.');
     expect(html).not.toContain('<br');
   });
+  it('inherits the server-provided dictionary through nested language providers', () => {
+    const html = renderToStaticMarkup(
+      <LanguageProvider locale="en" path="/" translations={{ '测试内容': 'Content from the server' }}>
+        <LanguageProvider locale="en" path="/">
+          <LocalizedTitle text="测试内容" />
+        </LanguageProvider>
+      </LanguageProvider>
+    );
+    expect(html).toContain('Content from the server');
+    expect(html).not.toContain('测试内容');
+  });
   it('covers complete published research and activity text, including image descriptions', () => {
     const missing = new Set<string>();
     const check = (text: string) => {
