@@ -33,6 +33,8 @@ export const renderDocument = (template: string, path: string, insights: Insight
     `<meta property="og:description" content="${description}" />`,
     `<meta property="og:url" content="${canonical}" />`,
     '<meta property="og:type" content="website" />',
+    `<meta property="og:image" content="${escapeHtml(new URL(route.meta.image || '/share/elexvx.png', siteIdentity.canonicalOrigin).href)}" />`,
+    '<meta name="twitter:card" content="summary_large_image" />',
   ].join('\n    ');
 
   return template

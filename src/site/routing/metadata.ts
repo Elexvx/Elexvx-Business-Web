@@ -103,6 +103,7 @@ export const nextMetadata = (path: string, locale: Locale = 'zh-CN'): Metadata =
   const chinesePath = `${siteIdentity.canonicalOrigin}${path === '/' ? '/' : `${path}/`}`;
   const englishPath = `${siteIdentity.canonicalOrigin}/en${path === '/' ? '/' : `${path}/`}`;
 
+  const image = new URL(route.meta.image || '/share/elexvx.png', siteIdentity.canonicalOrigin).href;
   return {
     title: { absolute: title },
     description,
@@ -114,11 +115,14 @@ export const nextMetadata = (path: string, locale: Locale = 'zh-CN'): Metadata =
         en: englishPath,
       },
     },
+    twitter: { card: 'summary_large_image', title, description, images: [image] },
     openGraph: {
       title,
       description,
       url: canonical,
       type: 'website',
+      siteName: 'Elexvx',
+      images: [{ url: image, alt: title }],
       locale: locale === 'en' ? 'en_US' : 'zh_CN',
     },
   };

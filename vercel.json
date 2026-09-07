@@ -6,51 +6,168 @@
   "outputDirectory": "dist",
   "installCommand": "npm install",
   "redirects": [
-    { "source": "/service/ai-design", "destination": "/research", "permanent": true },
-    { "source": "/service/hr-services", "destination": "/business/human-resources", "permanent": true },
-    { "source": "/service/trademark-agency", "destination": "/business/intellectual-property", "permanent": true },
-    { "source": "/service/supply-chain", "destination": "/business/supply-chain", "permanent": true },
-    { "source": "/company/about", "destination": "/company", "permanent": true },
-    { "source": "/company/leadership", "destination": "/company/team", "permanent": true },
-    { "source": "/company/contact", "destination": "/contact", "permanent": true },
-    { "source": "/company/careers", "destination": "/careers", "permanent": true },
-    { "source": "/blog", "destination": "/research", "permanent": true },
-    { "source": "/technology", "destination": "/news", "permanent": true },
-    { "source": "/stories", "destination": "/news", "permanent": true },
-    { "source": "/latest-news", "destination": "/news", "permanent": true },
-    { "source": "/exam", "destination": "/news", "permanent": true },
-    { "source": "/technology/2025-07-01-01", "destination": "/news/technology-2025-07-01-01", "permanent": true },
-    { "source": "/stories/2025-07-01-01", "destination": "/news/stories-2025-07-01-01", "permanent": true },
-    { "source": "/latest-news/2026-01-01-01", "destination": "/news/2026-01-01-01", "permanent": true },
-    { "source": "/latest-news/2026-01-14-01", "destination": "/news/2026-01-14-01", "permanent": true },
-    { "source": "/latest-news/2026-06-09-01", "destination": "/news/2026-06-09-01", "permanent": true },
-    { "source": "/latest-news/2025-07-16-01", "destination": "/news/2025-07-16-01", "permanent": true },
-    { "source": "/latest-news/2025-07-17-01", "destination": "/news/2025-07-17-01", "permanent": true },
-    { "source": "/latest-news/2025-08-21-01", "destination": "/news/2025-08-21-01", "permanent": true },
-    { "source": "/latest-news/2024-12-31-01", "destination": "/news/2024-12-31-01", "permanent": true }
+    {
+      "source": "/service/ai-design",
+      "destination": "/research",
+      "permanent": true
+    },
+    {
+      "source": "/service/hr-services",
+      "destination": "/business/human-resources",
+      "permanent": true
+    },
+    {
+      "source": "/service/trademark-agency",
+      "destination": "/business/intellectual-property",
+      "permanent": true
+    },
+    {
+      "source": "/service/supply-chain",
+      "destination": "/business/supply-chain",
+      "permanent": true
+    },
+    {
+      "source": "/company/about",
+      "destination": "/company",
+      "permanent": true
+    },
+    {
+      "source": "/company/leadership",
+      "destination": "/company/team",
+      "permanent": true
+    },
+    {
+      "source": "/company/contact",
+      "destination": "/contact",
+      "permanent": true
+    },
+    {
+      "source": "/company/careers",
+      "destination": "/careers",
+      "permanent": true
+    },
+    {
+      "source": "/blog",
+      "destination": "/research",
+      "permanent": true
+    },
+    {
+      "source": "/technology",
+      "destination": "/news",
+      "permanent": true
+    },
+    {
+      "source": "/stories",
+      "destination": "/news",
+      "permanent": true
+    },
+    {
+      "source": "/latest-news",
+      "destination": "/news",
+      "permanent": true
+    },
+    {
+      "source": "/exam",
+      "destination": "/news",
+      "permanent": true
+    },
+    {
+      "source": "/technology/2025-07-01-01",
+      "destination": "/news/technology-2025-07-01-01",
+      "permanent": true
+    },
+    {
+      "source": "/stories/2025-07-01-01",
+      "destination": "/news/stories-2025-07-01-01",
+      "permanent": true
+    },
+    {
+      "source": "/latest-news/2026-01-01-01",
+      "destination": "/news/2026-01-01-01",
+      "permanent": true
+    },
+    {
+      "source": "/latest-news/2026-01-14-01",
+      "destination": "/news/2026-01-14-01",
+      "permanent": true
+    },
+    {
+      "source": "/latest-news/2026-06-09-01",
+      "destination": "/news/2026-06-09-01",
+      "permanent": true
+    },
+    {
+      "source": "/latest-news/2025-07-16-01",
+      "destination": "/news/2025-07-16-01",
+      "permanent": true
+    },
+    {
+      "source": "/latest-news/2025-07-17-01",
+      "destination": "/news/2025-07-17-01",
+      "permanent": true
+    },
+    {
+      "source": "/latest-news/2025-08-21-01",
+      "destination": "/news/2025-08-21-01",
+      "permanent": true
+    },
+    {
+      "source": "/latest-news/2024-12-31-01",
+      "destination": "/news/2024-12-31-01",
+      "permanent": true
+    }
   ],
   "headers": [
     {
       "source": "/assets/(.*)",
-      "headers": [{ "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }]
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
     },
     {
       "source": "/brand/(.*)",
-      "headers": [{ "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }]
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
     },
     {
       "source": "/(sitemap|robots|rss)\\.xml",
-      "headers": [{ "key": "Cache-Control", "value": "public, max-age=43200, must-revalidate" }]
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=43200, must-revalidate"
+        }
+      ]
     },
     {
       "source": "/favicon.ico",
-      "headers": [{ "key": "Cache-Control", "value": "public, max-age=604800, must-revalidate" }]
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=604800, must-revalidate"
+        }
+      ]
     },
     {
       "source": "/(.*)\\.html",
       "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=1800, s-maxage=86400, stale-while-revalidate=604800" }
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=1800, s-maxage=86400, stale-while-revalidate=604800"
+        }
       ]
     }
-  ]
+  ],
+  "regions": ["hkg1"],
+  "functions": {
+    "api/wechat/signature.ts": {
+      "maxDuration": 30
+    }
+  }
 }

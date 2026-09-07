@@ -44,6 +44,7 @@ import {
 export type RouteMeta = {
   title: string;
   description: string;
+  image?: string;
   robots?: 'index,follow' | 'noindex,nofollow';
 };
 
@@ -203,17 +204,17 @@ const configuredRoutes = (insights: Insight[], news: NewsItem[] = []): SiteRoute
   })),
   ...publishedResearch.map((item) => ({
     path: `/research/${item.slug}`,
-    meta: { title: titleFor(item.title), description: item.excerpt },
+    meta: { title: titleFor(item.title), description: item.excerpt, image: item.cover },
     render: () => <ActivityPage slug={item.slug} research />,
   })),
   ...publishedActivities.map((item) => ({
     path: `/activities/${item.slug}`,
-    meta: { title: titleFor(item.title), description: item.excerpt },
+    meta: { title: titleFor(item.title), description: item.excerpt, image: item.cover },
     render: () => <ActivityPage slug={item.slug} />,
   })),
   ...publishedCaseStudies.map((item) => ({
     path: `/cases/${item.slug}`,
-    meta: { title: titleFor(item.title), description: item.excerpt },
+    meta: { title: titleFor(item.title), description: item.excerpt, image: item.cover },
     render: () => <CaseStudyPage slug={item.slug} />,
   })),
   ...teamMembers.map((member) => ({
@@ -254,14 +255,14 @@ const configuredRoutes = (insights: Insight[], news: NewsItem[] = []): SiteRoute
     .filter((insight) => insight.status === 'published')
     .map((insight) => ({
       path: `/insights/${insight.slug}`,
-      meta: { title: titleFor(insight.title), description: insight.excerpt },
+      meta: { title: titleFor(insight.title), description: insight.excerpt, image: insight.cover },
       render: () => <InsightPage slug={insight.slug} />,
     })),
   ...news
     .filter((item) => item.status === 'published')
     .map((item) => ({
       path: `/news/${item.slug}`,
-      meta: { title: titleFor(item.title), description: item.excerpt },
+      meta: { title: titleFor(item.title), description: item.excerpt, image: item.cover },
       render: () => <NewsItemPage slug={item.slug} />,
     })),
 ];
