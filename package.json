@@ -20,7 +20,8 @@
     "prebuild": "npm run design:sync",
     "predev": "npm run design:sync",
     "i18n:check": "tsx scripts/check-english.ts",
-    "wechat:serve": "tsx scripts/wechat-share-server.ts"
+    "wechat:serve": "tsx scripts/wechat-share-server.ts",
+    "images:optimize": "node scripts/optimize-images.mjs"
   },
   "dependencies": {
     "@ant-design/icons": "^6.0.0",

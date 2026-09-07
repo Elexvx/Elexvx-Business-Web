@@ -28,7 +28,7 @@ export const LanguageProvider = ({
   locale,
   path,
   children,
-  autoRedirect = true,
+  autoRedirect = false,
 }: {
   locale: Locale;
   path: string;

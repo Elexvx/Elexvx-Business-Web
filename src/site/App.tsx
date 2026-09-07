@@ -1,5 +1,3 @@
-'use client';
-
 import type { Insight, NewsItem } from '../content/types';
 import { ContentProvider } from './providers/content-context';
 import { LanguageProvider, type Locale } from './providers/i18n';
