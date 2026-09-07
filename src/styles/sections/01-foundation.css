@@ -3,7 +3,7 @@
   src: url('/fonts/source-han-sans/site-bb0ffa18e8.woff2') format('woff2');
   font-style: normal;
   font-weight: 250 900;
-  font-display: optional;
+  font-display: swap;
 }
 
 :root {
