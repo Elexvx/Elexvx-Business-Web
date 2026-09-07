@@ -1,5 +1,6 @@
 'use client';
 
+import { ArticleShare } from './article-share';
 import { SiteImage } from './site-image';
 import { ArticleGallery } from './article-gallery';
 import { useEffect, useRef, useState, type ReactNode } from 'react';
@@ -21,7 +22,7 @@ export const ArticleBody = ({ source, children }: { source: string; children?: R
   const [active, setActive] = useState('article-content');
   const { locale } = useI18n();
   useEffect(() => {
-    const nodes = Array.from(ref.current?.querySelectorAll('h1,h2,h3') || []);
+    const nodes = Array.from(ref.current?.querySelectorAll('h1,h2,h3') || []).filter((node) => !node.closest('dialog'));
     const entries = nodes.map((node, i) => {
       node.id = `article-section-${i + 1}`;
       return { id: node.id, text: node.textContent || '' };
@@ -87,24 +88,27 @@ export const ArticleMetadata = ({
         : (keywordsEn ?? []);
 
   return (
-    <section className="paper-metadata" aria-label={locale === 'en' ? 'Author and keywords' : '作者与关键词'}>
-      <dl>
-        <div>
-          <dt>{locale === 'en' ? 'Author' : '作者'}</dt>
-          <dd>{t(author) || (locale === 'en' ? 'To be confirmed' : '待确认')}</dd>
-        </div>
-        <div>
-          <dt>{locale === 'en' ? 'Keywords' : '关键词'}</dt>
-          <dd>
-            {localizedKeywords.length
-              ? localizedKeywords.join(locale === 'en' ? '; ' : '；')
-              : locale === 'en'
-                ? 'To be confirmed'
-                : '待确认'}
-          </dd>
-        </div>
-      </dl>
-    </section>
+    <>
+      <section className="paper-metadata" aria-label={locale === 'en' ? 'Author and keywords' : '作者与关键词'}>
+        <dl>
+          <div>
+            <dt>{locale === 'en' ? 'Author' : '作者'}</dt>
+            <dd>{t(author) || (locale === 'en' ? 'To be confirmed' : '待确认')}</dd>
+          </div>
+          <div>
+            <dt>{locale === 'en' ? 'Keywords' : '关键词'}</dt>
+            <dd>
+              {localizedKeywords.length
+                ? localizedKeywords.join(locale === 'en' ? '; ' : '；')
+                : locale === 'en'
+                  ? 'To be confirmed'
+                  : '待确认'}
+            </dd>
+          </div>
+        </dl>
+      </section>
+      <ArticleShare />
+    </>
   );
 };
 

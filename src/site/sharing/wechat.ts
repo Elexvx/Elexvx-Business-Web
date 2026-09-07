@@ -3,7 +3,7 @@ type ShareData = { title: string; description: string; url: string; image: strin
 type Wx = {
   config: (config: Record<string, unknown>) => void;
   ready: (callback: () => void) => void;
-  error: (callback: () => void) => void;
+  error: (callback: (error: { errMsg?: string }) => void) => void;
   updateAppMessageShareData: (data: Record<string, unknown>) => void;
   updateTimelineShareData: (data: Record<string, unknown>) => void;
 };
@@ -56,9 +56,9 @@ export async function configureWechat(data: ShareData): Promise<void> {
   if (!wx) throw new Error('SDK unavailable');
   await new Promise<void>((resolve, reject) => {
     const timeout = window.setTimeout(() => reject(new Error('WeChat configuration timeout')), 10000);
-    wx.error(() => {
+    wx.error((error) => {
       clearTimeout(timeout);
-      reject(new Error('WeChat configuration failed'));
+      reject(new Error(error.errMsg || 'WeChat configuration failed'));
     });
     wx.ready(() => {
       const payload = { title: data.title, desc: data.description, link: data.url, imgUrl: data.image };
