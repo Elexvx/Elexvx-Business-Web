@@ -43,7 +43,7 @@ export async function createShareCard(data: ShareData, en: boolean): Promise<str
   ctx.fillRect(0, 0, 900, 114);
   ctx.font = 'bold 38px Arial';
   ctx.fillStyle = '#fff';
-  const brandLogo = await loadImage('/brand/elexvx-logo-white-79454e6823.svg');
+  const brandLogo = await loadImage('/brand/elexvx-logo-white-600.webp');
   ctx.drawImage(brandLogo, 48, 35, 200, 44);
   ctx.font = '18px Arial';
   ctx.fillStyle = '#bbb';

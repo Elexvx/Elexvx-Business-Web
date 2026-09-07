@@ -95,7 +95,7 @@ export const metadata: Metadata = {
   },
   description: siteIdentity.description,
   icons: {
-    icon: '/brand/favicon.svg?v=84d6879',
+    icon: '/brand/favicon-64.png',
   },
   robots: {
     index: true,
