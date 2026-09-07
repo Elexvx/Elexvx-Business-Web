@@ -43,7 +43,8 @@ export async function createShareCard(data: ShareData, en: boolean): Promise<str
   ctx.fillRect(0, 0, 900, 114);
   ctx.font = 'bold 38px Arial';
   ctx.fillStyle = '#fff';
-  ctx.fillText('Elexvx', 48, 73);
+  const brandLogo = await loadImage('/brand/elexvx-logo-white.svg');
+  ctx.drawImage(brandLogo, 48, 35, 200, 44);
   ctx.font = '18px Arial';
   ctx.fillStyle = '#bbb';
   ctx.fillText('RESEARCH & ENGINEERING', 530, 69);
@@ -73,7 +74,7 @@ export async function createShareCard(data: ShareData, en: boolean): Promise<str
     ctx.fillRect(48, 150, 804, 405);
     ctx.fillStyle = '#fff';
     ctx.font = 'bold 72px Arial';
-    ctx.fillText('Elexvx', 95, 375);
+    ctx.drawImage(brandLogo, 95, 295, 420, 92);
   }
   const lines = (text: string, y: number, size: number, maxLines: number, color: string) => {
     ctx.font = `${size >= 40 ? '600 ' : ''}${size}px -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif`;
