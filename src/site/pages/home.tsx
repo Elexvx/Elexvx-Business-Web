@@ -2,6 +2,7 @@
 import { Translated } from '../providers/i18n';
 
 import { SiteImage } from '../components/site-image';
+import homeHeroInline from '../../data/home-hero-inline.json';
 
 import { ActivitySection } from './activities';
 import { CaseStudyCard } from './case-studies';
@@ -33,7 +34,13 @@ export const HomeWelcome = () => {
       <div className="home-welcome-inner">
         <div className={`home-hero-banner${image ? ' has-image' : ''}`}>
           {image && (
-            <SiteImage className="home-hero-background" src={image} alt="" loading="eager" fetchPriority="high" />
+            <SiteImage
+              className="home-hero-background"
+              src={image === '/visuals/research-gradient.jpg' ? homeHeroInline : image}
+              alt=""
+              loading="eager"
+              fetchPriority="high"
+            />
           )}
           <div className="home-hero-content">
             <h1>
