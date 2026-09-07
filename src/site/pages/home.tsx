@@ -1,9 +1,12 @@
 'use client';
+import { Translated } from '../providers/i18n';
 
 import { SiteImage } from '../components/site-image';
 
 import { ActivitySection } from './activities';
+import { CaseStudyCard } from './case-studies';
 import { publishedResearch } from '../../data/research-articles';
+import { publishedCaseStudies } from '../../data/case-studies';
 import { researchDirections } from '../../data/site';
 import { homeContent } from '../../data/page-content';
 import { usePublishedNews } from '../providers/content-context';
@@ -29,11 +32,23 @@ export const HomeWelcome = () => {
     <section className="home-welcome">
       <div className="home-welcome-inner">
         <div className={`home-hero-banner${image ? ' has-image' : ''}`}>
-          {image && <SiteImage className="home-hero-background" src={image} alt="" loading="eager" fetchPriority="high" />}
+          {image && (
+            <SiteImage className="home-hero-background" src={image} alt="" loading="eager" fetchPriority="high" />
+          )}
           <div className="home-hero-content">
-            <h1><T text={title} /></h1>
-            {description && <p className="home-welcome-description"><T text={description} /></p>}
-            {important?.action.href && important.action.label && <TextLink href={important.action.href} showArrow={false}>{important.action.label}</TextLink>}
+            <h1>
+              <T text={title} />
+            </h1>
+            {description && (
+              <p className="home-welcome-description">
+                <T text={description} />
+              </p>
+            )}
+            {important?.action.href && important.action.label && (
+              <TextLink href={important.action.href} showArrow={false}>
+                <Translated>{important.action.label}</Translated>
+              </TextLink>
+            )}
           </div>
         </div>
         <HomeLatestActivity />
@@ -53,12 +68,16 @@ export const HomeDirectionsSection = () => {
       <div className="home-content-inner">
         <div className="home-section-topline">
           <div>
-            <Eyebrow>{content.eyebrow}</Eyebrow>
+            <Eyebrow>
+              <Translated>{content.eyebrow}</Translated>
+            </Eyebrow>
             <h2 id="research-directions-title">
               <Title text={content.title} />
             </h2>
           </div>
-          <TextLink href={content.action.href}>{content.action.label}</TextLink>
+          <TextLink href={content.action.href}>
+            <Translated>{content.action.label}</Translated>
+          </TextLink>
         </div>
         <div className="home-direction-grid">
           {researchDirections.map((direction, index) => (
@@ -77,12 +96,16 @@ export const HomePublicationsSection = ({ insights }: { insights: Insight[] }) =
       <div className="home-content-inner">
         <div className="home-section-topline">
           <div>
-            <Eyebrow>{content.eyebrow}</Eyebrow>
+            <Eyebrow>
+              <Translated>{content.eyebrow}</Translated>
+            </Eyebrow>
             <h2 id="research-publications-title">
               <Title text={content.title} />
             </h2>
           </div>
-          <TextLink href={content.action.href}>{content.action.label}</TextLink>
+          <TextLink href={content.action.href}>
+            <Translated>{content.action.label}</Translated>
+          </TextLink>
         </div>
         {!insights.length && <HomeEmptyContent />}
         <div className="home-media-grid home-insight-grid">
@@ -106,7 +129,9 @@ export const HomeNewsSection = ({ news }: { news: NewsItem[] }) => {
       <div className="home-content-inner">
         <div className="home-section-topline">
           <div>
-            <Eyebrow>{content.eyebrow}</Eyebrow>
+            <Eyebrow>
+              <Translated>{content.eyebrow}</Translated>
+            </Eyebrow>
             <h2 id="news-title">
               <Title text={content.title} />
             </h2>
@@ -128,21 +153,32 @@ export const HomeNewsSection = ({ news }: { news: NewsItem[] }) => {
 
 export const HomeCasesSection = () => {
   const content = homeContent.cases;
+  const caseStudy = publishedCaseStudies[0];
   return (
     <section className="home-content-section" id="cooperation-cases" aria-labelledby="cooperation-cases-title">
       <div className="home-content-inner">
         <div className="home-section-topline">
           <div>
-            <Eyebrow>{content.eyebrow}</Eyebrow>
+            <Eyebrow>
+              <Translated>{content.eyebrow}</Translated>
+            </Eyebrow>
             <h2 id="cooperation-cases-title">
               <Title text={content.title} />
             </h2>
           </div>
-          <span className="text-link" aria-disabled="true" title="暂无已发布的合作案例">
-            <T text="查看更多" />
-          </span>
+          {caseStudy && (
+            <TextLink href={content.action.href} showArrow={false}>
+              <Translated>{content.action.label}</Translated>
+            </TextLink>
+          )}
         </div>
-        <HomeEmptyContent />
+        {caseStudy ? (
+          <div className="home-media-grid home-case-grid">
+            <CaseStudyCard item={caseStudy} />
+          </div>
+        ) : (
+          <HomeEmptyContent />
+        )}
       </div>
     </section>
   );
@@ -155,17 +191,28 @@ export const HomeResearchSection = () => {
     <section className="home-content-section home-products-section" id="research" aria-labelledby="home-research-title">
       <div className="home-content-inner">
         <div className="home-section-topline">
-          <h2 id="home-research-title"><Title text="研究" /></h2>
-          <TextLink href="/research" showArrow={false}>查看更多</TextLink>
+          <h2 id="home-research-title">
+            <Title text="研究" />
+          </h2>
+          <TextLink href="/research" showArrow={false}>
+            查看更多
+          </TextLink>
         </div>
         <div className="home-media-grid home-products-grid">
           {papers.map((paper) => (
             <article className="home-product-feature" key={paper.slug}>
               <a className="home-product-media" href={href(`/research/${paper.slug}`)} aria-label={t(paper.title)}>
-                <SiteImage src={paper.cover || '/visuals/research-gradient.jpg'} alt={t(paper.title)} width={1600} height={1600} />
+                <SiteImage
+                  src={paper.cover || '/visuals/research-gradient.jpg'}
+                  alt={t(paper.title)}
+                  width={1600}
+                  height={1600}
+                />
               </a>
               <div className="home-media-card-body home-product-copy">
-                <h3><a href={href(`/research/${paper.slug}`)}>{t(paper.title)}</a></h3>
+                <h3>
+                  <a href={href(`/research/${paper.slug}`)}>{t(paper.title)}</a>
+                </h3>
                 <Eyebrow>{paper.category || '研究'}</Eyebrow>
               </div>
             </article>
@@ -184,7 +231,9 @@ export const HomeProductsSection = () => {
       <div className="home-content-inner">
         <div className="home-section-topline">
           <div>
-            <Eyebrow>{content.eyebrow}</Eyebrow>
+            <Eyebrow>
+              <Translated>{content.eyebrow}</Translated>
+            </Eyebrow>
             <h2 id="products-title">
               <Title text={content.title} />
             </h2>
@@ -212,8 +261,12 @@ export const HomeProductsSection = () => {
               </a>
 
               <div className="home-media-card-body home-product-copy">
-                <h3>{product.name}</h3>
-                <Eyebrow>{product.category}</Eyebrow>
+                <h3>
+                  <Translated>{product.name}</Translated>
+                </h3>
+                <Eyebrow>
+                  <Translated>{product.category}</Translated>
+                </Eyebrow>
                 <p>{t(product.description)}</p>
               </div>
             </article>

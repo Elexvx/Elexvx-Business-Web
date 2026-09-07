@@ -116,23 +116,7 @@ export const homeContent = {
   cases: {
     eyebrow: 'COOPERATION CASES',
     title: '合作案例',
-    status: 'VERIFIED ONLY',
-    cards: [
-      {
-        image: visuals.system,
-        eyebrow: 'CASE LIBRARY',
-        title: '案例位置保留，事实优先于包装。',
-        description: '合作方名称、项目边界、交付内容和可公开成果确认后，再形成完整案例；未授权信息不使用模糊话术替代。',
-        href: '/contact',
-      },
-      {
-        image: visuals.industrial,
-        eyebrow: 'HOW WE COOPERATE',
-        title: '从问题定义，到系统验证。',
-        description: '案例将呈现合作过程、关键约束、验证方法和结果边界，而不只展示一张项目图片。',
-        href: '/capabilities',
-      },
-    ],
+    action: { label: '查看案例', href: '/cases/kaicheng-international-journal-publishing-system' },
   },
   product: {
     eyebrow: 'PRODUCTS',
@@ -314,7 +298,7 @@ export const pageContent = {
     hero: {
       eyebrow: 'ELEXVX COMPANY',
       title: '关于我们',
-      description: '集科技研发、劳务服务与供应链管理于一体，面向企业提供一站式、全链路的数字化解决方案。',
+      description: '我们是一家跨行业研发公司，以 AI 与数据智能为核心，把真实问题做成可验证的技术系统。',
       primaryAction: { label: '查看并行业务', href: '/business' },
       secondaryAction: { label: '了解团队', href: '/company/team' },
       media: visuals.research,
@@ -329,8 +313,8 @@ export const pageContent = {
   business: {
     hero: {
       eyebrow: 'ELEXVX COMPANY / BUSINESS',
-      title: '并行业务继续存在，但不替代研究主线。',
-      description: '这些业务由公司主体承接，拥有独立入口和清晰边界，不再与研究方向混在首页第一层。',
+      title: '并行业务',
+      description: '公司主体承接多元业务，研究主线继续回答更复杂的问题。',
       primaryAction: { label: '联系公司', href: '/contact' },
       secondaryAction: { label: '关于公司', href: '/company' },
       media: visuals.system,
@@ -353,9 +337,9 @@ export const pageContent = {
   },
   team: {
     hero: {
-      eyebrow: 'TEAM',
-      title: '研究需要不同的专业视角共同完成。',
-      description: '团队页面首版保留组织结构入口；个人资料和职责以后续确认内容为准。',
+      eyebrow: 'ELEXVX TEAM',
+      title: '团队',
+      description: '研究、工程与现场经验，在同一个问题上相遇。',
       primaryAction: { label: '查看加入机会', href: '/careers' },
       secondaryAction: { label: '关于公司', href: '/company' },
       media: visuals.research,
@@ -369,9 +353,9 @@ export const pageContent = {
   },
   careers: {
     hero: {
-      eyebrow: 'CAREERS',
-      title: '如果你关心问题如何变成系统，欢迎加入。',
-      description: '我们正在建立以研究方向、工程实践和真实场景为中心的团队。',
+      eyebrow: 'ELEXVX CAREERS',
+      title: '加入宏翔商道',
+      description: '和认真做事的人一起，把真实问题变成可以使用的系统。',
       primaryAction: { label: '联系招聘团队', href: '/contact' },
       secondaryAction: { label: '了解团队', href: '/company/team' },
       media: visuals.safety,
@@ -390,9 +374,9 @@ export const pageContent = {
   },
   contact: {
     hero: {
-      eyebrow: 'OPEN COLLABORATION',
-      title: '带着一个真实问题来。',
-      description: '如果你正在面对一个复杂的技术问题，欢迎从问题背景、现有数据和希望验证的结果开始介绍。',
+      eyebrow: 'ELEXVX CONTACT',
+      title: '联系我们',
+      description: '从一个真实问题开始，让一次对话走向可验证的合作。',
       primaryAction: { label: '发送合作邮件', href: 'mailto:contact@elexvx.com' },
       secondaryAction: { label: '查看研究方向', href: '/research' },
       media: visuals.system,
@@ -412,9 +396,8 @@ export const pageContent = {
   brand: {
     hero: {
       eyebrow: 'ELEXVX BRAND',
-      title: '商标品牌',
-      description:
-        '欢迎访问 Elexvx 品牌中心。此处汇集了 logo 规范、品牌语言与市场传播资源，确保全球传播的一致性与专业度。',
+      title: '品牌',
+      description: '每一次表达，都应保持清楚、一致、可辨认。',
       primaryAction: { label: '回到研究首页', href: '/' },
       secondaryAction: { label: '关于公司', href: '/company' },
       media: visuals.research,

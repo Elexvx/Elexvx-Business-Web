@@ -7,7 +7,7 @@
   "scripts": {
     "dev": "next dev --hostname 127.0.0.1 --port 5173",
     "start": "next dev --hostname 127.0.0.1 --port 5173",
-    "build": "next build && tsx scripts/generate-site.tsx",
+    "build": "next build && tsx scripts/generate-site.tsx && npm run i18n:check",
     "preview": "tsx scripts/preview-static.ts",
     "typecheck": "tsc --noEmit",
     "lint": "eslint src/app src/site src/content src/data src/main.tsx src/ssg scripts tests vite.config.ts next.config.mjs next-env.d.ts",
@@ -18,7 +18,8 @@
     "check": "npm run typecheck && npm run lint && npm run format:check && npm run content:check && npm test && npm run build",
     "design:sync": "node scripts/sync-design.mjs",
     "prebuild": "npm run design:sync",
-    "predev": "npm run design:sync"
+    "predev": "npm run design:sync",
+    "i18n:check": "tsx scripts/check-english.ts"
   },
   "dependencies": {
     "@ant-design/icons": "^6.0.0",

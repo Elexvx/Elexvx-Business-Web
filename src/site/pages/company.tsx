@@ -1,4 +1,6 @@
 'use client';
+import { Translated } from '../providers/i18n';
+import { CompanyIntro } from '../components/company-intro';
 
 import { SiteImage } from '../components/site-image';
 
@@ -17,9 +19,13 @@ export const CompanyPage = () => (
     <ResearchTile tone="light" eyebrow="ABOUT ELEXVX" title="我们是谁？">
       <div className="company-introduction">
         {companyContent.introduction.map((paragraph) => (
-          <p key={paragraph}>{paragraph}</p>
+          <p key={paragraph}>
+            <Translated>{paragraph}</Translated>
+          </p>
         ))}
-        <p className="company-belief">{companyContent.belief}</p>
+        <p className="company-belief">
+          <Translated>{companyContent.belief}</Translated>
+        </p>
       </div>
     </ResearchTile>
     {companyContent.sections.map((section, index) => (
@@ -33,8 +39,12 @@ export const CompanyPage = () => (
         <div className="company-content-list">
           {section.items.map((item) => (
             <div className="company-content-row" key={item.title}>
-              <h3>{item.title}</h3>
-              <p>{item.description}</p>
+              <h3>
+                <Translated>{item.title}</Translated>
+              </h3>
+              <p>
+                <Translated>{item.description}</Translated>
+              </p>
             </div>
           ))}
         </div>
@@ -44,8 +54,12 @@ export const CompanyPage = () => (
       <dl className="company-stats">
         {companyContent.stats.map((stat) => (
           <div key={stat.title}>
-            <dt>{stat.title}</dt>
-            <dd>{stat.amount}</dd>
+            <dt>
+              <Translated>{stat.title}</Translated>
+            </dt>
+            <dd>
+              <Translated>{stat.amount}</Translated>
+            </dd>
           </div>
         ))}
       </dl>
@@ -90,10 +104,71 @@ export const BusinessLinePage = ({ slug }: { slug: string }) => {
 
 export const ContactPage = () => (
   <SiteShell activePath="/contact">
-    <PageHero content={pageContent.contact.hero} />
-    <ResearchTile {...pageContent.contact.message}>
-      <EvidenceList onDark items={[...pageContent.contact.prompts]} />
-    </ResearchTile>
+    <section className="team-page contact-page">
+      <CompanyIntro
+        eyebrow="ELEXVX CONTACT"
+        title="联系我们"
+        description="从一个真实问题开始，让一次对话走向可验证的合作。"
+      />
+      <div className="contact-card-grid">
+        <section className="contact-info-card">
+          <span className="eyebrow">01 / VISIT</span>
+          <h2>
+            <Translated>{'企业地址'}</Translated>
+          </h2>
+          <p>
+            <Translated>{'宏翔商道（南京）科技发展有限公司'}</Translated>
+          </p>
+          <p className="contact-detail">
+            <Translated>{'详细地址待补充'}</Translated>
+          </p>
+          <p className="contact-note">
+            <Translated>{'来访前请先通过邮件联系，方便安排交流。'}</Translated>
+          </p>
+        </section>
+        <section className="contact-info-card">
+          <span className="eyebrow">02 / CONTACT</span>
+          <h2>
+            <Translated>{'联系方式'}</Translated>
+          </h2>
+          <dl>
+            <div>
+              <dt>
+                <Translated>{'联系邮箱'}</Translated>
+              </dt>
+              <dd>
+                <a href="mailto:contact@elexvx.com">contact@elexvx.com ↗</a>
+              </dd>
+            </div>
+            <div>
+              <dt>
+                <Translated>{'联系电话'}</Translated>
+              </dt>
+              <dd>
+                <Translated>{'待补充'}</Translated>
+              </dd>
+            </div>
+          </dl>
+          <p className="contact-note">
+            <Translated>{'邮件中请留下姓名、联系方式与合作事项。'}</Translated>
+          </p>
+        </section>
+        <section className="contact-info-card contact-wechat-card">
+          <div>
+            <span className="eyebrow">03 / WECHAT</span>
+            <h2>
+              <Translated>{'微信公众号'}</Translated>
+            </h2>
+            <p>
+              <Translated>{'关注我们的研究、产品与企业动态。'}</Translated>
+            </p>
+          </div>
+          <div className="contact-wechat-pending">
+            <Translated>{'公众号名称与二维码待补充'}</Translated>
+          </div>
+        </section>
+      </div>
+    </section>
   </SiteShell>
 );
 
@@ -111,7 +186,9 @@ export const BrandPage = () => (
             <div className={file.includes('reverse') ? 'brand-specimen brand-specimen-reverse' : 'brand-specimen'}>
               <SiteImage src={`/brand/original/${file}`} alt={label} />
             </div>
-            <figcaption>{label}</figcaption>
+            <figcaption>
+              <Translated>{label}</Translated>
+            </figcaption>
           </figure>
         ))}
       </div>
@@ -121,10 +198,14 @@ export const BrandPage = () => (
         <div className="company-content-list">
           {section.items.map((item) => (
             <div className="company-content-row" key={item.title}>
-              <h3>{item.title}</h3>
+              <h3>
+                <Translated>{item.title}</Translated>
+              </h3>
               <div>
                 {item.paragraphs.map((text) => (
-                  <p key={text}>{text}</p>
+                  <p key={text}>
+                    <Translated>{text}</Translated>
+                  </p>
                 ))}
               </div>
             </div>
@@ -136,8 +217,12 @@ export const BrandPage = () => (
       <div className="company-content-list">
         {brandContent.rules.map((item) => (
           <div className="company-content-row" key={item.title}>
-            <h3>{item.title}</h3>
-            <p>{item.description}</p>
+            <h3>
+              <Translated>{item.title}</Translated>
+            </h3>
+            <p>
+              <Translated>{item.description}</Translated>
+            </p>
           </div>
         ))}
       </div>
@@ -145,7 +230,9 @@ export const BrandPage = () => (
     <ResearchTile tone="parchment" title="法律声明">
       <div className="company-introduction">
         {brandContent.legal.map((text) => (
-          <p key={text}>{text}</p>
+          <p key={text}>
+            <Translated>{text}</Translated>
+          </p>
         ))}
       </div>
     </ResearchTile>

@@ -180,3 +180,13 @@
     background: #000;
   }
 }
+
+/* Shared text-only page introduction. */
+.site-shell-openai .page-hero .page-hero-inner { display: block; padding-top: 64px; }
+.site-shell-openai .page-hero .page-hero-copy { margin-inline: auto; text-align: center; }
+.site-shell-openai .page-hero .page-hero-copy h1,
+.site-shell-openai .page-hero .page-hero-copy > p { margin-inline: auto; }
+.site-shell-openai .page-hero .page-hero-actions { justify-content: center; flex-wrap: wrap; }
+@media (max-width: 720px) {
+  .site-shell-openai .page-hero .page-hero-inner { padding-top: 40px; }
+}

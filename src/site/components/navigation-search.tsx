@@ -1,9 +1,12 @@
 'use client';
 
+import { publishedResearch } from '../../data/research-articles';
+import { parseMarkdown } from '../../content/markdown';
 import { publishedActivities } from '../../data/activities';
+import { publishedCaseStudies } from '../../data/case-studies';
 import { useState } from 'react';
 import { SearchOutlined } from '@ant-design/icons';
-import { navigationGroups } from '../../data/research-navigation';
+import { navigationGroups, withNewsCategories } from '../../data/research-navigation';
 import { projects, researchDirections, scenarios } from '../../data/site';
 import { useAvailableLink, usePublishedInsights, usePublishedNews } from '../providers/content-context';
 import { useI18n } from '../providers/i18n';
@@ -15,23 +18,51 @@ export const NavigationSearch = ({ onNavigate }: { onNavigate: () => void }) => 
   const insights = usePublishedInsights();
   const news = usePublishedNews();
   const en = locale === 'en';
+  const localizedBody = (source: string): string => {
+    const parts: string[] = [];
+    const visit = (node: unknown): void => {
+      if (Array.isArray(node)) {
+        node.forEach(visit);
+        return;
+      }
+      if (!node || typeof node !== 'object') return;
+      const record = node as Record<string, unknown>;
+      if (record.type === 'text' && typeof record.value === 'string') {
+        parts.push(...record.value.split('\n').map(t));
+      } else Object.values(record).forEach(visit);
+    };
+    visit(parseMarkdown(source));
+    return parts.join(' ');
+  };
   const entries = [
+    ...publishedResearch.map((item) => ({
+      title: item.title,
+      path: `/research/${item.slug}`,
+      text: `${t(item.excerpt)} ${localizedBody(item.body)}`,
+      kind: en ? 'Research' : '研究',
+    })),
     ...publishedActivities.map((item) => ({
       title: item.title,
       path: `/activities/${item.slug}`,
-      text: `${item.excerpt} ${item.body}`,
+      text: `${t(item.excerpt)} ${localizedBody(item.body)}`,
       kind: en ? 'Activity' : '活动',
+    })),
+    ...publishedCaseStudies.map((item) => ({
+      title: en ? item.titleEn : item.title,
+      path: `/cases/${item.slug}`,
+      text: `${en ? item.excerptEn : item.excerpt} ${en ? item.bodyEn : localizedBody(item.body)}`,
+      kind: en ? 'Case study' : '合作案例',
     })),
     ...insights.map((item) => ({
       title: item.title,
       path: `/insights/${item.slug}`,
-      text: `${item.excerpt} ${item.body}`,
+      text: `${t(item.excerpt)} ${localizedBody(item.body)}`,
       kind: en ? 'Article' : '文章',
     })),
     ...news.map((item) => ({
       title: item.title,
       path: `/news/${item.slug}`,
-      text: `${item.excerpt} ${item.body} ${item.tags.join(' ')}`,
+      text: `${t(item.excerpt)} ${localizedBody(item.body)} ${item.tags.map(t).join(' ')}`,
       kind: en ? 'News' : '动态',
     })),
     ...researchDirections.map((item) => ({
@@ -52,7 +83,10 @@ export const NavigationSearch = ({ onNavigate }: { onNavigate: () => void }) => 
       text: JSON.stringify(item),
       kind: en ? 'Scenario' : '场景',
     })),
-    ...navigationGroups.flatMap((group) =>
+    ...withNewsCategories(
+      navigationGroups,
+      news.map((item) => item.category)
+    ).flatMap((group) =>
       group.columns.flatMap((column) =>
         column.links.map((link) => ({
           title: link.label,

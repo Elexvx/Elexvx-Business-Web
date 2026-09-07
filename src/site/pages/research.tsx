@@ -1,4 +1,5 @@
 'use client';
+import { Translated } from '../providers/i18n';
 
 import { SiteImage } from '../components/site-image';
 import { publishedResearch } from '../../data/research-articles';
@@ -13,7 +14,7 @@ import type { Insight } from '../../content/types';
 import { classNames, Eyebrow, ResearchTile, SiteShell } from '../components/index';
 
 import { LocalizedText as T, LocalizedTitle as Title, useI18n } from '../providers/i18n';
-import { ProjectCard, PageHero, InsightList, EmptyState, NotFoundPage } from './shared';
+import { formatNewsDate, ProjectCard, PageHero, InsightList, EmptyState, NotFoundPage } from './shared';
 
 export type ResearchIndexFilter = string;
 
@@ -27,9 +28,7 @@ export const ResearchPage = () => {
   const categoryFor = (insight: Insight & { categorySlug?: string; category?: string }) => {
     if (insight.categorySlug) return { id: insight.categorySlug, label: insight.category || insight.categorySlug };
     const direction = insight.directionSlug ? getDirection(insight.directionSlug) : undefined;
-    return direction
-      ? { id: direction.slug, label: t(direction.title) }
-      : { id: 'uncategorized', label: isChinese ? '技术文章' : 'Insights' };
+    return direction ? { id: direction.slug, label: direction.title } : { id: 'uncategorized', label: '技术文章' };
   };
   const categories = Array.from(
     new Map(
@@ -40,12 +39,14 @@ export const ResearchPage = () => {
     ).values()
   );
   const filters = [{ id: 'all', label: isChinese ? '全部' : 'All' }, ...categories];
-  const activeFilter = filter;
+  const activeFilter = filters.some((item) => item.id === filter) ? filter : 'all';
   const orderedInsights = insights
     .filter((insight) => activeFilter === 'all' || categoryFor(insight).id === activeFilter)
     .sort((left, right) => {
       const comparison = right.publishedAt.localeCompare(left.publishedAt);
-      return newestFirst ? comparison : -comparison;
+      if (comparison !== 0) return newestFirst ? comparison : -comparison;
+      const titleComparison = t(left.title).localeCompare(t(right.title), isChinese ? 'zh-CN' : 'en');
+      return newestFirst ? titleComparison : -titleComparison;
     });
 
   return (
@@ -69,7 +70,7 @@ export const ResearchPage = () => {
                     value={item.id}
                     type="button"
                   >
-                    {item.label}
+                    <Translated>{item.label}</Translated>
                   </Tabs.Trigger>
                 ))}
               </Tabs.List>
@@ -82,14 +83,13 @@ export const ResearchPage = () => {
                   <Popover.Portal>
                     <Popover.Content className="ui-filter-content" sideOffset={12} align="end" collisionPadding={16}>
                       {filters.map((item) => (
-                        <Popover.Close asChild>
+                        <Popover.Close asChild key={`menu-${item.id}`}>
                           <button
                             className={classNames(activeFilter === item.id && 'research-index-filter-active')}
-                            key={`menu-${item.id}`}
                             onClick={() => setFilter(item.id)}
                             type="button"
                           >
-                            {item.label}
+                            <Translated>{item.label}</Translated>
                           </button>
                         </Popover.Close>
                       ))}
@@ -97,12 +97,17 @@ export const ResearchPage = () => {
                   </Popover.Portal>
                 </Popover.Root>
                 <button
-                  aria-label={isChinese ? '切换研究文章排序' : 'Toggle research article order'}
+                  aria-label={
+                    isChinese
+                      ? `按${newestFirst ? '最新' : '最早'}发布排序`
+                      : `Sort ${newestFirst ? 'newest' : 'oldest'} first`
+                  }
+                  aria-pressed={newestFirst}
                   className="research-index-sort"
                   onClick={() => setNewestFirst((current) => !current)}
                   type="button"
                 >
-                  <span>{isChinese ? '排序' : 'Sort'}</span>
+                  <span>{newestFirst ? (isChinese ? '最新发布' : 'Newest') : isChinese ? '最早发布' : 'Oldest'}</span>
                   <DownOutlined
                     className={classNames(!newestFirst && 'research-index-sort-reversed')}
                     aria-hidden="true"
@@ -136,27 +141,52 @@ export const ResearchPage = () => {
 
           <Tabs.Content value={activeFilter} className="research-index-list">
             {orderedInsights.map((insight) => {
+              const category = categoryFor(insight);
+              const formattedDate = formatNewsDate(insight.publishedAt, locale);
+              const copy = (
+                <div className="research-index-copy">
+                  <h2>
+                    <Title text={insight.title} />
+                  </h2>
+                  <p>
+                    <T text={insight.excerpt} />
+                  </p>
+                  {showMedia && (
+                    <div className="research-index-card-meta">
+                      <strong>
+                        <Translated>{category.label}</Translated>
+                      </strong>
+                      <time dateTime={insight.publishedAt}>{formattedDate}</time>
+                    </div>
+                  )}
+                </div>
+              );
               return (
                 <a
                   className={classNames('research-index-row', showMedia && 'research-index-row-media')}
                   href={href(`/research/${insight.slug}`)}
                   key={`insight-${insight.slug}`}
                 >
-                  <div className="research-index-meta">
-                    <strong>{categoryFor(insight).label}</strong>
-                    <time dateTime={insight.publishedAt}>{insight.publishedAt}</time>
-                  </div>
-                  <div className="research-index-entry">
-                    {showMedia && insight.cover && <SiteImage src={insight.cover} alt={t(insight.title)} />}
-                    <div className="research-index-copy">
-                      <h2>
-                        <Title text={insight.title} />
-                      </h2>
-                      <p>
-                        <T text={insight.excerpt} />
-                      </p>
-                    </div>
-                  </div>
+                  {showMedia ? (
+                    <>
+                      <SiteImage
+                        className="research-index-media"
+                        src={insight.cover || '/visuals/research-gradient.jpg'}
+                        alt={t(insight.title)}
+                      />
+                      {copy}
+                    </>
+                  ) : (
+                    <>
+                      <div className="research-index-meta">
+                        <strong>
+                          <Translated>{category.label}</Translated>
+                        </strong>
+                        <time dateTime={insight.publishedAt}>{formattedDate}</time>
+                      </div>
+                      <div className="research-index-entry">{copy}</div>
+                    </>
+                  )}
                 </a>
               );
             })}
@@ -202,7 +232,9 @@ export const ResearchDirectionPage = ({ slug }: { slug: string }) => {
         <div className="method-grid">
           {direction.methods.map((method, index) => (
             <div className="method-item" key={method}>
-              <span>{`0${index + 1}`}</span>
+              <span>
+                <Translated>{`0${index + 1}`}</Translated>
+              </span>
               <strong>
                 <T text={method} />
               </strong>
@@ -212,7 +244,9 @@ export const ResearchDirectionPage = ({ slug }: { slug: string }) => {
       </ResearchTile>
       <section className="research-tile research-tile-parchment">
         <div className="section-heading">
-          <Eyebrow>{pageContent.direction.outputs.eyebrow}</Eyebrow>
+          <Eyebrow>
+            <Translated>{pageContent.direction.outputs.eyebrow}</Translated>
+          </Eyebrow>
           <h2>
             <Title text={pageContent.direction.outputs.title} />
           </h2>
@@ -229,7 +263,9 @@ export const ResearchDirectionPage = ({ slug }: { slug: string }) => {
       </section>
       <section className="research-tile research-tile-light">
         <div className="section-heading">
-          <Eyebrow>{pageContent.direction.insights.eyebrow}</Eyebrow>
+          <Eyebrow>
+            <Translated>{pageContent.direction.insights.eyebrow}</Translated>
+          </Eyebrow>
           <h2>
             <Title text={pageContent.direction.insights.title} />
           </h2>

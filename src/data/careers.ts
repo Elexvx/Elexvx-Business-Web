@@ -1,6 +1,6 @@
 // Recruitment copy restored from the original careers page.
 export const careersContent = {
-  intro: '加入宏翔商道，与我们一起用AI技术改变世界。我们提供有竞争力的薪酬、完善的福利和广阔的发展空间。',
+  intro: '和认真做事的人一起，把真实问题变成可以使用的系统。',
   culture: [
     {
       title: '技术驱动',

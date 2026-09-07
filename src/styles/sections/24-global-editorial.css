@@ -1,0 +1,456 @@
+/*
+ * Global editorial system.
+ *
+ * Keep the reference layout's hierarchy in one final layer so shared page
+ * primitives do not drift back into route-specific card and spacing rules.
+ */
+:root {
+  --page-title-size: clamp(40px, 5vw, 64px);
+  --section-title-size: clamp(28px, 2.7vw, 36px);
+  --card-title-size: 20px;
+  --body-text-size: 17px;
+  --intro-text-size: 20px;
+  --eyebrow-size: 14px;
+  --page-entry-space: 80px;
+  --section-space: clamp(72px, 8vw, 120px);
+}
+
+.site-shell-openai {
+  background: var(--color-canvas);
+}
+
+/* Let the header occupy its own row, like the reference layout. */
+.site-shell-openai .global-nav {
+  position: sticky;
+}
+
+.site-shell-openai main {
+  padding-top: 0;
+  font-size: var(--body-text-size);
+}
+
+.site-shell-openai .global-nav-inner {
+  height: 64px;
+}
+
+.site-shell-openai .desktop-nav {
+  gap: 14px;
+}
+
+.site-shell-openai .nav-link,
+.site-shell-openai .nav-utility-link {
+  font-size: 14px;
+}
+
+.site-shell-openai :is(.eyebrow, .technical-figure-eyebrow) {
+  font-size: var(--eyebrow-size);
+  line-height: 1.35;
+}
+
+/* One centered page entry: eyebrow, title, description, optional actions. */
+.site-shell-openai .page-hero {
+  padding: 88px var(--page-gutter) 112px;
+}
+
+.site-shell-openai .page-hero .page-hero-inner {
+  width: min(100%, 1120px);
+  max-width: 1120px;
+  padding: 0;
+  margin-inline: auto;
+}
+
+.site-shell-openai .company-intro {
+  box-sizing: border-box;
+  width: min(100%, 1120px);
+  max-width: 1120px;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  text-align: center;
+  margin-inline: auto;
+}
+
+.site-shell-openai main .company-intro > .eyebrow {
+  width: 100%;
+  max-width: none;
+  margin: 0 auto 24px;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 20px;
+  letter-spacing: 0;
+  text-align: center;
+}
+
+.site-shell-openai .company-intro h1 {
+  max-width: 900px;
+  margin: 0 auto;
+  font-size: clamp(40px, 5.5vw, 64px);
+  font-weight: 400;
+  line-height: 1.2;
+  letter-spacing: -0.035em;
+  text-wrap: balance;
+}
+
+.site-shell-openai .company-intro .company-intro-description {
+  width: min(100%, 24em);
+  max-width: 480px;
+  margin: 24px auto 0;
+  color: var(--color-ink);
+  font-size: clamp(18px, 1.6vw, 20px);
+  font-weight: 400;
+  line-height: 1.6;
+  text-wrap: balance;
+}
+
+.site-shell-openai .company-intro-actions {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 32px;
+}
+
+.site-shell-openai .company-intro .page-hero-actions {
+  margin: 0;
+  justify-content: center;
+}
+
+.site-shell-openai :is(.team-page, .design-guide, .careers-page):has(> .company-intro) {
+  padding-top: 88px;
+}
+
+.site-shell-openai :is(.team-page, .design-guide, .careers-page) > .company-intro {
+  margin-bottom: 112px;
+}
+
+.site-shell-openai .page-hero + .research-tile {
+  padding-top: 0;
+}
+
+.site-shell-openai .page-hero + .research-tile .tile-inner {
+  padding-top: 0;
+}
+
+/* Product catalog follows the shared list-page rhythm instead of homepage-only rules. */
+.site-shell-openai .product-index {
+  width: 100%;
+  max-width: var(--page-max-width);
+  min-height: calc(100vh - 64px);
+  margin-inline: auto;
+  padding: var(--page-entry-space) var(--page-gutter) var(--section-space);
+  color: var(--color-ink);
+  background: var(--color-canvas);
+}
+
+.site-shell-openai .product-index > h1 {
+  margin: 0;
+}
+
+.site-shell-openai .product-index > .research-index-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  margin: 32px 0;
+}
+
+.site-shell-openai .product-index .home-products-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
+  margin-top: 0;
+}
+
+.site-shell-openai .product-index .home-media-card {
+  min-height: 0;
+  overflow: visible;
+  color: var(--color-ink);
+  background: transparent;
+  border-radius: 0;
+  transform: none;
+  transition: none;
+}
+
+.site-shell-openai .product-index .home-media-card:hover,
+.site-shell-openai .product-index .home-media-card:focus-visible {
+  color: var(--color-ink);
+  background: transparent;
+  transform: none;
+}
+
+.site-shell-openai .product-index .home-media-card-media {
+  aspect-ratio: 1 / 1;
+  border-radius: 8px;
+}
+
+.site-shell-openai .product-index .home-media-card-body {
+  min-height: 0;
+  padding: 16px 0 0;
+}
+
+.site-shell-openai .product-index .home-media-card-body h3 {
+  color: var(--color-ink);
+  font-size: var(--card-title-size);
+  font-weight: 500;
+  line-height: 1.35;
+  letter-spacing: normal;
+}
+
+.site-shell-openai .product-index .home-media-card-body .eyebrow {
+  order: 2;
+  margin: 12px 0 0;
+  color: var(--color-ink-muted);
+  font-size: var(--eyebrow-size);
+  font-weight: 400;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+/* Keep the footer compact and keep all navigation groups on one desktop row. */
+.site-shell-openai .footer-inner {
+  padding-top: 64px;
+  padding-bottom: 24px;
+}
+
+.site-shell-openai .footer-columns {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 24px;
+}
+
+.site-shell-openai .footer-legal {
+  align-items: flex-start;
+  margin-top: 24px;
+  padding-top: 16px;
+}
+
+.site-shell-openai .footer-legal-meta {
+  row-gap: 4px;
+}
+
+.site-shell-openai .footer-language-option {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 10px 12px;
+}
+
+@media (max-width: 720px) {
+  .site-shell-openai .footer-inner {
+    padding-top: 48px;
+    padding-bottom: 20px;
+  }
+
+  .site-shell-openai .footer-columns {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 28px 16px;
+  }
+
+  .site-shell-openai .footer-legal {
+    margin-top: 32px;
+    padding-top: 16px;
+  }
+}
+
+@media (max-width: 720px) {
+  .site-shell-openai .product-index .home-products-grid {
+    grid-template-columns: 1fr;
+  }
+  .site-shell-openai .product-index .home-media-card-media {
+    border-radius: 6px;
+  }
+}
+
+/* Low-density sections share the same reading width and vertical rhythm. */
+.site-shell-openai:not(.site-shell-home) .research-tile {
+  padding: var(--section-space) var(--page-gutter);
+}
+
+.site-shell-openai:not(.site-shell-home) .research-tile .tile-inner {
+  width: min(100%, 1120px);
+  max-width: 1120px;
+  padding: 0;
+}
+
+.site-shell-openai:not(.site-shell-home) .tile-copy {
+  width: min(100%, 760px);
+  margin: 0 0 40px;
+  text-align: left;
+}
+
+.site-shell-openai:not(.site-shell-home) .tile-copy h2 {
+  font-size: var(--section-title-size);
+  font-weight: 500;
+  line-height: 1.25;
+  letter-spacing: -0.025em;
+  text-wrap: balance;
+}
+
+.site-shell-openai:not(.site-shell-home) .tile-description {
+  max-width: 720px;
+  margin-top: 16px;
+  font-size: var(--body-text-size);
+  line-height: 1.65;
+}
+
+.site-shell-openai .article-layout {
+  padding-top: var(--page-entry-space);
+  padding-bottom: var(--section-space);
+}
+
+.site-shell-openai .article-header h1,
+.site-shell-openai .research-index-header h1,
+.site-shell-openai .team-heading h1,
+.site-shell-openai .team-biography h1,
+.site-shell-openai .design-guide-header h1 {
+  font-size: var(--page-title-size);
+  line-height: 1.05;
+}
+
+.site-shell-openai :is(.research-index-header h1, .team-heading h1, .team-biography h1, .design-guide-header h1) {
+  text-wrap: balance;
+}
+
+/* Company pages use editorial rows, not a wall of nested cards. */
+.site-shell-openai.company-overview .research-tile {
+  padding-block: 0 var(--section-space);
+}
+
+.site-shell-openai.company-overview .page-hero + .research-tile {
+  padding-top: 0;
+}
+
+.site-shell-openai.company-overview .research-tile .tile-inner {
+  max-width: 1120px;
+}
+
+.site-shell-openai.company-overview .tile-copy {
+  margin-bottom: 32px;
+}
+
+.site-shell-openai.company-overview .company-introduction {
+  width: min(100%, 860px);
+  max-width: 860px;
+  margin: 0;
+  padding: 0;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+}
+
+.site-shell-openai.company-overview .company-introduction p {
+  max-width: 760px;
+  font-size: var(--body-text-size);
+  line-height: 1.75;
+}
+
+.site-shell-openai.company-overview .company-introduction .company-belief {
+  padding-top: 24px;
+  border-top: 1px solid var(--color-hairline);
+  font-size: 20px;
+  line-height: 1.55;
+}
+
+.site-shell-openai.company-overview .company-content-list {
+  gap: 48px 32px;
+}
+
+.site-shell-openai.company-overview .company-content-row {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 24px 0 0;
+  border: 0;
+  border-top: 1px solid var(--color-hairline);
+  border-radius: 0;
+  background: transparent;
+}
+
+.site-shell-openai.company-overview .company-content-row h3 {
+  font-size: var(--card-title-size);
+  font-weight: 500;
+  line-height: 1.35;
+}
+
+.site-shell-openai.company-overview .company-content-row p {
+  font-size: var(--body-text-size);
+  line-height: 1.7;
+}
+
+.site-shell-openai.company-overview .company-stats > div {
+  padding: 24px 0 0;
+  border: 0;
+  border-top: 1px solid var(--color-hairline);
+  border-radius: 0;
+  background: transparent;
+}
+
+.site-shell-openai.company-overview .company-stats dd {
+  font-size: clamp(36px, 4vw, 56px);
+  line-height: 1;
+}
+
+.site-shell-openai .contact-info-card {
+  padding: 24px 0 0;
+  border: 0;
+  border-top: 1px solid var(--color-hairline);
+  border-radius: 0;
+  background: transparent;
+}
+
+@media (max-width: 720px) {
+  :root {
+    --page-title-size: 40px;
+    --section-title-size: 28px;
+    --card-title-size: 18px;
+    --intro-text-size: 18px;
+    --eyebrow-size: 13px;
+    --page-entry-space: 48px;
+    --section-space: 72px;
+  }
+
+  .site-shell-openai .page-hero {
+    padding-top: 64px;
+    padding-bottom: 72px;
+  }
+
+  .site-shell-openai :is(.team-page, .design-guide, .careers-page):has(> .company-intro) {
+    padding-top: 64px;
+  }
+
+  .site-shell-openai :is(.team-page, .design-guide, .careers-page) > .company-intro {
+    margin-bottom: 72px;
+  }
+
+  .site-shell-openai .company-intro .company-intro-description {
+    margin-top: 20px;
+    line-height: 1.55;
+  }
+
+  .site-shell-openai .company-intro-actions {
+    margin-top: 24px;
+  }
+
+  .site-shell-openai:not(.site-shell-home) .research-tile {
+    padding-block: var(--section-space);
+  }
+
+  .site-shell-openai.company-overview .research-tile {
+    padding-block: 0 var(--section-space);
+  }
+
+  .site-shell-openai:not(.site-shell-home) .tile-copy {
+    margin-bottom: 28px;
+  }
+
+  .site-shell-openai.company-overview .company-introduction .company-belief {
+    font-size: 18px;
+  }
+
+  .site-shell-openai.company-overview .company-content-list {
+    gap: 32px 16px;
+  }
+
+  .site-shell-openai .contact-card-grid {
+    gap: 32px;
+  }
+}

@@ -45,6 +45,11 @@
   text-align: left;
 }
 
+/* The next homepage section owns the shared top rhythm; avoid doubling the gap here. */
+.site-shell-home .home-latest-activity {
+  padding-bottom: 0;
+}
+
 .home-activity-grid {
   display: grid;
   grid-template-columns: minmax(0, 2.1fr) minmax(260px, 0.7fr);
@@ -190,6 +195,10 @@
   .home-latest-activity {
     margin-top: 48px;
     padding-bottom: var(--home-section-space-mobile);
+  }
+
+  .site-shell-home .home-latest-activity {
+    padding-bottom: 0;
   }
 
   .home-activity-grid {

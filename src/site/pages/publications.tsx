@@ -1,4 +1,5 @@
 'use client';
+import { Translated } from '../providers/i18n';
 import { useCategoryFilter } from '../providers/category-filter';
 
 import { getDirection } from '../../data/site';
@@ -6,7 +7,7 @@ import { pageContent } from '../../data/page-content';
 import { useInsights, useNews, usePublishedInsights, usePublishedNews } from '../providers/content-context';
 
 import { Eyebrow, ResearchTile, SiteShell } from '../components/index';
-import { ArticleBody, ContinueReading } from '../components/article-reading';
+import { ArticleBody, ArticleMetadata, ContinueReading } from '../components/article-reading';
 import { LocalizedText as T, LocalizedTitle as Title, useI18n } from '../providers/i18n';
 import { formatNewsDate, NewsCard, PageHero, InsightList, NotFoundPage } from './shared';
 
@@ -17,7 +18,9 @@ export const InsightsPage = () => {
       <PageHero content={pageContent.insights.hero} />
       <section className="research-tile research-tile-light">
         <div className="section-heading">
-          <Eyebrow>{pageContent.insights.list.eyebrow}</Eyebrow>
+          <Eyebrow>
+            <Translated>{pageContent.insights.list.eyebrow}</Translated>
+          </Eyebrow>
           <h2>
             <Title text={pageContent.insights.list.title} />
           </h2>
@@ -38,11 +41,17 @@ export const NewsPage = () => {
     <SiteShell activePath="/news" className="site-shell-news">
       <section className="research-tile research-tile-light news-index-section" aria-labelledby="news-page-title">
         <div className="section-heading news-list-heading">
-          <h1 id="news-page-title">最近新闻</h1>
+          <h1 id="news-page-title">{t('最近新闻')}</h1>
         </div>
         <nav className="research-index-tabs news-category-tabs" aria-label={t('新闻分类')}>
           {['all', ...categories].map((value) => (
-            <button key={value} type="button" className={`research-index-tab ${category === value ? 'research-index-tab-active' : ''}`} aria-pressed={category === value} onClick={() => selectCategory(value)}>
+            <button
+              key={value}
+              type="button"
+              className={`research-index-tab ${category === value ? 'research-index-tab-active' : ''}`}
+              aria-pressed={category === value}
+              onClick={() => selectCategory(value)}
+            >
               {value === 'all' ? t('全部') : t(value)}
             </button>
           ))}
@@ -69,7 +78,9 @@ export const InsightPage = ({ slug }: { slug: string }) => {
       <article className="article-layout">
         <header className="article-header">
           <div className="article-kicker">
-            <span>{insight.publishedAt}</span>
+            <span>
+              <Translated>{insight.publishedAt}</Translated>
+            </span>
             <Eyebrow>{direction?.englishTitle ?? 'ELEXVX RESEARCH'}</Eyebrow>
           </div>
           <h1>
@@ -81,7 +92,9 @@ export const InsightPage = ({ slug }: { slug: string }) => {
             <span>{locale === 'en' ? `${insight.readingTime} min read` : `${insight.readingTime} 分钟阅读`}</span>
           </div>
         </header>
-        <ArticleBody source={insight.body} />
+        <ArticleBody source={insight.body}>
+          <ArticleMetadata author={insight.author} keywords={insight.keywords} keywordsEn={insight.keywordsEn} />
+        </ArticleBody>
         <div className="article-evidence">
           <Eyebrow>EVIDENCE</Eyebrow>
           {insight.evidence.map((item) => (
@@ -105,7 +118,9 @@ export const NewsItemPage = ({ slug }: { slug: string }) => {
         <header className="article-header">
           <div className="article-kicker">
             <span>{formatNewsDate(item.publishedAt, locale)}</span>
-            <Eyebrow>{item.category}</Eyebrow>
+            <Eyebrow>
+              <Translated>{item.category}</Translated>
+            </Eyebrow>
           </div>
           <h1>
             <Title text={item.title} />
@@ -116,7 +131,9 @@ export const NewsItemPage = ({ slug }: { slug: string }) => {
             <span>{locale === 'en' ? `${item.readingTime} min read` : `${item.readingTime} 分钟阅读`}</span>
           </div>
         </header>
-        <ArticleBody source={item.body} />
+        <ArticleBody source={item.body}>
+          <ArticleMetadata author={item.author} keywords={item.tags} keywordsEn={item.tags.map((tag) => t(tag))} />
+        </ArticleBody>
         <ContinueReading items={allNews} current={item} base="/news" />
       </article>
     </SiteShell>
@@ -128,7 +145,9 @@ export const ArchivePage = () => (
     <PageHero content={pageContent.archive.hero} />
     <ResearchTile {...pageContent.archive.legacy}>
       <div className="empty-state empty-state-dark">
-        <span>{pageContent.archive.status}</span>
+        <span>
+          <Translated>{pageContent.archive.status}</Translated>
+        </span>
         <strong>
           <T text={pageContent.archive.state} />
         </strong>

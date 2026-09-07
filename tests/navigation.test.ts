@@ -2,6 +2,9 @@ import { describe, expect, it } from 'vitest';
 import { createLinkAvailability } from '../src/data/navigation-availability';
 
 describe('shared navigation availability', () => {
+  it('includes published research articles in search availability', () => {
+    expect(createLinkAvailability(['/research/example'], ['example'])('/research/example')).toBe(true);
+  });
   it('hides parked directions even when their published articles remain', () => {
     const available = createLinkAvailability(['/research', '/insights/example'], ['ai-data']);
     expect(available('/research/ai-data')).toBe(false);

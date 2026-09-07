@@ -5,7 +5,7 @@
   --card-title-size: 20px;
   --page-entry-space: 64px;
 }
-.site-shell-openai.site-shell-openai.site-shell-openai main h1 {
+.site-shell-openai.site-shell-openai.site-shell-openai main h1:where(:not(.company-intro h1)) {
   font-size: var(--page-title-size);
   font-weight: 500;
   line-height: 1.15;
@@ -81,9 +81,6 @@
   width: 100%; max-width: none; margin: 0; padding: 0;
 }
 
-.site-shell-openai .product-index { padding: var(--page-entry-space) var(--page-gutter) 64px; }
-.site-shell-openai .product-index > h1 { margin: 0 0 32px; }
-.site-shell-openai .product-index > .research-index-tabs { margin-bottom: 32px; flex-wrap: wrap; }
 
 /* Avoid stacking section padding with the legacy tile's vertical padding. */
 .site-shell-openai.company-overview .research-tile { padding-block: 24px; }

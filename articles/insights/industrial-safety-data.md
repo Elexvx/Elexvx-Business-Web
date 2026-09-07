@@ -5,6 +5,8 @@ excerpt: '工业智能的第一步，不是增加一个仪表盘，而是让分�
 publishedAt: '2026-09-01'
 directionSlug: 'industrial-intelligence'
 author: '智能科技研发中心'
+keywords: ['工业智能', '工业物联网', '设备安全', '现场数据']
+keywordsEn: ['industrial intelligence', 'industrial IoT', 'equipment safety', 'field data']
 status: 'published'
 cover: '/visuals/industrial-intelligence-gradient.jpg'
 evidence: [{ 'label': '现有技术项目材料', 'kind': 'internal', 'verified': true }]

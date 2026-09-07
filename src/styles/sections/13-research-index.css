@@ -153,7 +153,7 @@
   grid-template-columns: 15rem minmax(0, 1fr);
   gap: clamp(2.5rem, 5vw, 4.25rem);
   align-items: start;
-  padding: clamp(2rem, 3.5vw, 3rem) 0;
+  padding: clamp(1.5rem, 2.5vw, 2.25rem) 0;
   border-bottom: 1px solid color-mix(in srgb, currentColor 17%, transparent);
   color: inherit;
   text-decoration: none;
@@ -214,6 +214,54 @@
   opacity: 0.76;
 }
 
+/* Media mode leads with the image, then keeps the editorial reading order on the right. */
+.research-index-row-media {
+  grid-template-columns: minmax(220px, 0.72fr) minmax(0, 1.6fr);
+  gap: clamp(1.5rem, 3vw, 3rem);
+  padding-block: clamp(1.5rem, 2.5vw, 2rem);
+}
+
+.research-index-row-media .research-index-media {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  border-radius: 0.5rem;
+  object-fit: cover;
+}
+
+.research-index-row-media .research-index-copy {
+  max-width: none;
+  padding-top: 0;
+}
+
+.research-index-row-media .research-index-copy h2 {
+  font-size: clamp(1.3rem, 2vw, 1.75rem);
+  line-height: 1.25;
+}
+
+.research-index-row-media .research-index-copy p {
+  max-width: none;
+  margin-top: 0.85rem;
+}
+
+.research-index-card-meta {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+  margin-top: 1.25rem;
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+.research-index-card-meta strong {
+  font-weight: 650;
+}
+
+.research-index-card-meta time {
+  opacity: 0.58;
+}
+
 .research-index-empty {
   margin: 0;
   padding: 3rem 0;
@@ -251,6 +299,16 @@
   .research-index-row {
     grid-template-columns: minmax(0, 1fr);
     gap: 1.5rem;
+  }
+
+  .research-index-row-media {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1rem;
+    padding-block: 1.5rem;
+  }
+
+  .research-index-row-media .research-index-media {
+    aspect-ratio: 16 / 9;
   }
 
   .research-index-meta {

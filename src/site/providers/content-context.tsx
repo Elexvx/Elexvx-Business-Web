@@ -2,6 +2,7 @@
 
 import { createContext, useContext, type ReactNode } from 'react';
 import { isDisabledPath } from '../../data/disabled-sections';
+import { publishedResearch } from '../../data/research-articles';
 import { createLinkAvailability } from '../../data/navigation-availability';
 import type { Insight, NewsItem } from '../../content/types';
 
@@ -34,7 +35,7 @@ export const useNews = () => useContext(NewsContext);
 export const usePublishedNews = () => useNews().filter((item) => item.status === 'published');
 
 export const useAvailableLink = () =>
-  createLinkAvailability(
-    useContext(RoutePathsContext),
-    usePublishedInsights().map((item) => item.directionSlug)
-  );
+  createLinkAvailability(useContext(RoutePathsContext), [
+    ...usePublishedInsights().map((item) => item.directionSlug),
+    ...publishedResearch.map((item) => item.slug),
+  ]);

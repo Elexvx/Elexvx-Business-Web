@@ -5,6 +5,8 @@ excerpt: '研究的起点不是模型名称，而是一个可以被描述、被�
 publishedAt: '2026-09-02'
 directionSlug: 'ai-data'
 author: 'Elexvx Research'
+keywords: ['问题定义', '数据智能', '模型选择', '研究方法']
+keywordsEn: ['problem framing', 'data intelligence', 'model selection', 'research methods']
 status: 'published'
 cover: '/visuals/ai-data-gradient.jpg'
 evidence: [{ 'label': 'Elexvx Research 内容基线', 'kind': 'internal', 'verified': true }]

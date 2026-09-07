@@ -40,7 +40,7 @@ const renderInline = (
           const number = node.href.slice('#reference-'.length);
           return (
             <sup className="paper-citation" key={key}>
-              <a href={node.href} aria-label={`参考文献 ${number}`}>
+              <a href={node.href} aria-label={`${t('参考文献')} ${number}`}>
                 [{number}]
               </a>
             </sup>

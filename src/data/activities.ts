@@ -12,6 +12,7 @@ export type Activity = {
   category?: string;
   categorySlug?: string;
   cover?: string;
+  pinned?: boolean;
   body: string;
 };
 

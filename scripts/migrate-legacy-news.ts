@@ -15,7 +15,7 @@ const entries: MigrationEntry[] = [
     slug: '2024-12-31-01',
     category: '最新动态',
     tags: ['新年贺词'],
-    cover: '/visuals/news/newyear.png',
+    cover: '/visuals/research-gradient.jpg',
   },
   {
     source: 'posts/latest-news/2025-07-16-01.md',
@@ -64,21 +64,14 @@ const entries: MigrationEntry[] = [
     slug: 'stories-2025-07-01-01',
     category: '公司动态',
     tags: ['公司动态', '知识产权'],
-    cover: '/visuals/news/test.png',
+    cover: '/visuals/ai-data-gradient.jpg',
   },
   {
     source: 'posts/technology/2025-07-01-01.md',
     slug: 'technology-2025-07-01-01',
     category: '技术研究',
     tags: ['研究', '工业智能'],
-    cover: '/visuals/news/10006.png',
-  },
-  {
-    source: 'posts/exam/2025-07-08-01.md',
-    slug: 'exam-2025-07-08-01',
-    category: '业务动态',
-    tags: ['往期考试'],
-    cover: '/visuals/news/jb.png',
+    cover: '/visuals/industrial-intelligence-gradient.jpg',
   },
 ];
 

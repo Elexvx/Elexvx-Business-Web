@@ -1,4 +1,6 @@
 'use client';
+import { Translated } from '../providers/i18n';
+import { CompanyIntro } from '../components/company-intro';
 
 import { ErrorPage } from '../components/error-page';
 import { SiteImage } from '../components/site-image';
@@ -32,14 +34,20 @@ export const DirectionCard = ({ direction, index }: { direction: ResearchDirecti
           />
         </div>
       )}
-      <Eyebrow onDark={direction.accent === 'dark'}>{`RESEARCH ${String(index + 1).padStart(2, '0')}`}</Eyebrow>
+      <Eyebrow onDark={direction.accent === 'dark'}>
+        <Translated>{`RESEARCH ${String(index + 1).padStart(2, '0')}`}</Translated>
+      </Eyebrow>
       <h2>
         <Title text={direction.title} />
       </h2>
-      <p className="card-english">{direction.englishTitle}</p>
+      <p className="card-english">
+        <Translated>{direction.englishTitle}</Translated>
+      </p>
       <p>{t(direction.summary)}</p>
       <div className="card-footer">
-        <span className="card-index">{`${direction.methods.length} METHODS`}</span>
+        <span className="card-index">
+          <Translated>{`${direction.methods.length} METHODS`}</Translated>
+        </span>
         <a className="card-link" href={href(`/research/${direction.slug}`)}>
           {t('进入方向')} <ArrowRightOutlined aria-hidden="true" />
         </a>
@@ -62,11 +70,15 @@ export const ProjectCard = ({ project }: { project: Project }) => {
           />
         </div>
       )}
-      <Eyebrow>{`PROJECT / ${project.status.toUpperCase()}`}</Eyebrow>
+      <Eyebrow>
+        <Translated>{`PROJECT / ${project.status.toUpperCase()}`}</Translated>
+      </Eyebrow>
       <h2>
         <Title text={project.title} />
       </h2>
-      <p className="card-english">{project.englishTitle}</p>
+      <p className="card-english">
+        <Translated>{project.englishTitle}</Translated>
+      </p>
       <p>{t(project.output)}</p>
       <div className="project-card-details">
         <div>
@@ -79,7 +91,9 @@ export const ProjectCard = ({ project }: { project: Project }) => {
         </div>
       </div>
       <div className="card-footer">
-        <span className="card-index">{`${project.evidence.length} EVIDENCE`}</span>
+        <span className="card-index">
+          <Translated>{`${project.evidence.length} EVIDENCE`}</Translated>
+        </span>
         <a className="card-link" href={href(`/projects/${project.slug}`)}>
           {t('阅读项目')} <ArrowRightOutlined aria-hidden="true" />
         </a>
@@ -92,7 +106,9 @@ export const InsightRow = ({ insight }: { insight: Insight }) => {
   const { t, href } = useI18n();
   return (
     <a className="insight-list-item" href={href(`/insights/${insight.slug}`)}>
-      <span className="insight-list-date">{insight.publishedAt}</span>
+      <span className="insight-list-date">
+        <Translated>{insight.publishedAt}</Translated>
+      </span>
       <span>
         <strong>{t(insight.title)}</strong>
         <span className="insight-list-meta">{t(insight.excerpt)}</span>
@@ -131,7 +147,9 @@ export const HomeMediaCard = ({
       </div>
       <div className="home-media-card-body">
         <h3>{naturalTitle ? t(title) : <Title text={title} />}</h3>
-        <Eyebrow>{eyebrow}</Eyebrow>
+        <Eyebrow>
+          <Translated>{eyebrow}</Translated>
+        </Eyebrow>
         {description && <p>{t(description)}</p>}
       </div>
     </>
@@ -139,10 +157,12 @@ export const HomeMediaCard = ({
 
   return href ? (
     <a className={classNames('home-media-card', className)} href={localizedHref(href)}>
-      {content}
+      <Translated>{content}</Translated>
     </a>
   ) : (
-    <article className={classNames('home-media-card', className)}>{content}</article>
+    <article className={classNames('home-media-card', className)}>
+      <Translated>{content}</Translated>
+    </article>
   );
 };
 
@@ -162,7 +182,9 @@ export const HomeDirectionCard = ({ direction, index }: { direction: ResearchDir
         <h3>
           <Title text={direction.title} />
         </h3>
-        <Eyebrow>{`RESEARCH ${String(index + 1).padStart(2, '0')}`}</Eyebrow>
+        <Eyebrow>
+          <Translated>{`RESEARCH ${String(index + 1).padStart(2, '0')}`}</Translated>
+        </Eyebrow>
         <p>{t(direction.summary)}</p>
       </div>
     </a>
@@ -188,7 +210,7 @@ export const HomeInsightCard = ({ insight }: { insight: Insight }) => {
 export const formatNewsDate = (date: string, locale: 'zh-CN' | 'en') =>
   new Intl.DateTimeFormat(locale === 'en' ? 'en-US' : 'zh-CN', {
     year: 'numeric',
-    month: 'numeric',
+    month: locale === 'en' ? 'long' : 'numeric',
     day: 'numeric',
   }).format(new Date(`${date}T00:00:00`));
 
@@ -233,24 +255,22 @@ export const PageHero = ({ content, className }: { content: PageHeroContent; cla
   return (
     <section className={classNames('page-hero', className)}>
       <div className="page-hero-inner">
-        <div className="page-hero-copy">
-          <Eyebrow>{content.eyebrow}</Eyebrow>
-          <h1>
-            <Title text={content.title} />
-          </h1>
-          <p>{t(content.description)}</p>
+        <CompanyIntro
+          eyebrow={content.eyebrow}
+          title={<Title text={content.title} />}
+          description={t(content.description)}
+        >
           <div className="page-hero-actions">
-            <ActionButton href={content.primaryAction.href}>{content.primaryAction.label}</ActionButton>
+            <ActionButton href={content.primaryAction.href}>
+              <Translated>{content.primaryAction.label}</Translated>
+            </ActionButton>
             {content.secondaryAction ? (
               <ActionButton href={content.secondaryAction.href} secondary>
-                {content.secondaryAction.label}
+                <Translated>{content.secondaryAction.label}</Translated>
               </ActionButton>
             ) : null}
           </div>
-        </div>
-        <figure className="page-hero-media">
-          <SiteImage src={content.media.src} alt={t(content.media.alt)} fetchPriority="high" decoding="async" />
-        </figure>
+        </CompanyIntro>
       </div>
     </section>
   );
@@ -272,10 +292,14 @@ export const ScenarioCard = ({ scenario }: { scenario: Scenario }) => {
       <h2>
         <Title text={scenario.title} />
       </h2>
-      <p className="card-english">{scenario.englishTitle}</p>
+      <p className="card-english">
+        <Translated>{scenario.englishTitle}</Translated>
+      </p>
       <p>{t(scenario.summary)}</p>
       <div className="card-footer">
-        <span className="card-index">{`${scenario.projectSlugs.length} PROJECTS`}</span>
+        <span className="card-index">
+          <Translated>{`${scenario.projectSlugs.length} PROJECTS`}</Translated>
+        </span>
         <a className="card-link" href={href(`/scenarios/${scenario.slug}`)}>
           {t('查看场景')} <ArrowRightOutlined aria-hidden="true" />
         </a>
@@ -292,7 +316,9 @@ export const BusinessCard = ({ line }: { line: BusinessLine }) => {
       <h2>
         <Title text={line.title} />
       </h2>
-      <p className="card-english">{line.englishTitle}</p>
+      <p className="card-english">
+        <Translated>{line.englishTitle}</Translated>
+      </p>
       <p>{t(line.summary)}</p>
       <div className="card-footer">
         <span className="card-index">PARALLEL LINE</span>

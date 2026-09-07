@@ -27,8 +27,7 @@
     { "source": "/latest-news/2025-07-16-01", "destination": "/news/2025-07-16-01", "permanent": true },
     { "source": "/latest-news/2025-07-17-01", "destination": "/news/2025-07-17-01", "permanent": true },
     { "source": "/latest-news/2025-08-21-01", "destination": "/news/2025-08-21-01", "permanent": true },
-    { "source": "/latest-news/2024-12-31-01", "destination": "/news/2024-12-31-01", "permanent": true },
-    { "source": "/exam/2025-07-08-01", "destination": "/news/exam-2025-07-08-01", "permanent": true }
+    { "source": "/latest-news/2024-12-31-01", "destination": "/news/2024-12-31-01", "permanent": true }
   ],
   "headers": [
     {

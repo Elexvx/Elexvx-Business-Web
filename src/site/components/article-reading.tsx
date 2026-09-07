@@ -1,8 +1,8 @@
 'use client';
 
 import { SiteImage } from './site-image';
-import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { ArticleGallery } from './article-gallery';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { MarkdownRenderer } from './MarkdownRenderer';
 import { useI18n } from '../providers/i18n';
 
@@ -40,27 +40,71 @@ export const ArticleBody = ({ source, children }: { source: string; children?: R
     if (entries.some((entry) => entry.id === hash)) document.getElementById(hash)?.scrollIntoView();
     return () => window.removeEventListener('scroll', update);
   }, [source, locale]);
+  const hasHeadings = headings.length > 0;
   return (
-    <ArticleGallery>
-      <div className="article-reading-layout">
-        <aside className="article-toc">
-          <nav aria-label={locale === 'en' ? 'Table of contents' : '文章目录'}>
-            <p>{locale === 'en' ? 'Contents' : '目录'}</p>
-            {(headings.length ? headings : [{ id: 'article-content', text: locale === 'en' ? 'Article' : '正文' }]).map(
-              (entry) => (
+    <>
+      <div className={`article-reading-layout${hasHeadings ? '' : ' article-reading-layout-no-toc'}`}>
+        {hasHeadings && (
+          <aside className="article-toc">
+            <nav aria-label={locale === 'en' ? 'Table of contents' : '文章目录'}>
+              <p>{locale === 'en' ? 'Contents' : '目录'}</p>
+              {headings.map((entry) => (
                 <a key={entry.id} href={`#${entry.id}`} aria-current={active === entry.id ? 'location' : undefined}>
                   {entry.text}
                 </a>
-              )
-            )}
-          </nav>
-        </aside>
-        <div className="article-body" id="article-content" ref={ref}>
-          <MarkdownRenderer source={source} />
-          {children}
+              ))}
+            </nav>
+          </aside>
+        )}
+        <div className="article-body" id="article-content" lang={locale} ref={ref}>
+          <ArticleGallery>
+            <MarkdownRenderer source={source} />
+            {children}
+          </ArticleGallery>
         </div>
       </div>
-    </ArticleGallery>
+    </>
+  );
+};
+
+export const ArticleMetadata = ({
+  author,
+  keywords,
+  keywordsEn,
+}: {
+  author: string;
+  keywords?: string[];
+  keywordsEn?: string[];
+}) => {
+  const { locale, t } = useI18n();
+  const localizedKeywords =
+    locale === 'en'
+      ? keywordsEn?.length
+        ? keywordsEn
+        : (keywords ?? []).map(t)
+      : keywords?.length
+        ? keywords
+        : (keywordsEn ?? []);
+
+  return (
+    <section className="paper-metadata" aria-label={locale === 'en' ? 'Author and keywords' : '作者与关键词'}>
+      <dl>
+        <div>
+          <dt>{locale === 'en' ? 'Author' : '作者'}</dt>
+          <dd>{t(author) || (locale === 'en' ? 'To be confirmed' : '待确认')}</dd>
+        </div>
+        <div>
+          <dt>{locale === 'en' ? 'Keywords' : '关键词'}</dt>
+          <dd>
+            {localizedKeywords.length
+              ? localizedKeywords.join(locale === 'en' ? '; ' : '；')
+              : locale === 'en'
+                ? 'To be confirmed'
+                : '待确认'}
+          </dd>
+        </div>
+      </dl>
+    </section>
   );
 };
 

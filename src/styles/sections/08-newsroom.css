@@ -56,10 +56,17 @@
 
 .site-shell-home .home-news-card .home-media-card-body h3 {
   max-width: 300px;
+  display: -webkit-box;
+  overflow: hidden;
   font-size: clamp(17px, 1.45vw, 20px);
   font-weight: 400;
   letter-spacing: -0.018em;
   line-height: 1.28;
+  min-height: calc(3 * 1.45em);
+  min-height: 3lh;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
 }
 
 .site-shell-home .home-news-card .home-media-card-body .eyebrow {
@@ -206,11 +213,18 @@
 
 .news-list-grid .news-card .home-media-card-body h3 {
   max-width: 300px;
+  display: -webkit-box;
+  overflow: hidden;
   color: var(--color-ink);
   font-size: clamp(17px, 1.45vw, 20px);
   font-weight: 400;
   letter-spacing: -0.018em;
   line-height: 1.28;
+  min-height: calc(3 * 1.45em);
+  min-height: 3lh;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
 }
 
 .news-list-grid .news-card .home-news-card-meta {

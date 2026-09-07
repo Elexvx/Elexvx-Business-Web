@@ -3,17 +3,18 @@ import { ArrowRightOutlined, MenuOutlined } from '@ant-design/icons';
 
 import { useEffect, useRef, useState } from 'react';
 
-import { navigationGroups, type NavigationGroup } from '../../data/research-navigation';
+import { navigationGroups, withNewsCategories, type NavigationGroup } from '../../data/research-navigation';
 import { useI18n } from '../providers/i18n';
 
 import { NavigationSearch } from './navigation-search';
-import { useAvailableLink } from '../providers/content-context';
+import { useAvailableLink, usePublishedNews } from '../providers/content-context';
 import { classNames, Logo } from './ui';
 
 export const GlobalNav = ({ activePath = '/', tone = 'light' }: { activePath?: string; tone?: 'light' | 'dark' }) => {
   const { locale, t, href } = useI18n();
   const isAvailableLink = useAvailableLink();
-  const visibleNavigationGroups = navigationGroups
+  const newsCategories = usePublishedNews().map((item) => item.category);
+  const visibleNavigationGroups = withNewsCategories(navigationGroups, newsCategories)
     .map((group) => ({
       ...group,
       columns: group.columns
@@ -236,9 +237,7 @@ export const GlobalNav = ({ activePath = '/', tone = 'light' }: { activePath?: s
                 )}
                 {panelGroup.columns.length > 1 && (
                   <div className="desktop-menu-secondary-group">
-                    <p className="desktop-menu-group-label">
-                      {t(panelGroup.columns[1].title)}
-                    </p>
+                    <p className="desktop-menu-group-label">{t(panelGroup.columns[1].title)}</p>
                     <div className="desktop-menu-secondary-links">
                       {panelGroup.columns.slice(1).flatMap((column) =>
                         column.links.map((link) => (

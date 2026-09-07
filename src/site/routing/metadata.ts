@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { translateEnglish } from '../translation';
 import { loadInsights } from '../../content/loader';
 import { loadNews } from '../../content/news-loader';
 import { siteIdentity } from '../../data/site';
@@ -33,7 +34,7 @@ const englishMetadata: Record<string, string> = {
   'Elexvx Research 的研究记录、工程方法与技术文章。':
     'Research notes, engineering methods, and technical articles from Elexvx Research.',
   '宏翔商道 / Elexvx 与 Elexvx Research 的公司主体、研究关系和并行业务。':
-    'The company, research relationship, and parallel business lines of Hongxiang Business / Elexvx and Elexvx Research.',
+    'The company, research relationship, and parallel business lines of Hongxiang Shangdao / Elexvx and Elexvx Research.',
   'Elexvx Research 的研究与工程协作结构。': 'The research and engineering collaboration structure of Elexvx Research.',
   'Elexvx 与 Elexvx Research 的网页品牌使用方式。': 'Web brand usage for Elexvx and Elexvx Research.',
   'Elexvx 公司主体的人力、知识产权和供应链并行业务。':
@@ -44,7 +45,7 @@ const englishMetadata: Record<string, string> = {
   '旧站内容归档，不代表 Elexvx Research 的新研究主线。':
     'An archive of legacy material that does not represent the new Elexvx Research direction.',
   '宏翔商道 / Elexvx 的公司公告、业务动态与历史新闻。':
-    'Company announcements, business updates, and historical news from Hongxiang Business / Elexvx.',
+    'Company announcements, business updates, and historical news from Hongxiang Shangdao / Elexvx.',
   'AI 与数据智能': 'AI & Data Intelligence',
   工业智能与安全: 'Industrial Intelligence & Safety',
   'LLM / AI 安全': 'LLM / AI Safety',
@@ -84,11 +85,12 @@ const englishMetadata: Record<string, string> = {
 };
 
 const translateMetadata = (value: string, locale: Locale) =>
-  locale === 'en' ? (englishMetadata[value] ?? value) : value;
+  locale === 'en' ? (englishMetadata[value] ?? translateEnglish(value)) : value;
 
 const localizedTitle = (title: string, locale: Locale) => {
   const [section, ...rest] = title.split(' · ');
-  return [translateMetadata(section, locale), ...rest].join(' · ');
+  const translated = translateMetadata(section, locale);
+  return translated !== section ? [translated, ...rest].join(' · ') : locale === 'en' ? translateEnglish(title) : title;
 };
 
 export const nextMetadata = (path: string, locale: Locale = 'zh-CN'): Metadata => {

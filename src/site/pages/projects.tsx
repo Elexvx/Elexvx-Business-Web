@@ -1,4 +1,5 @@
 'use client';
+import { Translated } from '../providers/i18n';
 import { CheckOutlined } from '@ant-design/icons';
 
 import { capabilities, getDirection, getProject, getScenario, projects, scenarios } from '../../data/site';
@@ -14,7 +15,9 @@ export const CapabilitiesPage = () => (
     <PageHero content={pageContent.capabilities.hero} />
     <section className="research-tile research-tile-dark">
       <div className="section-heading section-heading-on-dark">
-        <Eyebrow onDark>{pageContent.capabilities.loop.eyebrow}</Eyebrow>
+        <Eyebrow onDark>
+          <Translated>{pageContent.capabilities.loop.eyebrow}</Translated>
+        </Eyebrow>
         <h2>
           <Title text={pageContent.capabilities.loop.title} />
         </h2>
@@ -22,7 +25,9 @@ export const CapabilitiesPage = () => (
       <div className="process-list">
         {capabilities.map((capability) => (
           <div className="process-row process-row-on-dark" key={capability.index}>
-            <span className="process-index">{capability.index}</span>
+            <span className="process-index">
+              <Translated>{capability.index}</Translated>
+            </span>
             <h2>
               <Title text={capability.title} />
             </h2>
@@ -42,7 +47,9 @@ export const CapabilitiesPage = () => (
       <div className="delivery-grid">
         {pageContent.capabilities.delivery.items.map((item) => (
           <div className="delivery-item" key={item.eyebrow}>
-            <Eyebrow>{item.eyebrow}</Eyebrow>
+            <Eyebrow>
+              <Translated>{item.eyebrow}</Translated>
+            </Eyebrow>
             <h2>
               <Title text={item.title} />
             </h2>
@@ -61,7 +68,9 @@ export const ProjectsPage = () => (
     <PageHero content={pageContent.projects.hero} />
     <section className="research-tile research-tile-parchment">
       <div className="section-heading">
-        <Eyebrow>{pageContent.projects.list.eyebrow}</Eyebrow>
+        <Eyebrow>
+          <Translated>{pageContent.projects.list.eyebrow}</Translated>
+        </Eyebrow>
         <h2>
           <Title text={pageContent.projects.list.title} />
         </h2>
@@ -170,7 +179,9 @@ export const ScenarioPage = ({ slug }: { slug: string }) => {
       </ResearchTile>
       <section className="research-tile research-tile-parchment">
         <div className="section-heading">
-          <Eyebrow>{pageContent.scenario.projects.eyebrow}</Eyebrow>
+          <Eyebrow>
+            <Translated>{pageContent.scenario.projects.eyebrow}</Translated>
+          </Eyebrow>
           <h2>
             <Title text={pageContent.scenario.projects.title} />
           </h2>

@@ -74,7 +74,7 @@ const navigationDefinitions: NavigationGroup[] = [
   },
   {
     id: 'news',
-    label: '最近新闻',
+    label: '新闻',
     englishTitle: 'NEWS',
     title: '探索新闻',
     intro: '公司公告与最新新闻。',
@@ -261,7 +261,34 @@ export const navigationGroups: NavigationGroup[] = navigationDefinitions.map((gr
     ...group,
     columns: [
       { title: '总览', links: [{ label: '总览', href: group.href }] },
-      ...(uniqueChildren.length ? [{ title: group.id === 'research' || group.id === 'activities' ? '分类' : '了解更多', links: uniqueChildren }] : []),
+      ...(uniqueChildren.length
+        ? [{ title: group.id === 'research' || group.id === 'activities' ? '分类' : '了解更多', links: uniqueChildren }]
+        : []),
     ],
   };
 });
+
+/**
+ * News categories come from the published content context, so the shared
+ * navigation can stay client-safe while still reflecting the live newsroom.
+ */
+export const withNewsCategories = (groups: NavigationGroup[], categories: string[]) => {
+  const categoryLinks = [...new Set(categories.map((category) => category.trim()).filter(Boolean))].map((category) => ({
+    label: category,
+    href: `/news?category=${encodeURIComponent(category)}`,
+  }));
+
+  if (!categoryLinks.length) return groups;
+
+  return groups.map((group) => {
+    if (group.id !== 'news') return group;
+
+    const categoryColumn = group.columns.find((column) => column.title === '分类');
+    if (categoryColumn) return group;
+
+    return {
+      ...group,
+      columns: [...group.columns, { title: '分类', links: categoryLinks }],
+    };
+  });
+};

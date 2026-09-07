@@ -1,8 +1,11 @@
-import { asEvidenceArray, asString, parseFrontmatter, type FrontmatterValue } from './frontmatter';
+import { asEvidenceArray, asString, asStringArray, parseFrontmatter, type FrontmatterValue } from './frontmatter';
 import type { EvidenceRef, Insight, InsightFrontmatter } from './types';
 
 const asOptionalString = (value: FrontmatterValue | undefined, field: string) =>
   asString(value, field, false) || undefined;
+
+const asOptionalStringArray = (value: FrontmatterValue | undefined, field: string) =>
+  typeof value === 'undefined' ? undefined : asStringArray(value, field);
 
 export const calculateReadingTime = (body: string) => {
   const clean = body.replace(/```[\s\S]*?```/g, '').replace(/`[^`]*`/g, '');
@@ -27,6 +30,8 @@ export const insightFromSource = (source: string, filename: string): Insight => 
     updatedAt: asOptionalString(data.updatedAt, 'updatedAt'),
     directionSlug: asOptionalString(data.directionSlug, 'directionSlug'),
     author: asString(data.author, 'author'),
+    keywords: asOptionalStringArray(data.keywords, 'keywords'),
+    keywordsEn: asOptionalStringArray(data.keywordsEn, 'keywordsEn'),
     status: status as InsightFrontmatter['status'],
     evidence,
     cover: asOptionalString(data.cover, 'cover'),

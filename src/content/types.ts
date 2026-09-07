@@ -47,6 +47,8 @@ export type InsightFrontmatter = {
   updatedAt?: string;
   directionSlug?: string;
   author: string;
+  keywords?: string[];
+  keywordsEn?: string[];
   status: InsightStatus;
   evidence: EvidenceRef[];
   cover?: string;

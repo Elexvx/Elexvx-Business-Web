@@ -6,6 +6,7 @@ import { loadNews } from '../src/content/news-loader';
 import { getStaticRoutes, resolveRoute } from '../src/site/routing/routes';
 import { homeContent, staticPageHeroByPath } from '../src/data/page-content';
 import { validateSiteCatalog } from '../src/data/site';
+import { publishedCaseStudies } from '../src/data/case-studies';
 
 describe('content publication gates', () => {
   it('loads published and draft insights while only publishing verified content', () => {
@@ -29,11 +30,12 @@ describe('content publication gates', () => {
     expect(resolveRoute('/missing', insights).meta.robots).toBe('noindex,nofollow');
   });
 
-  it('migrates all legacy posts into the published news collection', () => {
+  it('publishes the active news collection', () => {
     const news = loadNews();
-    expect(news).toHaveLength(10);
+    expect(news).toHaveLength(9);
     expect(news.every((item) => item.status === 'published')).toBe(true);
-    expect(news.every((item) => item.cover?.startsWith('/visuals/news/'))).toBe(true);
+    expect(news.some((item) => item.slug === 'exam-2025-07-08-01')).toBe(false);
+    expect(news.every((item) => item.cover?.startsWith('/visuals/'))).toBe(true);
   });
 
   it('keeps the latest activity module enabled and data-driven by default', () => {
@@ -41,6 +43,18 @@ describe('content publication gates', () => {
     expect(homeContent.latestActivity.title).toBeTruthy();
     expect(homeContent.latestActivity.action.href).toBe('/news');
     expect(homeContent.latestActivity.media.src.startsWith('/visuals/')).toBe(true);
+  });
+
+  it('publishes the cooperation case as its own route with an English body', () => {
+    const insights = loadInsights();
+    const news = loadNews();
+    const routes = getStaticRoutes(insights, news).map((route) => route.path);
+    expect(publishedCaseStudies).toHaveLength(1);
+    expect(routes).toContain(`/cases/${publishedCaseStudies[0].slug}`);
+    expect(publishedCaseStudies[0].title).toBe('ELEXVX 期刊管理与出版协同系统助力凯城国际');
+    expect(publishedCaseStudies[0].excerpt).toContain('凯城国际出版社');
+    expect(publishedCaseStudies[0].titleEn).toContain('ELEXVX Journal Management & Publishing Collaboration System');
+    expect(publishedCaseStudies[0].bodyEn).toContain('Kaicheng International Publishing House');
   });
 
   it('validates parameterized catalog references and gives every static subpage a hero visual', () => {

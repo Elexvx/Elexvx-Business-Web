@@ -690,11 +690,88 @@
 .footer-identity > span,
 .footer-legal-meta > span,
 .footer-legal-meta > a,
-.footer-legal-meta > .footer-cookie-settings {
+.footer-legal-meta > .footer-cookie-settings,
+.footer-legal-meta > .footer-language-switcher {
   display: inline-flex;
   align-items: center;
   min-height: 28px;
   line-height: 20px;
+}
+
+.footer-language-switcher {
+  position: relative;
+}
+
+.footer-language-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 28px;
+  padding: 0;
+  color: inherit;
+  font: inherit;
+  line-height: 20px;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+}
+
+.footer-language-trigger:hover,
+.footer-language-trigger:focus-visible {
+  color: var(--color-ink);
+}
+
+.footer-language-menu {
+  position: absolute;
+  right: 0;
+  bottom: calc(100% + 8px);
+  z-index: 5;
+  display: grid;
+  min-width: 132px;
+  padding: 6px;
+  border: 1px solid var(--color-hairline);
+  border-radius: 8px;
+  background: var(--color-canvas);
+  box-shadow: 0 10px 28px rgb(0 0 0 / 16%);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translateY(4px);
+  transition:
+    opacity 160ms ease,
+    transform 160ms ease,
+    visibility 0s linear 160ms;
+}
+
+.footer-language-switcher:hover .footer-language-menu,
+.footer-language-switcher:focus-within .footer-language-menu,
+.footer-language-switcher.is-open .footer-language-menu {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: translateY(0);
+  transition-delay: 0s;
+}
+
+.footer-language-option {
+  display: block;
+  padding: 8px 10px;
+  color: var(--color-ink-muted);
+  border-radius: 5px;
+  font-size: 12px;
+  line-height: 20px;
+  white-space: nowrap;
+}
+
+.footer-language-option:hover,
+.footer-language-option:focus-visible {
+  color: var(--color-ink);
+  background: var(--color-action-tint);
+}
+
+.footer-language-option-current {
+  color: var(--color-ink);
+  cursor: default;
 }
 
 .footer-legal a {

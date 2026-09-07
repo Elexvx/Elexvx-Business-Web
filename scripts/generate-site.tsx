@@ -1,9 +1,11 @@
-import { mkdir, writeFile } from 'node:fs/promises';
+import { mkdir, writeFile, readFile, readdir } from 'node:fs/promises';
 import { dirname, join, resolve } from 'node:path';
 import { loadInsights } from '../src/content/loader';
 import { loadNews } from '../src/content/news-loader';
 import { getStaticRoutes, redirectRoutes } from '../src/site/routing/routes';
 import { siteIdentity } from '../src/data/site';
+
+import { translateEnglish } from '../src/site/translation';
 
 const distRoot = resolve(process.cwd(), 'dist');
 const insights = loadInsights();
@@ -93,3 +95,25 @@ await writeFile(
 console.log(
   `Next.js export postprocessed: ${routes.length} static routes, ${published.length} published insights, ${publishedNews.length} published news items, and ${Object.keys(redirectRoutes).length} redirects.`
 );
+
+// Static exports have one root layout; stamp the language on every English document.
+const localizeDocumentLanguage = async (directory: string): Promise<void> => {
+  for (const entry of await readdir(directory, { withFileTypes: true })) {
+    const file = join(directory, entry.name);
+    if (entry.isDirectory()) await localizeDocumentLanguage(file);
+    else if (entry.name.endsWith('.html')) {
+      const html = await readFile(file, 'utf8');
+      await writeFile(
+        file,
+        html
+          .replace(
+            /<html\b([^>]*)>/,
+            (_, attributes: string) => `<html${attributes.replace(/\s+lang="[^"]*"/, '')} lang="en">`
+          )
+          .replaceAll(escapeHtml(siteIdentity.description), escapeHtml(translateEnglish(siteIdentity.description))),
+        'utf8'
+      );
+    }
+  }
+};
+await localizeDocumentLanguage(join(distRoot, 'en'));

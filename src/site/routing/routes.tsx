@@ -4,6 +4,7 @@ import { DesignPage } from '../pages/design';
 import { homeContent } from '../../data/page-content';
 import { jobs } from '../../data/jobs';
 import { publishedActivities } from '../../data/activities';
+import { publishedCaseStudies } from '../../data/case-studies';
 import { isDisabledPath } from '../../data/disabled-sections';
 import type { ReactNode } from 'react';
 import { teamMembers } from '../../data/team';
@@ -12,6 +13,7 @@ import type { Insight, NewsItem } from '../../content/types';
 import {
   ActivitiesPage,
   ActivityPage,
+  CaseStudyPage,
   ProductCatalogPage,
   ProductDetailPage,
   ArchivePage,
@@ -112,7 +114,10 @@ const staticRoutes: SiteRoute[] = [
   },
   {
     path: '/company/design',
-    meta: { title: titleFor('设计规范'), description: 'Elexvx 官网的标题、页面布局、间距与响应式设计规范，提供 design.md 下载。' },
+    meta: {
+      title: titleFor('设计规范'),
+      description: 'Elexvx 官网的标题、页面布局、间距与响应式设计规范，提供 design.md 下载。',
+    },
     render: () => <DesignPage />,
   },
   {
@@ -173,7 +178,6 @@ const originalRedirectRoutes: Record<string, string> = {
   '/latest-news/2025-07-17-01': '/news/2025-07-17-01',
   '/latest-news/2025-08-21-01': '/news/2025-08-21-01',
   '/latest-news/2024-12-31-01': '/news/2024-12-31-01',
-  '/exam/2025-07-08-01': '/news/exam-2025-07-08-01',
 };
 
 export const redirectRoutes = Object.fromEntries(
@@ -206,6 +210,11 @@ const configuredRoutes = (insights: Insight[], news: NewsItem[] = []): SiteRoute
     path: `/activities/${item.slug}`,
     meta: { title: titleFor(item.title), description: item.excerpt },
     render: () => <ActivityPage slug={item.slug} />,
+  })),
+  ...publishedCaseStudies.map((item) => ({
+    path: `/cases/${item.slug}`,
+    meta: { title: titleFor(item.title), description: item.excerpt },
+    render: () => <CaseStudyPage slug={item.slug} />,
   })),
   ...teamMembers.map((member) => ({
     path: `/company/team/${member.id}`,

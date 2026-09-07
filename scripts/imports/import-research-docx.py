@@ -7,6 +7,13 @@ M='http://schemas.openxmlformats.org/officeDocument/2006/math'
 ns={'w':W,'m':M}
 root=Path(__file__).resolve().parents[2]
 sources=[('面向MoE推理的Chiplet专家复用架构','moe-chiplet-expert-reuse','芯片架构','chip-architecture'),('面向智能体推理的生命周期感知KV缓存系统','agent-kv-cache-lifecycle','推理系统','inference-systems'),('面向异构加速器的可迁移FP4量化','portable-fp4-quantization','量化与编译','quantization-compilation'),('面向端侧NPU的大模型编译优化','edge-npu-llm-compilation','量化与编译','quantization-compilation'),('大模型推理的内存中心化架构演进','memory-centric-inference','芯片架构','chip-architecture')]
+covers={
+ 'moe-chiplet-expert-reuse':'/visuals/system-gradient.jpg',
+ 'agent-kv-cache-lifecycle':'/visuals/ai-data-gradient.jpg',
+ 'portable-fp4-quantization':'/visuals/industrial-intelligence-gradient.jpg',
+ 'edge-npu-llm-compilation':'/visuals/ai-safety-gradient.jpg',
+ 'memory-centric-inference':'/visuals/research-gradient.jpg',
+}
 def math(n):
  if n is None:return ''
  tag=E.QName(n).localname
@@ -69,7 +76,7 @@ for title,slug,category,categorySlug in sources:
     width=max(map(len,table));table=[r+['']*(width-len(r)) for r in table]
     blocks.append('\n'.join(['| '+' | '.join(table[0])+' |','| '+' | '.join(['---']*width)+' |']+['| '+' | '.join(r)+' |' for r in table[1:]]))
   target=root/'public/research/papers'/slug;target.mkdir(parents=True,exist_ok=True);shutil.copy2(p,target/'manuscript.docx')
-  article=dict(slug=slug,title=title,excerpt=abstract.split('。')[0]+'。',publishedAt='2026-09-06',author='',status='published',category=category,categorySlug=categorySlug,cover='/visuals/research-gradient.jpg',body='\n\n'.join(blocks))
+  article=dict(slug=slug,title=title,excerpt=abstract.split('。')[0]+'。',publishedAt='2026-09-06',author='',status='published',category=category,categorySlug=categorySlug,cover=covers[slug],body='\n\n'.join(blocks))
   new.append(article)
   print(title,'tables',len(doc.findall('.//w:tbl',ns)),'formula',len(doc.findall('.//m:oMath',ns)),'chars',len(article['body']))
 (root/'content/site/research.json').write_text(json.dumps(new+[r for r in rows if r['slug'] not in {x['slug'] for x in new}],ensure_ascii=False,indent=2)+'\n')

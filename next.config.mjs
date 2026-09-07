@@ -2,7 +2,8 @@
 const nextConfig = {
   output: 'export',
   trailingSlash: true,
-  distDir: 'dist',
+  // Keep Turbopack's development cache separate from the static export.
+  distDir: process.env.NODE_ENV === 'development' ? 'dist-dev' : 'dist',
   poweredByHeader: false,
   reactStrictMode: true,
   pageExtensions: ['tsx'],

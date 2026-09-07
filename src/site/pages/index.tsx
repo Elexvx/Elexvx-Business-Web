@@ -8,3 +8,4 @@ export * from './team';
 export * from './activities';
 export * from './careers';
 export * from './product-catalog';
+export * from './case-studies';
