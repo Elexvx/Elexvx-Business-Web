@@ -6,7 +6,6 @@ import { CookieConsent } from './cookie-consent';
 
 import { classNames } from './ui';
 import { GlobalNav } from './navigation';
-import { WechatShareInit } from './wechat-share-init';
 import { Footer } from './footer';
 
 export const SiteShell = ({
@@ -26,7 +25,6 @@ export const SiteShell = ({
       <main>{children}</main>
       <Footer />
       <CookieConsent />
-      <WechatShareInit path={activePath} />
     </div>
   );
 };

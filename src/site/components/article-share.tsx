@@ -1,13 +1,12 @@
 'use client';
 import { useRef, useState } from 'react';
-import { WechatOutlined, LinkOutlined, QrcodeOutlined, CloseOutlined } from '@ant-design/icons';
+import { LinkOutlined, QrcodeOutlined, CloseOutlined } from '@ant-design/icons';
 import { useI18n } from '../providers/i18n';
-import { configureWechat } from '../sharing/wechat';
 export function ArticleShare() {
   const { locale } = useI18n();
   const en = locale === 'en';
   const dialog = useRef<HTMLDialogElement>(null);
-  const [mode, setMode] = useState<'wechat' | 'link' | 'card'>('wechat');
+  const [mode, setMode] = useState<'link' | 'card'>('card');
   const [status, setStatus] = useState('');
   const [card, setCard] = useState('');
   const [url, setUrl] = useState('');
@@ -37,35 +36,6 @@ export function ArticleShare() {
       }
       return;
     }
-    if (next === 'wechat') {
-      if (!/MicroMessenger/i.test(navigator.userAgent)) {
-        setStatus(
-          en
-            ? 'Open this article inside WeChat, then share from the top-right menu. You can also send a QR card.'
-            : '请在手机微信内打开本文，再通过右上角「···」分享。也可以生成二维码卡片发送。'
-        );
-        return;
-      }
-      setBusy(true);
-      setStatus(en ? 'Preparing WeChat sharing…' : '正在准备微信分享…');
-      try {
-        await configureWechat(current);
-        setStatus(
-          en
-            ? 'Ready. Close this panel, then use ··· → Send to chat or Moments.'
-            : '微信已接收标题和封面设置。关闭此窗口，再点击右上角「···」→ 发送给朋友或分享到朋友圈。若仍显示网址，请通过二维码重新打开本页后对照测试。'
-        );
-      } catch (error) {
-        setStatus(
-          (en ? 'WeChat sharing failed: ' : '微信分享配置失败：') +
-            (error instanceof Error ? error.message : 'unknown') +
-            (en ? '. You can use a QR card.' : '。可先使用二维码卡片分享。')
-        );
-      } finally {
-        setBusy(false);
-      }
-      return;
-    }
     if (card) return;
     setBusy(true);
     setStatus(en ? 'Creating card…' : '正在生成卡片…');
@@ -84,10 +54,6 @@ export function ArticleShare() {
       <section className="article-share" aria-label={en ? 'Share article' : '转发文章'}>
         <span className="article-share-label">{en ? 'Share' : '转发'}</span>
         <div className="article-share-options">
-          <button type="button" onClick={() => void open('wechat')} disabled={busy}>
-            <WechatOutlined />
-            <span>{en ? 'WeChat' : '微信'}</span>
-          </button>
           <button type="button" onClick={() => void open('link')} disabled={busy}>
             <LinkOutlined />
             <span>{en ? 'Web link' : '网页'}</span>
@@ -107,19 +73,7 @@ export function ArticleShare() {
         }}
       >
         <header>
-          <h2>
-            {mode === 'wechat'
-              ? en
-                ? 'Share to WeChat'
-                : '分享到微信'
-              : mode === 'link'
-                ? en
-                  ? 'Web link'
-                  : '网页链接'
-                : en
-                  ? 'QR card'
-                  : '二维码卡片'}
-          </h2>
+          <h2>{mode === 'link' ? (en ? 'Web link' : '网页链接') : en ? 'QR card' : '二维码卡片'}</h2>
           <button type="button" aria-label={en ? 'Close' : '关闭'} onClick={() => dialog.current?.close()}>
             <CloseOutlined />
           </button>
@@ -132,11 +86,6 @@ export function ArticleShare() {
             readOnly
             onFocus={(e) => e.currentTarget.select()}
           />
-        )}
-        {mode === 'wechat' && !busy && (
-          <button className="article-share-secondary" onClick={() => void open('card')}>
-            {en ? 'Create QR card' : '生成二维码卡片'}
-          </button>
         )}
         {mode === 'card' && card && (
           <div className="article-share-card">
