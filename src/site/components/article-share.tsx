@@ -53,7 +53,7 @@ export function ArticleShare() {
         setStatus(
           en
             ? 'Ready. Close this panel, then use ··· → Send to chat or Moments.'
-            : '微信分享配置成功。关闭此窗口，再点击右上角「···」→ 发送给朋友或分享到朋友圈。'
+            : '微信已接收标题和封面设置。关闭此窗口，再点击右上角「···」→ 发送给朋友或分享到朋友圈。若仍显示网址，请通过二维码重新打开本页后对照测试。'
         );
       } catch (error) {
         setStatus(
