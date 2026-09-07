@@ -32,3 +32,9 @@
 @import './sections/24-global-editorial.css';
 
 @import './sections/25-sharing.css';
+
+/* Intrinsic dimensions reserve space without forcing the source pixel height.
+   Component rules can still specify fixed heights or aspect ratios. */
+:where(img) {
+  height: auto;
+}
