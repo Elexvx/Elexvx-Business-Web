@@ -24,7 +24,7 @@
 }
 .site-shell-openai.site-shell-openai.site-shell-openai main :is(.home-media-card-body h3, .home-product-copy h3,
 .article-continue-grid h3, .company-content-row h3, .careers-value h4,
-.careers-job-row h3, .lumira-grid h3, .team-card h3) {
+.careers-job-row h3, .lumira-grid h3, .team-card h2) {
   font-size: var(--card-title-size);
   font-weight: 400;
   line-height: 1.45;
