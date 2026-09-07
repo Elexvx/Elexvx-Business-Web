@@ -88,7 +88,7 @@
     "title": "面向端侧NPU的大模型编译优化",
     "excerpt": "端侧神经网络处理器具有高能效矩阵阵列、紧耦合片上存储和异步DMA，但其静态图、有限动态形状、受限地址空间及功率热约束与大模型的自回归状态、可变序列和混合算子存在结构性冲突。",
     "publishedAt": "2026-09-06",
-    "author": "",
+    "author": "研发中心",
     "status": "published",
     "category": "量化与编译",
     "categorySlug": "quantization-compilation",

@@ -14,6 +14,9 @@ covers={
  'edge-npu-llm-compilation':'/visuals/ai-safety-gradient.jpg',
  'memory-centric-inference':'/visuals/research-gradient.jpg',
 }
+authors={
+ 'edge-npu-llm-compilation':'研发中心',
+}
 def math(n):
  if n is None:return ''
  tag=E.QName(n).localname
@@ -76,7 +79,7 @@ for title,slug,category,categorySlug in sources:
     width=max(map(len,table));table=[r+['']*(width-len(r)) for r in table]
     blocks.append('\n'.join(['| '+' | '.join(table[0])+' |','| '+' | '.join(['---']*width)+' |']+['| '+' | '.join(r)+' |' for r in table[1:]]))
   target=root/'public/research/papers'/slug;target.mkdir(parents=True,exist_ok=True);shutil.copy2(p,target/'manuscript.docx')
-  article=dict(slug=slug,title=title,excerpt=abstract.split('。')[0]+'。',publishedAt='2026-09-06',author='',status='published',category=category,categorySlug=categorySlug,cover=covers[slug],body='\n\n'.join(blocks))
+  article=dict(slug=slug,title=title,excerpt=abstract.split('。')[0]+'。',publishedAt='2026-09-06',author=authors.get(slug,''),status='published',category=category,categorySlug=categorySlug,cover=covers[slug],body='\n\n'.join(blocks))
   new.append(article)
   print(title,'tables',len(doc.findall('.//w:tbl',ns)),'formula',len(doc.findall('.//m:oMath',ns)),'chars',len(article['body']))
 (root/'content/site/research.json').write_text(json.dumps(new+[r for r in rows if r['slug'] not in {x['slug'] for x in new}],ensure_ascii=False,indent=2)+'\n')
