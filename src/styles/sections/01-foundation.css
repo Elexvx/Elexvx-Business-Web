@@ -1,9 +1,9 @@
 @font-face {
   font-family: 'Source Han Sans';
-  src: url('/fonts/source-han-sans/SourceHanSansCN-VF.woff2') format('woff2');
+  src: url('/fonts/source-han-sans/site-bb0ffa18e8.woff2') format('woff2');
   font-style: normal;
   font-weight: 250 900;
-  font-display: swap;
+  font-display: optional;
 }
 
 :root {
@@ -27,8 +27,8 @@
   --color-action-tint: #2a2a2a;
   --color-nav-surface: #000000;
   --color-nav-muted: #b3b3b3;
-  --font-system: 'Source Han Sans', sans-serif;
-  --font-display: 'Source Han Sans', sans-serif;
+  --font-system: 'Source Han Sans', -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  --font-display: 'Source Han Sans', -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif;
   --space-xxs: 6px;
   --space-xs: 10px;
   --space-sm: 16px;

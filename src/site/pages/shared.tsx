@@ -220,7 +220,13 @@ export const NewsCard = ({ item, showExcerpt = true }: { item: NewsItem; showExc
   return (
     <a className="home-media-card home-news-card news-card" href={href(`/news/${item.slug}`)}>
       <div className="home-media-card-media">
-        <SiteImage src={cover} alt={`${t(item.title)} ${t('新闻配图')}`} loading="lazy" decoding="async" />
+        <SiteImage
+          sizes="(max-width: 640px) 120px, 180px"
+          src={cover}
+          alt={`${t(item.title)} ${t('新闻配图')}`}
+          loading="lazy"
+          decoding="async"
+        />
       </div>
       <div className="home-media-card-body">
         <h3>

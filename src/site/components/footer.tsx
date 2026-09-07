@@ -76,11 +76,11 @@ export const Footer = () => {
               aria-label={
                 locale === 'en'
                   ? theme === 'dark'
-                    ? 'Switch to light mode'
-                    : 'Switch to dark mode'
+                    ? 'Dark mode'
+                    : 'Light mode'
                   : theme === 'dark'
-                    ? '切换到浅色模式'
-                    : '切换到深色模式'
+                    ? '深色模式'
+                    : '浅色模式'
               }
               checked={theme === 'dark'}
               title={
