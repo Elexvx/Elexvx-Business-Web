@@ -30,16 +30,17 @@ const escapeXml = (value: string) =>
 
 const redirectDocument = (target: string) => {
   const safeTarget = escapeHtml(target);
+  const en = target.startsWith('/en/');
   return `<!doctype html>
-<html lang="zh-CN">
+<html lang="${en ? 'en' : 'zh-CN'}">
   <head>
     <meta charset="UTF-8" />
     <meta name="robots" content="noindex,nofollow" />
     <meta http-equiv="refresh" content="0;url=${safeTarget}" />
-    <title>页面已移动 · Elexvx Research</title>
+    <title>${en ? 'Page moved' : '页面已移动'} · Elexvx Research</title>
   </head>
   <body style="margin:0;background:#000;color:#fff;font-family:system-ui,sans-serif">
-    <main style="padding:48px"><p>页面已移动到 <a style="color:#fff" href="${safeTarget}">${safeTarget}</a>。</p></main>
+    <main style="padding:48px"><p>${en ? 'This page has moved to' : '页面已移动到'} <a style="color:#fff" href="${safeTarget}">${safeTarget}</a>。</p></main>
   </body>
 </html>
 `;
