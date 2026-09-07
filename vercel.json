@@ -115,6 +115,36 @@
       "source": "/latest-news/2024-12-31-01",
       "destination": "/news/2024-12-31-01",
       "permanent": true
+    },
+    {
+      "source": "/company/team/tjc",
+      "destination": "/company/team/taojincheng",
+      "permanent": true
+    },
+    {
+      "source": "/company/team/mxh",
+      "destination": "/company/team/mengxiaohua",
+      "permanent": true
+    },
+    {
+      "source": "/company/team/gkr",
+      "destination": "/company/team/gongkairui",
+      "permanent": true
+    },
+    {
+      "source": "/en/company/team/tjc",
+      "destination": "/en/company/team/taojincheng",
+      "permanent": true
+    },
+    {
+      "source": "/en/company/team/mxh",
+      "destination": "/en/company/team/mengxiaohua",
+      "permanent": true
+    },
+    {
+      "source": "/en/company/team/gkr",
+      "destination": "/en/company/team/gongkairui",
+      "permanent": true
     }
   ],
   "headers": [
@@ -164,7 +194,9 @@
       ]
     }
   ],
-  "regions": ["hkg1"],
+  "regions": [
+    "hkg1"
+  ],
   "functions": {
     "api/wechat/signature.ts": {
       "maxDuration": 30

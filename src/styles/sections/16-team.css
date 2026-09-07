@@ -52,9 +52,9 @@
   transform-origin: center bottom;
   scale: calc(var(--portrait-scale, 1) * 1.05);
 }
-.team-card[data-member="tjc"] { --portrait-scale: 0.945; }
-.team-card[data-member="mxh"] { --portrait-scale: 1; }
-.team-card[data-member="gkr"] { --portrait-scale: 1; }
+.team-card[data-member="taojincheng"] { --portrait-scale: 0.945; }
+.team-card[data-member="mengxiaohua"] { --portrait-scale: 1; }
+.team-card[data-member="gongkairui"] { --portrait-scale: 1; }
 .team-card[data-member="shihaoyu"] { --portrait-scale: 0.945; }
 .team-card[data-member="qiuziye"] { --portrait-scale: 0.903; }
 

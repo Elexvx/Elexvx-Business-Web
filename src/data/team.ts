@@ -10,8 +10,8 @@ export interface Leader {
 }
 
 export const leadersData: Record<string, Leader> = {
-  tjc: {
-    id: 'tjc',
+  taojincheng: {
+    id: 'taojincheng',
     name: '陶锦程',
     position: '投资人、总经理、支部书记',
     image: '/team/taojincheng-cutout.png',
@@ -50,15 +50,15 @@ export const leadersData: Record<string, Leader> = {
   }
 ],
   },
-  mxh: {
-    id: 'mxh',
+  mengxiaohua: {
+    id: 'mengxiaohua',
     name: '孟小华',
     position: '首席财务官、董事',
     image: '/team/mengxiaohua-cutout.png',
     bio: '孟小华，女，1976年10月生，汉族，江苏南京人，1995年10月参加工作。\n\n孟小华女士拥有丰富的财务管理经验，担任首席财务官和副经理职务。她负责公司的财务规划、成本控制和风险管理，为公司的稳健发展提供了坚实的财务保障。',
   },
-  gkr: {
-    id: 'gkr',
+  gongkairui: {
+    id: 'gongkairui',
     name: '龚凯瑞',
     position: '首席投资顾问、董事',
     image: '/team/gongkairui-cutout.png',
