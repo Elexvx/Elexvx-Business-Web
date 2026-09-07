@@ -180,7 +180,7 @@ export const BrandPage = () => (
         {[
           ['elexvx-logo.svg', 'Elexvx 品牌蓝主标志'],
           ['elexvx-logo-reverse.svg', 'Elexvx 反白标志'],
-          ['elexvx-logo-black.svg', 'Elexvx 单色黑标志'],
+          ['elexvx-logo-black-2460d9206a.svg', 'Elexvx 单色黑标志'],
         ].map(([file, label]) => (
           <figure key={file}>
             <div className={file.includes('reverse') ? 'brand-specimen brand-specimen-reverse' : 'brand-specimen'}>

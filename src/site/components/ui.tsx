@@ -19,7 +19,7 @@ export const Logo = ({ inverse = false }: { inverse?: boolean }) => (
   <SiteImage
     loading="eager"
     className="site-logo"
-    src={inverse ? '/brand/elexvx-logo-white.svg' : '/brand/elexvx-logo-black.svg'}
+    src={inverse ? '/brand/elexvx-logo-white-79454e6823.svg' : '/brand/elexvx-logo-black-2460d9206a.svg'}
     alt="Elexvx"
     width="112"
     height="26"
