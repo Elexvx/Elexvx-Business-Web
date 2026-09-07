@@ -88,7 +88,7 @@ export async function createShareCard(data: ShareData, en: boolean): Promise<str
         if (row === maxLines - 1) {
           while (ctx.measureText(line + '…').width > 800) line = line.slice(0, -1);
           ctx.fillText(line + '…', 48, y + row * size * 1.45);
-          return;
+          return y + row * size * 1.45;
         }
         ctx.fillText(line, 48, y + row * size * 1.45);
         row++;
@@ -96,21 +96,29 @@ export async function createShareCard(data: ShareData, en: boolean): Promise<str
       } else line = next;
     }
     ctx.fillText(line, 48, y + row * size * 1.45);
+    return y + row * size * 1.45;
   };
-  lines(data.title, 630, 46, 3, '#111');
-  lines(data.description, 844, 25, 3, '#555');
+  const titleBottom = lines(data.title, 630, 46, 3, '#111');
+  const descriptionBottom = data.description ? lines(data.description, titleBottom + 56, 25, 3, '#555') : titleBottom;
+  const dividerY = Math.ceil(descriptionBottom + 44);
   ctx.strokeStyle = '#d4d4d0';
   ctx.beginPath();
-  ctx.moveTo(48, 978);
-  ctx.lineTo(852, 978);
+  ctx.moveTo(48, dividerY);
+  ctx.lineTo(852, dividerY);
   ctx.stroke();
   const qr = await loadImage(await QRCode.toDataURL(data.url, { width: 168, margin: 4, errorCorrectionLevel: 'M' }));
-  ctx.drawImage(qr, 684, 1004, 168, 168);
+  ctx.drawImage(qr, 684, dividerY + 26, 168, 168);
   ctx.fillStyle = '#111';
   ctx.font = 'bold 25px sans-serif';
-  ctx.fillText(en ? 'Discover the full story' : '长按识别二维码，阅读全文', 48, 1066);
+  ctx.fillText(en ? 'Discover the full story' : '长按识别二维码，阅读全文', 48, dividerY + 88);
   ctx.fillStyle = '#666';
   ctx.font = '22px Arial';
-  ctx.fillText('www.elexvx.com', 48, 1110);
-  return canvas.toDataURL('image/png');
+  ctx.fillText('www.elexvx.com', 48, dividerY + 132);
+  const output = document.createElement('canvas');
+  output.width = canvas.width;
+  output.height = dividerY + 222;
+  const outputContext = output.getContext('2d');
+  if (!outputContext) throw new Error('Canvas unavailable');
+  outputContext.drawImage(canvas, 0, 0);
+  return output.toDataURL('image/png');
 }
