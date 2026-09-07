@@ -53,15 +53,20 @@ export async function createShareCard(data: ShareData, en: boolean): Promise<str
     if (url.origin !== new URL(data.url).origin && url.origin !== window.location.origin)
       throw new Error('External image');
     const cover = await loadImage(url.pathname);
-    const scale = Math.min(804 / cover.width, 405 / cover.height);
-    ctx.fillStyle = '#eaeae7';
-    ctx.fillRect(48, 150, 804, 405);
+    // Crop to fill the cover area without side gutters or distortion.
+    const scale = Math.max(804 / cover.width, 405 / cover.height);
+    const sourceWidth = 804 / scale;
+    const sourceHeight = 405 / scale;
     ctx.drawImage(
       cover,
-      48 + (804 - cover.width * scale) / 2,
-      150 + (405 - cover.height * scale) / 2,
-      cover.width * scale,
-      cover.height * scale
+      (cover.width - sourceWidth) / 2,
+      (cover.height - sourceHeight) / 2,
+      sourceWidth,
+      sourceHeight,
+      48,
+      150,
+      804,
+      405
     );
   } catch {
     ctx.fillStyle = '#181818';
