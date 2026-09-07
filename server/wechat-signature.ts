@@ -28,8 +28,12 @@ export function createTicketProvider(appId: string, secret: string, request: typ
         body: JSON.stringify({ grant_type: 'client_credential', appid: appId, secret, force_refresh: false }),
         signal: AbortSignal.timeout(10000),
       });
-      const token = (await tokenResponse.json()) as { access_token?: string };
-      if (!tokenResponse.ok || !token.access_token) throw new Error('WeChat token unavailable');
+      const token = (await tokenResponse.json()) as { access_token?: string; errcode?: number; errmsg?: string };
+      if (!tokenResponse.ok || !token.access_token) {
+        const ip = token.errmsg?.match(/invalid ip\s+([\d.]+)/i)?.[1];
+        console.warn('WeChat token failure', { code: token.errcode, ip });
+        throw new Error('WeChat token unavailable');
+      }
       const ticketResponse = await request(
         `https://api.weixin.qq.com/cgi-bin/ticket/getticket?access_token=${encodeURIComponent(token.access_token)}&type=jsapi`,
         { signal: AbortSignal.timeout(10000) }

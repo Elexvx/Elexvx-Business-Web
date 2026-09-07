@@ -1,4 +1,4 @@
-import { createNonce, createTicketProvider, signTicket, validateShareUrl } from '../../server/wechat-signature';
+import { createNonce, createTicketProvider, signTicket, validateShareUrl } from '../../server/wechat-signature.js';
 import type { IncomingMessage, ServerResponse } from 'node:http';
 let provider: ReturnType<typeof createTicketProvider> | undefined;
 export default async function handler(req: IncomingMessage, res: ServerResponse) {
