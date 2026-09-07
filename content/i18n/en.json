@@ -759,7 +759,6 @@
   "中标题 H2": "Section heading H2",
   "小标题 H3／卡片标题": "Subheading H3 / card title",
   "页面主标题 H1": "Page heading H1",
-  "模块标题 H2": "Section heading H2",
   "页面导语": "Page introduction",
   "眉题, 图注, 表注": "Eyebrows, figure captions and table notes",
   "眉题、图注、表注": "Eyebrows, figure captions and table notes",
@@ -2303,5 +2302,16 @@
   "Elexvx 官网全新上线，研究、活动、新闻、产品与公司栏目统一开放，欢迎访问全新的企业数字入口。": "The new Elexvx website is now live, bringing research, activities, news, products and company information together in one unified digital entry point.",
   "2026 年 9 月 7 日，Elexvx 官网全新上线。新网站以研究、活动、最近新闻、产品和公司为核心栏目，集中呈现企业动态、技术成果、产品能力与团队信息。": "On September 7, 2026, the new Elexvx website went live. Its core sections for research, activities, news, products and the company bring together company updates, technical work, product capabilities and team information.",
   "全新的页面结构统一了导航、版式和内容展示方式，让访问者可以从清晰的栏目入口了解 Elexvx，也让每项内容都有明确的位置和连续的浏览路径。": "The new page structure unifies navigation, layout and content presentation, giving visitors clear entry points into Elexvx and a consistent path through every piece of content.",
-  "网站会随着业务发展持续更新。我们将继续补充研究成果、活动记录、企业资质与产品资料，为研究交流、合作沟通和品牌展示提供稳定入口。": "The website will continue to evolve with the business. We will keep adding research results, activity records, company qualifications and product materials to support research exchange, collaboration and brand presentation."
+  "网站会随着业务发展持续更新。我们将继续补充研究成果、活动记录、企业资质与产品资料，为研究交流、合作沟通和品牌展示提供稳定入口。": "The website will continue to evolve with the business. We will keep adding research results, activity records, company qualifications and product materials to support research exchange, collaboration and brand presentation.",
+  "邱子枼，西南石油大学俄语专业大二学生，已通过英语四级（CET-4）。现任创新项目团队负责人，负责“AI智能体多工具调用数据溯源追踪系统”的整体规划、任务协调与进度跟进，参与需求分析、界面设计和基础代码调试，配合团队完成系统落地与材料撰写。": "Qiu Ziye is a second-year Russian major at Southwest Petroleum University and has passed CET-4. As Innovation Project Team Lead, she oversees planning, task coordination and progress for the AI Agent Multi-tool Invocation Data Provenance Tracking System. She contributes to requirements analysis, interface design, basic debugging, implementation and documentation.",
+  "邱子枼，西南石油大学俄语专业大二学生，英语四级（CET-4）。": "Qiu Ziye is a second-year Russian major at Southwest Petroleum University and has passed CET-4.",
+  "邱子枼": "Qiu Ziye",
+  "邱子枼 · Elexvx Research": "Qiu Ziye · Elexvx Research",
+  "邱子枼现任 Elexvx 创新项目团队负责人，负责公司“执衡”企业智能体可信执行项目的组织与推进，统筹阶段目标、任务分工、资源协调和进度复核，衔接研究、产品与技术成员的协作。": "Qiu Ziye is Innovation Project Team Lead at Elexvx, coordinating the company’s Zhiheng enterprise agent trusted execution project. She oversees milestones, task assignments, resource coordination and progress reviews, connecting research, product and engineering contributors.",
+  "执衡面向高风险企业智能体，研究多工具调用中的字段级数据血缘、语义授权与可验证执行，首个验证场景为通信网络运维中的配置变更。项目旨在建立数据来源、证据、结论、执行动作与外部结果之间的关联，让关键操作有据可查、权限可核验、结果可追踪。": "Zhiheng studies field-level data lineage, semantic authorization and verifiable execution for high-risk enterprise agents using multiple tools. Its first planned validation scenario is configuration changes in telecommunications network operations. The project aims to connect data sources, evidence, conclusions, actions and external outcomes so that critical operations can be traced, permissions verified and results checked.",
+  "在项目推进中，邱子枼负责将研究目标拆解为阶段任务，组织需求梳理与跨专业沟通，协调文献调研、原型设计、测试反馈和材料编写。围绕项目拟研究的带证工具调用、影子执行、人工审批与统一审计等机制，配合技术成员整理验证需求、跟进问题处理，并保留阶段评审与交付记录。": "Qiu translates research objectives into phased tasks, organizes requirements discussions and cross-disciplinary communication, and coordinates literature reviews, prototype design, test feedback and documentation. For proposed mechanisms including evidence-bearing tool calls, shadow execution, human approval and unified auditing, she works with technical contributors to document validation needs, track issues and maintain review and delivery records.",
+  "邱子枼就读于西南石油大学俄语专业，已通过英语四级（CET-4），具备外文资料查阅、文档整理与团队沟通能力。持续学习 AI 与基础开发知识，可协助开展页面原型、基础调试和接口测试，将资料分析与组织协调能力用于公司创新项目的研究支持和实施推进。": "Qiu studies Russian at Southwest Petroleum University and has passed CET-4. She contributes foreign-language research, documentation and team communication skills. She continues to study AI and basic development, assisting with page prototypes, basic debugging and API testing while supporting research and implementation within the company’s innovation projects.",
+  "“执衡”项目负责人": "Zhiheng Project Lead",
+  "邱子枼现任 Elexvx “执衡”项目负责人，负责公司“执衡”企业智能体可信执行项目的组织与推进，统筹阶段目标、任务分工、资源协调和进度复核，衔接研究、产品与技术成员的协作。": "Qiu Ziye is Zhiheng Project Lead at Elexvx, coordinating the company’s Zhiheng enterprise agent trusted execution project. She oversees milestones, task assignments, resource coordination and progress reviews, connecting research, product and engineering contributors.",
+  "“执衡”团队负责人": "Zhiheng Team Lead"
 }
