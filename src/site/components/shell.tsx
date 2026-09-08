@@ -13,16 +13,19 @@ export const SiteShell = ({
   activePath = '/',
   navTone = 'dark',
   className,
+  mainHtml,
 }: {
-  children: ReactNode;
+  children?: ReactNode;
   activePath?: string;
   navTone?: 'light' | 'dark';
   className?: string;
+  /** Trusted, build-generated homepage markup; interactive pages use children. */
+  mainHtml?: string;
 }) => {
   return (
     <div className={classNames('site-shell', 'site-shell-openai', className)}>
       <GlobalNav activePath={activePath} tone={navTone} />
-      <main>{children}</main>
+      {mainHtml === undefined ? <main>{children}</main> : <main dangerouslySetInnerHTML={{ __html: mainHtml }} />}
       <Footer />
       <CookieConsent />
     </div>
