@@ -17,6 +17,14 @@ const optimizer = new Beasties({
 });
 for (const file of ['dist/index.html', 'dist/en/index.html']) {
   const html = await readFile(file, 'utf8');
-  await writeFile(file, await optimizer.process(html));
+  const processed = await optimizer.process(html);
+  // Next emits several CSS chunks. Keep the complete critical cascade after all
+  // deferred links so a partially loaded chunk cannot temporarily override it.
+  const criticalStyles: string[] = [];
+  const withoutCriticalStyles = processed.replace(/<style\b[^>]*>[\s\S]*?<\/style>/g, (style) => {
+    criticalStyles.push(style);
+    return '';
+  });
+  await writeFile(file, withoutCriticalStyles.replace('</head>', `${criticalStyles.join('')}</head>`));
 }
 console.log('Inlined homepage critical CSS for both languages.');
