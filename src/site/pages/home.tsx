@@ -40,6 +40,7 @@ export const HomeWelcome = () => {
               alt=""
               loading="eager"
               fetchPriority="high"
+              decoding="sync"
             />
           )}
           <div className="home-hero-content">
