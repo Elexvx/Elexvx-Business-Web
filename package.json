@@ -7,7 +7,7 @@
   "scripts": {
     "dev": "next dev --hostname 127.0.0.1 --port 5173",
     "start": "next dev --hostname 127.0.0.1 --port 5173",
-    "build": "next build && tsx scripts/generate-site.tsx && npm run i18n:check",
+    "build": "next build && tsx scripts/generate-site.tsx && tsx scripts/inline-home-css.ts && npm run i18n:check",
     "preview": "tsx scripts/preview-static.ts",
     "typecheck": "tsc --noEmit",
     "lint": "eslint src/app src/site src/content src/data src/main.tsx src/ssg scripts tests vite.config.ts next.config.mjs next-env.d.ts",
@@ -40,6 +40,7 @@
     "@types/react": "^19.1.0",
     "@types/react-dom": "^19.1.0",
     "@vitejs/plugin-react": "^5.0.4",
+    "beasties": "^0.5.4",
     "eslint": "^9.24.0",
     "globals": "^16.0.0",
     "prettier": "^3.5.3",
