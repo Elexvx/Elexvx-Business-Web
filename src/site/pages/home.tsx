@@ -1,4 +1,5 @@
 'use client';
+import { Suspense } from 'react';
 import { Translated } from '../providers/i18n';
 
 import { SiteImage } from '../components/site-image';
@@ -214,6 +215,7 @@ export const HomeResearchSection = () => {
                   alt={t(paper.title)}
                   width={1600}
                   height={1600}
+                  sizes="(max-width: 720px) 80vw, (max-width: 1024px) 45vw, 420px"
                 />
               </a>
               <div className="home-media-card-body home-product-copy">
@@ -262,6 +264,7 @@ export const HomeProductsSection = () => {
                   alt={product.name}
                   width={1600}
                   height={1600}
+                  sizes="(max-width: 720px) 80vw, (max-width: 1024px) 45vw, 420px"
                   loading="lazy"
                   decoding="async"
                 />
@@ -305,12 +308,26 @@ export const HomePage = () => {
   const news = [...usePublishedNews()].sort((a, b) => b.publishedAt.localeCompare(a.publishedAt)).slice(0, 6);
   return (
     <SiteShell activePath="/" navTone="dark" className="site-shell-home">
-      <HomeWelcome />
-      <HomeNewsSection news={news} />
-      <HomeResearchSection />
-      <HomeProductsSection />
-      <HomeCasesSection />
-      <HomeCompanyEntry />
+      {/* Keep every section in the initial HTML while allowing React to hydrate
+          independent sections without one page-wide blocking task. */}
+      <Suspense fallback={null}>
+        <HomeWelcome />
+      </Suspense>
+      <Suspense fallback={null}>
+        <HomeNewsSection news={news} />
+      </Suspense>
+      <Suspense fallback={null}>
+        <HomeResearchSection />
+      </Suspense>
+      <Suspense fallback={null}>
+        <HomeProductsSection />
+      </Suspense>
+      <Suspense fallback={null}>
+        <HomeCasesSection />
+      </Suspense>
+      <Suspense fallback={null}>
+        <HomeCompanyEntry />
+      </Suspense>
     </SiteShell>
   );
 };
