@@ -1,5 +1,4 @@
 'use client';
-import { Suspense } from 'react';
 import { Translated } from '../providers/i18n';
 
 import { SiteImage } from '../components/site-image';
@@ -308,26 +307,12 @@ export const HomePage = () => {
   const news = [...usePublishedNews()].sort((a, b) => b.publishedAt.localeCompare(a.publishedAt)).slice(0, 6);
   return (
     <SiteShell activePath="/" navTone="dark" className="site-shell-home">
-      {/* Keep every section in the initial HTML while allowing React to hydrate
-          independent sections without one page-wide blocking task. */}
-      <Suspense fallback={null}>
-        <HomeWelcome />
-      </Suspense>
-      <Suspense fallback={null}>
-        <HomeNewsSection news={news} />
-      </Suspense>
-      <Suspense fallback={null}>
-        <HomeResearchSection />
-      </Suspense>
-      <Suspense fallback={null}>
-        <HomeProductsSection />
-      </Suspense>
-      <Suspense fallback={null}>
-        <HomeCasesSection />
-      </Suspense>
-      <Suspense fallback={null}>
-        <HomeCompanyEntry />
-      </Suspense>
+      <HomeWelcome />
+      <HomeNewsSection news={news} />
+      <HomeResearchSection />
+      <HomeProductsSection />
+      <HomeCasesSection />
+      <HomeCompanyEntry />
     </SiteShell>
   );
 };
