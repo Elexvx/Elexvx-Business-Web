@@ -1,6 +1,6 @@
 'use client';
 
-import { Suspense, type ReactNode } from 'react';
+import { type ReactNode } from 'react';
 
 import { CookieConsent } from './cookie-consent';
 
@@ -21,16 +21,10 @@ export const SiteShell = ({
 }) => {
   return (
     <div className={classNames('site-shell', 'site-shell-openai', className)}>
-      <Suspense fallback={null}>
-        <GlobalNav activePath={activePath} tone={navTone} />
-      </Suspense>
+      <GlobalNav activePath={activePath} tone={navTone} />
       <main>{children}</main>
-      <Suspense fallback={null}>
-        <Footer />
-      </Suspense>
-      <Suspense fallback={null}>
-        <CookieConsent />
-      </Suspense>
+      <Footer />
+      <CookieConsent />
     </div>
   );
 };
