@@ -34,70 +34,73 @@ export const NavigationSearch = ({ onNavigate }: { onNavigate: () => void }) => 
     visit(parseMarkdown(source));
     return parts.join(' ');
   };
-  const entries = [
-    ...publishedResearch.map((item) => ({
-      title: item.title,
-      path: `/research/${item.slug}`,
-      text: `${t(item.excerpt)} ${localizedBody(item.body)}`,
-      kind: en ? 'Research' : '研究',
-    })),
-    ...publishedActivities.map((item) => ({
-      title: item.title,
-      path: `/activities/${item.slug}`,
-      text: `${t(item.excerpt)} ${localizedBody(item.body)}`,
-      kind: en ? 'Activity' : '活动',
-    })),
-    ...publishedCaseStudies.map((item) => ({
-      title: en ? item.titleEn : item.title,
-      path: `/cases/${item.slug}`,
-      text: `${en ? item.excerptEn : item.excerpt} ${en ? item.bodyEn : localizedBody(item.body)}`,
-      kind: en ? 'Case study' : '合作案例',
-    })),
-    ...insights.map((item) => ({
-      title: item.title,
-      path: `/insights/${item.slug}`,
-      text: `${t(item.excerpt)} ${localizedBody(item.body)}`,
-      kind: en ? 'Article' : '文章',
-    })),
-    ...news.map((item) => ({
-      title: item.title,
-      path: `/news/${item.slug}`,
-      text: `${t(item.excerpt)} ${localizedBody(item.body)} ${item.tags.map(t).join(' ')}`,
-      kind: en ? 'News' : '动态',
-    })),
-    ...researchDirections.map((item) => ({
-      title: item.title,
-      path: `/research/${item.slug}`,
-      text: JSON.stringify(item),
-      kind: en ? 'Research' : '研究',
-    })),
-    ...projects.map((item) => ({
-      title: item.title,
-      path: `/projects/${item.slug}`,
-      text: JSON.stringify(item),
-      kind: en ? 'Project' : '成果',
-    })),
-    ...scenarios.map((item) => ({
-      title: item.title,
-      path: `/scenarios/${item.slug}`,
-      text: JSON.stringify(item),
-      kind: en ? 'Scenario' : '场景',
-    })),
-    ...withNewsCategories(
-      navigationGroups,
-      news.map((item) => item.category)
-    ).flatMap((group) =>
-      group.columns.flatMap((column) =>
-        column.links.map((link) => ({
-          title: link.label,
-          path: link.href,
-          text: `${group.label} ${column.title}`,
-          kind: en ? 'Page' : '页面',
-        }))
-      )
-    ),
-  ];
   const terms = query.trim().toLocaleLowerCase().split(/\s+/).filter(Boolean);
+  // A closed or empty search must not parse every article during page hydration.
+  const entries = terms.length
+    ? [
+        ...publishedResearch.map((item) => ({
+          title: item.title,
+          path: `/research/${item.slug}`,
+          text: `${t(item.excerpt)} ${localizedBody(item.body)}`,
+          kind: en ? 'Research' : '研究',
+        })),
+        ...publishedActivities.map((item) => ({
+          title: item.title,
+          path: `/activities/${item.slug}`,
+          text: `${t(item.excerpt)} ${localizedBody(item.body)}`,
+          kind: en ? 'Activity' : '活动',
+        })),
+        ...publishedCaseStudies.map((item) => ({
+          title: en ? item.titleEn : item.title,
+          path: `/cases/${item.slug}`,
+          text: `${en ? item.excerptEn : item.excerpt} ${en ? item.bodyEn : localizedBody(item.body)}`,
+          kind: en ? 'Case study' : '合作案例',
+        })),
+        ...insights.map((item) => ({
+          title: item.title,
+          path: `/insights/${item.slug}`,
+          text: `${t(item.excerpt)} ${localizedBody(item.body)}`,
+          kind: en ? 'Article' : '文章',
+        })),
+        ...news.map((item) => ({
+          title: item.title,
+          path: `/news/${item.slug}`,
+          text: `${t(item.excerpt)} ${localizedBody(item.body)} ${item.tags.map(t).join(' ')}`,
+          kind: en ? 'News' : '动态',
+        })),
+        ...researchDirections.map((item) => ({
+          title: item.title,
+          path: `/research/${item.slug}`,
+          text: JSON.stringify(item),
+          kind: en ? 'Research' : '研究',
+        })),
+        ...projects.map((item) => ({
+          title: item.title,
+          path: `/projects/${item.slug}`,
+          text: JSON.stringify(item),
+          kind: en ? 'Project' : '成果',
+        })),
+        ...scenarios.map((item) => ({
+          title: item.title,
+          path: `/scenarios/${item.slug}`,
+          text: JSON.stringify(item),
+          kind: en ? 'Scenario' : '场景',
+        })),
+        ...withNewsCategories(
+          navigationGroups,
+          news.map((item) => item.category)
+        ).flatMap((group) =>
+          group.columns.flatMap((column) =>
+            column.links.map((link) => ({
+              title: link.label,
+              path: link.href,
+              text: `${group.label} ${column.title}`,
+              kind: en ? 'Page' : '页面',
+            }))
+          )
+        ),
+      ]
+    : [];
   const seen = new Set<string>();
   const results = terms.length
     ? entries
