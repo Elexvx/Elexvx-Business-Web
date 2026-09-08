@@ -321,10 +321,15 @@
 
 .site-shell-openai.company-overview .research-tile .tile-inner {
   max-width: 1120px;
+  margin-inline: auto;
 }
 
 .site-shell-openai.company-overview .tile-copy {
   margin-bottom: 32px;
+}
+
+.site-shell-openai.company-overview .tile-description {
+  margin-inline: 0;
 }
 
 .site-shell-openai.company-overview .company-introduction {
@@ -447,7 +452,7 @@
   }
 
   .site-shell-openai.company-overview .company-content-list {
-    gap: 32px 16px;
+    gap: 24px 16px;
   }
 
   .site-shell-openai .contact-card-grid {
