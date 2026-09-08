@@ -1,6 +1,6 @@
-import { publishedResearch } from './research-articles';
-import { publishedActivities } from './activities';
+import catalog from './navigation-catalog.json';
 import { homeContent } from './page-content';
+const { research: publishedResearch, activities: publishedActivities } = catalog;
 
 export type NavigationLink = { label: string; href: string };
 

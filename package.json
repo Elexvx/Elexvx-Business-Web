@@ -17,8 +17,8 @@
     "test": "vitest run",
     "check": "npm run typecheck && npm run lint && npm run format:check && npm run content:check && npm test && npm run build",
     "design:sync": "node scripts/sync-design.mjs",
-    "prebuild": "npm run design:sync && tsx scripts/generate-home.tsx",
-    "predev": "npm run design:sync",
+    "prebuild": "npm run design:sync && tsx scripts/generate-navigation.ts && tsx scripts/generate-home.tsx",
+    "predev": "npm run design:sync && tsx scripts/generate-navigation.ts && tsx scripts/generate-home.tsx",
     "i18n:check": "tsx scripts/check-english.ts",
     "wechat:serve": "tsx scripts/wechat-share-server.ts",
     "images:optimize": "node scripts/optimize-images.mjs"

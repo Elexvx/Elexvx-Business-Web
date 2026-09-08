@@ -1,7 +1,7 @@
 import { loadInsights } from '../content/loader';
 import { loadNews } from '../content/news-loader';
 import { ContentProvider } from '../site/providers/content-context';
-import { getStaticRoutes } from '../site/routing/routes';
+import routePaths from '../data/route-paths.json';
 import type { Metadata } from 'next';
 import 'katex/dist/katex.min.css';
 import '../styles/apple-system.css';
@@ -106,7 +106,6 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   const insights = loadInsights();
   const news = loadNews();
-  const routePaths = getStaticRoutes(insights, news).map((route) => route.path);
   return (
     <html lang="zh-CN" suppressHydrationWarning>
       <head>

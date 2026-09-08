@@ -15,6 +15,7 @@ import { getStaticRoutes } from '../src/site/routing/routes';
 const insights = loadInsights();
 const news = loadNews();
 const routePaths = getStaticRoutes(insights, news).map((route) => route.path);
+await writeFile('src/data/route-paths.json', `${JSON.stringify(routePaths, null, 2)}\n`);
 const output: Partial<Record<Locale, string>> = {};
 for (const locale of ['zh-CN', 'en'] as const) {
   const html = renderToStaticMarkup(

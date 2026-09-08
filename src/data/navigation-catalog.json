@@ -1,0 +1,41 @@
+{
+  "research": [
+    {
+      "slug": "moe-chiplet-expert-reuse",
+      "category": "芯片架构",
+      "categorySlug": "chip-architecture"
+    },
+    {
+      "slug": "agent-kv-cache-lifecycle",
+      "category": "推理系统",
+      "categorySlug": "inference-systems"
+    },
+    {
+      "slug": "portable-fp4-quantization",
+      "category": "量化与编译",
+      "categorySlug": "quantization-compilation"
+    },
+    {
+      "slug": "edge-npu-llm-compilation",
+      "category": "量化与编译",
+      "categorySlug": "quantization-compilation"
+    },
+    {
+      "slug": "memory-centric-inference",
+      "category": "芯片架构",
+      "categorySlug": "chip-architecture"
+    }
+  ],
+  "activities": [
+    {
+      "slug": "website-permissions-redesign-2026",
+      "category": "网站更新",
+      "categorySlug": "site-updates"
+    },
+    {
+      "slug": "jinxi-entrepreneurship-roadshow-2026",
+      "category": "项目路演",
+      "categorySlug": "roadshows"
+    }
+  ]
+}

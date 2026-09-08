@@ -6,9 +6,10 @@ import { useEffect, useRef, useState } from 'react';
 import { navigationGroups, withNewsCategories, type NavigationGroup } from '../../data/research-navigation';
 import { useI18n } from '../providers/i18n';
 
-import { NavigationSearch } from './navigation-search';
+import dynamic from 'next/dynamic';
 import { useAvailableLink, usePublishedNews } from '../providers/content-context';
 import { classNames, Logo } from './ui';
+const NavigationSearch = dynamic(() => import('./navigation-search').then((module) => module.NavigationSearch));
 
 export const GlobalNav = ({ activePath = '/', tone = 'light' }: { activePath?: string; tone?: 'light' | 'dark' }) => {
   const { locale, t, href } = useI18n();
@@ -266,7 +267,7 @@ export const GlobalNav = ({ activePath = '/', tone = 'light' }: { activePath?: s
       >
         <div className="mobile-navigation-inner">
           <div className="mobile-navigation-heading">
-            <NavigationSearch onNavigate={() => setMenuOpen(false)} />
+            {menuOpen && <NavigationSearch onNavigate={() => setMenuOpen(false)} />}
             <button
               type="button"
               className="mobile-close-button"
