@@ -1,9 +1,9 @@
 'use client';
 
-import { publishedCaseStudies, type CaseStudy } from '../../data/case-studies';
+import type { CaseStudy, CaseStudySummary } from '../../data/case-studies';
 import { Eyebrow } from '../components/index';
 import { ArticleBody, ArticleMetadata, ContinueReading } from '../components/article-reading';
-import { HomeMediaCard, NotFoundPage } from './shared';
+import { HomeMediaCard } from './shared';
 import { useI18n } from '../providers/i18n';
 import { SiteShell } from '../components/shell';
 
@@ -14,9 +14,15 @@ const localizedCase = (item: CaseStudy, locale: 'zh-CN' | 'en') => ({
   body: locale === 'en' ? item.bodyEn : item.body,
 });
 
-export const CaseStudyCard = ({ item }: { item: CaseStudy }) => {
+const localizedCaseSummary = (item: CaseStudySummary, locale: 'zh-CN' | 'en') => ({
+  title: locale === 'en' ? item.titleEn : item.title,
+  excerpt: locale === 'en' ? item.excerptEn : item.excerpt,
+  category: locale === 'en' ? item.categoryEn : item.category,
+});
+
+export const CaseStudyCard = ({ item }: { item: CaseStudySummary }) => {
   const { locale } = useI18n();
-  const copy = localizedCase(item, locale);
+  const copy = localizedCaseSummary(item, locale);
   return (
     <HomeMediaCard
       className="home-case-card"
@@ -31,10 +37,8 @@ export const CaseStudyCard = ({ item }: { item: CaseStudy }) => {
   );
 };
 
-export const CaseStudyPage = ({ slug }: { slug: string }) => {
+export const CaseStudyPage = ({ item, related }: { item: CaseStudy; related: CaseStudySummary[] }) => {
   const { locale, href } = useI18n();
-  const item = publishedCaseStudies.find((entry) => entry.slug === slug);
-  if (!item) return <NotFoundPage />;
   const copy = localizedCase(item, locale);
   return (
     <SiteShell activePath="/" className="site-shell-case-study">
@@ -56,7 +60,7 @@ export const CaseStudyPage = ({ slug }: { slug: string }) => {
           <span>{locale === 'en' ? 'Publishing systems' : '出版数字化'}</span>
           <a href={href('/')}>{locale === 'en' ? '← Back to home' : '← 返回首页'}</a>
         </div>
-        <ContinueReading items={publishedCaseStudies} current={item} base="/cases" />
+        <ContinueReading items={related} current={item} base="/cases" />
       </article>
     </SiteShell>
   );

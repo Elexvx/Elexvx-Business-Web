@@ -2,7 +2,7 @@
 import { Translated } from '../providers/i18n';
 
 import { SiteImage } from '../components/site-image';
-import { publishedResearch } from '../../data/research-articles';
+import type { ActivitySummary } from '../../data/activities';
 import { useCategoryFilter } from '../providers/category-filter';
 import { Tabs, Popover } from 'radix-ui';
 import { AppstoreOutlined, DownOutlined, FilterOutlined, UnorderedListOutlined } from '@ant-design/icons';
@@ -10,7 +10,6 @@ import { useState } from 'react';
 import { getDirection, projects } from '../../data/site';
 import { pageContent } from '../../data/page-content';
 import { usePublishedInsights } from '../providers/content-context';
-import type { Insight } from '../../content/types';
 import { classNames, Eyebrow, ResearchTile, SiteShell } from '../components/index';
 
 import { LocalizedText as T, LocalizedTitle as Title, useI18n } from '../providers/i18n';
@@ -18,14 +17,14 @@ import { formatNewsDate, ProjectCard, PageHero, InsightList, EmptyState, NotFoun
 
 export type ResearchIndexFilter = string;
 
-export const ResearchPage = () => {
+export const ResearchPage = ({ items }: { items: ActivitySummary[] }) => {
   const { href, locale, t } = useI18n();
-  const insights = publishedResearch.map((item) => ({ ...item, evidence: [], readingTime: 1 }));
+  const insights = items;
   const [filter, setFilter] = useCategoryFilter();
   const [newestFirst, setNewestFirst] = useState(true);
   const [showMedia, setShowMedia] = useState(false);
   const isChinese = locale === 'zh-CN';
-  const categoryFor = (insight: Insight & { categorySlug?: string; category?: string }) => {
+  const categoryFor = (insight: ActivitySummary & { categorySlug?: string; category?: string }) => {
     if (insight.categorySlug) return { id: insight.categorySlug, label: insight.category || insight.categorySlug };
     const direction = insight.directionSlug ? getDirection(insight.directionSlug) : undefined;
     return direction ? { id: direction.slug, label: direction.title } : { id: 'uncategorized', label: '技术文章' };

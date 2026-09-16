@@ -5,8 +5,14 @@ import type { NewsItem } from './types';
 
 const newsRoot = resolve(process.cwd(), 'articles', 'news');
 
+let newsCache: NewsItem[] | undefined;
+
 export const loadNews = (): NewsItem[] => {
-  if (!existsSync(newsRoot)) return [];
+  if (newsCache) return newsCache;
+  if (!existsSync(newsRoot)) {
+    newsCache = [];
+    return newsCache;
+  }
   const files = readdirSync(newsRoot)
     .filter((filename) => filename.endsWith('.md'))
     .sort();
@@ -16,7 +22,8 @@ export const loadNews = (): NewsItem[] => {
     if (seen.has(item.slug)) throw new Error(`Duplicate news slug: ${item.slug}`);
     seen.add(item.slug);
   }
-  return sortNews(news);
+  newsCache = sortNews(news);
+  return newsCache;
 };
 
 export const publishedNews = () => loadNews().filter((item) => item.status === 'published');

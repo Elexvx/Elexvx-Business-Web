@@ -10,6 +10,7 @@ import { Eyebrow, ResearchTile, SiteShell } from '../components/index';
 import { ArticleBody, ArticleMetadata, ContinueReading } from '../components/article-reading';
 import { LocalizedText as T, LocalizedTitle as Title, useI18n } from '../providers/i18n';
 import { formatNewsDate, NewsCard, PageHero, InsightList, NotFoundPage } from './shared';
+import type { Insight, NewsItem } from '../../content/types';
 
 export const InsightsPage = () => {
   const insights = usePublishedInsights();
@@ -67,11 +68,10 @@ export const NewsPage = () => {
   );
 };
 
-export const InsightPage = ({ slug }: { slug: string }) => {
+export const InsightPage = ({ insight }: { insight: Insight }) => {
   const { t, locale } = useI18n();
   const allInsights = useInsights();
-  const insight = allInsights.find((item) => item.slug === slug);
-  if (!insight || insight.status !== 'published') return <NotFoundPage />;
+  if (insight.status !== 'published') return <NotFoundPage />;
   const direction = insight.directionSlug ? getDirection(insight.directionSlug) : undefined;
   return (
     <SiteShell activePath="/insights">
@@ -107,11 +107,10 @@ export const InsightPage = ({ slug }: { slug: string }) => {
   );
 };
 
-export const NewsItemPage = ({ slug }: { slug: string }) => {
+export const NewsItemPage = ({ item }: { item: NewsItem }) => {
   const { t, locale } = useI18n();
   const allNews = useNews();
-  const item = allNews.find((candidate) => candidate.slug === slug);
-  if (!item || item.status !== 'published') return <NotFoundPage />;
+  if (item.status !== 'published') return <NotFoundPage />;
   return (
     <SiteShell activePath="/news">
       <article className="article-layout article-layout-news">

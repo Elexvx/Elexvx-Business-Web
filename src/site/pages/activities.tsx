@@ -3,16 +3,15 @@ import { Translated } from '../providers/i18n';
 
 import { SiteImage } from '../components/site-image';
 import { useCategoryFilter } from '../providers/category-filter';
-import { publishedResearch } from '../../data/research-articles';
-import { publishedActivities, type Activity } from '../../data/activities';
+import type { Activity, ActivitySummary } from '../../data/activities';
 import { Eyebrow, SiteShell } from '../components/index';
 import { ArticleBody, ArticleMetadata, ContinueReading } from '../components/article-reading';
 import { useI18n } from '../providers/i18n';
-import { HomeEmptyContent, HomeMediaCard, NotFoundPage } from './shared';
+import { HomeEmptyContent, HomeMediaCard } from './shared';
 
-export const ActivityHighlights = ({ items }: { items: Activity[] }) => {
+export const ActivityHighlights = ({ items }: { items: ActivitySummary[] }) => {
   const { href, t } = useI18n();
-  const card = (item: Activity, lead = false) => (
+  const card = (item: ActivitySummary, lead = false) => (
     <article className={lead ? 'activity-highlight activity-highlight-lead' : 'activity-highlight'} key={item.slug}>
       <a href={href(`/activities/${item.slug}`)}>
         <SiteImage src={item.cover || '/visuals/research-gradient.jpg'} alt={t(item.title)} loading="lazy" />
@@ -43,14 +42,12 @@ export const ActivityHighlights = ({ items }: { items: Activity[] }) => {
   );
 };
 
-export const ActivitySection = ({ page = false }: { page?: boolean }) => {
+export const ActivitySection = ({ items, page = false }: { items: ActivitySummary[]; page?: boolean }) => {
   const { locale, t } = useI18n();
   const [category, selectCategory] = useCategoryFilter();
-  const categories = Array.from(
-    new Map(publishedActivities.map((item) => [item.categorySlug, item.category])).entries()
-  );
+  const categories = Array.from(new Map(items.map((item) => [item.categorySlug, item.category])).entries());
   const Heading = page ? 'h1' : 'h2';
-  const entries = [...publishedActivities].sort(
+  const entries = [...items].sort(
     (a, b) => Number(Boolean(b.pinned)) - Number(Boolean(a.pinned)) || b.publishedAt.localeCompare(a.publishedAt)
   );
   const shown = page
@@ -103,19 +100,25 @@ export const ActivitySection = ({ page = false }: { page?: boolean }) => {
   );
 };
 
-export const ActivitiesPage = () => (
+export const ActivitiesPage = ({ items }: { items: ActivitySummary[] }) => (
   <SiteShell activePath="/activities" className="site-shell-home">
     <div className="activities-page-inner">
-      <ActivitySection page />
+      <ActivitySection items={items} page />
     </div>
   </SiteShell>
 );
 
-export const ActivityPage = ({ slug, research = false }: { slug: string; research?: boolean }) => {
+export const ActivityPage = ({
+  item,
+  related,
+  research = false,
+}: {
+  item: Activity;
+  related: ActivitySummary[];
+  research?: boolean;
+}) => {
   const { t } = useI18n();
   const base = research ? '/research' : '/activities';
-  const item = (research ? publishedResearch : publishedActivities).find((entry) => entry.slug === slug);
-  if (!item) return <NotFoundPage />;
   return (
     <SiteShell activePath={base}>
       <article className="article-layout">
@@ -133,7 +136,7 @@ export const ActivityPage = ({ slug, research = false }: { slug: string; researc
         <ArticleBody source={item.body}>
           <ArticleMetadata author={item.author} keywords={item.keywords} keywordsEn={item.keywordsEn} />
         </ArticleBody>
-        <ContinueReading items={research ? publishedResearch : publishedActivities} current={item} base={base} />
+        <ContinueReading items={related} current={item} base={base} />
       </article>
     </SiteShell>
   );

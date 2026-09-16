@@ -32,3 +32,4 @@ pnpm-lock.yaml
 .local/
 .vercel/
 .env.*
+public/search-index.json

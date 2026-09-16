@@ -1,5 +1,5 @@
 import { mkdir, writeFile, readFile, readdir } from 'node:fs/promises';
-import { dirname, join, resolve } from 'node:path';
+import { join, resolve } from 'node:path';
 import { loadInsights } from '../src/content/loader';
 import { loadNews } from '../src/content/news-loader';
 import { getStaticRoutes, redirectRoutes } from '../src/site/routing/routes';
@@ -50,9 +50,6 @@ const writeRouteFile = async (path: string, html: string) => {
   const routeDirectory = join(distRoot, path.replace(/^\//, ''));
   await mkdir(routeDirectory, { recursive: true });
   await writeFile(join(routeDirectory, 'index.html'), html, 'utf8');
-  const cleanUrlFile = join(distRoot, `${path.replace(/^\//, '')}.html`);
-  await mkdir(dirname(cleanUrlFile), { recursive: true });
-  await writeFile(cleanUrlFile, html, 'utf8');
 };
 
 for (const [from, target] of Object.entries(redirectRoutes)) {

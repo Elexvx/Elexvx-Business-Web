@@ -16,6 +16,15 @@ export type CaseStudy = {
   bodyEn: string;
 };
 
+export type CaseStudySummary = Omit<CaseStudy, 'body' | 'bodyEn'>;
+
+export const toCaseStudySummary = (item: CaseStudy): CaseStudySummary => {
+  const { body, bodyEn, ...summary } = item;
+  void body;
+  void bodyEn;
+  return summary;
+};
+
 export const caseStudies: CaseStudy[] = [
   {
     slug: 'kaicheng-international-journal-publishing-system',

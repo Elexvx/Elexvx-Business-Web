@@ -230,12 +230,5 @@
       ]
     }
   ],
-  "regions": [
-    "hkg1"
-  ],
-  "functions": {
-    "api/wechat/signature.ts": {
-      "maxDuration": 30
-    }
-  }
+  "regions": ["hkg1"]
 }

@@ -7,7 +7,11 @@ const articleRoot = resolve(process.cwd(), 'articles', 'insights');
 const legacyContentRoot = resolve(process.cwd(), 'content', 'insights');
 const contentRoot = existsSync(articleRoot) ? articleRoot : legacyContentRoot;
 
+let insightsCache: Insight[] | undefined;
+
 export const loadInsights = (): Insight[] => {
+  if (insightsCache) return insightsCache;
+
   const files = readdirSync(contentRoot)
     .filter((filename) => filename.endsWith('.md'))
     .sort();
@@ -25,7 +29,8 @@ export const loadInsights = (): Insight[] => {
       throw new Error(`Published insight requires verified evidence: ${insight.slug}`);
     }
   }
-  return sortInsights(insights);
+  insightsCache = sortInsights(insights);
+  return insightsCache;
 };
 
 export const publishedInsights = () => loadInsights().filter((insight) => insight.status === 'published');

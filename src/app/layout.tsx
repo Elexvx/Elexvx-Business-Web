@@ -1,5 +1,6 @@
 import { loadInsights } from '../content/loader';
 import { loadNews } from '../content/news-loader';
+import { toInsightSummary, toNewsSummary } from '../content/summaries';
 import { ContentProvider } from '../site/providers/content-context';
 import routePaths from '../data/route-paths.json';
 import type { Metadata } from 'next';
@@ -113,7 +114,11 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       </head>
       <body>
         <ThemeProvider>
-          <ContentProvider insights={insights} news={news} routePaths={routePaths}>
+          <ContentProvider
+            insights={insights.map(toInsightSummary)}
+            news={news.map(toNewsSummary)}
+            routePaths={routePaths}
+          >
             {children}
           </ContentProvider>
         </ThemeProvider>

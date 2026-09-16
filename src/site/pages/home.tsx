@@ -6,24 +6,24 @@ import homeHeroInline from '../../data/home-hero-inline.json';
 
 import { ActivitySection } from './activities';
 import { CaseStudyCard } from './case-studies';
-import { publishedResearch } from '../../data/research-articles';
-import { publishedCaseStudies } from '../../data/case-studies';
 import { researchDirections } from '../../data/site';
 import { homeContent } from '../../data/page-content';
 import { usePublishedNews } from '../providers/content-context';
-import type { Insight, NewsItem } from '../../content/types';
+import type { InsightSummary, NewsSummary } from '../../content/types';
+import type { ActivitySummary } from '../../data/activities';
+import type { CaseStudySummary } from '../../data/case-studies';
 import { Eyebrow, SiteShell, TextLink } from '../components/index';
 
 import { LocalizedText as T, LocalizedTitle as Title, useI18n } from '../providers/i18n';
 import { HomeDirectionCard, HomeInsightCard, NewsCard, HomeEmptyContent } from './shared';
 
-export const isCompanyActivity = (item: NewsItem) =>
+export const isCompanyActivity = (item: NewsSummary) =>
   ['活动', '公司活动', '最近活动', 'activity', 'event'].includes(item.category.toLowerCase()) ||
   item.tags.some((tag) => ['公司活动', 'activity', 'event'].includes(tag.toLowerCase()));
 
-export const HomeLatestActivity = () => <ActivitySection />;
+export const HomeLatestActivity = ({ items }: { items: ActivitySummary[] }) => <ActivitySection items={items} />;
 
-export const HomeWelcome = () => {
+export const HomeWelcome = ({ items }: { items: ActivitySummary[] }) => {
   const { hero } = homeContent;
   const important = hero.important.enabled && hero.important.title.trim() ? hero.important : null;
   const title = important?.title || hero.title;
@@ -59,7 +59,7 @@ export const HomeWelcome = () => {
             )}
           </div>
         </div>
-        <HomeLatestActivity />
+        <HomeLatestActivity items={items} />
       </div>
     </section>
   );
@@ -97,7 +97,7 @@ export const HomeDirectionsSection = () => {
   );
 };
 
-export const HomePublicationsSection = ({ insights }: { insights: Insight[] }) => {
+export const HomePublicationsSection = ({ insights }: { insights: InsightSummary[] }) => {
   const content = homeContent.publications;
   return (
     <section className="home-content-section" id="research-publications" aria-labelledby="research-publications-title">
@@ -126,7 +126,7 @@ export const HomePublicationsSection = ({ insights }: { insights: Insight[] }) =
   );
 };
 
-export const HomeNewsSection = ({ news }: { news: NewsItem[] }) => {
+export const HomeNewsSection = ({ news }: { news: NewsSummary[] }) => {
   const content = homeContent.news;
   return (
     <section
@@ -159,9 +159,9 @@ export const HomeNewsSection = ({ news }: { news: NewsItem[] }) => {
   );
 };
 
-export const HomeCasesSection = () => {
+export const HomeCasesSection = ({ items }: { items: CaseStudySummary[] }) => {
   const content = homeContent.cases;
-  const caseStudy = publishedCaseStudies[0];
+  const caseStudy = items[0];
   return (
     <section className="home-content-section" id="cooperation-cases" aria-labelledby="cooperation-cases-title">
       <div className="home-content-inner">
@@ -192,9 +192,9 @@ export const HomeCasesSection = () => {
   );
 };
 
-export const HomeResearchSection = () => {
+export const HomeResearchSection = ({ items }: { items: ActivitySummary[] }) => {
   const { t, href } = useI18n();
-  const papers = [...publishedResearch].sort((a, b) => b.publishedAt.localeCompare(a.publishedAt)).slice(0, 3);
+  const papers = [...items].sort((a, b) => b.publishedAt.localeCompare(a.publishedAt)).slice(0, 3);
   return (
     <section className="home-content-section home-products-section" id="research" aria-labelledby="home-research-title">
       <div className="home-content-inner">
@@ -304,15 +304,23 @@ export const HomeCompanyEntry = () => {
   );
 };
 
-export const HomePage = () => {
+export const HomePage = ({
+  activities,
+  research,
+  caseStudies,
+}: {
+  activities: ActivitySummary[];
+  research: ActivitySummary[];
+  caseStudies: CaseStudySummary[];
+}) => {
   const news = [...usePublishedNews()].sort((a, b) => b.publishedAt.localeCompare(a.publishedAt)).slice(0, 6);
   return (
     <SiteShell activePath="/" navTone="dark" className="site-shell-home">
-      <HomeWelcome />
+      <HomeWelcome items={activities} />
       <HomeNewsSection news={news} />
-      <HomeResearchSection />
+      <HomeResearchSection items={research} />
       <HomeProductsSection />
-      <HomeCasesSection />
+      <HomeCasesSection items={caseStudies} />
       <HomeCompanyEntry />
     </SiteShell>
   );

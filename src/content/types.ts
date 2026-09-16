@@ -59,6 +59,8 @@ export type Insight = InsightFrontmatter & {
   readingTime: number;
 };
 
+export type InsightSummary = Omit<Insight, 'body'>;
+
 export type NewsStatus = 'draft' | 'published' | 'archived';
 
 export type NewsFrontmatter = {
@@ -80,6 +82,8 @@ export type NewsItem = NewsFrontmatter & {
   body: string;
   readingTime: number;
 };
+
+export type NewsSummary = Omit<NewsItem, 'body'>;
 
 export type Scenario = {
   slug: string;

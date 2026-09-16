@@ -9,7 +9,14 @@ import { ArrowRightOutlined } from '@ant-design/icons';
 import { getDirection } from '../../data/site';
 import { type PageHeroContent } from '../../data/page-content';
 
-import type { BusinessLine, Insight, NewsItem, Project, ResearchDirection, Scenario } from '../../content/types';
+import type {
+  BusinessLine,
+  InsightSummary,
+  NewsSummary,
+  Project,
+  ResearchDirection,
+  Scenario,
+} from '../../content/types';
 import { ActionButton, classNames, Eyebrow } from '../components/index';
 
 import { LocalizedText as T, LocalizedTitle as Title, useI18n } from '../providers/i18n';
@@ -102,7 +109,7 @@ export const ProjectCard = ({ project }: { project: Project }) => {
   );
 };
 
-export const InsightRow = ({ insight }: { insight: Insight }) => {
+export const InsightRow = ({ insight }: { insight: InsightSummary }) => {
   const { t, href } = useI18n();
   return (
     <a className="insight-list-item" href={href(`/insights/${insight.slug}`)}>
@@ -191,7 +198,7 @@ export const HomeDirectionCard = ({ direction, index }: { direction: ResearchDir
   );
 };
 
-export const HomeInsightCard = ({ insight }: { insight: Insight }) => {
+export const HomeInsightCard = ({ insight }: { insight: InsightSummary }) => {
   const direction = insight.directionSlug ? getDirection(insight.directionSlug) : undefined;
   const { t } = useI18n();
   return (
@@ -214,7 +221,7 @@ export const formatNewsDate = (date: string, locale: 'zh-CN' | 'en') =>
     day: 'numeric',
   }).format(new Date(`${date}T00:00:00`));
 
-export const NewsCard = ({ item, showExcerpt = true }: { item: NewsItem; showExcerpt?: boolean }) => {
+export const NewsCard = ({ item, showExcerpt = true }: { item: NewsSummary; showExcerpt?: boolean }) => {
   const { t, href, locale } = useI18n();
   const cover = item.cover ?? '/visuals/research-gradient.jpg';
   return (
@@ -282,7 +289,7 @@ export const PageHero = ({ content, className }: { content: PageHeroContent; cla
   );
 };
 
-export const InsightList = ({ insights }: { insights: Insight[] }) => (
+export const InsightList = ({ insights }: { insights: InsightSummary[] }) => (
   <div className="insight-list">
     {insights.map((insight) => (
       <InsightRow insight={insight} key={insight.slug} />

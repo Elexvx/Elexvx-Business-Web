@@ -4,7 +4,6 @@ import { useEffect, useRef, useState } from 'react';
 import { ShareAltOutlined, CopyOutlined, DownloadOutlined, CloseOutlined, WechatOutlined } from '@ant-design/icons';
 import { useI18n } from '../providers/i18n';
 import { shareDataFromDocument, type ShareData } from '../sharing/card';
-import { configureWechat } from '../sharing/wechat';
 
 export function SiteShare() {
   const { locale } = useI18n();
@@ -22,9 +21,6 @@ export function SiteShare() {
     setData(current);
     setWechat(/MicroMessenger/i.test(navigator.userAgent));
     setNative(typeof navigator.share === 'function');
-    configureWechat(current).catch(() => {
-      /* Link, QR and poster remain available without SDK. */
-    });
   }, []);
   const open = () => {
     setStatus('');

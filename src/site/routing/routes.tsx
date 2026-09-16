@@ -3,8 +3,8 @@ import { QualificationsPage } from '../pages/qualifications';
 import { DesignPage } from '../pages/design';
 import { homeContent } from '../../data/page-content';
 import { jobs } from '../../data/jobs';
-import { publishedActivities } from '../../data/activities';
-import { publishedCaseStudies } from '../../data/case-studies';
+import { publishedActivities, toActivitySummary } from '../../data/activities';
+import { publishedCaseStudies, toCaseStudySummary } from '../../data/case-studies';
 import { isDisabledPath } from '../../data/disabled-sections';
 import type { ReactNode } from 'react';
 import { teamMembers } from '../../data/team';
@@ -56,16 +56,20 @@ export type SiteRoute = {
 
 const titleFor = (section: string) => `${section} · ${siteIdentity.researchName}`;
 
+const researchItems = publishedResearch.map(toActivitySummary);
+const activityItems = publishedActivities.map(toActivitySummary);
+const caseStudyItems = publishedCaseStudies.map(toCaseStudySummary);
+
 const staticRoutes: SiteRoute[] = [
   {
     path: '/activities',
     meta: { title: titleFor('活动'), description: 'Elexvx 活动记录与交流。' },
-    render: () => <ActivitiesPage />,
+    render: () => <ActivitiesPage items={activityItems} />,
   },
   {
     path: '/',
     meta: { title: siteIdentity.researchName, description: siteIdentity.description },
-    render: () => <HomePage />,
+    render: () => <HomePage activities={activityItems} research={researchItems} caseStudies={caseStudyItems} />,
   },
   {
     path: '/research',
@@ -73,7 +77,7 @@ const staticRoutes: SiteRoute[] = [
       title: titleFor('研究方向'),
       description: '浏览全部已发布的研究文章。',
     },
-    render: () => <ResearchPage />,
+    render: () => <ResearchPage items={researchItems} />,
   },
   {
     path: '/capabilities',
@@ -158,6 +162,7 @@ const staticRoutes: SiteRoute[] = [
 ];
 
 const originalRedirectRoutes: Record<string, string> = {
+  '/service/ai-design': '/research',
   '/service/hr-services': '/business/human-resources',
   '/service/trademark-agency': '/business/intellectual-property',
   '/service/supply-chain': '/business/supply-chain',
@@ -165,7 +170,7 @@ const originalRedirectRoutes: Record<string, string> = {
   '/company/leadership': '/company/team',
   '/company/contact': '/contact',
   '/company/careers': '/careers',
-  '/blog': '/insights',
+  '/blog': '/research',
   '/latest-news': '/news',
   '/stories': '/news',
   '/technology': '/news',
@@ -211,17 +216,17 @@ const configuredRoutes = (insights: Insight[], news: NewsItem[] = []): SiteRoute
   ...publishedResearch.map((item) => ({
     path: `/research/${item.slug}`,
     meta: { title: titleFor(item.title), description: item.excerpt, image: item.cover },
-    render: () => <ActivityPage slug={item.slug} research />,
+    render: () => <ActivityPage item={item} related={researchItems} research />,
   })),
   ...publishedActivities.map((item) => ({
     path: `/activities/${item.slug}`,
     meta: { title: titleFor(item.title), description: item.excerpt, image: item.cover },
-    render: () => <ActivityPage slug={item.slug} />,
+    render: () => <ActivityPage item={item} related={activityItems} />,
   })),
   ...publishedCaseStudies.map((item) => ({
     path: `/cases/${item.slug}`,
     meta: { title: titleFor(item.title), description: item.excerpt, image: item.cover },
-    render: () => <CaseStudyPage slug={item.slug} />,
+    render: () => <CaseStudyPage item={item} related={caseStudyItems} />,
   })),
   ...teamMembers.map((member) => ({
     path: `/company/team/${member.id}`,
@@ -262,19 +267,35 @@ const configuredRoutes = (insights: Insight[], news: NewsItem[] = []): SiteRoute
     .map((insight) => ({
       path: `/insights/${insight.slug}`,
       meta: { title: titleFor(insight.title), description: insight.excerpt, image: insight.cover },
-      render: () => <InsightPage slug={insight.slug} />,
+      render: () => <InsightPage insight={insight} />,
     })),
   ...news
     .filter((item) => item.status === 'published')
     .map((item) => ({
       path: `/news/${item.slug}`,
       meta: { title: titleFor(item.title), description: item.excerpt, image: item.cover },
-      render: () => <NewsItemPage slug={item.slug} />,
+      render: () => <NewsItemPage item={item} />,
     })),
 ];
 
+type RouteIndex = {
+  routes: SiteRoute[];
+  byPath: Map<string, SiteRoute>;
+};
+
+let routeIndexCache: { insights: Insight[]; news: NewsItem[]; index: RouteIndex } | undefined;
+
+const getRouteIndex = (insights: Insight[], news: NewsItem[] = []): RouteIndex => {
+  if (routeIndexCache?.insights === insights && routeIndexCache.news === news) return routeIndexCache.index;
+
+  const routes = configuredRoutes(insights, news).filter((route) => !isDisabledPath(route.path));
+  const index: RouteIndex = { routes, byPath: new Map(routes.map((route) => [route.path, route])) };
+  routeIndexCache = { insights, news, index };
+  return index;
+};
+
 export const allRoutes = (insights: Insight[], news: NewsItem[] = []): SiteRoute[] =>
-  configuredRoutes(insights, news).filter((route) => !isDisabledPath(route.path));
+  getRouteIndex(insights, news).routes;
 
 const normalizePath = (path: string) => {
   const pathname = path.split('?')[0].split('#')[0] || '/';
@@ -284,7 +305,7 @@ const normalizePath = (path: string) => {
 
 export const resolveRoute = (path: string, insights: Insight[], news: NewsItem[] = []): SiteRoute => {
   const normalized = normalizePath(path);
-  const route = allRoutes(insights, news).find((candidate) => candidate.path === normalized);
+  const route = getRouteIndex(insights, news).byPath.get(normalized);
   return (
     route ?? {
       path: normalized,

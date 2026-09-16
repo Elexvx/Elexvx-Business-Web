@@ -1,7 +1,7 @@
 'use client';
 import { Switch } from 'radix-ui';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useI18n } from '../providers/i18n';
 
 const COOKIE_PREFERENCE_KEY = 'elexvx-cookie-preferences-v1';
@@ -24,6 +24,7 @@ export const CookieConsent = () => {
   const [visible, setVisible] = useState(false);
   const [managing, setManaging] = useState(false);
   const [preferences, setPreferences] = useState<CookiePreferences>(defaultPreferences);
+  const consentRef = useRef<HTMLElement>(null);
   const english = locale === 'en';
 
   useEffect(() => {
@@ -63,13 +64,53 @@ export const CookieConsent = () => {
     setVisible(false);
   };
 
+  useEffect(() => {
+    if (!visible) return;
+    const dialog = consentRef.current;
+    if (!dialog) return;
+    const selector = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
+    const focusable = () =>
+      Array.from(dialog.querySelectorAll<HTMLElement>(selector)).filter(
+        (element) => !element.hasAttribute('disabled') && element.getAttribute('aria-hidden') !== 'true'
+      );
+    focusable()[0]?.focus();
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        if (managing) setManaging(false);
+        else setVisible(false);
+        return;
+      }
+      if (event.key !== 'Tab') return;
+      const elements = focusable();
+      if (!elements.length) return;
+      const first = elements[0];
+      const last = elements[elements.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    };
+    document.addEventListener('keydown', onKeyDown);
+    return () => document.removeEventListener('keydown', onKeyDown);
+  }, [visible, managing]);
+
   if (!visible) return null;
 
   return (
-    <section className="cookie-consent" role="dialog" aria-label={english ? 'Cookie preferences' : 'Cookie 偏好设置'}>
+    <section
+      ref={consentRef}
+      className="cookie-consent"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="cookie-consent-title"
+      aria-label={english ? 'Cookie preferences' : 'Cookie 偏好设置'}
+    >
       <div className="cookie-consent-inner">
         <div className="cookie-consent-copy">
-          <h2>{english ? 'We use cookies' : '我们使用 Cookie'}</h2>
+          <h2 id="cookie-consent-title">{english ? 'We use cookies' : '我们使用 Cookie'}</h2>
           <p>
             {english
               ? 'We use necessary cookies to keep the site working. Optional analytics and marketing preferences can be changed at any time from the footer.'
