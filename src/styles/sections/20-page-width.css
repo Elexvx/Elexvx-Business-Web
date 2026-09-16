@@ -1,5 +1,9 @@
 /* One route width and one gutter for all page-level modules. */
-:root { --page-max-width: 1440px; --page-gutter: 32px; }
+:root {
+  --page-max-width: 1440px;
+  --page-content-max-width: 1120px;
+  --page-gutter: 32px;
+}
 @media (max-width: 720px) { :root { --page-gutter: 20px; } }
 .site-shell-openai > main {
   width: 100%; max-width: var(--page-max-width); margin-inline: auto;
