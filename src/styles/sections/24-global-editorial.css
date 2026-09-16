@@ -53,16 +53,16 @@
 }
 
 .site-shell-openai .page-hero .page-hero-inner {
-  width: min(100%, var(--page-content-max-width));
-  max-width: var(--page-content-max-width);
+  width: min(100%, var(--page-max-width));
+  max-width: var(--page-max-width);
   padding: 0;
   margin-inline: auto;
 }
 
 .site-shell-openai .company-intro {
   box-sizing: border-box;
-  width: min(100%, var(--page-content-max-width));
-  max-width: var(--page-content-max-width);
+  width: min(100%, var(--page-max-width));
+  max-width: var(--page-max-width);
   min-width: 0;
   padding: 0;
   border: 0;
@@ -127,7 +127,8 @@
 
 /*
  * Keep the outer page surface wide enough for full-bleed backgrounds, while
- * every company-facing content section shares the same editorial boundary.
+ * every company-facing content section shares the same page boundary as the
+ * homepage.
  */
 .site-shell-openai :is(
   .team-page > .team-grid,
@@ -140,22 +141,22 @@
   .job-detail > header,
   .job-detail > .job-detail-layout
 ) {
-  width: min(100%, var(--page-content-max-width));
-  max-width: var(--page-content-max-width);
+  width: min(100%, var(--page-max-width));
+  max-width: var(--page-max-width);
   margin-inline: auto;
 }
 
 .site-shell-openai .job-detail > .team-back {
   display: block;
-  width: min(100%, var(--page-content-max-width));
-  max-width: var(--page-content-max-width);
+  width: min(100%, var(--page-max-width));
+  max-width: var(--page-max-width);
   margin-inline: auto;
 }
 
 /* The detail hero keeps its full-bleed surface but aligns its content edges. */
 .site-shell-openai :is(.team-member-hero-inner, .team-member-content) {
-  width: min(100%, calc(var(--page-content-max-width) + var(--page-gutter) + var(--page-gutter)));
-  max-width: calc(var(--page-content-max-width) + var(--page-gutter) + var(--page-gutter));
+  width: min(100%, var(--page-max-width));
+  max-width: var(--page-max-width);
   padding-inline: var(--page-gutter);
 }
 
@@ -300,8 +301,8 @@
 }
 
 .site-shell-openai:not(.site-shell-home) .research-tile .tile-inner {
-  width: min(100%, var(--page-content-max-width));
-  max-width: var(--page-content-max-width);
+  width: min(100%, var(--page-max-width));
+  max-width: var(--page-max-width);
   padding: 0;
 }
 
@@ -354,7 +355,7 @@
 }
 
 .site-shell-openai.company-overview .research-tile .tile-inner {
-  max-width: var(--page-content-max-width);
+  max-width: var(--page-max-width);
   margin-inline: auto;
 }
 

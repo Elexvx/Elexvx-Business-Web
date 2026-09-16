@@ -8,7 +8,7 @@
 }
 
 .site-shell-openai .design-guide > .company-intro {
-  max-width: var(--page-content-max-width);
+  max-width: var(--page-max-width);
 }
 
 .design-download {
