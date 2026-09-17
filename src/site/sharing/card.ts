@@ -24,7 +24,7 @@ const loadImage = (src: string) =>
 export function shareDataFromDocument(): ShareData {
   const meta = (name: string) => document.querySelector<HTMLMetaElement>(`meta[property="${name}"]`)?.content || '';
   return {
-    title: meta('og:title').replace(/ · Elexvx Research$/, '') || document.title,
+    title: meta('og:title').replace(/\s*(?:·\s*Elexvx Research|\|\s*宏翔商道-Elexvx)$/u, '') || document.title,
     description: meta('og:description'),
     url: document.querySelector<HTMLLinkElement>('link[rel="canonical"]')?.href || 'https://www.elexvx.com/',
     image: meta('og:image') || '/share/elexvx.png',

@@ -14,7 +14,7 @@ export function ArticleShare() {
   const data = () => {
     const meta = (key: string) => document.querySelector<HTMLMetaElement>(`meta[property="${key}"]`)?.content || '';
     return {
-      title: (meta('og:title') || document.title).replace(/ · Elexvx Research$/, ''),
+      title: (meta('og:title') || document.title).replace(/\s*(?:·\s*Elexvx Research|\|\s*宏翔商道-Elexvx)$/u, ''),
       description: meta('og:description'),
       url: document.querySelector<HTMLLinkElement>('link[rel="canonical"]')?.href || location.href.split('#')[0],
       image: new URL(meta('og:image') || '/share/elexvx.png', location.origin).href,

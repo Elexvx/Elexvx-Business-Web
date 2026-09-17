@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation';
 import { loadNews } from '../../../content/news-loader';
 import { NextSitePage } from '../../../site/NextSitePage';
 import { nextMetadata } from '../../../site/routing/metadata';
+import { NewsArticleJsonLd } from '../../../site/seo/news-article-json-ld';
 
 export const dynamicParams = false;
 
@@ -20,5 +21,11 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
   const { slug } = await params;
   const item = loadNews().find((news) => news.slug === slug && news.status === 'published');
   if (!item) notFound();
-  return <NextSitePage path={`/news/${slug}`} />;
+
+  return (
+    <>
+      <NewsArticleJsonLd item={item} />
+      <NextSitePage path={`/news/${slug}`} />
+    </>
+  );
 }

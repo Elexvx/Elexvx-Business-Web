@@ -9,8 +9,10 @@ type FooterColumn = {
 type SiteCatalog = {
   identity: {
     companyName: string;
+    seoName: string;
     researchName: string;
     researchNameNote: string;
+    seoDescription: string;
     description: string;
     canonicalOrigin: string;
     registrations?: {

@@ -31,16 +31,17 @@ const escapeXml = (value: string) =>
 const redirectDocument = (target: string) => {
   const safeTarget = escapeHtml(target);
   const en = target.startsWith('/en/');
+  const brand = en ? 'Hongxiang Shangdao-Elexvx' : siteIdentity.seoName;
   return `<!doctype html>
 <html lang="${en ? 'en' : 'zh-CN'}">
   <head>
     <meta charset="UTF-8" />
     <meta name="robots" content="noindex,nofollow" />
     <meta http-equiv="refresh" content="0;url=${safeTarget}" />
-    <title>${en ? 'Page moved' : '页面已移动'} · Elexvx Research</title>
+    <title>${en ? 'Page moved' : '页面已移动'} · ${escapeHtml(brand)}</title>
   </head>
   <body style="margin:0;background:#000;color:#fff;font-family:system-ui,sans-serif">
-    <main style="padding:48px"><p>${en ? 'This page has moved to' : '页面已移动到'} <a style="color:#fff" href="${safeTarget}">${safeTarget}</a>。</p></main>
+    <main style="padding:48px"><p>${en ? 'This page has moved to' : '页面已移动到'} <a style="color:#fff" href="${safeTarget}">${safeTarget}</a>${en ? '.' : '。'}</p></main>
   </body>
 </html>
 `;
@@ -60,10 +61,17 @@ const indexableRoutes = routes.filter((route) => route.meta.robots !== 'noindex,
 const localizedIndexablePaths = indexableRoutes.flatMap((route) => {
   const path = route.path === '/' ? '/' : `${route.path}/`;
   const englishPath = route.path === '/' ? '/en/' : `/en${route.path}/`;
-  return [path, englishPath];
+  const lastmod = route.meta.updatedAt ?? route.meta.publishedAt;
+  return [
+    { path, lastmod },
+    { path: englishPath, lastmod },
+  ];
 });
 const sitemap = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${localizedIndexablePaths
-  .map((path) => `<url><loc>${siteIdentity.canonicalOrigin}${path}</loc></url>`)
+  .map(
+    ({ path, lastmod }) =>
+      `<url><loc>${siteIdentity.canonicalOrigin}${path}</loc>${lastmod ? `<lastmod>${escapeXml(lastmod)}</lastmod>` : ''}</url>`
+  )
   .join('')}</urlset>\n`;
 await writeFile(join(distRoot, 'sitemap.xml'), sitemap, 'utf8');
 
@@ -76,7 +84,7 @@ const feedItems = [
   ...published.map((insight) => ({ ...insight, href: `/insights/${insight.slug}/` })),
   ...publishedNews.map((item) => ({ ...item, href: `/news/${item.slug}/` })),
 ].sort((a, b) => Date.parse(b.publishedAt) - Date.parse(a.publishedAt));
-const rss = `<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"><channel><title>${escapeXml(siteIdentity.researchName)}</title><link>${siteIdentity.canonicalOrigin}</link><description>${escapeXml(siteIdentity.description)}</description>${feedItems
+const rss = `<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"><channel><title>${escapeXml(siteIdentity.seoName)}</title><link>${siteIdentity.canonicalOrigin}</link><description>${escapeXml(siteIdentity.seoDescription)}</description>${feedItems
   .map(
     (item) =>
       `<item><title>${escapeXml(item.title)}</title><link>${siteIdentity.canonicalOrigin}${item.href}</link><guid>${siteIdentity.canonicalOrigin}${item.href}</guid><pubDate>${new Date(item.publishedAt).toUTCString()}</pubDate><description>${escapeXml(item.excerpt)}</description></item>`
@@ -101,9 +109,27 @@ const localizeDocumentLanguage = async (directory: string): Promise<void> => {
     if (entry.isDirectory()) await localizeDocumentLanguage(file);
     else if (entry.name.endsWith('.html')) {
       const html = await readFile(file, 'utf8');
+      const englishRootTitle = 'Hongxiang Shangdao-Elexvx | AI & Data Intelligence R&D';
+      const englishRootDescription =
+        'Hongxiang Shangdao-Elexvx is an AI and data intelligence R&D company publishing research, products, company news, and collaboration opportunities.';
+      const englishRootKeywords = 'Hongxiang Shangdao-Elexvx,Elexvx,AI,data intelligence';
+      const chineseRootTitle = `${siteIdentity.seoName} | 人工智能与数据智能研发`;
+      const chineseRootKeywords = ['宏翔商道-Elexvx', '宏翔商道', 'Elexvx', '人工智能', '数据智能'].join(',');
+      const englishErrorMetadata = html.includes('id="__next_error__"')
+        ? html
+            .replaceAll(
+              `<title>${escapeHtml(chineseRootTitle)}</title>`,
+              `<title>${escapeHtml(englishRootTitle)}</title>`
+            )
+            .replaceAll(`content="${escapeHtml(chineseRootTitle)}"`, `content="${escapeHtml(englishRootTitle)}"`)
+            .replaceAll(escapeHtml(siteIdentity.seoDescription), escapeHtml(englishRootDescription))
+            .replaceAll(`content="${escapeHtml(chineseRootKeywords)}"`, `content="${escapeHtml(englishRootKeywords)}"`)
+            .replaceAll(`content="${escapeHtml(siteIdentity.seoName)}"`, 'content="Hongxiang Shangdao-Elexvx"')
+            .replaceAll(`content="${escapeHtml(siteIdentity.companyName)}"`, 'content="Hongxiang Shangdao-Elexvx"')
+        : html;
       await writeFile(
         file,
-        html
+        englishErrorMetadata
           .replace(
             /<html\b([^>]*)>/,
             (_, attributes: string) => `<html${attributes.replace(/\s+lang="[^"]*"/, '')} lang="en">`

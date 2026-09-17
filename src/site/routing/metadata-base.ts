@@ -6,6 +6,8 @@ import type { RouteMeta } from './routes';
 
 const englishMetadata: Record<string, string> = {
   'Elexvx Research': 'Elexvx Research',
+  '宏翔商道-Elexvx（宏翔商道）是一家以人工智能与数据智能为核心的跨行业研发企业，官网发布研究成果、产品项目、公司业务、新闻公告与合作信息，持续回应真实世界的复杂技术问题。':
+    'Hongxiang Shangdao-Elexvx is an AI and data intelligence R&D company publishing research, products, company news, and collaboration opportunities.',
   '面向真实世界复杂问题的 AI 与数据智能研发门户。':
     'An AI and data-intelligence research portal for complex real-world problems.',
   研究方向: 'Research',
@@ -44,6 +46,11 @@ const englishMetadata: Record<string, string> = {
     'An archive of legacy material that does not represent the new Elexvx Research direction.',
   '宏翔商道 / Elexvx 的公司公告、业务动态与历史新闻。':
     'Company announcements, business updates, and historical news from Hongxiang Shangdao / Elexvx.',
+  '宏翔商道-Elexvx 的公司公告、业务动态与历史新闻。':
+    'Company announcements, business updates, and historical news from Hongxiang Shangdao-Elexvx.',
+  '宏翔商道-Elexvx 与 Elexvx Research 的公司主体、研究关系和并行业务。':
+    'The operating company, research relationship, and parallel business lines of Hongxiang Shangdao-Elexvx and Elexvx Research.',
+  '宏翔商道-Elexvx 企业资质与证书展示。': 'Company qualifications and certificates for Hongxiang Shangdao-Elexvx.',
   'AI 与数据智能': 'AI & Data Intelligence',
   工业智能与安全: 'Industrial Intelligence & Safety',
   'LLM / AI 安全': 'LLM / AI Safety',
@@ -85,31 +92,198 @@ const englishMetadata: Record<string, string> = {
 const translateMetadata = (value: string, locale: Locale) =>
   locale === 'en' ? (englishMetadata[value] ?? translateEnglish(value)) : value;
 
+const brandKeywords = {
+  'zh-CN': ['宏翔商道-Elexvx', '宏翔商道', 'Elexvx', '人工智能', '数据智能'],
+  en: ['Hongxiang Shangdao-Elexvx', 'Elexvx', 'AI', 'data intelligence'],
+} as const;
+
+const localizedBrandName = (locale: Locale) => (locale === 'en' ? 'Hongxiang Shangdao-Elexvx' : siteIdentity.seoName);
+
+const titleContext = (path: string, locale: Locale) => {
+  const contexts =
+    locale === 'en'
+      ? {
+          activities: 'Activities and collaboration records',
+          activityArticle: 'Activity reports and project collaboration',
+          business: 'Business lines and enterprise services',
+          businessArticle: 'Enterprise business service',
+          careers: 'Careers and open positions',
+          cases: 'Technical collaboration case study',
+          company: 'Company and business information',
+          design: 'Website design system and standards',
+          qualifications: 'Company qualifications and certificates',
+          brand: 'Brand system and usage guidelines',
+          team: 'Team and organizational information',
+          teamMember: 'Team member role and profile',
+          contact: 'Collaboration and technical contact',
+          news: 'Company news and announcements',
+          newsArticle: 'Company news announcement',
+          products: 'Products and technical outcomes',
+          product: 'Product features and applications',
+          research: 'AI and data intelligence research',
+          researchArticle: 'AI and data intelligence research article',
+          insights: 'Technical articles and research notes',
+        }
+      : {
+          activities: '活动交流与项目合作记录',
+          activityArticle: '活动报道与项目交流记录',
+          business: '并行业务与企业服务能力',
+          businessArticle: '企业业务服务介绍',
+          careers: '加入我们与岗位招聘信息',
+          cases: '技术合作案例与项目成果',
+          company: '公司主体与业务介绍',
+          design: '官网设计系统与使用规范',
+          qualifications: '企业资质与证书信息',
+          brand: '企业品牌体系与使用规范',
+          team: '团队与组织架构信息',
+          teamMember: '团队成员职务与背景',
+          contact: '开放合作与技术交流入口',
+          news: '公司新闻与公告动态',
+          newsArticle: '公司新闻公告与最新动态',
+          products: '产品与技术成果介绍',
+          product: '产品功能与应用介绍',
+          research: '人工智能与数据智能研究方向',
+          researchArticle: '人工智能与数据智能研究文章',
+          insights: '技术文章与研究记录',
+        };
+
+  if (path === '/activities') return contexts.activities;
+  if (path.startsWith('/activities/')) return contexts.activityArticle;
+  if (path === '/business') return contexts.business;
+  if (path.startsWith('/business/')) return contexts.businessArticle;
+  if (path === '/careers') return contexts.careers;
+  if (path.startsWith('/careers/')) return contexts.careers;
+  if (path.startsWith('/cases/')) return contexts.cases;
+  if (path === '/company') return contexts.company;
+  if (path === '/company/design') return contexts.design;
+  if (path === '/company/qualifications') return contexts.qualifications;
+  if (path === '/company/brand') return contexts.brand;
+  if (path === '/company/team') return contexts.team;
+  if (path.startsWith('/company/team/')) return contexts.teamMember;
+  if (path === '/contact') return contexts.contact;
+  if (path === '/news') return contexts.news;
+  if (path.startsWith('/news/')) return contexts.newsArticle;
+  if (path === '/products') return contexts.products;
+  if (path.startsWith('/products/')) return contexts.product;
+  if (path === '/research') return contexts.research;
+  if (path.startsWith('/research/')) return contexts.researchArticle;
+  if (path === '/insights') return contexts.insights;
+  if (path.startsWith('/insights/')) return contexts.insights;
+  return locale === 'en' ? 'Official company information' : '官方公司信息';
+};
+
 const localizedTitle = (title: string, locale: Locale) => {
   const [section, ...rest] = title.split(' · ');
   const translated = translateMetadata(section, locale);
   return translated !== section ? [translated, ...rest].join(' · ') : locale === 'en' ? translateEnglish(title) : title;
 };
 
+const pageTitle = (title: string) => title.replace(/\s*·\s*Elexvx Research$/u, '').trim();
+
+const enrichTitle = (title: string, path: string, locale: Locale) => {
+  const minimumTitleLength = locale === 'en' ? 42 : 24;
+  if (path === '/' || title.length >= minimumTitleLength) return title;
+  const context = titleContext(path, locale);
+  return title.includes(context) ? title : `${title}${locale === 'en' ? ' — ' : '｜'}${context}`;
+};
+
+const withBrandDescription = (description: string, locale: Locale) => {
+  const brand = locale === 'en' ? 'Hongxiang Shangdao-Elexvx' : siteIdentity.seoName;
+  if (description.includes(brand)) return description;
+  return locale === 'en' ? `${description} Official website of ${brand}.` : `${description} ${brand}官方网站。`;
+};
+
+const compactDescription = (description: string, title: string, locale: Locale) => {
+  const maximumLength = locale === 'en' ? 180 : 160;
+  if (description.length <= maximumLength) return description;
+
+  const brand = localizedBrandName(locale);
+  const pageContext = locale === 'en' ? ` Page focus: ${title}.` : ` 页面主题：“${title}”。`;
+  const brandSuffix = locale === 'en' ? ` Official website of ${brand}.` : ` ${brand}官方网站。`;
+  const source = description.replace(pageContext, '').replace(brandSuffix, '').trim();
+  const suffix = `${pageContext}${brandSuffix}`;
+  const availableLength = Math.max(24, maximumLength - suffix.length - 1);
+  const clipped = source
+    .slice(0, availableLength)
+    .trim()
+    .replace(/\s+\S*$/u, '')
+    .trim();
+  return `${clipped}…${suffix}`;
+};
+
+const enrichDescription = (description: string, title: string, path: string, locale: Locale) => {
+  if (path === '/') return description;
+  const minimumDescriptionLength = locale === 'en' ? 120 : 80;
+  const pageContext = locale === 'en' ? `Page focus: ${title}.` : `页面主题：“${title}”。`;
+  const shouldAddPageContext = path.startsWith('/news/') || description.length < minimumDescriptionLength;
+  const contextualDescription =
+    shouldAddPageContext && !description.includes(title) ? `${description} ${pageContext}` : description;
+  if (contextualDescription.length >= minimumDescriptionLength)
+    return compactDescription(contextualDescription, title, locale);
+  const brand = localizedBrandName(locale);
+  const context = titleContext(path, locale).toLowerCase();
+  const supplement =
+    locale === 'en'
+      ? ` This official ${context} page provides relevant background and contact information from ${brand}.`
+      : `本页属于${context}，提供官方背景、公开资料与相关联系入口，帮助了解主题内容及后续合作方式，信息以${brand}官方网站发布内容为准。`;
+  return compactDescription(`${contextualDescription}${supplement}`, title, locale);
+};
+
 export const metadataForRoute = (meta: RouteMeta, path: string, locale: Locale = 'zh-CN'): Metadata => {
   const localePath = locale === 'en' ? `/en${path === '/' ? '' : path}` : path;
   const canonical = `${siteIdentity.canonicalOrigin}${localePath === '/' ? '/' : `${localePath}/`}`;
   const isNoIndex = meta.robots === 'noindex,nofollow';
-  const title = localizedTitle(meta.title, locale);
-  const description = translateMetadata(meta.description, locale);
+  const localizedPageTitle = pageTitle(localizedTitle(meta.title, locale));
+  const brandName = localizedBrandName(locale);
+  const articleAuthor = meta.author && locale === 'en' ? brandName : meta.author;
+  const title =
+    path === '/'
+      ? `${brandName} | ${locale === 'en' ? 'AI & Data Intelligence R&D' : '人工智能与数据智能研发'}`
+      : `${enrichTitle(localizedPageTitle, path, locale)} | ${brandName}`;
+  const description = enrichDescription(
+    withBrandDescription(translateMetadata(meta.description, locale), locale),
+    localizedPageTitle,
+    path,
+    locale
+  );
   const chinesePath = `${siteIdentity.canonicalOrigin}${path === '/' ? '/' : `${path}/`}`;
   const englishPath = `${siteIdentity.canonicalOrigin}/en${path === '/' ? '/' : `${path}/`}`;
 
   const image = new URL(meta.image || '/share/elexvx.png', siteIdentity.canonicalOrigin).href;
+  const openGraphArticle =
+    meta.openGraphType === 'article'
+      ? {
+          type: 'article' as const,
+          ...(meta.publishedAt ? { publishedTime: meta.publishedAt } : {}),
+          ...(meta.updatedAt ? { modifiedTime: meta.updatedAt } : {}),
+          ...(articleAuthor ? { authors: [articleAuthor] } : {}),
+        }
+      : { type: 'website' as const };
   return {
     title: { absolute: title },
     description,
-    robots: { index: !isNoIndex, follow: !isNoIndex },
+    applicationName: brandName,
+    keywords: [...brandKeywords[locale]],
+    authors: [{ name: brandName, url: siteIdentity.canonicalOrigin }],
+    creator: brandName,
+    publisher: brandName,
+    robots: {
+      index: !isNoIndex,
+      follow: !isNoIndex,
+      googleBot: {
+        index: !isNoIndex,
+        follow: !isNoIndex,
+        'max-image-preview': 'large',
+        'max-snippet': -1,
+        'max-video-preview': -1,
+      },
+    },
     alternates: {
       canonical,
       languages: {
         'zh-CN': chinesePath,
         en: englishPath,
+        'x-default': chinesePath,
       },
     },
     twitter: { card: 'summary_large_image', title, description, images: [image] },
@@ -117,8 +291,8 @@ export const metadataForRoute = (meta: RouteMeta, path: string, locale: Locale =
       title,
       description,
       url: canonical,
-      type: 'website',
-      siteName: 'Elexvx',
+      ...openGraphArticle,
+      siteName: brandName,
       images: [{ url: image, alt: title }],
       locale: locale === 'en' ? 'en_US' : 'zh_CN',
     },

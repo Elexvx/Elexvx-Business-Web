@@ -88,19 +88,82 @@ const themeInitializer = `
   })();
 `;
 
+const organizationId = `${siteIdentity.canonicalOrigin}/#organization`;
+const structuredData = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'Organization',
+      '@id': organizationId,
+      name: siteIdentity.seoName,
+      legalName: '宏翔商道（南京）科技发展有限公司',
+      alternateName: ['宏翔商道', 'Elexvx'],
+      description: siteIdentity.seoDescription,
+      url: `${siteIdentity.canonicalOrigin}/`,
+      logo: `${siteIdentity.canonicalOrigin}/brand/elexvx-logo-black-600.webp`,
+      email: 'contact@elexvx.com',
+    },
+    {
+      '@type': 'WebSite',
+      '@id': `${siteIdentity.canonicalOrigin}/#website`,
+      name: siteIdentity.seoName,
+      alternateName: ['宏翔商道', 'Elexvx'],
+      description: siteIdentity.seoDescription,
+      url: `${siteIdentity.canonicalOrigin}/`,
+      publisher: { '@id': organizationId },
+      inLanguage: ['zh-CN', 'en'],
+    },
+  ],
+}).replace(/</g, '\\u003c');
+
 export const metadata: Metadata = {
   metadataBase: new URL(siteIdentity.canonicalOrigin),
   title: {
-    default: siteIdentity.researchName,
-    template: `%s · ${siteIdentity.researchName}`,
+    default: `${siteIdentity.seoName} | 人工智能与数据智能研发`,
+    template: `%s | ${siteIdentity.seoName}`,
   },
-  description: siteIdentity.description,
+  description: siteIdentity.seoDescription,
+  applicationName: siteIdentity.seoName,
+  keywords: ['宏翔商道-Elexvx', '宏翔商道', 'Elexvx', '人工智能', '数据智能'],
+  authors: [{ name: siteIdentity.companyName, url: siteIdentity.canonicalOrigin }],
+  creator: siteIdentity.seoName,
+  publisher: siteIdentity.companyName,
+  alternates: {
+    canonical: '/',
+    languages: {
+      'zh-CN': '/',
+      en: '/en/',
+      'x-default': '/',
+    },
+  },
+  openGraph: {
+    title: `${siteIdentity.seoName} | 人工智能与数据智能研发`,
+    description: siteIdentity.seoDescription,
+    url: `${siteIdentity.canonicalOrigin}/`,
+    siteName: siteIdentity.seoName,
+    type: 'website',
+    locale: 'zh_CN',
+    images: [{ url: '/share/elexvx.png', alt: siteIdentity.seoName }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: `${siteIdentity.seoName} | 人工智能与数据智能研发`,
+    description: siteIdentity.seoDescription,
+    images: ['/share/elexvx.png'],
+  },
   icons: {
     icon: '/brand/favicon-64.png',
   },
   robots: {
     index: true,
     follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+      'max-video-preview': -1,
+    },
   },
 };
 
@@ -110,6 +173,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html lang="zh-CN" suppressHydrationWarning>
       <head>
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: structuredData }} />
         <script dangerouslySetInnerHTML={{ __html: themeInitializer }} />
       </head>
       <body>

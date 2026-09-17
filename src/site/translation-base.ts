@@ -118,8 +118,8 @@ export const existingEnglish: Record<string, string> = {
     'We are building a team around research directions, engineering practice, and real-world contexts.',
   '我们研究什么，决定我们如何研发。': 'What we research shapes how we build.',
   '想象力，真的没有边界': 'Imagination truly has no boundaries.',
-  '宏翔商道 / Elexvx 是一家跨行业研发公司，以 AI 与数据智能为核心，面向工业现场、知识工作与负责任的 AI 应用，构建可验证的技术系统。':
-    'Hongxiang Shangdao / Elexvx is a cross-industry R&D company building verifiable technical systems for industrial operations, knowledge work, and responsible AI.',
+  '宏翔商道-Elexvx 是一家跨行业研发公司，以 AI 与数据智能为核心，面向工业现场、知识工作与负责任的 AI 应用，构建可验证的技术系统。':
+    'Hongxiang Shangdao-Elexvx is a cross-industry R&D company building verifiable technical systems for industrial operations, knowledge work, and responsible AI.',
   技术文章: 'Insights',
   '技术能力只有进入场景，才会遇到真正的问题。':
     'Technical capability meets the real problem only when it enters context.',

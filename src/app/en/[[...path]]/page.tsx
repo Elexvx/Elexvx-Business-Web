@@ -4,6 +4,7 @@ import { loadNews } from '../../../content/news-loader';
 import { NextSitePage } from '../../../site/NextSitePage';
 import { nextMetadata } from '../../../site/routing/metadata';
 import { getStaticRoutes, normalizeRoutePath } from '../../../site/routing/routes';
+import { NewsArticleJsonLd } from '../../../site/seo/news-article-json-ld';
 
 export const dynamicParams = false;
 
@@ -24,5 +25,13 @@ export default async function Page({ params }: { params: Promise<{ path?: string
   const { path } = await params;
   const resolvedPath = routePath(path);
   if (!getStaticRoutes(loadInsights(), loadNews()).some((route) => route.path === resolvedPath)) notFound();
-  return <NextSitePage path={resolvedPath} locale="en" />;
+  const newsItem = resolvedPath.startsWith('/news/')
+    ? loadNews().find((item) => item.slug === resolvedPath.slice('/news/'.length) && item.status === 'published')
+    : undefined;
+  return (
+    <>
+      {newsItem ? <NewsArticleJsonLd item={newsItem} locale="en" /> : null}
+      <NextSitePage path={resolvedPath} locale="en" />
+    </>
+  );
 }

@@ -46,6 +46,10 @@ export type RouteMeta = {
   description: string;
   image?: string;
   robots?: 'index,follow' | 'noindex,nofollow';
+  openGraphType?: 'website' | 'article';
+  publishedAt?: string;
+  updatedAt?: string;
+  author?: string;
 };
 
 export type SiteRoute = {
@@ -68,7 +72,7 @@ const staticRoutes: SiteRoute[] = [
   },
   {
     path: '/',
-    meta: { title: siteIdentity.researchName, description: siteIdentity.description },
+    meta: { title: siteIdentity.researchName, description: siteIdentity.seoDescription },
     render: () => <HomePage activities={activityItems} research={researchItems} caseStudies={caseStudyItems} />,
   },
   {
@@ -101,14 +105,14 @@ const staticRoutes: SiteRoute[] = [
   },
   {
     path: '/news',
-    meta: { title: titleFor('最新动态'), description: '宏翔商道 / Elexvx 的公司公告、业务动态与历史新闻。' },
+    meta: { title: titleFor('最新动态'), description: '宏翔商道-Elexvx 的公司公告、业务动态与历史新闻。' },
     render: () => <NewsPage />,
   },
   {
     path: '/company',
     meta: {
       title: titleFor('公司与业务'),
-      description: '宏翔商道 / Elexvx 与 Elexvx Research 的公司主体、研究关系和并行业务。',
+      description: '宏翔商道-Elexvx 与 Elexvx Research 的公司主体、研究关系和并行业务。',
     },
     render: () => <CompanyPage />,
   },
@@ -127,7 +131,7 @@ const staticRoutes: SiteRoute[] = [
   },
   {
     path: '/company/qualifications',
-    meta: { title: titleFor('企业资质'), description: '宏翔商道 / Elexvx 企业资质与证书展示。' },
+    meta: { title: titleFor('企业资质'), description: '宏翔商道-Elexvx 企业资质与证书展示。' },
     render: () => <QualificationsPage />,
   },
   {
@@ -215,17 +219,38 @@ const configuredRoutes = (insights: Insight[], news: NewsItem[] = []): SiteRoute
   })),
   ...publishedResearch.map((item) => ({
     path: `/research/${item.slug}`,
-    meta: { title: titleFor(item.title), description: item.excerpt, image: item.cover },
+    meta: {
+      title: titleFor(item.title),
+      description: item.excerpt,
+      image: item.cover,
+      openGraphType: 'article' as const,
+      publishedAt: item.publishedAt,
+      author: item.author,
+    },
     render: () => <ActivityPage item={item} related={researchItems} research />,
   })),
   ...publishedActivities.map((item) => ({
     path: `/activities/${item.slug}`,
-    meta: { title: titleFor(item.title), description: item.excerpt, image: item.cover },
+    meta: {
+      title: titleFor(item.title),
+      description: item.excerpt,
+      image: item.cover,
+      openGraphType: 'article' as const,
+      publishedAt: item.publishedAt,
+      author: item.author,
+    },
     render: () => <ActivityPage item={item} related={activityItems} />,
   })),
   ...publishedCaseStudies.map((item) => ({
     path: `/cases/${item.slug}`,
-    meta: { title: titleFor(item.title), description: item.excerpt, image: item.cover },
+    meta: {
+      title: titleFor(item.title),
+      description: item.excerpt,
+      image: item.cover,
+      openGraphType: 'article' as const,
+      publishedAt: item.publishedAt,
+      author: item.author,
+    },
     render: () => <CaseStudyPage item={item} related={caseStudyItems} />,
   })),
   ...teamMembers.map((member) => ({
@@ -266,14 +291,30 @@ const configuredRoutes = (insights: Insight[], news: NewsItem[] = []): SiteRoute
     .filter((insight) => insight.status === 'published')
     .map((insight) => ({
       path: `/insights/${insight.slug}`,
-      meta: { title: titleFor(insight.title), description: insight.excerpt, image: insight.cover },
+      meta: {
+        title: titleFor(insight.title),
+        description: insight.excerpt,
+        image: insight.cover,
+        openGraphType: 'article' as const,
+        publishedAt: insight.publishedAt,
+        updatedAt: insight.updatedAt,
+        author: insight.author,
+      },
       render: () => <InsightPage insight={insight} />,
     })),
   ...news
     .filter((item) => item.status === 'published')
     .map((item) => ({
       path: `/news/${item.slug}`,
-      meta: { title: titleFor(item.title), description: item.excerpt, image: item.cover },
+      meta: {
+        title: titleFor(item.title),
+        description: item.excerpt,
+        image: item.cover,
+        openGraphType: 'article' as const,
+        publishedAt: item.publishedAt,
+        updatedAt: item.updatedAt,
+        author: item.author,
+      },
       render: () => <NewsItemPage item={item} />,
     })),
 ];

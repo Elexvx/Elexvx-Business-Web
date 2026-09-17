@@ -5,7 +5,7 @@ import { siteIdentity } from '../data/site';
 import homeHtml from '../data/home-static.json';
 
 export const metadata = metadataForRoute(
-  { title: siteIdentity.researchName, description: siteIdentity.description },
+  { title: siteIdentity.researchName, description: siteIdentity.seoDescription },
   '/'
 );
 
