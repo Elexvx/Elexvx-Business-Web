@@ -40,8 +40,11 @@
 .site-shell-openai.company-overview .company-introduction { padding: clamp(24px, 4vw, 48px); }
 .site-shell-openai .home-content-section { padding-inline: 0; }
 .site-shell-openai.brand-overview .page-hero-inner { width: 100%; max-width: none; margin-inline: 0; }
-.site-shell-openai :is(.news-index-section .section-heading, .news-index-section .news-list-grid, .activities-page-inner) {
+.site-shell-openai :is(.news-index-section .section-heading, .news-index-section .news-list-grid) {
   width: 100%; max-width: none; padding-inline: var(--page-gutter); margin-inline: auto;
+}
+.site-shell-openai .activities-page-inner {
+  width: 100%; max-width: var(--page-max-width); padding-inline: var(--page-gutter); margin-inline: auto;
 }
 
 /* Article end modules align with the same content edges as the home sections. */
