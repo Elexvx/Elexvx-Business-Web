@@ -10,11 +10,11 @@ const pageTitle = brandedPageTitle('服务状态历史');
 export const metadata: Metadata = {
   title: { absolute: pageTitle },
   description: `查看最近 ${serviceNavigationConfig.status.historyDays} 天的服务运行记录。`,
-  alternates: { canonical: 'https://www.elexvx.com/status/history/' },
+  alternates: { canonical: 'https://status.elexvx.com/history/' },
   openGraph: {
     title: pageTitle,
     description: `查看最近 ${serviceNavigationConfig.status.historyDays} 天的服务运行记录。`,
-    url: 'https://www.elexvx.com/status/history/',
+    url: 'https://status.elexvx.com/history/',
     siteName: '宏翔商道-Elexvx',
     locale: 'zh_CN',
     type: 'website',

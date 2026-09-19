@@ -10,11 +10,11 @@ const pageTitle = brandedPageTitle('服务状态');
 export const metadata: Metadata = {
   title: { absolute: pageTitle },
   description: serviceNavigationConfig.status.description,
-  alternates: { canonical: 'https://www.elexvx.com/status/' },
+  alternates: { canonical: 'https://status.elexvx.com/' },
   openGraph: {
     title: pageTitle,
     description: serviceNavigationConfig.status.description,
-    url: 'https://www.elexvx.com/status/',
+    url: 'https://status.elexvx.com/',
     siteName: '宏翔商道-Elexvx',
     locale: 'zh_CN',
     type: 'website',
