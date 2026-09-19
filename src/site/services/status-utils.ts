@@ -1,6 +1,9 @@
 import { statusConfig } from '../../data/service-status';
 import type { AvailabilityDay, MonitorState, StatusMonitor } from '../../data/service-status';
 
+const statusDayFormatter = new Intl.DateTimeFormat('zh-CN', { month: 'short', day: 'numeric' });
+const statusDayLabelCache = new Map<number, string>();
+
 export type StatusTone = 'healthy' | 'warning' | 'error' | 'unknown';
 
 export interface StatusGroup {
@@ -110,7 +113,13 @@ export function formatStatusTime(timestamp: number): string {
 }
 
 export function formatDay(timestamp: number): string {
-  return new Intl.DateTimeFormat('zh-CN', { month: 'short', day: 'numeric' }).format(new Date(timestamp * 1000));
+  const cachedLabel = statusDayLabelCache.get(timestamp);
+  if (cachedLabel) return cachedLabel;
+
+  const label = statusDayFormatter.format(new Date(timestamp * 1000));
+  if (statusDayLabelCache.size >= 240) statusDayLabelCache.clear();
+  statusDayLabelCache.set(timestamp, label);
+  return label;
 }
 
 export function formatDuration(seconds: number): string {

@@ -106,7 +106,7 @@ function useStatusData() {
     }));
 
     try {
-      const response = await fetch('/api/status', {
+      const response = await fetch('/api/status/', {
         cache: 'no-store',
         credentials: 'same-origin',
         headers: { Accept: 'application/json' },
@@ -476,40 +476,47 @@ export const StatusPage = ({ history = false }: StatusPageProps) => {
           </a>
         ) : null}
 
-        {loading ? (
-          <div className="service-status-loading" aria-label="正在加载服务状态">
-            <span />
-            <span />
-            <span />
-            <span />
-          </div>
-        ) : passwordRequired ? (
-          <StatusLogin onLogin={login} />
-        ) : error || !data ? (
-          <section className="service-status-error" role="alert">
-            <WarningFilled aria-hidden="true" />
-            <h2>暂时无法获取服务状态</h2>
-            <p>{error || '请稍后重试'}</p>
-            <button type="button" onClick={() => void refresh()}>
-              重新加载
-            </button>
-          </section>
-        ) : (
-          <>
-            {history ? (
-              <StatusHistory data={data} />
-            ) : (
-              <StatusPanel data={data} onRefresh={refresh} refreshing={refreshing} />
-            )}
-            {!history ? (
-              <div className="service-history-action">
-                <a href={statusHistoryHref}>
-                  <CalendarOutlined aria-hidden="true" /> 查看历史记录
-                </a>
-              </div>
-            ) : null}
-          </>
-        )}
+        <div
+          className={`service-status-result${history ? '' : ' service-status-result-current'}${
+            loading ? ' is-loading' : ''
+          }`}
+          aria-busy={loading}
+        >
+          {loading ? (
+            <div className="service-status-loading" role="status" aria-label="正在加载服务状态">
+              <span />
+              <span />
+              <span />
+              <span />
+            </div>
+          ) : passwordRequired ? (
+            <StatusLogin onLogin={login} />
+          ) : error || !data ? (
+            <section className="service-status-error" role="alert">
+              <WarningFilled aria-hidden="true" />
+              <h2>暂时无法获取服务状态</h2>
+              <p>{error || '请稍后重试'}</p>
+              <button type="button" onClick={() => void refresh()}>
+                重新加载
+              </button>
+            </section>
+          ) : (
+            <>
+              {history ? (
+                <StatusHistory data={data} />
+              ) : (
+                <StatusPanel data={data} onRefresh={refresh} refreshing={refreshing} />
+              )}
+              {!history ? (
+                <div className="service-history-action">
+                  <a href={statusHistoryHref}>
+                    <CalendarOutlined aria-hidden="true" /> 查看历史记录
+                  </a>
+                </div>
+              ) : null}
+            </>
+          )}
+        </div>
       </div>
     </section>
   );

@@ -12,15 +12,33 @@ const pages = [
     file: 'dist/navigation/index.html',
     allowRules: [...sharedAllowRules, /\.service-page-hero/, /\.service-search/],
   },
+  {
+    file: 'dist/status/index.html',
+    allowRules: [
+      ...sharedAllowRules,
+      /\.status-performance-shell/,
+      /\.service-site-shell/,
+      /\.service-status-/,
+      /\.service-monitor-/,
+      /\.service-availability-/,
+      /\.service-group-uptime/,
+      /\.service-refresh-button/,
+      /\.service-history-action/,
+      /\.site-footer/,
+      /\.footer-/,
+      /\.sr-only/,
+    ],
+    inlineFonts: false,
+  },
 ];
 
-for (const { file, allowRules } of pages) {
+for (const { file, allowRules, inlineFonts = true } of pages) {
   const optimizer = new Beasties({
     path: resolve('dist'),
     preload: 'swap',
     pruneSource: false,
     reduceInlineStyles: false,
-    inlineFonts: true,
+    inlineFonts,
     preloadFonts: false,
     noscriptFallback: true,
     allowRules,
@@ -37,4 +55,4 @@ for (const { file, allowRules } of pages) {
   });
   await writeFile(file, withoutCriticalStyles.replace('</head>', `${criticalStyles.join('')}</head>`));
 }
-console.log('Inlined route-specific critical CSS for the homepages and service navigation.');
+console.log('Inlined route-specific critical CSS for the homepages, navigation, and status page.');

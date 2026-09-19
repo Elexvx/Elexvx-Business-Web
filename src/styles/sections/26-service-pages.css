@@ -9,6 +9,14 @@
   background: var(--color-canvas);
 }
 
+/* The status subdomain favors the device's built-in CJK font to avoid
+   downloading the full editorial font set on this utility page. */
+.status-performance-shell {
+  --font-system: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  --font-display: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  font-family: var(--font-system);
+}
+
 .service-site-shell :is(h1, h2, h3, h4, p) {
   margin-block-start: 0;
 }
@@ -1387,6 +1395,19 @@
 
   .service-status-main {
     padding-top: 56px;
+  }
+
+  .service-status-result-current {
+    min-height: 1140px;
+  }
+
+  .service-status-result-current.is-loading {
+    display: grid;
+    align-items: center;
+  }
+
+  .service-status-result-current.is-loading .service-status-loading {
+    margin-block: 0;
   }
 
   .service-status-heading p:last-child {

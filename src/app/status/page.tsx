@@ -30,7 +30,11 @@ export const metadata: Metadata = {
 
 export default function Page() {
   return (
-    <SiteShell activePath="/status" className="service-site-shell" linkOrigin="https://www.elexvx.com">
+    <SiteShell
+      activePath="/status"
+      className="service-site-shell status-performance-shell"
+      linkOrigin="https://www.elexvx.com"
+    >
       <StatusPage />
     </SiteShell>
   );

@@ -2,7 +2,7 @@ import type { StatusMonitor } from '../src/data/service-status';
 import { navigationGroups } from '../src/data/research-navigation';
 import { serviceNavigation, serviceNavigationLinks } from '../src/data/service-navigation';
 import { serviceRoutePaths } from '../src/data/service-routes';
-import { availabilityTone, groupStatusMonitors } from '../src/site/services/status-utils';
+import { availabilityTone, formatDay, groupStatusMonitors } from '../src/site/services/status-utils';
 import vercelConfig from '../vercel.json';
 import { describe, expect, it } from 'vitest';
 
@@ -50,6 +50,12 @@ describe('integrated service pages', () => {
     expect(availabilityTone(0)).toBe('unknown');
     expect(availabilityTone(0, true)).toBe('error');
     expect(availabilityTone(100, true)).toBe('healthy');
+  });
+
+  it('formats availability dates consistently for all monitor rows', () => {
+    const newYear = new Date(2026, 0, 1).getTime() / 1000;
+    expect(formatDay(newYear)).toBe('1月1日');
+    expect(formatDay(newYear + 12 * 60 * 60)).toBe('1月1日');
   });
 
   it('keeps service entry points in the same navigation source as the main site', () => {
