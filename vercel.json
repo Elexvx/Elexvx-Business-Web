@@ -21,6 +21,12 @@
   },
   "redirects": [
     {
+      "source": "/:path*",
+      "has": [{ "type": "host", "value": "ai.elexvx.com" }],
+      "destination": "https://www.elexvx.com/:path*",
+      "permanent": true
+    },
+    {
       "source": "/",
       "has": [{ "type": "host", "value": "nav.elexvx.com" }],
       "destination": "/navigation/",

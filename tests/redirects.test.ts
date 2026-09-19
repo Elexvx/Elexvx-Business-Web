@@ -5,6 +5,7 @@ import { describe, expect, it } from 'vitest';
 type VercelRedirect = {
   source: string;
   destination: string;
+  permanent?: boolean;
   has?: Array<{ type: string; value: string }>;
 };
 
@@ -29,6 +30,7 @@ describe('redirect configuration', () => {
       }));
 
     expect(configuredHostRedirects).toEqual([
+      { source: '/:path*', destination: 'https://www.elexvx.com/:path*', host: 'ai.elexvx.com' },
       { source: '/', destination: '/navigation/', host: 'nav.elexvx.com' },
       { source: '/', destination: '/status/', host: 'status.elexvx.com' },
       { source: '/history', destination: '/status/history/', host: 'status.elexvx.com' },
@@ -38,5 +40,11 @@ describe('redirect configuration', () => {
       { source: '/sitemap.xml', destination: '/status-sitemap.xml', host: 'status.elexvx.com' },
       { source: '/robots.txt', destination: '/status-robots.txt', host: 'status.elexvx.com' },
     ]);
+
+    const aiHostRedirect = (vercelConfig.redirects as VercelRedirect[]).find(({ has }) =>
+      has?.some(({ type, value }) => type === 'host' && value === 'ai.elexvx.com')
+    );
+
+    expect(aiHostRedirect?.permanent).toBe(true);
   });
 });
