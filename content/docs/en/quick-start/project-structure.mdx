@@ -1,0 +1,31 @@
+---
+title: Project Structure
+description: A quick orientation to the main folders and responsibilities in the Legendary Invention repository.
+tags:
+  - quick-start
+  - structure
+  - repository
+---
+
+## Top-level layout
+
+```text
+legendary-invention/
+├── frontend/
+├── services/
+├── libs/
+├── deploy/
+├── scripts/
+├── docs/
+└── database/
+```
+
+## Key areas
+
+- `frontend/`: React + Umi + Ant Design app
+- `services/legendary-server/`: production backend runtime entry
+- `services/*-service/`: logical backend module boundaries
+- `libs/`: shared infrastructure and API contracts
+- `deploy/`: Docker Compose, Nginx, observability, production resources
+- `scripts/`: start, stop, deploy, and validation tooling
+- `docs/`: original architecture and design notes

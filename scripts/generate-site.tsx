@@ -2,6 +2,8 @@ import { mkdir, writeFile, readFile, readdir } from 'node:fs/promises';
 import { join, resolve } from 'node:path';
 import { loadInsights } from '../src/content/loader';
 import { loadNews } from '../src/content/news-loader';
+import { loadDocumentation } from '../src/content/documentation';
+import { documentationPath } from '../src/content/documentation-model';
 import { getStaticRoutes, redirectRoutes } from '../src/site/routing/routes';
 import { siteIdentity } from '../src/data/site';
 
@@ -11,6 +13,14 @@ const distRoot = resolve(process.cwd(), 'dist');
 const insights = loadInsights();
 const news = loadNews();
 const routes = getStaticRoutes(insights, news);
+const documentationPaths = loadDocumentation('zh-CN').flatMap((page) => {
+  const path = documentationPath('zh-CN', page.slug);
+  return [
+    { path: `${path}/`, lastmod: undefined },
+    { path: `${documentationPath('en', page.slug)}/`, lastmod: undefined },
+  ];
+});
+const servicePagePaths = ['/services/', '/navigation/', '/status/', '/status/history/'];
 
 const escapeHtml = (value: string) =>
   value
@@ -38,7 +48,7 @@ const redirectDocument = (target: string) => {
     <meta charset="UTF-8" />
     <meta name="robots" content="noindex,nofollow" />
     <meta http-equiv="refresh" content="0;url=${safeTarget}" />
-    <title>${en ? 'Page moved' : '页面已移动'} · ${escapeHtml(brand)}</title>
+    <title>${en ? 'Page moved' : '页面已移动'} | ${escapeHtml(brand)}</title>
   </head>
   <body style="margin:0;background:#000;color:#fff;font-family:system-ui,sans-serif">
     <main style="padding:48px"><p>${en ? 'This page has moved to' : '页面已移动到'} <a style="color:#fff" href="${safeTarget}">${safeTarget}</a>${en ? '.' : '。'}</p></main>
@@ -58,15 +68,19 @@ for (const [from, target] of Object.entries(redirectRoutes)) {
 }
 
 const indexableRoutes = routes.filter((route) => route.meta.robots !== 'noindex,nofollow');
-const localizedIndexablePaths = indexableRoutes.flatMap((route) => {
-  const path = route.path === '/' ? '/' : `${route.path}/`;
-  const englishPath = route.path === '/' ? '/en/' : `/en${route.path}/`;
-  const lastmod = route.meta.updatedAt ?? route.meta.publishedAt;
-  return [
-    { path, lastmod },
-    { path: englishPath, lastmod },
-  ];
-});
+const localizedIndexablePaths = [
+  ...indexableRoutes.flatMap((route) => {
+    const path = route.path === '/' ? '/' : `${route.path}/`;
+    const englishPath = route.path === '/' ? '/en/' : `/en${route.path}/`;
+    const lastmod = route.meta.updatedAt ?? route.meta.publishedAt;
+    return [
+      { path, lastmod },
+      { path: englishPath, lastmod },
+    ];
+  }),
+  ...documentationPaths,
+  ...servicePagePaths.map((path) => ({ path, lastmod: undefined })),
+];
 const sitemap = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${localizedIndexablePaths
   .map(
     ({ path, lastmod }) =>
@@ -109,11 +123,11 @@ const localizeDocumentLanguage = async (directory: string): Promise<void> => {
     if (entry.isDirectory()) await localizeDocumentLanguage(file);
     else if (entry.name.endsWith('.html')) {
       const html = await readFile(file, 'utf8');
-      const englishRootTitle = 'Hongxiang Shangdao-Elexvx | AI & Data Intelligence R&D';
+      const englishRootTitle = 'AI & Data Intelligence R&D | Hongxiang Shangdao-Elexvx';
       const englishRootDescription =
         'Hongxiang Shangdao-Elexvx is an AI and data intelligence R&D company publishing research, products, company news, and collaboration opportunities.';
       const englishRootKeywords = 'Hongxiang Shangdao-Elexvx,Elexvx,AI,data intelligence';
-      const chineseRootTitle = `${siteIdentity.seoName} | 人工智能与数据智能研发`;
+      const chineseRootTitle = `人工智能与数据智能研发 | ${siteIdentity.seoName}`;
       const chineseRootKeywords = ['宏翔商道-Elexvx', '宏翔商道', 'Elexvx', '人工智能', '数据智能'].join(',');
       const englishErrorMetadata = html.includes('id="__next_error__"')
         ? html

@@ -15,9 +15,11 @@
 
   .site-shell-openai .desktop-menu-panel-inner {
     display: block;
-    min-height: 336px;
-    padding-top: 34px;
-    padding-bottom: 36px;
+    min-height: 0;
+    max-height: min(320px, calc(100vh - 64px));
+    padding-top: 26px;
+    padding-bottom: 30px;
+    overflow-y: auto;
   }
 
   .site-shell-openai .desktop-menu-panel-content {

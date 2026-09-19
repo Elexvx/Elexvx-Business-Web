@@ -1,45 +1,47 @@
 import { publishedResearch } from '../../data/research-articles';
-import { QualificationsPage } from '../pages/qualifications';
-import { DesignPage } from '../pages/design';
 import { homeContent } from '../../data/page-content';
 import { jobs } from '../../data/jobs';
 import { publishedActivities, toActivitySummary } from '../../data/activities';
 import { publishedCaseStudies, toCaseStudySummary } from '../../data/case-studies';
 import { isDisabledPath } from '../../data/disabled-sections';
+import dynamic from 'next/dynamic';
 import type { ReactNode } from 'react';
 import { teamMembers } from '../../data/team';
 import { businessLines, getProject, getScenario, researchDirections, siteIdentity } from '../../data/site';
 import type { Insight, NewsItem } from '../../content/types';
-import {
-  ActivitiesPage,
-  ActivityPage,
-  CaseStudyPage,
-  ProductCatalogPage,
-  ProductDetailPage,
-  ArchivePage,
-  BrandPage,
-  BusinessLinePage,
-  BusinessPage,
-  CapabilitiesPage,
-  CareersPage,
-  JobPage,
-  CompanyPage,
-  ContactPage,
-  HomePage,
-  InsightPage,
-  InsightsPage,
-  NewsPage,
-  NewsItemPage,
-  NotFoundPage,
-  ProjectPage,
-  ProjectsPage,
-  ResearchDirectionPage,
-  ResearchPage,
-  ScenarioPage,
-  ScenariosPage,
-  TeamPage,
-  TeamMemberPage,
-} from '../pages/index';
+
+const ActivitiesPage = dynamic(() => import('../pages/activities').then((module) => module.ActivitiesPage));
+const ActivityPage = dynamic(() => import('../pages/activities').then((module) => module.ActivityPage));
+const CaseStudyPage = dynamic(() => import('../pages/case-studies').then((module) => module.CaseStudyPage));
+const ProductCatalogPage = dynamic(() =>
+  import('../pages/product-catalog').then((module) => module.ProductCatalogPage)
+);
+const ProductDetailPage = dynamic(() => import('../pages/product-catalog').then((module) => module.ProductDetailPage));
+const ArchivePage = dynamic(() => import('../pages/publications').then((module) => module.ArchivePage));
+const InsightPage = dynamic(() => import('../pages/publications').then((module) => module.InsightPage));
+const InsightsPage = dynamic(() => import('../pages/publications').then((module) => module.InsightsPage));
+const NewsPage = dynamic(() => import('../pages/publications').then((module) => module.NewsPage));
+const NewsItemPage = dynamic(() => import('../pages/publications').then((module) => module.NewsItemPage));
+const BrandPage = dynamic(() => import('../pages/company').then((module) => module.BrandPage));
+const BusinessLinePage = dynamic(() => import('../pages/company').then((module) => module.BusinessLinePage));
+const BusinessPage = dynamic(() => import('../pages/company').then((module) => module.BusinessPage));
+const CompanyPage = dynamic(() => import('../pages/company').then((module) => module.CompanyPage));
+const ContactPage = dynamic(() => import('../pages/company').then((module) => module.ContactPage));
+const HomePage = dynamic(() => import('../pages/home').then((module) => module.HomePage));
+const CapabilitiesPage = dynamic(() => import('../pages/projects').then((module) => module.CapabilitiesPage));
+const ProjectPage = dynamic(() => import('../pages/projects').then((module) => module.ProjectPage));
+const ProjectsPage = dynamic(() => import('../pages/projects').then((module) => module.ProjectsPage));
+const ScenarioPage = dynamic(() => import('../pages/projects').then((module) => module.ScenarioPage));
+const ScenariosPage = dynamic(() => import('../pages/projects').then((module) => module.ScenariosPage));
+const ResearchDirectionPage = dynamic(() => import('../pages/research').then((module) => module.ResearchDirectionPage));
+const ResearchPage = dynamic(() => import('../pages/research').then((module) => module.ResearchPage));
+const CareersPage = dynamic(() => import('../pages/careers').then((module) => module.CareersPage));
+const JobPage = dynamic(() => import('../pages/careers').then((module) => module.JobPage));
+const DesignPage = dynamic(() => import('../pages/design').then((module) => module.DesignPage));
+const QualificationsPage = dynamic(() => import('../pages/qualifications').then((module) => module.QualificationsPage));
+const TeamPage = dynamic(() => import('../pages/team').then((module) => module.TeamPage));
+const TeamMemberPage = dynamic(() => import('../pages/team').then((module) => module.TeamMemberPage));
+const NotFoundPage = dynamic(() => import('../pages/shared').then((module) => module.NotFoundPage));
 
 export type RouteMeta = {
   title: string;
@@ -58,7 +60,7 @@ export type SiteRoute = {
   render: () => ReactNode;
 };
 
-const titleFor = (section: string) => `${section} · ${siteIdentity.researchName}`;
+const titleFor = (section: string) => section;
 
 const researchItems = publishedResearch.map(toActivitySummary);
 const activityItems = publishedActivities.map(toActivitySummary);
@@ -185,8 +187,6 @@ const originalRedirectRoutes: Record<string, string> = {
   '/en/company/team/mxh': '/en/company/team/mengxiaohua',
   '/en/company/team/gkr': '/en/company/team/gongkairui',
   '/exam': '/news',
-  '/technology/2025-07-01-01': '/news/technology-2025-07-01-01',
-  '/stories/2025-07-01-01': '/news/stories-2025-07-01-01',
   '/latest-news/2026-01-01-01': '/news/2026-01-01-01',
   '/latest-news/2026-01-14-01': '/news/2026-01-14-01',
   '/latest-news/2026-06-09-01': '/news/2026-06-09-01',
@@ -229,18 +229,20 @@ const configuredRoutes = (insights: Insight[], news: NewsItem[] = []): SiteRoute
     },
     render: () => <ActivityPage item={item} related={researchItems} research />,
   })),
-  ...publishedActivities.map((item) => ({
-    path: `/activities/${item.slug}`,
-    meta: {
-      title: titleFor(item.title),
-      description: item.excerpt,
-      image: item.cover,
-      openGraphType: 'article' as const,
-      publishedAt: item.publishedAt,
-      author: item.author,
-    },
-    render: () => <ActivityPage item={item} related={activityItems} />,
-  })),
+  ...publishedActivities
+    .filter((item) => !item.externalUrl)
+    .map((item) => ({
+      path: `/activities/${item.slug}`,
+      meta: {
+        title: titleFor(item.title),
+        description: item.excerpt,
+        image: item.cover,
+        openGraphType: 'article' as const,
+        publishedAt: item.publishedAt,
+        author: item.author,
+      },
+      render: () => <ActivityPage item={item} related={activityItems} />,
+    })),
   ...publishedCaseStudies.map((item) => ({
     path: `/cases/${item.slug}`,
     meta: {

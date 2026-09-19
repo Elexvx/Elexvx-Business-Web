@@ -13,7 +13,7 @@ export const ActivityHighlights = ({ items }: { items: ActivitySummary[] }) => {
   const { href, t } = useI18n();
   const card = (item: ActivitySummary, lead = false) => (
     <article className={lead ? 'activity-highlight activity-highlight-lead' : 'activity-highlight'} key={item.slug}>
-      <a href={href(`/activities/${item.slug}`)}>
+      <a href={item.externalUrl || href(`/activities/${item.slug}`)}>
         <SiteImage src={item.cover || '/visuals/research-gradient.jpg'} alt={t(item.title)} loading="lazy" />
         <div>
           <h3>{t(item.title)}</h3>
@@ -88,7 +88,7 @@ export const ActivitySection = ({ items, page = false }: { items: ActivitySummar
                 title={item.title}
                 eyebrow={`${item.pinned ? `${t('置顶')} · ` : ''}${t(item.category || '活动')} · ${item.publishedAt}`}
                 naturalTitle
-                href={`/activities/${item.slug}`}
+                href={item.externalUrl || `/activities/${item.slug}`}
               />
             ))}
           </div>

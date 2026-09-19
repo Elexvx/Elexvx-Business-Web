@@ -1,0 +1,241 @@
+---
+title: 本地启动与开发
+description: 用最短路径在本地启动 Legendary Invention，并知道常用命令该怎么用。
+tags:
+  - quick-start
+  - local
+  - development
+---
+
+## 环境要求
+
+- Java 21
+- Maven 3.9+，或仓库自带 `./mvnw`
+- Node.js 20+
+- pnpm 10+
+- Docker，推荐用于 MySQL、Redis 和部署演练
+
+## 仓库位置
+
+```bash
+/Users/johntao/Documents/GitHub/legendary-invention
+```
+
+## 先理解本地启动目标
+
+本地开发不需要把自己当成一个要维护一堆独立后端服务的“微服务平台管理员”。当前推荐目标很明确：
+
+- 前端能访问
+- `/api` 请求能通
+- `legendary-server` 能承载主要业务模块
+- MySQL、Redis 等基础设施可用
+
+只要这四件事成立，你就已经拥有一个有效的本地开发环境。
+
+## 最短启动路径
+
+一键启动整套本地环境：
+
+```bash
+node scripts/start-platform.mjs
+```
+
+如果不想重新构建镜像：
+
+```bash
+node scripts/start-platform.mjs --skip-build
+```
+
+停止本地环境：
+
+```bash
+node scripts/stop-platform.mjs
+```
+
+这个启动脚本的价值不是“少打一条命令”，而是它会统一处理本地开发最容易乱掉的几件事：
+
+- 端口检查
+- 基础设施复用或拉起
+- 后端主入口启动
+- 前端开发态启动
+- 统一的本地访问路径
+
+## 常用启动变体
+
+如果你只想复用已有基础设施，不重复拉起：
+
+```bash
+node scripts/start-platform.mjs --skip-infra
+```
+
+如果你只想准备基础设施，不启动服务：
+
+```bash
+node scripts/start-platform.mjs --skip-services --skip-frontend
+```
+
+如果你暂时只看后端接口：
+
+```bash
+node scripts/start-platform.mjs --skip-frontend
+```
+
+## 只启动后端
+
+构建聚合入口：
+
+```bash
+./mvnw -pl services/legendary-server -am package
+```
+
+直接运行聚合后端：
+
+```bash
+./mvnw -pl services/legendary-server -am spring-boot:run
+```
+
+## 只启动前端
+
+```bash
+cd frontend
+corepack pnpm install
+corepack pnpm dev
+```
+
+## 本地默认地址
+
+- 前端入口：`http://localhost:8000`
+- 后端入口：`http://localhost:8080`
+- API 健康检查：`http://localhost:8080/actuator/health`
+- 代理健康检查：`http://localhost:8000/api/health`
+
+如果你的本地脚本版本仍带有单独代理入口，可能还会看到 `8081`。遇到这种情况时，先以脚本实际打印出的地址为准，但业务开发仍要遵守一个原则：前端统一请求 `/api`，不要直接硬编码后端模块地址。
+
+## 推荐开发顺序
+
+1. 启动本地后端与前端
+2. 先确认 `/api/health` 返回成功
+3. 再进入你要修改的模块或页面
+4. 修改后优先跑最小验证，而不是全量冒烟
+
+## 第一次启动时建议按这个顺序检查
+
+### 1. 检查 Java 和 Node 环境
+
+```bash
+java -version
+./mvnw -version
+node -v
+corepack pnpm -v
+docker version
+```
+
+### 2. 启动平台
+
+```bash
+node scripts/start-platform.mjs
+```
+
+### 3. 检查健康状态
+
+```bash
+curl http://localhost:8080/actuator/health
+curl http://localhost:8000/api/health
+```
+
+### 4. 再进入页面开发或接口调试
+
+如果这一步还没通，就不要急着改业务代码，先把基础启动链路修通。
+
+## 常用检查命令
+
+后端打包：
+
+```bash
+./mvnw -DskipTests package
+```
+
+前端类型检查：
+
+```bash
+cd frontend
+corepack pnpm typecheck
+```
+
+前端测试：
+
+```bash
+cd frontend
+corepack pnpm test
+```
+
+指定聚合入口构建：
+
+```bash
+./mvnw -pl services/legendary-server -am -DskipTests package
+```
+
+指定模块编译：
+
+```bash
+./mvnw -q -pl services/system-service -am -DskipTests compile
+```
+
+## 当前架构下要特别记住的事
+
+- 正式主入口是 `legendary-server`，不是多进程纯微服务
+- 代码目录保留 `services/*-service` 是为了边界清晰和未来可拆分
+- 前端永远优先调用 `/api` 下的相对路径，不要直接硬编码服务地址
+
+## 本地开发时最常见的误区
+
+### 误区 1：把目录结构误认为当前运行形态
+
+看到 `auth-service`、`message-service`、`file-service` 等目录，并不意味着你今天本地就要分别启动它们。默认开发和调试都围绕聚合入口进行。
+
+### 误区 2：直接在页面里写真实服务域名
+
+前端如果直接写死后端绝对地址，后面无论本地、测试、Vercel rewrite 还是生产代理都会更难维护。统一用 `/api` 是为了把环境差异收敛掉。
+
+### 误区 3：一上来跑全量验证
+
+这个仓库前后端、部署、脚本、观测链路都不短。日常开发更应该先做“最小回归”：
+
+- 改前端，先跑类型检查和目标页面
+- 改后端模块，先编译目标模块或聚合入口
+- 改部署脚本，再做部署检查
+
+## 常见本地问题
+
+### 页面能开，但接口全 401 / 403
+
+优先检查：
+
+- 是否真的走了 `/api`
+- 登录态是否恢复
+- 当前租户上下文是否正确
+- 后端接口是否使用了正确的 `permission_key`
+
+### 页面提示服务不可用
+
+优先检查：
+
+- `legendary-server` 是否启动成功
+- `/api/health` 是否可访问
+- 前端代理或本地 rewrite 是否生效
+
+### 上传类功能失败
+
+优先检查：
+
+- 本地存储目录是否可写
+- 相关上传配置是否加载
+- 文件模块链路是否正常
+
+## 建议你在开始改代码前先确认的三件事
+
+1. 你改的是前端壳层、业务页面，还是后端 owner 模块
+2. 你改动是否会影响权限、审计、Outbox 或部署
+3. 你准备的验证命令是不是足够小、足够快
+
+确认完这三件事，后面的开发会顺很多。

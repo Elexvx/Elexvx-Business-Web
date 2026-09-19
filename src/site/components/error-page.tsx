@@ -1,6 +1,7 @@
 'use client';
 
 import { useSyncExternalStore } from 'react';
+import { siteIdentity } from '../../data/site';
 import { SiteShell } from './shell';
 import { LanguageProvider, useI18n } from '../providers/i18n';
 
@@ -40,12 +41,15 @@ export function ErrorPage({ code = 404, retry }: { code?: 403 | 404 | 500; retry
   const english = locale === 'en' || /^\/en(?:\/|$)/.test(pathname);
   const path = pathname.replace(/^\/en(?=\/|$)/, '') || '/';
   const content = copy[code];
+  const brand = english ? 'Hongxiang Shangdao-Elexvx' : siteIdentity.seoName;
   const href = (path: string) => (english ? `/en${path === '/' ? '/' : path}` : path);
   return (
     <LanguageProvider locale={english ? 'en' : 'zh-CN'} path={path} autoRedirect={false}>
       <SiteShell activePath={path}>
         <section className="status-page">
-          <title>{english ? content.enTitle : content.title} · Elexvx Research</title>
+          <title>
+            {brand} — {english ? content.enTitle : content.title}
+          </title>
           <meta name="robots" content="noindex,nofollow" />
           <div className="status-main">
             <div className="status-visual" aria-hidden="true">

@@ -13,10 +13,19 @@ type ReadingItem = {
   publishedAt: string;
   cover?: string;
   category?: string;
+  externalUrl?: string;
   status: string;
 };
 
-export const ArticleBody = ({ source, children }: { source: string; children?: ReactNode }) => {
+export const ArticleBody = ({
+  source,
+  children,
+  showToc = true,
+}: {
+  source: string;
+  children?: ReactNode;
+  showToc?: boolean;
+}) => {
   const ref = useRef<HTMLDivElement>(null);
   const [headings, setHeadings] = useState<{ id: string; text: string }[]>([]);
   const [active, setActive] = useState('article-content');
@@ -41,7 +50,7 @@ export const ArticleBody = ({ source, children }: { source: string; children?: R
     if (entries.some((entry) => entry.id === hash)) document.getElementById(hash)?.scrollIntoView();
     return () => window.removeEventListener('scroll', update);
   }, [source, locale]);
-  const hasHeadings = headings.length > 0;
+  const hasHeadings = showToc && headings.length > 0;
   return (
     <>
       <div className={`article-reading-layout${hasHeadings ? '' : ' article-reading-layout-no-toc'}`}>
@@ -141,7 +150,7 @@ export const ContinueReading = ({
       </div>
       <div className="article-continue-grid">
         {related.map((item) => (
-          <a key={item.slug} href={href(`${base}/${item.slug}`)}>
+          <a key={item.slug} href={item.externalUrl || href(`${base}/${item.slug}`)}>
             <SiteImage src={item.cover || '/visuals/research-gradient.jpg'} alt={t(item.title)} loading="lazy" />
             <h3>{t(item.title)}</h3>
             <p>

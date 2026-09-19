@@ -1,0 +1,34 @@
+---
+title: Backend Module Boundaries
+description: Learn how backend layers, module ownership, and allowed dependency directions are defined.
+tags:
+  - architecture
+  - backend
+  - modules
+---
+
+## Dependency direction
+
+```text
+controller -> app/service -> domain -> infrastructure/mapper
+```
+
+## Core rules
+
+- controllers receive input and enforce entry permissions
+- app services orchestrate use cases and publish audits/events
+- domain holds business rules
+- infrastructure handles database, Redis, jobs, and external integrations
+
+## Anti-patterns
+
+- controllers calling mappers directly
+- one module modifying another module's tables
+- duplicating permission or audit logic in multiple places
+
+## Important owners
+
+- `auth-service`: login, token refresh, passkeys, WeChat login
+- `system-service`: IAM, menus, roles, config, audit, AI management
+- `file-service`: file upload/download and storage-space governance
+- `message-service`: notices, push delivery, message outbox

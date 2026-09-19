@@ -33,6 +33,9 @@
 
 @import './sections/25-sharing.css';
 
+@import './sections/26-service-pages.css';
+@import './sections/27-content-card-system.css';
+
 /* Intrinsic dimensions reserve space without forcing the source pixel height.
    Component rules can still specify fixed heights or aspect ratios. */
 :where(img) {

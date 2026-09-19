@@ -1,0 +1,154 @@
+---
+title: 运维手册
+description: 常用的发布检查、健康检查、问题排查和日常运维动作。
+tags:
+  - deployment
+  - operations
+  - runbook
+---
+
+## 发布后最少要检查什么
+
+1. 容器是否正常运行
+2. `/api/health` 是否返回 200
+3. 关键业务链路是否可用
+4. 日志里是否出现新的 5xx 或权限错误
+
+如果是对外环境，建议再补两项：
+
+5. 域名入口 `/health` 是否正常
+6. 登录页或公开配置接口是否可访问
+
+## 常用检查
+
+部署健康检查：
+
+```bash
+node scripts/check-deployment.mjs
+```
+
+公网环境检查：
+
+```bash
+DEPLOY_CHECK_BASE_URL=https://api.elexvx.com \
+node scripts/check-deployment.mjs
+```
+
+状态查看：
+
+```bash
+node scripts/deploy-container.mjs --ps
+```
+
+日志查看：
+
+```bash
+node scripts/deploy-container.mjs --logs
+```
+
+## 容器侧常看什么
+
+- `legendary-server`
+- `api-proxy`
+- `edge-proxy`
+- `mysql`
+- `redis`
+- `legendary-xxl-job-admin`
+
+如果启用了观测栈，也要顺带确认：
+
+- `grafana`
+- `prometheus`
+- `loki`
+- `tempo`
+
+## 常见故障思路
+
+### 前端页面报错
+
+先分清：
+
+- 是静态资源问题
+- 是 `/api` 代理问题
+- 还是后端业务 4xx / 5xx
+
+建议排查顺序：
+
+1. 看浏览器 Network，请求是否真的发到 `/api`
+2. 看 rewrite 或代理是否正确
+3. 看 `api-proxy` / `edge-proxy`
+4. 再看后端业务日志
+
+### 登录失败
+
+优先检查：
+
+- `/api/v1/public/login-capabilities`
+- `auth-service` 或聚合入口里的认证日志
+- Redis 会话和 token 配置
+- 用户状态、租户状态、二次认证配置
+
+### 上传失败
+
+优先检查：
+
+- 存储空间是否启用
+- `UPLOAD_STORAGE_ROOT` 对应卷是否可写
+- 容器内应用用户是否有目录权限
+
+### 权限异常
+
+优先检查：
+
+- 前端权限快照是否更新
+- 后端接口是否校验了对应 `permission_key`
+- 当前租户上下文是否正确
+
+### Outbox 不投递
+
+优先检查：
+
+- `platform_event_outbox` 是否仍有 `RECORDED` 或 `FAILED`
+- relay 是否启用
+- dispatcher 配置是否正确
+- `job-executor` 是否有调用内部 relay 接口
+- `last_error` 和服务日志
+
+### 知识库或消息链路异常
+
+优先检查：
+
+- 主对象是否真的写入成功
+- 对应 owner 模块事件是否已记录
+- 下游消费者或实时投递链路是否可用
+
+## 一套比较稳妥的排障顺序
+
+1. 先确认是“全局故障”还是“单功能故障”
+2. 先看健康检查，再看容器状态
+3. 再区分入口代理、后端主链路、业务模块、异步链路
+4. 最后才去怀疑前端页面本身
+
+这样排查通常比一上来翻代码更快。
+
+## 运维原则
+
+- 先看健康检查，再看容器状态，再看业务日志
+- 先确认运行形态，再判断是配置问题还是代码问题
+- 能固化到脚本里的修复，不要只在线上手改一次
+
+## 发布前后推荐清单
+
+发布前：
+
+- 核对环境变量
+- 核对存储与插件目录权限
+- 如涉及数据迁移，先备份
+- 跑最小构建与检查
+
+发布后：
+
+- 跑 `check-deployment`
+- 看容器状态与关键日志
+- 验证登录、上传、关键业务链路
+- 确认没有新的 5xx、高频 4xx、权限异常

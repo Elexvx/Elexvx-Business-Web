@@ -59,20 +59,6 @@ const entries: MigrationEntry[] = [
     tags: ['对外投资'],
     cover: '/visuals/news/investment-exit-2026-square.jpg',
   },
-  {
-    source: 'posts/stories/2025-07-01-01.md',
-    slug: 'stories-2025-07-01-01',
-    category: '公司动态',
-    tags: ['公司动态', '知识产权'],
-    cover: '/visuals/news/stories-brand-protection-2025-square.jpg',
-  },
-  {
-    source: 'posts/technology/2025-07-01-01.md',
-    slug: 'technology-2025-07-01-01',
-    category: '技术研究',
-    tags: ['研究', '工业智能'],
-    cover: '/visuals/news/technology-industrial-intelligence-2025-square.jpg',
-  },
 ];
 
 const unquote = (value: string) => {

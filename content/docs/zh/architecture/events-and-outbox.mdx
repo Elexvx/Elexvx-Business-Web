@@ -1,0 +1,134 @@
+---
+title: 事件与 Outbox
+description: 了解项目里的 Outbox 事件机制，以及为什么它对文件、消息、AI 等链路很重要。
+tags:
+  - architecture
+  - outbox
+  - events
+---
+
+## Outbox 是用来做什么的
+
+Outbox 用来把“已经提交成功的业务事实”可靠地发布出去。
+
+它适合：
+
+- 缓存失效
+- 索引更新
+- 审计投影
+- 异步通知
+- 弱一致流程
+
+它不适合代替同步 RPC 或在 payload 里塞复杂指令。
+
+更直白一点说：主事务应该先把“业务事实”落稳，Outbox 再负责把这个事实可靠地传播出去。这样才能既保证主链路稳定，又给后续扩展留出空间。
+
+## 当前仓库里的典型事件
+
+- `AI_KNOWLEDGE_DOCUMENT_INDEXED`
+- `AI_KNOWLEDGE_DOCUMENT_DELETED`
+- `FILE_OBJECT_UPLOADED`
+- `FILE_OBJECT_DELETED`
+- `MESSAGE_NOTICE_CREATED`
+- `MESSAGE_NOTICE_RETRACTED`
+
+这些事件分别来自不同 owner 模块，不应该由外围模块“替别人补发”。
+
+## 事件表关键字段
+
+- `source_type`
+- `event_type`
+- `event_key`
+- `payload_json`
+- `dispatch_status`
+- `retry_count`
+- `next_retry_at`
+- `trace_id`
+- `request_id`
+
+其中最关键的几个字段可以这样理解：
+
+- `event_key`：消费幂等的第一道抓手
+- `dispatch_status`：当前是否只是记录、正在投递、已投递或失败
+- `retry_count` / `next_retry_at`：失败后的重试窗口
+- `trace_id` / `request_id`：后续排查链路问题时非常有用
+
+## 生产规则
+
+- 事件必须围绕已提交事实
+- 消费端必须幂等
+- 失败后要允许重试
+- 事件不能替代审计日志
+
+建议再多记住两条：
+
+- payload 只描述事实，不描述消费策略
+- 事件归 owner 模块发布，不要跨模块伪造事实来源
+
+## 标准 payload 应该长什么样
+
+一个典型的 payload 通常包含：
+
+- `schemaVersion`
+- `occurredAt`
+- `tenantId`
+- `userId`
+- `aggregateType`
+- `aggregateId`
+- `attributes`
+
+`attributes` 里再放与本次事实直接相关的补充信息，例如文档标题、知识库 ID、chunk 数量、文件对象 ID 等。
+
+## 典型链路
+
+### 文件上传
+
+```text
+写入 file_object
+  -> 记录 FILE_OBJECT_UPLOADED
+  -> 后续消费者可做 OCR、缩略图、病毒扫描、知识库解析
+```
+
+这条链路的意义在于，上传接口不需要同步等待所有后处理完成。只要主对象写成功，后续消费者就可以按自己的节奏继续处理。
+
+### AI 知识库
+
+```text
+保存知识库文档
+  -> 切 chunk
+  -> 记录 AI_KNOWLEDGE_DOCUMENT_INDEXED
+  -> 后续消费者可做向量化、索引刷新
+```
+
+这个模式很适合知识库、搜索、消息、审计投影这类“主事实先写，衍生处理稍后完成”的场景。
+
+### 消息通知
+
+```text
+message-service 写入消息
+  -> 记录消息事件
+  -> WebSocket 实时投递
+  -> 投递失败时可重试或重放
+```
+
+## Relay 怎么接入运行
+
+当前平台已经给 Outbox 预留了 relay 运行方式。典型模式是：
+
+- owner 模块先写入 `platform_event_outbox`
+- relay 任务扫描 `RECORDED` 或可重试事件
+- 按配置投递到 logging、Redis Stream 或其他 dispatcher
+
+在当前体系里，`job-executor` 可以通过内部任务接口触发 relay。
+
+## 为什么这很重要
+
+当系统继续演进时，很多看似“附带”的工作其实都不应该阻塞主事务。Outbox 能让主链路保持简单，同时让扩展点保持可靠。
+
+## 常见错误
+
+- 业务还没提交成功就先发事件
+- 一个事件里塞入过多后续处理指令
+- 消费端没有幂等保护
+- 事件失败后没有可观察的重试状态
+- 把 Outbox 当成审计日志的替代品

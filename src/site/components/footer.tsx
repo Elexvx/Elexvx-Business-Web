@@ -11,8 +11,13 @@ import { COOKIE_SETTINGS_EVENT } from './cookie-consent';
 
 import { useAvailableLink, usePublishedNews } from '../providers/content-context';
 
-export const Footer = () => {
+export const Footer = ({ linkOrigin }: { linkOrigin?: string }) => {
   const { locale, t, href, switchHref } = useI18n();
+  const resolveHref = (value: string) => {
+    const localizedHref = href(value);
+    return linkOrigin && localizedHref.startsWith('/') ? new URL(localizedHref, linkOrigin).href : localizedHref;
+  };
+  const resolvedSwitchHref = resolveHref(switchHref);
   const { theme, toggleTheme } = useTheme();
   const isAvailableLink = useAvailableLink();
   const newsCategories = usePublishedNews().map((item) => item.category);
@@ -45,7 +50,7 @@ export const Footer = () => {
                 <Title text={column.title} />
               </h2>
               {column.links.map((link) => (
-                <a href={href(link.href)} key={link.href}>
+                <a href={resolveHref(link.href)} key={link.href}>
                   {t(link.label)}
                 </a>
               ))}
@@ -154,7 +159,7 @@ export const Footer = () => {
                       hrefLang={option.code}
                       role="menuitem"
                       onClick={(event) => {
-                        event.currentTarget.href = `${option.href}${window.location.search}${window.location.hash}`;
+                        event.currentTarget.href = `${resolvedSwitchHref}${window.location.search}${window.location.hash}`;
                         try {
                           window.localStorage.setItem(LANGUAGE_STORAGE_KEY, option.code);
                         } catch {

@@ -1,0 +1,55 @@
+---
+title: Local Setup
+description: The shortest path to run Legendary Invention locally and understand the core developer commands.
+tags:
+  - quick-start
+  - local
+  - development
+---
+
+## Requirements
+
+- Java 21
+- Maven 3.9+ or `./mvnw`
+- Node.js 20+
+- pnpm 10+
+- Docker
+
+## Start locally
+
+```bash
+node scripts/start-platform.mjs
+```
+
+Without rebuilding images:
+
+```bash
+node scripts/start-platform.mjs --skip-build
+```
+
+Stop:
+
+```bash
+node scripts/stop-platform.mjs
+```
+
+## Backend only
+
+```bash
+./mvnw -pl services/legendary-server -am spring-boot:run
+```
+
+## Frontend only
+
+```bash
+cd frontend
+corepack pnpm install
+corepack pnpm dev
+```
+
+## Default local URLs
+
+- frontend: `http://localhost:8000`
+- backend: `http://localhost:8080`
+- backend health: `http://localhost:8080/actuator/health`
+- proxy health: `http://localhost:8000/api/health`

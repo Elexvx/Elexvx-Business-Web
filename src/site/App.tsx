@@ -5,6 +5,7 @@ import { LanguageProvider, type Locale } from './providers/i18n';
 import { EnglishLanguageProvider } from './providers/english-i18n';
 import { getStaticRoutes, resolveRoute } from './routing/routes';
 import { SiteShell } from './components/shell';
+import { serviceRoutePaths } from '../data/service-routes';
 
 export const App = ({
   path,
@@ -31,7 +32,7 @@ export const App = ({
     <ContentProvider
       insights={insights.map(toInsightSummary)}
       news={news.map(toNewsSummary)}
-      routePaths={routes.map((item) => item.path)}
+      routePaths={[...routes.map((item) => item.path), ...serviceRoutePaths]}
     >
       {page}
     </ContentProvider>

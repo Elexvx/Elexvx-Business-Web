@@ -1,0 +1,40 @@
+---
+title: Data and Permission Boundaries
+description: Understand tenant-aware data design, RBAC, permission keys, and resource-level authorization.
+tags:
+  - architecture
+  - data
+  - permission
+  - rbac
+---
+
+## Data rules
+
+- tenant isolation first
+- standard audit fields
+- query-driven index design
+- business ownership must be explicit
+
+## Permission model
+
+Recommended relationship:
+
+```text
+user -> user-tenant relation -> role -> permission_key -> page/API/data scope
+```
+
+## `permission_key`
+
+Use one shared format:
+
+```text
+<domain>:<resource>:<action>
+```
+
+Examples:
+
+- `system:user:view`
+- `system:file:upload`
+- `plugin:management:install`
+
+Frontend visibility control is useful, but backend enforcement is the real security boundary.

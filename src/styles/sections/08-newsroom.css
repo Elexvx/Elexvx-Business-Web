@@ -27,7 +27,7 @@
   overflow: visible;
   color: #fff;
   background: transparent;
-  border-radius: 0;
+  border-radius: var(--home-card-radius);
   transform: none;
   transition: color 180ms ease;
 }
@@ -185,7 +185,7 @@
   overflow: visible;
   color: var(--color-ink);
   background: transparent;
-  border-radius: 0;
+  border-radius: var(--home-card-radius);
   transform: none;
 }
 

@@ -1,0 +1,386 @@
+/* Keep editorial content open; reserve outlines for explicit numeric metrics. */
+:root {
+  --content-card-radius: 16px;
+  --content-card-border: none;
+  --content-card-surface: color-mix(in srgb, var(--color-ink) 3%, var(--color-canvas));
+}
+
+.site-shell-openai.company-overview .research-tile .tile-inner {
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+}
+
+.site-shell-openai.company-overview .company-introduction,
+.site-shell-openai.company-overview .company-content-row,
+.site-shell-openai .contact-info-card,
+.site-shell-openai .team-card,
+.site-shell-openai .qualification-card,
+.site-shell-openai :is(.direction-card, .project-card, .business-card, .scenario-card),
+.site-shell-openai .home-media-card,
+.site-shell-openai .research-index-row,
+.site-shell-openai :is(.process-row, .insight-list-item, .method-item, .delivery-item, .principle-row, .evidence-row),
+.site-shell-openai .careers-value,
+.site-shell-openai .careers-page .careers-job-row,
+.site-shell-openai .brand-original-gallery figure,
+.site-shell-openai .lumira-grid article,
+.site-shell-openai .lumira-stack article,
+.site-shell-openai .lumira-diagram-node,
+.site-shell-openai .lumira-server-box,
+.site-shell-openai .lumira-flow li,
+.site-shell-openai .lumira-closing {
+  border: var(--content-card-border);
+  border-radius: var(--content-card-radius);
+}
+
+.site-shell-openai.company-overview .company-stats > div {
+  border: 1px solid var(--color-hairline);
+  border-radius: var(--content-card-radius);
+}
+
+.site-shell-openai.company-overview .company-introduction,
+.site-shell-openai.company-overview .company-content-row,
+.site-shell-openai.company-overview .company-stats > div,
+.site-shell-openai .contact-info-card,
+.site-shell-openai .careers-value,
+.site-shell-openai .lumira-closing {
+  background: var(--content-card-surface);
+}
+
+.site-shell-openai.company-overview .company-introduction {
+  padding: clamp(24px, 4vw, 48px);
+}
+
+.site-shell-openai.company-overview .company-content-list {
+  gap: 20px;
+}
+
+.site-shell-openai.company-overview .company-stats {
+  gap: 16px;
+}
+
+.site-shell-openai.company-overview .company-stats > div {
+  padding: 24px;
+  background: var(--content-card-surface);
+}
+
+.site-shell-openai .contact-info-card {
+  padding: 24px;
+}
+
+.site-shell-openai .team-grid {
+  gap: 24px;
+}
+
+.site-shell-openai .team-card {
+  padding: 14px;
+  background: var(--color-canvas);
+}
+
+.site-shell-openai .team-card .team-portrait-stage {
+  border-radius: 10px;
+}
+
+.site-shell-openai .team-card h2 {
+  margin-top: 16px;
+}
+
+.site-shell-openai .qualification-card {
+  overflow: hidden;
+  background: var(--color-canvas);
+}
+
+.site-shell-openai .qualification-card .qualification-image {
+  border: 0;
+  border-radius: 0;
+}
+
+.site-shell-openai .qualification-card figcaption {
+  padding: 0 18px 18px;
+}
+
+.site-shell-openai :is(.direction-grid, .home-direction-grid, .home-media-grid) {
+  gap: 20px;
+}
+
+.site-shell-openai :is(.direction-card, .project-card, .business-card, .scenario-card) {
+  border-color: var(--color-hairline);
+  border-radius: var(--content-card-radius);
+}
+
+.site-shell-openai .direction-card-dark {
+  border-color: color-mix(in srgb, currentColor 20%, transparent);
+}
+
+.site-shell-openai .home-media-card {
+  border-color: var(--color-hairline);
+  border-radius: var(--content-card-radius);
+}
+
+.site-shell-openai .home-direction-section .direction-grid {
+  gap: 20px;
+}
+
+.site-shell-openai .home-direction-section .direction-card,
+.site-shell-openai .home-direction-section .direction-card + .direction-card {
+  border: var(--content-card-border);
+  border-radius: var(--content-card-radius);
+}
+
+.site-shell-openai .home-direction-section .direction-card-dark {
+  border-color: var(--color-hairline);
+}
+
+.site-shell-openai .home-product-feature {
+  border: var(--content-card-border);
+  border-radius: var(--content-card-radius);
+}
+
+.site-shell-openai .product-index .home-media-card-body {
+  padding: 20px 22px 24px;
+}
+
+.site-shell-openai :is(.home-news-card, .news-list-grid .news-card) {
+  min-width: 0;
+  padding: 14px;
+  border: var(--content-card-border);
+  border-radius: var(--content-card-radius);
+}
+
+.site-shell-home .home-news-section .home-news-card {
+  border-color: rgb(255 255 255 / 22%);
+}
+
+.site-shell-openai :is(.process-list, .insight-list, .principle-list, .evidence-list, .research-index-list) {
+  display: grid;
+  gap: 12px;
+  border: 0;
+}
+
+.site-shell-openai :is(.process-row, .insight-list-item, .principle-row, .evidence-row, .research-index-row) {
+  padding: 20px 22px;
+  border-color: var(--color-hairline);
+}
+
+.site-shell-openai .research-index-row {
+  border-bottom: 1px solid color-mix(in srgb, currentColor 17%, transparent);
+  border-radius: 0;
+}
+
+.site-shell-openai :is(.process-row:last-child, .insight-list-item:last-child, .principle-row:last-child) {
+  border-bottom: 1px solid var(--color-hairline);
+}
+
+.site-shell-openai .process-row-on-dark,
+.site-shell-openai .principle-row,
+.site-shell-openai .evidence-list-on-dark .evidence-row {
+  border-color: rgb(255 255 255 / 22%);
+}
+
+.site-shell-openai .research-index-row:first-child {
+  padding-top: 22px;
+}
+
+.site-shell-openai .method-grid,
+.site-shell-openai .delivery-grid {
+  gap: 16px;
+}
+
+.site-shell-openai :is(.method-item, .delivery-item) {
+  padding: 22px;
+  background: var(--content-card-surface);
+}
+
+.site-shell-openai .principle-row {
+  grid-template-columns: 52px minmax(0, 1fr);
+}
+
+.site-shell-openai .careers-value {
+  margin: 0;
+  padding: 20px;
+}
+
+.site-shell-openai .careers-culture .careers-editorial {
+  border: 0;
+}
+
+.site-shell-openai .careers-page .careers-job-row {
+  padding: 22px;
+  border-color: var(--color-hairline);
+}
+
+.site-shell-openai .lumira-flow {
+  gap: 16px;
+}
+
+.site-shell-openai .lumira-flow li {
+  border-top-width: 1px;
+  background: var(--content-card-surface);
+}
+
+.site-shell-openai .brand-original-gallery figure {
+  overflow: hidden;
+}
+
+.site-shell-openai .brand-overview .brand-specimen {
+  border: 0;
+}
+
+.service-site-shell :is(.service-directory-row, .service-overview-card, .service-docs-card) {
+  border: var(--content-card-border);
+  border-radius: var(--content-card-radius);
+}
+
+.service-site-shell .service-docs-guide ol {
+  gap: 10px;
+}
+
+.service-site-shell .service-docs-guide li {
+  padding: 16px;
+  border: var(--content-card-border);
+  border-radius: var(--content-card-radius);
+}
+
+.service-site-shell .service-docs-guide li:first-child {
+  padding-top: 16px;
+}
+
+.service-site-shell .service-status-panel {
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  overflow: visible;
+}
+
+.service-site-shell .service-status-panel-heading {
+  border: 0;
+}
+
+.service-site-shell .service-status-panel > .service-status-summary,
+.service-site-shell .service-status-summary {
+  border: 0;
+  border-radius: var(--content-card-radius);
+}
+
+.service-site-shell .service-status-groups {
+  display: grid;
+  gap: 12px;
+  background: transparent;
+}
+
+.service-site-shell .service-status-group,
+.service-site-shell .service-status-group + .service-status-group {
+  border: 0;
+  background: transparent;
+}
+
+.service-site-shell .service-status-group-trigger {
+  min-height: 84px;
+  padding: 12px 22px;
+  border: 1px solid var(--status-line);
+  border-radius: var(--content-card-radius);
+}
+
+.service-site-shell .service-monitor-list {
+  display: grid;
+  gap: 8px;
+  padding-top: 10px;
+  border: 0;
+  background: transparent;
+}
+
+.service-site-shell .service-monitor-row {
+  padding: 14px 20px;
+  border: 1px solid var(--status-line);
+  border-radius: var(--content-card-radius);
+}
+
+.service-site-shell .service-monitor-row:last-child {
+  border-bottom: 1px solid var(--status-line);
+}
+
+.service-site-shell .service-history-list {
+  display: grid;
+  gap: 12px;
+  background: transparent;
+}
+
+.service-site-shell .service-history-row {
+  border: 1px solid var(--status-line);
+  border-radius: var(--content-card-radius);
+}
+
+.service-site-shell .service-history-row:last-child {
+  border-bottom: 1px solid var(--status-line);
+}
+
+.site-shell-openai .home-rail-links,
+.site-shell-openai .home-company-links {
+  display: grid;
+  gap: 10px;
+  border: 0;
+}
+
+.site-shell-openai :is(.home-rail-links a, .home-company-links a) {
+  min-height: 56px;
+  padding: 12px 16px;
+  border: var(--content-card-border);
+  border-radius: var(--content-card-radius);
+}
+
+@media (max-width: 720px) {
+  .site-shell-openai.company-overview .research-tile .tile-inner {
+    padding: 0;
+  }
+
+  .site-shell-openai.company-overview .company-introduction {
+    padding: 22px;
+  }
+
+  .site-shell-openai.company-overview .company-content-list {
+    gap: 16px;
+  }
+
+  .site-shell-openai.company-overview .company-content-row,
+  .site-shell-openai.company-overview .company-stats > div,
+  .site-shell-openai .contact-info-card {
+    padding: 18px;
+  }
+
+  .site-shell-openai .team-grid {
+    gap: 16px;
+  }
+
+  .site-shell-openai .team-card {
+    padding: 10px;
+  }
+
+  .site-shell-openai .qualification-card figcaption {
+    padding: 0 12px 14px;
+  }
+
+  .site-shell-openai :is(.process-row, .insight-list-item, .principle-row, .evidence-row, .research-index-row) {
+    padding: 16px;
+  }
+
+  .site-shell-openai .research-index-row:first-child {
+    padding-top: 16px;
+  }
+
+  .site-shell-openai :is(.home-news-card, .news-list-grid .news-card) {
+    padding: 12px;
+  }
+
+  .site-shell-openai .careers-value {
+    padding: 16px;
+  }
+
+  .service-site-shell .service-monitor-row {
+    padding: 14px 16px;
+  }
+
+  .service-site-shell .service-status-group-trigger {
+    padding-inline: 16px;
+  }
+}

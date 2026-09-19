@@ -1,0 +1,47 @@
+---
+title: Docker Deployment
+description: The current standard deployment shape for Legendary Invention uses Vercel for frontend hosting and Docker Compose for the backend stack.
+tags:
+  - deployment
+  - docker
+  - compose
+---
+
+## Standard shape
+
+- frontend hosted on Vercel
+- backend hosted on a server with Docker Compose
+- unified API entry through `edge-proxy` and `api-proxy`
+
+## Deployment topology
+
+```mermaid
+flowchart TD
+  U["Browser"] --> F["Vercel frontend"]
+  F --> R["/api/** rewrite to api.elexvx.com/api/**"]
+  R --> D["api.elexvx.com"]
+  D --> E["edge-proxy"]
+  E --> P["api-proxy"]
+  P --> L["legendary-server"]
+  L --> I["MySQL / Redis / XXL-JOB"]
+```
+
+## Core files
+
+- `deploy/docker-compose.prod.yml`
+- `deploy/.env`
+- `deploy/nginx/*.conf`
+- `scripts/deploy-container.mjs`
+
+## Common commands
+
+```bash
+node scripts/deploy-container.mjs --rebuild
+node scripts/deploy-container.mjs --ps
+node scripts/deploy-container.mjs --logs
+node scripts/deploy-container.mjs --stop
+```
+
+## Important note
+
+Writable Docker volumes matter for uploads, plugin storage, and staging directories. Deployment automation should prepare permissions instead of relying on one-off manual fixes.

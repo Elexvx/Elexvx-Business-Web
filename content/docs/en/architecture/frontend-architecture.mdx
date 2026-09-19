@@ -1,0 +1,26 @@
+---
+title: Frontend Architecture
+description: Understand the shell layer, shared capabilities, and business-page layer in the frontend app.
+tags:
+  - architecture
+  - frontend
+  - umi
+---
+
+## Main stack
+
+- React
+- TypeScript
+- Umi Max
+- Ant Design
+- ProComponents
+
+## Three-layer model
+
+- shell layer: layouts, navigation, top actions, shared containers
+- capability layer: requests, auth, permissions, theme, reusable features
+- business page layer: route pages focused on domain behavior
+
+## Request rule
+
+Frontend code should call relative `/api/**` paths through the shared request layer instead of hardcoding backend service URLs.

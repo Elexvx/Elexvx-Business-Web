@@ -1,4 +1,6 @@
 import { ArticleImage } from './article-gallery';
+import { MermaidDiagram } from './mermaid-diagram';
+import 'katex/dist/katex.min.css';
 import katex from 'katex';
 import { createElement, type ReactNode } from 'react';
 import { parseMarkdown, type BlockNode, type InlineNode } from '../../content/markdown';
@@ -138,6 +140,7 @@ const renderBlocks = (
               }}
             />
           );
+        if (block.language === 'mermaid') return <MermaidDiagram key={key} chart={block.value} />;
         return (
           <pre key={key} data-language={block.language}>
             <code>{block.value}</code>

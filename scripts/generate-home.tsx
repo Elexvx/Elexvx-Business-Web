@@ -13,12 +13,13 @@ import { getStaticRoutes } from '../src/site/routing/routes';
 import { publishedActivities, toActivitySummary } from '../src/data/activities';
 import { publishedCaseStudies, toCaseStudySummary } from '../src/data/case-studies';
 import { publishedResearch } from '../src/data/research-articles';
+import { serviceRoutePaths } from '../src/data/service-routes';
 
 // Homepage body contains native links and images, with no client interactions.
 // Generate it from the same components/content used by the live development UI.
 const insights = loadInsights();
 const news = loadNews();
-const routePaths = getStaticRoutes(insights, news).map((route) => route.path);
+const routePaths = [...getStaticRoutes(insights, news).map((route) => route.path), ...serviceRoutePaths];
 const activityItems = publishedActivities.map(toActivitySummary);
 const researchItems = publishedResearch.map(toActivitySummary);
 const caseStudyItems = publishedCaseStudies.map(toCaseStudySummary);

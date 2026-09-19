@@ -28,6 +28,11 @@
   ],
   "activities": [
     {
+      "slug": "aigc-teacher-training-2026",
+      "category": "技术交流",
+      "categorySlug": "technical-exchange"
+    },
+    {
       "slug": "website-permissions-redesign-2026",
       "category": "网站更新",
       "categorySlug": "site-updates"
@@ -36,6 +41,11 @@
       "slug": "jinxi-entrepreneurship-roadshow-2026",
       "category": "项目路演",
       "categorySlug": "roadshows"
+    },
+    {
+      "slug": "elexvxai-lab-established-2026",
+      "category": "公告",
+      "categorySlug": "announcements"
     }
   ]
 }

@@ -5,7 +5,69 @@
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
   "installCommand": "npm install",
+  "functions": {
+    "api/status.ts": {
+      "regions": ["hkg1"],
+      "maxDuration": 30
+    },
+    "api/login.ts": {
+      "regions": ["hkg1"],
+      "maxDuration": 10
+    },
+    "api/logout.ts": {
+      "regions": ["hkg1"],
+      "maxDuration": 10
+    }
+  },
   "redirects": [
+    {
+      "source": "/",
+      "has": [{ "type": "host", "value": "nav.elexvx.com" }],
+      "destination": "/navigation/",
+      "permanent": true
+    },
+    {
+      "source": "/",
+      "has": [{ "type": "host", "value": "status.elexvx.com" }],
+      "destination": "/status/",
+      "permanent": true
+    },
+    {
+      "source": "/history",
+      "has": [{ "type": "host", "value": "status.elexvx.com" }],
+      "destination": "/status/history/",
+      "permanent": true
+    },
+    {
+      "source": "/history/",
+      "has": [{ "type": "host", "value": "status.elexvx.com" }],
+      "destination": "/status/history/",
+      "permanent": true
+    },
+    {
+      "source": "/sitemap.xml",
+      "has": [{ "type": "host", "value": "nav.elexvx.com" }],
+      "destination": "/navigation-sitemap.xml",
+      "permanent": true
+    },
+    {
+      "source": "/robots.txt",
+      "has": [{ "type": "host", "value": "nav.elexvx.com" }],
+      "destination": "/navigation-robots.txt",
+      "permanent": true
+    },
+    {
+      "source": "/sitemap.xml",
+      "has": [{ "type": "host", "value": "status.elexvx.com" }],
+      "destination": "/status-sitemap.xml",
+      "permanent": true
+    },
+    {
+      "source": "/robots.txt",
+      "has": [{ "type": "host", "value": "status.elexvx.com" }],
+      "destination": "/status-robots.txt",
+      "permanent": true
+    },
     {
       "source": "/service/ai-design",
       "destination": "/research",
@@ -69,16 +131,6 @@
     {
       "source": "/exam",
       "destination": "/news",
-      "permanent": true
-    },
-    {
-      "source": "/technology/2025-07-01-01",
-      "destination": "/news/technology-2025-07-01-01",
-      "permanent": true
-    },
-    {
-      "source": "/stories/2025-07-01-01",
-      "destination": "/news/stories-2025-07-01-01",
       "permanent": true
     },
     {

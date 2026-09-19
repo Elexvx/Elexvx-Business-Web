@@ -49,15 +49,26 @@ export const parseFrontmatter = (source: string): { data: Record<string, Frontma
 
   const rawHeader = normalized.slice(4, end).trim();
   const data: Record<string, FrontmatterValue> = {};
+  let activeListKey: string | undefined;
 
   for (const [index, line] of rawHeader.split('\n').entries()) {
     const trimmed = line.trim();
     if (!trimmed || trimmed.startsWith('#')) continue;
+    if (trimmed.startsWith('- ')) {
+      const list = activeListKey ? data[activeListKey] : undefined;
+      if (!Array.isArray(list)) {
+        throw new Error(`Invalid frontmatter list item ${index + 1}: ${line}`);
+      }
+      list.push(parseScalar(trimmed.slice(2)) as FrontmatterPrimitive);
+      continue;
+    }
     const separator = trimmed.indexOf(':');
     if (separator <= 0) throw new Error(`Invalid frontmatter line ${index + 1}: ${line}`);
     const key = trimmed.slice(0, separator).trim();
     if (!/^[A-Za-z][A-Za-z0-9_-]*$/.test(key)) throw new Error(`Invalid frontmatter key: ${key}`);
-    data[key] = parseScalar(trimmed.slice(separator + 1));
+    const rawValue = trimmed.slice(separator + 1);
+    activeListKey = rawValue.trim() ? undefined : key;
+    data[key] = rawValue.trim() ? parseScalar(rawValue) : [];
   }
 
   return {

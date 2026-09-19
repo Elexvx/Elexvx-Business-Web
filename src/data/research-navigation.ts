@@ -98,6 +98,26 @@ const navigationDefinitions: NavigationGroup[] = [
     ],
   },
   {
+    id: 'services',
+    label: '服务',
+    englishTitle: 'SERVICES',
+    title: '进入 Elexvx 服务中心',
+    intro: '帮助文档、企业服务导航与平台运行状态，由同一个主站项目统一管理。',
+    href: '/services/',
+    paths: ['/services', '/services/docs', '/navigation', '/status', '/status/history'],
+    columns: [
+      {
+        title: '服务入口',
+        links: [
+          { label: '服务', href: '/services/' },
+          { label: '帮助文档', href: '/services/docs/' },
+          { label: '企业导航', href: '/navigation/' },
+          { label: '服务状态', href: '/status/' },
+        ],
+      },
+    ],
+  },
+  {
     id: 'company',
     label: 'Elexvx',
     englishTitle: 'ELEXVX',
@@ -260,7 +280,10 @@ export const navigationGroups: NavigationGroup[] = navigationDefinitions.map((gr
   return {
     ...group,
     columns: [
-      { title: '总览', links: [{ label: '总览', href: group.href }] },
+      {
+        title: group.id === 'services' ? '服务入口' : '总览',
+        links: [{ label: group.id === 'services' ? '服务' : '总览', href: group.href }],
+      },
       ...(uniqueChildren.length
         ? [{ title: group.id === 'research' || group.id === 'activities' ? '分类' : '了解更多', links: uniqueChildren }]
         : []),

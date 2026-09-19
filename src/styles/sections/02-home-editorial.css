@@ -18,7 +18,7 @@
 .home-direction-section .direction-card {
   min-height: 320px;
   border-color: var(--color-hairline);
-  border-radius: 0;
+  border-radius: var(--radius-lg);
   background: transparent;
 }
 

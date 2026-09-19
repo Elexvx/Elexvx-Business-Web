@@ -1,0 +1,28 @@
+---
+title: Events and Outbox
+description: Learn how the project uses Outbox events for reliable async follow-up work.
+tags:
+  - architecture
+  - outbox
+  - events
+---
+
+## Why Outbox exists
+
+Outbox records committed business facts and publishes them reliably for downstream async work such as:
+
+- cache invalidation
+- indexing
+- notifications
+- audit projections
+
+## Example events
+
+- `FILE_OBJECT_UPLOADED`
+- `FILE_OBJECT_DELETED`
+- `AI_KNOWLEDGE_DOCUMENT_INDEXED`
+- `MESSAGE_NOTICE_CREATED`
+
+## Design rule
+
+Events should describe facts, not commands. Consumers must remain idempotent.

@@ -1,0 +1,36 @@
+---
+title: Operations Runbook
+description: Common health checks, release validation, and troubleshooting patterns.
+tags:
+  - deployment
+  - operations
+  - runbook
+---
+
+## Minimum release checks
+
+1. containers are running
+2. `/api/health` returns 200
+3. the key business path still works
+4. logs do not show new 5xx failures
+
+## Useful checks
+
+```bash
+node scripts/check-deployment.mjs
+```
+
+Public environment check:
+
+```bash
+DEPLOY_CHECK_BASE_URL=https://api.elexvx.com \
+node scripts/check-deployment.mjs
+```
+
+## Common upload failure path
+
+If uploads fail, check:
+
+- storage space status
+- writable volume permissions
+- runtime user access inside the container

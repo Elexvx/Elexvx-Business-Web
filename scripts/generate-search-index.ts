@@ -3,6 +3,8 @@ import { mkdir, writeFile } from 'node:fs/promises';
 import { loadInsights } from '../src/content/loader';
 import { loadNews } from '../src/content/news-loader';
 import { markdownToSearchText } from '../src/content/search';
+import { documentationSearchPairs } from '../src/content/documentation';
+import { documentationPath } from '../src/content/documentation-model';
 import { publishedActivities } from '../src/data/activities';
 import { publishedCaseStudies } from '../src/data/case-studies';
 import { publishedResearch } from '../src/data/research-articles';
@@ -87,7 +89,7 @@ for (const item of publishedResearch) {
 for (const item of publishedActivities) {
   documents.push(
     markdownDocument(
-      `/activities/${item.slug}`,
+      item.externalUrl || `/activities/${item.slug}`,
       item.title,
       translateEnglish(item.title),
       item.excerpt,
@@ -177,6 +179,22 @@ for (const project of projects) {
 for (const scenario of scenarios) {
   documents.push(
     staticDocument(`/scenarios/${scenario.slug}`, scenario.title, scenario.englishTitle, scenario, '场景', 'Scenario')
+  );
+}
+
+for (const { chinese, english } of documentationSearchPairs()) {
+  documents.push(
+    markdownDocument(
+      documentationPath('zh-CN', chinese.slug),
+      chinese.title,
+      english.title,
+      chinese.description,
+      english.description,
+      chinese.body,
+      english.body,
+      '文档',
+      'Documentation'
+    )
   );
 }
 

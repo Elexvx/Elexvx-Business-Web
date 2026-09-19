@@ -106,9 +106,7 @@
   background: var(--color-parchment);
   border: 0;
   border-radius: var(--home-card-radius);
-  transition:
-    background-color 220ms ease,
-    transform 260ms cubic-bezier(0.22, 1, 0.36, 1);
+  transition: background-color 220ms ease;
 }
 
 .home-direction-card:hover,
@@ -117,7 +115,6 @@
 .home-media-card:focus-visible {
   color: var(--color-ink);
   background: var(--color-pearl);
-  transform: translateY(-3px);
 }
 
 .home-media-card-media {

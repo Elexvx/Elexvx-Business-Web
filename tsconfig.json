@@ -25,6 +25,7 @@
   },
   "include": [
     "next-env.d.ts",
+    "api",
     "src/app",
     "src/content",
     "src/main.tsx",
@@ -36,6 +37,7 @@
     "dist/types/**/*.ts",
     "dist/dev/types/**/*.ts",
     "src/site",
+    "src/server",
     "src/data",
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts",

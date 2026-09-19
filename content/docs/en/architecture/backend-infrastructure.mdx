@@ -1,0 +1,63 @@
+---
+title: Backend Infrastructure Rules
+description: Shared backend rules for tenant context, caching, rate limiting, task execution, file handling, auditing, configuration, and observability.
+tags:
+  - architecture
+  - backend
+  - infrastructure
+---
+
+## Why this page exists
+
+Module boundaries answer where code belongs. Infrastructure rules answer how shared backend concerns must be handled consistently.
+
+## Tenant context
+
+After authentication, a request should carry at least:
+
+- `tenantId`
+- `tenantCode`
+- `tenantStatus`
+- `userId`
+- role set
+- permission snapshot version
+
+Tenant isolation affects more than database rows. It also affects cache, files, logs, jobs, rate limits, and auditing.
+
+## Data access
+
+- keep tenant-aware query rules consistent
+- require pagination for list endpoints
+- design indexes around real query paths
+- prevent unsafe full-table batch writes
+
+## Caching
+
+Use a combination of:
+
+- local hot cache for tiny stable metadata
+- Redis for sessions, permission snapshots, tenant config, menu trees, dictionaries, and task state
+
+Cache keys should include environment and ownership dimensions such as module, tenant, user, or version.
+
+## Rate limiting and idempotency
+
+Important protection dimensions include IP, user, tenant, endpoint, client, and global scope. Login, export, task submission, and sensitive writes should be protected.
+
+## Jobs and async work
+
+Prefer a unified task model for imports, exports, reports, batch processing, and file handling. Tasks should expose status, result, retry count, failure reason, execution logs, and tenant or user context.
+
+## Files, logs, and observability
+
+- file handling should remain platformized rather than reimplemented per module
+- application logs should carry trace, request, tenant, and user context
+- sensitive actions should be audited
+- metrics should cover HTTP, JVM, database, cache, and job health
+
+## Reliability rules
+
+- protect the main path first
+- degrade weak dependencies instead of collapsing the whole service
+- enforce timeouts for external calls
+- do not return raw stack traces to clients

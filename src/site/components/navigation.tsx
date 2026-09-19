@@ -11,8 +11,20 @@ import { useAvailableLink, usePublishedNews } from '../providers/content-context
 import { classNames, Logo } from './ui';
 const NavigationSearch = dynamic(() => import('./navigation-search').then((module) => module.NavigationSearch));
 
-export const GlobalNav = ({ activePath = '/', tone = 'light' }: { activePath?: string; tone?: 'light' | 'dark' }) => {
+export const GlobalNav = ({
+  activePath = '/',
+  tone = 'light',
+  linkOrigin,
+}: {
+  activePath?: string;
+  tone?: 'light' | 'dark';
+  linkOrigin?: string;
+}) => {
   const { locale, t, href } = useI18n();
+  const resolveHref = (value: string) => {
+    const localizedHref = href(value);
+    return linkOrigin && localizedHref.startsWith('/') ? new URL(localizedHref, linkOrigin).href : localizedHref;
+  };
   const isAvailableLink = useAvailableLink();
   const newsCategories = usePublishedNews().map((item) => item.category);
   const visibleNavigationGroups = withNewsCategories(navigationGroups, newsCategories)
@@ -151,7 +163,7 @@ export const GlobalNav = ({ activePath = '/', tone = 'light' }: { activePath?: s
         onMouseLeave={scheduleClose}
       >
         <div className="global-nav-inner">
-          <a className="brand-lockup" href={href('/')} aria-label={t('Elexvx Research 首页')}>
+          <a className="brand-lockup" href={resolveHref('/')} aria-label={t('Elexvx Research 首页')}>
             <Logo inverse={tone === 'dark'} />
             <span className="brand-divider" aria-hidden="true" />
             <span className="research-wordmark">Research</span>
@@ -166,7 +178,7 @@ export const GlobalNav = ({ activePath = '/', tone = 'light' }: { activePath?: s
                   openGroup === group.id && 'is-open'
                 )}
                 key={group.id}
-                href={href(group.href)}
+                href={resolveHref(group.href)}
                 aria-expanded={openGroup === group.id}
                 aria-controls={openGroup === group.id ? 'desktop-menu-panel' : undefined}
                 onMouseEnter={() => scheduleOpen(group.id)}
@@ -226,7 +238,7 @@ export const GlobalNav = ({ activePath = '/', tone = 'light' }: { activePath?: s
                     <div className="desktop-menu-primary-links">
                       {panelGroup.columns[0].links.map((link) => (
                         <a
-                          href={href(link.href)}
+                          href={resolveHref(link.href)}
                           key={`${panelGroup.id}-primary-${link.href}-${link.label}`}
                           onClick={closeDesktopMenu}
                         >
@@ -243,7 +255,7 @@ export const GlobalNav = ({ activePath = '/', tone = 'light' }: { activePath?: s
                       {panelGroup.columns.slice(1).flatMap((column) =>
                         column.links.map((link) => (
                           <a
-                            href={href(link.href)}
+                            href={resolveHref(link.href)}
                             key={`${panelGroup.id}-${column.title}-${link.href}-${link.label}`}
                             onClick={closeDesktopMenu}
                           >
@@ -288,7 +300,7 @@ export const GlobalNav = ({ activePath = '/', tone = 'light' }: { activePath?: s
                 >
                   {group.id === 'research' ? (
                     <a
-                      href={href(group.href)}
+                      href={resolveHref(group.href)}
                       onClick={(event) => {
                         event.stopPropagation();
                         setMenuOpen(false);
@@ -306,7 +318,7 @@ export const GlobalNav = ({ activePath = '/', tone = 'light' }: { activePath?: s
                     .flatMap((column) => column.links)
                     .map((link, linkIndex) => (
                       <a
-                        href={href(link.href)}
+                        href={resolveHref(link.href)}
                         key={`${group.id}-${link.href}-${linkIndex}`}
                         onClick={() => setMenuOpen(false)}
                       >

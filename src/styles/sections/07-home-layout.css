@@ -124,7 +124,7 @@
   min-height: 0;
   overflow: visible;
   background: transparent;
-  border-radius: 0;
+  border-radius: var(--home-card-radius);
   transform: none;
 }
 
@@ -322,7 +322,7 @@
   }
 
   .site-shell-home .home-section-topline,
-.article-continue .home-section-topline {
+  .article-continue .home-section-topline {
     align-items: flex-start;
   }
 

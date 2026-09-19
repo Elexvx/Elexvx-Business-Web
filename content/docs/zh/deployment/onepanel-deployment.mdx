@@ -1,0 +1,195 @@
+---
+title: 1Panel 容器部署
+description: 在 1Panel 中使用容器编排部署 Legendary Invention 后端平台，并与 Vercel 前端对接。
+tags:
+  - deployment
+  - onepanel
+  - docker
+  - operations
+---
+
+## 适用场景
+
+如果前端已经托管在 Vercel，而你的服务器由 1Panel 管理，那么 1Panel 最适合承担这部分工作：
+
+- 部署后端容器
+- 维护容器编排
+- 配置反向代理
+- 管理日志、数据卷和运行状态
+
+这种模式下，1Panel 不一定要托管前端，它主要负责后端平台和基础设施。
+
+## 相关文件
+
+- `deploy/docker-compose.prod.yml`
+- `deploy/.env.example`
+
+## 最简单部署方式
+
+如果你是在普通服务器命令行部署，优先推荐：
+
+```bash
+node scripts/deploy-container.mjs --rebuild
+```
+
+脚本会自动生成 `deploy/.env`、填入随机密钥，然后执行 Docker Compose 部署。默认不会启动前端容器。
+
+常用命令：
+
+```bash
+node scripts/deploy-container.mjs --ps
+node scripts/deploy-container.mjs --logs
+node scripts/deploy-container.mjs --stop
+```
+
+如果要彻底删除数据库、上传文件和容器卷：
+
+```bash
+DEPLOY_RESET_CONFIRM=DELETE_LEGENDARY_DATA node scripts/deploy-container.mjs --reset
+```
+
+`--reset` 是高危操作。交互终端会要求输入确认字符串，非交互环境也必须显式传入确认变量，不要把它写进长期配置。
+
+## 1Panel 部署步骤
+
+### 1. 上传项目到服务器
+
+例如放到：
+
+```bash
+/opt/legendary-invention
+```
+
+### 2. 复制环境变量模板
+
+```bash
+cp deploy/.env.example deploy/.env
+```
+
+### 3. 修改关键环境变量
+
+至少替换：
+
+- `DB_PASSWORD`
+- `JWT_SECRET`
+- `PLUGIN_SIGNATURE_SECRET`
+- `SAAS_JOB_INTERNAL_TOKEN`
+
+`DB_PASSWORD` 会同时作为容器内 MySQL root 密码和后端数据库连接密码，目的是避免维护两套数据库密码。
+
+### 4. 在 1Panel 中创建编排
+
+进入：
+
+1. `容器`
+2. `编排`
+3. `创建编排`
+
+然后配置：
+
+- 编排目录：项目根目录或 `deploy` 目录
+- Compose 文件：`deploy/docker-compose.prod.yml`
+- 环境变量文件：`deploy/.env`
+
+### 5. 启动编排
+
+启动后，先确认关键容器已经正常起来，再继续配反向代理和域名。
+
+## 命令行验证方式
+
+如果你想在服务器上先用命令行验证一次：
+
+```bash
+docker compose --env-file deploy/.env -f deploy/docker-compose.prod.yml up -d --build
+```
+
+## 访问入口
+
+默认暴露：
+
+- 网关：`http://服务器IP:8081`
+
+正式域名建议在 1Panel 的“网站”里创建反向代理：
+
+- `https://api.你的域名` -> `http://127.0.0.1:8081`
+
+如果前端在 Vercel，上面的后端域名就是前端 rewrite 或环境变量应该指向的目标。
+
+## 跨域配置
+
+跨域放行可以通过环境变量覆盖，例如只允许你的前端域名：
+
+```bash
+CORS_ALLOWED_ORIGIN_PATTERNS=https://你的前端.vercel.app,https://你的自定义前端域名
+```
+
+不要在正式环境里直接写成全开放。
+
+## 可选 profile
+
+如果以后要让 1Panel 同时托管前端，可启用前端 profile：
+
+```bash
+docker compose --env-file deploy/.env -f deploy/docker-compose.prod.yml --profile frontend up -d --build frontend
+```
+
+如果要启用 Nacos：
+
+```bash
+docker compose --env-file deploy/.env -f deploy/docker-compose.prod.yml --profile nacos up -d
+```
+
+如果要启用定时任务相关 profile：
+
+```bash
+docker compose --env-file deploy/.env -f deploy/docker-compose.prod.yml --profile jobs up -d --build
+```
+
+启用这些 profile 之前，先补齐对应环境变量，例如：
+
+- `NACOS_AUTH_TOKEN`
+- `NACOS_AUTH_IDENTITY_KEY`
+- `NACOS_AUTH_IDENTITY_VALUE`
+- `XXL_JOB_ADMIN_ACCESS_TOKEN`
+- `XXL_JOB_ACCESS_TOKEN`
+- `XXL_JOB_LOGIN_PASSWORD`
+
+## 持久化数据
+
+Compose 已通过 Docker volume 保存关键数据：
+
+- MySQL：`mysql_data`
+- Redis：`redis_data`
+- 上传文件：`upload_data`
+- 插件文件：`plugin_data`
+- 插件 staging：`plugin_staging`
+- Nacos：`nacos_data`、`nacos_logs`
+- XXL-JOB 执行器日志：`xxl_job_executor_logs`
+
+不要把本地开发目录里的 `storage` 直接打进生产镜像，生产环境应该依赖明确的数据卷。
+
+## 生产注意事项
+
+- `.env` 不要提交到 Git
+- 不要使用示例值作为正式密钥
+- `JWT_SECRET` 和 `PLUGIN_SIGNATURE_SECRET` 建议 32 字符以上随机字符串
+- 对公网只建议开放 80/443
+- MySQL、Redis、Nacos、XXL-JOB 尽量只在内部网络中使用
+- 首次启动构建多个 Java 镜像，时间会较长
+
+## 常用排查命令
+
+```bash
+docker compose --env-file deploy/.env -f deploy/docker-compose.prod.yml ps
+docker compose --env-file deploy/.env -f deploy/docker-compose.prod.yml logs -f api-proxy
+docker compose --env-file deploy/.env -f deploy/docker-compose.prod.yml logs -f legendary-server
+docker compose --env-file deploy/.env -f deploy/docker-compose.prod.yml restart api-proxy
+docker compose --env-file deploy/.env -f deploy/docker-compose.prod.yml down
+```
+
+## 推荐的发布后检查
+
+1. 先看 1Panel 里的容器状态
+2. 再看后端域名 `/health` 与 `/api/health`
+3. 再验证登录、上传、关键业务页
+4. 最后确认日志里没有新增的 5xx、权限异常或目录权限异常

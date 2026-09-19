@@ -1,0 +1,165 @@
+---
+title: 服务与数据 Ownership
+description: 统一说明各模块拥有哪些业务表、哪些写入被允许，以及跨模块如何安全协作。
+tags:
+  - architecture
+  - ownership
+  - data
+  - modules
+---
+
+## 为什么这一页很重要
+
+当前系统虽然是聚合运行，但如果没有 owner 纪律，很快就会退化成“谁都能改谁的表、谁都能解释谁的数据”的状态。那样的结果通常是：
+
+- 权限边界失真
+- 数据迁移困难
+- 事件来源不清
+- 后续独立服务化几乎无法进行
+
+所以这页的目的很直接：明确谁拥有数据，谁可以写，谁只能读，跨模块应该怎么协作。
+
+## 基本原则
+
+- 一个业务表只能有一个 owner module
+- 只有 owner module 可以写入自己的业务表
+- 其他模块需要数据时，优先通过应用服务契约、内部 API、事件投影或只读快照获取
+- Flyway migration 应放在 owner module 的 `db/migration` 下
+- 共享 DTO、跨模块 contract、事件契约优先放入 `libs/legendary-api`
+- 不允许业务服务直接依赖另一个服务的 mapper、entity 或 migration
+
+## 服务 ownership 概览
+
+### `legendary-server`
+
+- 作用：聚合运行入口、统一后端进程
+- 重点：它不直接拥有业务表
+
+也就是说，`legendary-server` 是运行容器，不是业务 owner。
+
+### `auth-service`
+
+- 负责：登录、刷新 token、二次认证、Passkey、微信登录入口
+- 拥有：认证会话、登录保护、认证挑战等认证域数据
+
+用户主数据仍由 `system-service` 维护，`auth-service` 不应变成第二份用户中心。
+
+### `system-service`
+
+- 负责：系统核心、IAM、菜单、角色、权限、配置、审计、AI、知识库
+- 拥有：`sys_*`、`iam_*`、`ai_*`、审计与平台治理相关表
+
+### `file-service`
+
+- 负责：文件上传、文件对象、存储空间、访问控制
+- 拥有：`file_object`、`file_storage_space` 以及后续文件处理投影
+
+### `message-service`
+
+- 负责：站内信、WebSocket 推送、消息归档、投递日志
+- 拥有：`msg_*` 和消息 outbox
+
+### `plugin-service`
+
+- 负责：插件定义、版本、租户启用、运行日志、插件网关
+- 长期 owner：`sys_plugin_*`
+
+### `localization-service`
+
+- 负责：语言、命名空间、翻译词条、发布版本
+- 长期 owner：`sys_localization_*`
+
+### `job-executor`
+
+- 负责：XXL-JOB 执行器、内部任务触发
+- 原则：不拥有业务表，只调用内部任务接口
+
+## 表 ownership 的理解方式
+
+比较典型的 owner 关系包括：
+
+- `sys_user`、`sys_role`、`sys_menu`、`sys_permission`：`system-service`
+- `sys_department`、`sys_user_department`、`sys_role_data_scope`：`system-service`
+- `sys_config`、`sys_dict_*`：`system-service`
+- `ai_*`：`system-service`
+- `file_object`、`file_storage_space`：`file-service`
+- `msg_*`：`message-service`
+- `sys_plugin_*`：长期由 `plugin-service` 收口
+- `sys_localization_*`：长期由 `localization-service` 收口
+
+`platform_event_outbox` 比较特殊：它不是全平台共享一张物理表，而是每个事件生产服务维护自己的 outbox。
+
+## 跨模块访问规则
+
+### 读访问
+
+- UI 查询通过 `/api` 进入 owner module
+- 模块间查询优先通过 `libs/legendary-api` 契约或明确的应用服务接口
+- 高频只读数据可以做本地缓存或 Redis 缓存
+- 缓存 key 必须带租户、用户或版本维度
+
+不要为了省事，在一个服务里直接引入另一个服务的 mapper 或 entity。
+
+### 写访问
+
+- 写操作必须进入 owner service
+- 跨模块写入使用命令 API 或事件驱动流程
+- 强一致、用户在等待结果的场景适合同步 API
+- 索引、通知、投影、缓存失效更适合 Outbox 事件
+
+### Migration
+
+- 新表放入 owner service 的 migration
+- 从 `system-service` 拆出的表，要先声明 owner，再安排数据迁移和停写窗口
+- 不允许同一张表在两个服务里同时新增结构变更
+
+## 典型协作方式
+
+### 文件被 AI 知识库引用
+
+正确方式：
+
+1. 文件对象由 `file-service` 维护
+2. AI 模块通过契约或接口拿到文件对象信息
+3. 知识库处理结果由 AI owner 模块维护
+4. 后续索引、向量化等动作通过 Outbox 事件扩展
+
+错误方式：
+
+- AI 模块直接修改 `file_object`
+- 文件模块反向修改知识库业务表
+
+### 消息通知某个业务动作
+
+正确方式：
+
+1. owner 业务先提交自己的事实
+2. 记录事件
+3. `message-service` 或下游消费者基于事件投递通知
+
+这样消息是协作结果，不是业务 owner 的替身。
+
+## 当前最该持续收口的地方
+
+- 将 `sys_plugin_*` 的长期写入口收口到 `plugin-service`
+- 将 `sys_localization_*` 的长期 owner 收口到 `localization-service`
+- 为文件事件继续补 relay、dispatcher 和下游消费者
+- 继续统一跨服务事件命名和 payload schema
+
+## 判断一个新表该放哪的简易方法
+
+问自己四个问题：
+
+1. 谁定义它的生命周期
+2. 谁解释它的权限边界
+3. 谁最频繁地写它
+4. 谁应该为它的错误负责
+
+这四个问题如果答案一致，owner 基本就清楚了。
+
+## 开发红线
+
+- 不允许跨模块直接写别人 owner 的业务表
+- 不允许共享 mapper、entity 作为长期协作方式
+- 不允许把聚合运行误解成“没有边界”
+- 不允许多个模块同时维护同一张表的 schema 演进

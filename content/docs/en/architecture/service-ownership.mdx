@@ -1,0 +1,41 @@
+---
+title: Service and Data Ownership
+description: Clarifies which module owns which business tables and how cross-module collaboration should work.
+tags:
+  - architecture
+  - ownership
+  - data
+---
+
+## Core rule
+
+Running as one backend process does not remove ownership boundaries. A business table should have exactly one owner module.
+
+## Ownership principles
+
+- only the owner module writes its business tables
+- other modules should read through contracts, internal APIs, projections, or snapshots
+- migrations belong to the owner module
+- shared contracts belong in `libs/legendary-api`
+
+## Main owners
+
+- `system-service`: `sys_*`, `iam_*`, `ai_*`, audit, and platform governance tables
+- `file-service`: `file_object`, `file_storage_space`, and future file-processing projections
+- `message-service`: `msg_*` and message outbox data
+- `plugin-service`: long-term owner of `sys_plugin_*`
+- `localization-service`: long-term owner of `sys_localization_*`
+- `auth-service`: authentication-domain data such as sessions and challenges
+
+`legendary-server` is the runtime entry, not the business-data owner.
+
+## Read and write rules
+
+- reads should go through the owner module
+- writes must enter the owner module
+- synchronous APIs fit strong-consistency workflows
+- Outbox events fit notification, indexing, projection, cache invalidation, and compensation flows
+
+## Common mistake to avoid
+
+Do not treat the modular monolith as permission to directly import another module's mapper, entity, or migration logic.

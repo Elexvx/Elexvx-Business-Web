@@ -99,52 +99,66 @@ const brandKeywords = {
 
 const localizedBrandName = (locale: Locale) => (locale === 'en' ? 'Hongxiang Shangdao-Elexvx' : siteIdentity.seoName);
 
+const normalizedPageName = (pageName: string) =>
+  pageName
+    .replace(
+      /\s*(?:\||｜|·)\s*(?:宏翔商道(?:-Elexvx)?(?:\s*\/\s*Elexvx)?|Hongxiang Shangdao-Elexvx|Elexvx Research|宏翔商道企业服务导航)$/iu,
+      ''
+    )
+    .trim();
+
+export const brandedPageTitle = (pageName: string, locale: Locale = 'zh-CN') =>
+  `${localizedBrandName(locale)} — ${normalizedPageName(pageName)}`;
+
+export const brandedHomepageTitle = (pageName: string, locale: Locale = 'zh-CN') =>
+  `${localizedBrandName(locale)} — ${normalizedPageName(pageName)}`;
+
 const titleContext = (path: string, locale: Locale) => {
   const contexts =
     locale === 'en'
       ? {
-          activities: 'Activities and collaboration records',
-          activityArticle: 'Activity reports and project collaboration',
-          business: 'Business lines and enterprise services',
-          businessArticle: 'Enterprise business service',
-          careers: 'Careers and open positions',
-          cases: 'Technical collaboration case study',
-          company: 'Company and business information',
-          design: 'Website design system and standards',
-          qualifications: 'Company qualifications and certificates',
-          brand: 'Brand system and usage guidelines',
-          team: 'Team and organizational information',
-          teamMember: 'Team member role and profile',
-          contact: 'Collaboration and technical contact',
-          news: 'Company news and announcements',
-          newsArticle: 'Company news announcement',
-          products: 'Products and technical outcomes',
-          product: 'Product features and applications',
-          research: 'AI and data intelligence research',
-          researchArticle: 'AI and data intelligence research article',
-          insights: 'Technical articles and research notes',
+          activities: 'Projects and partnerships',
+          activityArticle: 'Event report',
+          business: 'Enterprise services',
+          businessArticle: 'Business overview',
+          careers: 'Open positions',
+          cases: 'Collaboration case study',
+          company: 'Company information',
+          design: 'Design standards',
+          qualifications: 'Company credentials',
+          brand: 'Brand guidelines',
+          team: 'Team information',
+          teamMember: 'Team profile',
+          contact: 'Contact and collaboration',
+          news: 'Company updates',
+          newsArticle: 'Company news',
+          products: 'Products and projects',
+          product: 'Product overview',
+          research: 'AI and data intelligence',
+          researchArticle: 'Research article',
+          insights: 'Research notes',
         }
       : {
-          activities: '活动交流与项目合作记录',
-          activityArticle: '活动报道与项目交流记录',
-          business: '并行业务与企业服务能力',
-          businessArticle: '企业业务服务介绍',
-          careers: '加入我们与岗位招聘信息',
-          cases: '技术合作案例与项目成果',
-          company: '公司主体与业务介绍',
-          design: '官网设计系统与使用规范',
-          qualifications: '企业资质与证书信息',
-          brand: '企业品牌体系与使用规范',
-          team: '团队与组织架构信息',
-          teamMember: '团队成员职务与背景',
-          contact: '开放合作与技术交流入口',
-          news: '公司新闻与公告动态',
-          newsArticle: '公司新闻公告与最新动态',
-          products: '产品与技术成果介绍',
-          product: '产品功能与应用介绍',
-          research: '人工智能与数据智能研究方向',
-          researchArticle: '人工智能与数据智能研究文章',
-          insights: '技术文章与研究记录',
+          activities: '项目合作',
+          activityArticle: '活动报道',
+          business: '企业服务',
+          businessArticle: '业务介绍',
+          careers: '岗位招聘',
+          cases: '合作案例',
+          company: '企业信息',
+          design: '设计规范',
+          qualifications: '企业资质',
+          brand: '品牌规范',
+          team: '团队介绍',
+          teamMember: '成员介绍',
+          contact: '合作联系',
+          news: '公司动态',
+          newsArticle: '新闻公告',
+          products: '产品项目',
+          product: '产品介绍',
+          research: 'AI 与数据智能',
+          researchArticle: '研究文章',
+          insights: '研究记录',
         };
 
   if (path === '/activities') return contexts.activities;
@@ -169,7 +183,7 @@ const titleContext = (path: string, locale: Locale) => {
   if (path.startsWith('/research/')) return contexts.researchArticle;
   if (path === '/insights') return contexts.insights;
   if (path.startsWith('/insights/')) return contexts.insights;
-  return locale === 'en' ? 'Official company information' : '官方公司信息';
+  return locale === 'en' ? 'Company information' : '公司信息';
 };
 
 const localizedTitle = (title: string, locale: Locale) => {
@@ -181,10 +195,10 @@ const localizedTitle = (title: string, locale: Locale) => {
 const pageTitle = (title: string) => title.replace(/\s*·\s*Elexvx Research$/u, '').trim();
 
 const enrichTitle = (title: string, path: string, locale: Locale) => {
-  const minimumTitleLength = locale === 'en' ? 42 : 24;
+  const minimumTitleLength = locale === 'en' ? 36 : 18;
   if (path === '/' || title.length >= minimumTitleLength) return title;
   const context = titleContext(path, locale);
-  return title.includes(context) ? title : `${title}${locale === 'en' ? ' — ' : '｜'}${context}`;
+  return title.includes(context) ? title : `${title} — ${context}`;
 };
 
 const withBrandDescription = (description: string, locale: Locale) => {
@@ -238,8 +252,8 @@ export const metadataForRoute = (meta: RouteMeta, path: string, locale: Locale =
   const articleAuthor = meta.author && locale === 'en' ? brandName : meta.author;
   const title =
     path === '/'
-      ? `${brandName} | ${locale === 'en' ? 'AI & Data Intelligence R&D' : '人工智能与数据智能研发'}`
-      : `${enrichTitle(localizedPageTitle, path, locale)} | ${brandName}`;
+      ? brandedHomepageTitle(locale === 'en' ? 'AI & Data Intelligence R&D' : '人工智能与数据智能研发', locale)
+      : brandedPageTitle(enrichTitle(localizedPageTitle, path, locale), locale);
   const description = enrichDescription(
     withBrandDescription(translateMetadata(meta.description, locale), locale),
     localizedPageTitle,

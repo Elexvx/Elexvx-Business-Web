@@ -130,17 +130,18 @@
  * every company-facing content section shares the same page boundary as the
  * homepage.
  */
-.site-shell-openai :is(
-  .team-page > .team-grid,
-  .qualifications-page > .qualification-section,
-  .contact-page > .contact-card-grid,
-  .design-guide > .design-section,
-  .careers-page > .careers-culture,
-  .careers-page > .careers-roles,
-  .careers-page > .careers-closing,
-  .job-detail > header,
-  .job-detail > .job-detail-layout
-) {
+.site-shell-openai
+  :is(
+    .team-page > .team-grid,
+    .qualifications-page > .qualification-section,
+    .contact-page > .contact-card-grid,
+    .design-guide > .design-section,
+    .careers-page > .careers-culture,
+    .careers-page > .careers-roles,
+    .careers-page > .careers-closing,
+    .job-detail > header,
+    .job-detail > .job-detail-layout
+  ) {
   width: min(100%, var(--page-max-width));
   max-width: var(--page-max-width);
   margin-inline: auto;
@@ -201,7 +202,7 @@
   overflow: visible;
   color: var(--color-ink);
   background: transparent;
-  border-radius: 0;
+  border-radius: var(--home-card-radius);
   transform: none;
   transition: none;
 }
@@ -345,7 +346,7 @@
   text-wrap: balance;
 }
 
-/* Company pages use editorial rows, not a wall of nested cards. */
+/* The company overview uses a consistent outlined-card treatment throughout. */
 .site-shell-openai.company-overview .research-tile {
   padding-block: 0 var(--section-space);
 }
@@ -355,8 +356,13 @@
 }
 
 .site-shell-openai.company-overview .research-tile .tile-inner {
+  box-sizing: border-box;
   max-width: var(--page-max-width);
   margin-inline: auto;
+  padding: clamp(20px, 3vw, 40px);
+  border: 1px solid var(--color-hairline);
+  border-radius: 20px;
+  background: var(--color-canvas);
 }
 
 .site-shell-openai.company-overview .tile-copy {
@@ -398,11 +404,10 @@
   display: flex;
   flex-direction: column;
   gap: 12px;
-  padding: 24px 0 0;
-  border: 0;
-  border-top: 1px solid var(--color-hairline);
-  border-radius: 0;
-  background: transparent;
+  padding: 24px;
+  border: 1px solid var(--color-hairline);
+  border-radius: 16px;
+  background: color-mix(in srgb, var(--color-ink) 3%, var(--color-canvas));
 }
 
 .site-shell-openai.company-overview .company-content-row h3 {
@@ -417,11 +422,11 @@
 }
 
 .site-shell-openai.company-overview .company-stats > div {
-  padding: 24px 0 0;
-  border: 0;
-  border-top: 1px solid var(--color-hairline);
-  border-radius: 0;
-  background: transparent;
+  min-width: 0;
+  padding: 24px;
+  border: 1px solid var(--color-hairline);
+  border-radius: 16px;
+  background: color-mix(in srgb, var(--color-ink) 3%, var(--color-canvas));
 }
 
 .site-shell-openai.company-overview .company-stats dd {
@@ -488,6 +493,17 @@
 
   .site-shell-openai.company-overview .company-content-list {
     gap: 24px 16px;
+  }
+
+  .site-shell-openai.company-overview .research-tile .tile-inner {
+    padding: 20px;
+    border-radius: 16px;
+  }
+
+  .site-shell-openai.company-overview .company-content-row,
+  .site-shell-openai.company-overview .company-stats > div {
+    padding: 18px;
+    border-radius: 14px;
   }
 
   .site-shell-openai .contact-card-grid {

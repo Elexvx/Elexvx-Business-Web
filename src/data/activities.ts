@@ -13,6 +13,7 @@ export type Activity = {
   categorySlug?: string;
   directionSlug?: string;
   cover?: string;
+  externalUrl?: string;
   pinned?: boolean;
   body: string;
 };

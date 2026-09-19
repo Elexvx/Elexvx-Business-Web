@@ -4,7 +4,6 @@ import { toInsightSummary, toNewsSummary } from '../content/summaries';
 import { ContentProvider } from '../site/providers/content-context';
 import routePaths from '../data/route-paths.json';
 import type { Metadata } from 'next';
-import 'katex/dist/katex.min.css';
 import '../styles/apple-system.css';
 import { siteIdentity } from '../data/site';
 import { ThemeProvider } from '../site/providers/theme-provider';
@@ -89,6 +88,8 @@ const themeInitializer = `
 `;
 
 const organizationId = `${siteIdentity.canonicalOrigin}/#organization`;
+const fallbackPageTitle = '人工智能与数据智能研发';
+const fallbackSearchTitle = `${siteIdentity.seoName} — ${fallbackPageTitle}`;
 const structuredData = JSON.stringify({
   '@context': 'https://schema.org',
   '@graph': [
@@ -119,8 +120,8 @@ const structuredData = JSON.stringify({
 export const metadata: Metadata = {
   metadataBase: new URL(siteIdentity.canonicalOrigin),
   title: {
-    default: `${siteIdentity.seoName} | 人工智能与数据智能研发`,
-    template: `%s | ${siteIdentity.seoName}`,
+    default: fallbackSearchTitle,
+    template: `${siteIdentity.seoName} — %s`,
   },
   description: siteIdentity.seoDescription,
   applicationName: siteIdentity.seoName,
@@ -137,7 +138,7 @@ export const metadata: Metadata = {
     },
   },
   openGraph: {
-    title: `${siteIdentity.seoName} | 人工智能与数据智能研发`,
+    title: fallbackSearchTitle,
     description: siteIdentity.seoDescription,
     url: `${siteIdentity.canonicalOrigin}/`,
     siteName: siteIdentity.seoName,
@@ -147,12 +148,12 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: `${siteIdentity.seoName} | 人工智能与数据智能研发`,
+    title: fallbackSearchTitle,
     description: siteIdentity.seoDescription,
     images: ['/share/elexvx.png'],
   },
   icons: {
-    icon: '/brand/favicon-64.png',
+    icon: [{ url: '/brand/elexvx-logo-64.png', type: 'image/png', sizes: '64x64' }],
   },
   robots: {
     index: true,

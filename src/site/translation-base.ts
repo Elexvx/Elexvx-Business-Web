@@ -18,6 +18,27 @@ export const existingEnglish: Record<string, string> = {
   最近新闻: 'Latest news',
   探索新闻: 'Explore news',
   活动: 'Activities',
+  产品: 'Products',
+  芯片架构: 'Chip architecture',
+  推理系统: 'Inference systems',
+  量化与编译: 'Quantization & compilation',
+  技术交流: 'Technical exchange',
+  网站更新: 'Website updates',
+  项目路演: 'Project roadshows',
+  设计规范: 'Design system',
+  公告: 'Announcement',
+  'ElexvxAI 创新产业研发中心正式成立': 'ElexvxAI Innovation Industry R&D Center officially established',
+  'ElexvxAI 创新产业研发中心于 2026 年 3 月 6 日正式成立，我们将持续推进 AI 研究、工程实践与产业落地。':
+    'ElexvxAI Innovation Industry R&D Center was officially established on March 6, 2026, and will continue advancing AI research, engineering practice, and industrial applications.',
+  服务: 'Services',
+  '进入 Elexvx 服务站点': 'Access Elexvx service sites',
+  帮助文档: 'Help documentation',
+  企业导航: 'Business directory',
+  服务状态: 'Service status',
+  网站备案信息: 'Website filing information',
+  苏ICP备2025160017号: 'Su ICP Filing No. 2025160017',
+  '© 2026 由宏翔商道 / Elexvx 设计，并保留所有权利。':
+    '© 2026 Designed by Hongxiang Shangdao / Elexvx. All rights reserved.',
   查看案例: 'View case study',
   'ELEXVX 期刊管理与出版协同系统助力凯城国际':
     'ELEXVX Journal Management & Publishing Collaboration System for Kaicheng International',
@@ -118,8 +139,8 @@ export const existingEnglish: Record<string, string> = {
     'We are building a team around research directions, engineering practice, and real-world contexts.',
   '我们研究什么，决定我们如何研发。': 'What we research shapes how we build.',
   '想象力，真的没有边界': 'Imagination truly has no boundaries.',
-  '宏翔商道-Elexvx 是一家跨行业研发公司，以 AI 与数据智能为核心，面向工业现场、知识工作与负责任的 AI 应用，构建可验证的技术系统。':
-    'Hongxiang Shangdao-Elexvx is a cross-industry R&D company building verifiable technical systems for industrial operations, knowledge work, and responsible AI.',
+  '宏翔商道-Elexvx 是一家跨行业研发公司，以 AI 与数据智能为核心，聚焦企业管理、知识工作与负责任的 AI 应用，持续构建可验证的产品与系统。':
+    'Hongxiang Shangdao-Elexvx is a cross-industry R&D company focused on enterprise management, knowledge work, and responsible AI applications, building verifiable products and systems.',
   技术文章: 'Insights',
   '技术能力只有进入场景，才会遇到真正的问题。':
     'Technical capability meets the real problem only when it enters context.',

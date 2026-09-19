@@ -1,0 +1,139 @@
+---
+title: 项目目录结构
+description: 快速理解 Legendary Invention 仓库的主要目录和职责边界。
+tags:
+  - quick-start
+  - structure
+  - repository
+---
+
+## 顶层目录
+
+```text
+legendary-invention/
+├── frontend/                  前端工程
+├── services/                  后端模块
+├── libs/                      公共基础库与跨模块契约
+├── deploy/                    Docker Compose、Nginx、观测配置
+├── scripts/                   启停、部署、检查脚本
+├── docs/                      原始设计文档与架构说明
+└── database/                  数据库相关资源
+```
+
+## 怎么读这个仓库最不容易迷路
+
+第一次进入仓库时，建议不要按“哪个目录最大先看哪个”来读，而是按下面这条路径建立心智模型：
+
+1. 先看 `README.md`，确认当前运行形态
+2. 再看 `services/legendary-server/`，理解后端真实启动入口
+3. 然后看 `frontend/`，理解前端如何通过 `/api` 接入后端
+4. 再看 `services/*-service` 和 `libs/*`，理解模块边界和契约位置
+5. 最后看 `deploy/`、`scripts/`、`docs/`，理解发布与历史设计
+
+这样读，你会更容易区分“当前生效的东西”和“为未来拆分预留的东西”。
+
+## 前端目录
+
+- `frontend/src/layouts/`：壳层布局
+- `frontend/src/pages/`：业务页面
+- `frontend/src/services/`：请求封装与接口类型
+- `frontend/src/auth/`：认证、会话、登录态恢复
+- `frontend/src/features/`：页面级通用能力
+- `frontend/src/theme/`：主题、视觉令牌、反馈桥接
+
+前端建议按三层来理解：
+
+- 壳层：布局、导航、用户菜单、全局抽屉、系统级交互
+- 基础能力层：请求、认证、权限、响应式、hooks、通用组件
+- 业务页面层：真正承载列表、表单、详情、配置页
+
+## 后端目录
+
+- `services/legendary-server/`：正式运行入口，聚合全部模块
+- `services/auth-service/`：登录、刷新、Passkey、微信登录
+- `services/system-service/`：系统控制面、IAM、菜单、配置、AI、审计
+- `services/file-service/`：文件、图片、存储空间、上传校验
+- `services/message-service/`：站内信、WebSocket 推送、消息 outbox
+- `services/plugin-service/`：插件管理与插件运行时
+- `services/localization-service/`：多语言内容管理
+- `services/job-executor/`：XXL-JOB 执行器
+
+后端最重要的阅读原则是：**运行入口和代码 owner 不是一回事。**
+
+- 看启动方式、健康检查、容器编排时，以 `legendary-server` 为准
+- 看业务归属、数据库 owner、权限边界时，以具体 `*-service` 模块为准
+
+## 公共库
+
+- `libs/common-core`：异常、错误码、基础常量
+- `libs/common-web`：统一响应、全局异常、Web 基础约定
+- `libs/common-security`：安全上下文、权限、JWT 通用能力
+- `libs/legendary-api`：跨模块 API 契约
+
+这些公共库的意义，是把“所有模块都会反复用到，但不应该重复实现”的东西收敛起来。常见包括：
+
+- 统一响应模型
+- 通用异常体系
+- 安全上下文与当前用户
+- 跨模块 API 契约
+- 插件或平台级公共接口
+
+## 基本理解方式
+
+- 看“运行形态”时，以 `legendary-server` 为准
+- 看“代码边界”时，以 `services/*-service` 和 `libs/*` 为准
+- 看“生产发布”时，以 `deploy/` 和 `scripts/` 为准
+- 看“历史设计决策”时，再去翻 `docs/`
+
+## 值得重点关注的几个目录
+
+### `deploy/`
+
+这里放的是现在真正影响线上部署的文件：
+
+- `docker-compose.prod.yml`
+- `.env`
+- Nginx 配置
+- 观测配置
+- 备份恢复脚本
+
+### `scripts/`
+
+这里决定了你日常怎么启动、停止、部署、检查系统，通常比手工敲一长串命令更值得优先读。尤其是：
+
+- `start-platform.mjs`
+- `stop-platform.mjs`
+- `deploy-container.mjs`
+- `check-deployment.mjs`
+- `install-platform.mjs`
+
+### `docs/`
+
+这里是原始设计资料库，不一定每一份都代表当前最新运行形态，但它对理解以下主题仍然很有价值：
+
+- 数据模型与 RBAC
+- 前端架构
+- 模块边界
+- Outbox 事件
+- 部署与运维手册
+
+## 开发中的边界规则
+
+- 不要让页面直接拼接后端域名
+- 不要让 controller 直接操作 mapper
+- 不要跨模块直接读写别人 owner 的表
+- 新增能力时，先明确 owner，再决定代码放哪里
+
+## 新人最容易搞混的三组概念
+
+### 1. `frontend/` 和 `deploy/`
+
+`frontend/` 负责应用本身，`deploy/` 负责应用怎么被运行起来。前者是业务实现，后者是交付方式。
+
+### 2. `services/legendary-server/` 和 `services/*-service/`
+
+前者是运行入口，后者是模块边界。不要因为只启动一个入口，就把所有业务继续往一个模块里堆。
+
+### 3. `libs/*` 和“随便跨模块调用”
+
+有公共库，不代表所有代码都应该进公共库。只有真正跨模块稳定复用、并且值得被抽象的能力，才应该沉淀到 `libs/*`。

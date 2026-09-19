@@ -1,0 +1,68 @@
+---
+title: API Contracts and Unified Responses
+description: A compact guide to path conventions, HTTP methods, response envelopes, pagination, idempotency, and permission boundaries.
+tags:
+  - architecture
+  - api
+  - contracts
+---
+
+## Why this matters
+
+Without a shared API contract, teams quickly drift into inconsistent response shapes, unclear route semantics, and duplicated frontend adapters. This page defines the minimum common contract.
+
+## Path conventions
+
+- internal APIs use `/api/v1/*`
+- paths should express resources first
+- prefer lowercase resource-style paths
+
+Examples:
+
+- `/api/v1/auth/login`
+- `/api/v1/system/users`
+- `/api/v1/files/upload`
+- `/api/v1/audit/operate-logs`
+
+## HTTP methods
+
+- `GET` for reads
+- `POST` for create, complex search, and task submission
+- `PUT` for full updates
+- `PATCH` for partial updates
+- `DELETE` for deletion
+
+## Unified response envelope
+
+```json
+{
+  "httpStatus": 200,
+  "code": "A0000",
+  "message": "success",
+  "userMessage": null,
+  "data": {},
+  "requestId": "trace_xxx",
+  "path": "/api/example",
+  "timestamp": "2026-03-25 10:00:00"
+}
+```
+
+Keep `requestId` and business `code` stable so the frontend can handle failures consistently.
+
+## Pagination
+
+Use a consistent request shape with `current`, `pageSize`, `sorter`, and `filters`. Responses should return `list`, `total`, `current`, and `pageSize`.
+
+Large unrestricted pages are not allowed.
+
+## Permission and idempotency
+
+- permission checks must happen on the backend
+- data-scope filtering belongs in backend query layers
+- create, approve, import, export, send, and state transitions should consider idempotency
+
+## File and task endpoints
+
+- uploads should go through the unified file endpoint
+- downloads must be authenticated and audited
+- imports and exports should prefer task-based APIs over long blocking requests

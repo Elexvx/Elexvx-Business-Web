@@ -7,6 +7,7 @@ import { getStaticRoutes, resolveRoute } from '../src/site/routing/routes';
 import { homeContent, staticPageHeroByPath } from '../src/data/page-content';
 import { validateSiteCatalog } from '../src/data/site';
 import { publishedCaseStudies } from '../src/data/case-studies';
+import { publishedActivities } from '../src/data/activities';
 
 describe('content publication gates', () => {
   it('loads published and draft insights while only publishing verified content', () => {
@@ -32,9 +33,11 @@ describe('content publication gates', () => {
 
   it('publishes the active news collection', () => {
     const news = loadNews();
-    expect(news).toHaveLength(9);
+    expect(news).toHaveLength(7);
     expect(news.every((item) => item.status === 'published')).toBe(true);
     expect(news.some((item) => item.slug === 'exam-2025-07-08-01')).toBe(false);
+    expect(news.some((item) => item.slug === 'stories-2025-07-01-01')).toBe(false);
+    expect(news.some((item) => item.slug === 'technology-2025-07-01-01')).toBe(false);
     expect(news.every((item) => item.cover?.startsWith('/visuals/'))).toBe(true);
   });
 
@@ -55,6 +58,17 @@ describe('content publication gates', () => {
     expect(publishedCaseStudies[0].excerpt).toContain('凯城国际出版社');
     expect(publishedCaseStudies[0].titleEn).toContain('ELEXVX Journal Management & Publishing Collaboration System');
     expect(publishedCaseStudies[0].bodyEn).toContain('Kaicheng International Publishing House');
+  });
+
+  it('publishes the ElexvxAI announcement as an internal activity page', () => {
+    const item = publishedActivities.find((activity) => activity.slug === 'elexvxai-lab-established-2026');
+    expect(item).toMatchObject({
+      title: 'ElexvxAI 创新产业研发中心正式成立',
+      publishedAt: '2026-03-06',
+      cover: '/activities/elexvxai-2026/hello.svg',
+    });
+    expect(item?.externalUrl).toBeUndefined();
+    expect(item?.body).toContain('![ElexvxAI 创新产业研发中心正式成立](/activities/elexvxai-2026/hello.svg)');
   });
 
   it('validates parameterized catalog references and gives every static subpage a hero visual', () => {

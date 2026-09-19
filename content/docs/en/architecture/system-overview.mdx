@@ -1,0 +1,38 @@
+---
+title: System Overview
+description: Understand the current modular-monolith runtime shape, request path, and evolution model.
+tags:
+  - architecture
+  - overview
+  - monolith
+---
+
+## Current runtime model
+
+The repository no longer runs as a fully split microservice platform by default. Instead, it uses:
+
+- one backend runtime process: `legendary-server`
+- clear module boundaries in code
+- a unified `/api` entry for frontend traffic
+
+## Request path
+
+```text
+frontend -> /api -> api-proxy -> legendary-server -> module -> database/cache/outbox
+```
+
+This keeps frontend integration stable while preserving the option to split modules later.
+
+## Main modules
+
+- `auth`
+- `system`
+- `file`
+- `message`
+- `plugin`
+- `localization`
+- `job`
+
+## Key principle
+
+One runtime entry does **not** mean one undisciplined codebase. Module ownership, data ownership, and permission ownership still need to stay explicit.

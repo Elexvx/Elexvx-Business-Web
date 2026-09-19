@@ -1,0 +1,57 @@
+---
+title: 1Panel Container Deployment
+description: Deploy the backend platform with 1Panel container orchestration while keeping the frontend on Vercel.
+tags:
+  - deployment
+  - onepanel
+  - docker
+---
+
+## When to use this
+
+Use this path when:
+
+- the frontend is hosted on Vercel
+- the server is managed through 1Panel
+- 1Panel is responsible for container orchestration, reverse proxying, logs, and volumes
+
+## Key files
+
+- `deploy/docker-compose.prod.yml`
+- `deploy/.env.example`
+
+## Recommended deployment path
+
+From the command line, the simplest path is still:
+
+```bash
+node scripts/deploy-container.mjs --rebuild
+```
+
+For 1Panel-driven setup:
+
+1. upload the project to the server, for example `/opt/legendary-invention`
+2. copy `deploy/.env.example` to `deploy/.env`
+3. replace at least `DB_PASSWORD`, `JWT_SECRET`, `PLUGIN_SIGNATURE_SECRET`, and `SAAS_JOB_INTERNAL_TOKEN`
+4. create a new compose orchestration in 1Panel
+5. point it to `deploy/docker-compose.prod.yml` and `deploy/.env`
+6. start the orchestration
+
+## Reverse proxy
+
+Expose the backend through a domain such as:
+
+- `https://api.your-domain.com` -> `http://127.0.0.1:8081`
+
+Then point the Vercel frontend rewrite or environment config at that backend domain.
+
+## Persistent volumes
+
+Keep MySQL, Redis, uploads, plugin files, and optional Nacos or job logs in Docker volumes rather than bundling local runtime storage into production images.
+
+## Production reminders
+
+- never commit `.env`
+- do not use example secrets in production
+- keep public exposure limited to `80/443`
+- verify health checks and key business flows after deployment
