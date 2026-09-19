@@ -53,14 +53,17 @@ interface StoredStatusData {
 
 const STATUS_CACHE_KEY = 'elexvx-status-data-v1';
 const STATUS_CACHE_MAX_AGE_MS = 10 * 60 * 1000;
+const STATUS_OVERVIEW_DAYS = 14;
 
-const readStoredStatusData = (): StatusData | undefined => {
+const statusCacheKey = (historyDays: number) => `${STATUS_CACHE_KEY}-${historyDays}`;
+
+const readStoredStatusData = (historyDays: number): StatusData | undefined => {
   try {
-    const value = window.localStorage.getItem(STATUS_CACHE_KEY);
+    const value = window.localStorage.getItem(statusCacheKey(historyDays));
     if (!value) return undefined;
     const stored = JSON.parse(value) as StoredStatusData;
     if (!stored.data || Date.now() - stored.savedAt > STATUS_CACHE_MAX_AGE_MS) {
-      window.localStorage.removeItem(STATUS_CACHE_KEY);
+      window.localStorage.removeItem(statusCacheKey(historyDays));
       return undefined;
     }
     return stored.data;
@@ -69,9 +72,9 @@ const readStoredStatusData = (): StatusData | undefined => {
   }
 };
 
-const storeStatusData = (data: StatusData) => {
+const storeStatusData = (data: StatusData, historyDays: number) => {
   try {
-    window.localStorage.setItem(STATUS_CACHE_KEY, JSON.stringify({ savedAt: Date.now(), data }));
+    window.localStorage.setItem(statusCacheKey(historyDays), JSON.stringify({ savedAt: Date.now(), data }));
   } catch {
     // A cached snapshot is optional when storage is unavailable.
   }
@@ -85,9 +88,9 @@ async function parseResponse(response: Response): Promise<StatusApiResponse> {
   }
 }
 
-function useStatusData() {
+function useStatusData(historyDays: number) {
   const [state, setState] = useState<StatusDataState>(() => {
-    const storedData = readStoredStatusData();
+    const storedData = readStoredStatusData(historyDays);
     return {
       ...(storedData ? { data: storedData } : {}),
       loading: !storedData,
@@ -106,7 +109,7 @@ function useStatusData() {
     }));
 
     try {
-      const response = await fetch('/api/status/', {
+      const response = await fetch(`/api/status/?days=${historyDays}`, {
         cache: 'no-store',
         credentials: 'same-origin',
         headers: { Accept: 'application/json' },
@@ -130,7 +133,7 @@ function useStatusData() {
       }
 
       if (mountedRef.current) {
-        storeStatusData(payload.data);
+        storeStatusData(payload.data, historyDays);
         setState({ data: payload.data, loading: false, refreshing: false, passwordRequired: false });
       }
     } catch (error) {
@@ -152,7 +155,7 @@ function useStatusData() {
         }));
       }
     }
-  }, []);
+  }, [historyDays]);
 
   const login = useCallback(
     async (password: string) => {
@@ -453,7 +456,8 @@ const statusHomeHref = '/status/';
 const statusHistoryHref = '/status/history/';
 
 export const StatusPage = ({ history = false }: StatusPageProps) => {
-  const { data, error, loading, refreshing, passwordRequired, login, refresh } = useStatusData();
+  const historyDays = history ? serviceNavigationConfig.status.historyDays : STATUS_OVERVIEW_DAYS;
+  const { data, error, loading, refreshing, passwordRequired, login, refresh } = useStatusData(historyDays);
 
   return (
     <section className="service-status-page">

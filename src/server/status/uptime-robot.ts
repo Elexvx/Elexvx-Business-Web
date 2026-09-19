@@ -48,8 +48,12 @@ interface RangeBatch {
   includesOverall: boolean;
 }
 
-let cache: StatusCache | undefined;
-let inFlightRequest: Promise<StatusData> | undefined;
+const cacheByHistoryDays = new Map<number, StatusCache>();
+const inFlightRequestsByHistoryDays = new Map<number, Promise<StatusData>>();
+
+function normalizeHistoryDays(value: number | undefined): number {
+  return Math.max(7, Math.min(90, Math.floor(value ?? 60) || 60));
+}
 
 function startOfToday(): Date {
   const value = new Date();
@@ -58,7 +62,7 @@ function startOfToday(): Date {
 }
 
 export function buildDateRanges(historyDays: number): DateRangeRequest {
-  const safeHistoryDays = Math.max(7, Math.min(90, Math.floor(historyDays) || 60));
+  const safeHistoryDays = normalizeHistoryDays(historyDays);
   const today = startOfToday();
   const dates = Array.from({ length: safeHistoryDays }, (_, index) => {
     const date = new Date(today);
@@ -202,20 +206,23 @@ export async function fetchStatusData(options: {
   timeoutMs?: number;
   rangeBatchSize?: number;
 }): Promise<{ data: StatusData; source: 'api' | 'cache' }> {
+  const historyDays = normalizeHistoryDays(options.historyDays);
   const now = Date.now();
-  if (cache && cache.expiresAt > now) return { data: cache.data, source: 'cache' };
+  const cached = cacheByHistoryDays.get(historyDays);
+  if (cached && cached.expiresAt > now) return { data: cached.data, source: 'cache' };
 
+  const inFlightRequest = inFlightRequestsByHistoryDays.get(historyDays);
   if (inFlightRequest) {
     try {
       return { data: await inFlightRequest, source: 'cache' };
     } catch (error) {
-      if (cache && cache.staleUntil > Date.now()) return { data: cache.data, source: 'cache' };
+      if (cached && cached.staleUntil > Date.now()) return { data: cached.data, source: 'cache' };
       throw error;
     }
   }
 
-  const ranges = buildDateRanges(options.historyDays ?? 60);
-  inFlightRequest = (async () => {
+  const ranges = buildDateRanges(historyDays);
+  const request = (async () => {
     const batches = createRangeBatches(ranges, options.rangeBatchSize ?? 20);
     const apiBaseUrl = options.apiUrl ?? 'https://api.uptimerobot.com/v2/';
     const apiUrl = `${apiBaseUrl.replace(/\/+$/u, '')}/getMonitors`;
@@ -239,25 +246,26 @@ export async function fetchStatusData(options: {
     );
     return formatUptimeRobotData(mergeBatchResponses(payloads, batches), ranges);
   })();
+  inFlightRequestsByHistoryDays.set(historyDays, request);
 
   try {
-    const data = await inFlightRequest;
+    const data = await request;
     const completedAt = Date.now();
-    cache = {
+    cacheByHistoryDays.set(historyDays, {
       data,
       expiresAt: completedAt + (options.cacheTtlMs ?? 300_000),
       staleUntil: completedAt + (options.staleTtlMs ?? 86_400_000),
-    };
+    });
     return { data, source: 'api' };
   } catch (error) {
-    if (cache && cache.staleUntil > Date.now()) return { data: cache.data, source: 'cache' };
+    if (cached && cached.staleUntil > Date.now()) return { data: cached.data, source: 'cache' };
     throw error;
   } finally {
-    inFlightRequest = undefined;
+    inFlightRequestsByHistoryDays.delete(historyDays);
   }
 }
 
 export function resetStatusCacheForTests() {
-  cache = undefined;
-  inFlightRequest = undefined;
+  cacheByHistoryDays.clear();
+  inFlightRequestsByHistoryDays.clear();
 }

@@ -36,10 +36,13 @@ export default async function handler(request: IncomingMessage, response: Server
   }
 
   try {
+    const configuredHistoryDays = Number(process.env.COUNT_DAYS || 60);
+    const requestedDays = new URL(request.url || '/api/status/', 'https://status.elexvx.com').searchParams.get('days');
+    const historyDays = requestedDays === '14' ? 14 : configuredHistoryDays;
     const result = await fetchStatusData({
       apiKey,
       apiUrl: process.env.UPTIMEROBOT_API_URL || process.env.API_URL,
-      historyDays: Number(process.env.COUNT_DAYS || 60),
+      historyDays,
     });
     const payload: StatusApiResponse = {
       code: 200,
