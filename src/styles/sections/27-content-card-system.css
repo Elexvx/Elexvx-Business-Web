@@ -227,8 +227,12 @@
   border: 0;
 }
 
-.service-site-shell :is(.service-directory-row, .service-overview-card, .service-docs-card) {
+.service-site-shell :is(.service-overview-card, .service-docs-card) {
   border: var(--content-card-border);
+  border-radius: var(--content-card-radius);
+}
+
+.service-site-shell .service-directory-row {
   border-radius: var(--content-card-radius);
 }
 
