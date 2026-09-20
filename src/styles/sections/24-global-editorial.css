@@ -374,8 +374,8 @@
 }
 
 .site-shell-openai.company-overview .company-introduction {
-  width: min(100%, 860px);
-  max-width: 860px;
+  width: 100%;
+  max-width: none;
   margin: 0;
   padding: 0;
   background: transparent;
@@ -384,7 +384,7 @@
 }
 
 .site-shell-openai.company-overview .company-introduction p {
-  max-width: 760px;
+  max-width: none;
   font-size: var(--body-text-size);
   line-height: 1.75;
 }

@@ -20,13 +20,20 @@ describe('content publication gates', () => {
     ).toBe(true);
   });
 
-  it('publishes active content routes and excludes the parked insights section', () => {
+  it('publishes verified insights while excluding drafts and other parked sections', () => {
     const insights = loadInsights();
     const news = loadNews();
     const routes = getStaticRoutes(insights, news).map((route) => route.path);
-    expect(routes.some((path) => path === '/insights' || path.startsWith('/insights/'))).toBe(false);
+    expect(routes).toContain('/insights');
+    for (const insight of insights.filter((item) => item.status === 'published')) {
+      expect(routes).toContain(`/insights/${insight.slug}`);
+    }
     expect(routes).toContain('/research/moe-chiplet-expert-reuse');
     expect(routes).not.toContain('/insights/llm-safety-boundaries');
+    expect(routes).not.toContain('/capabilities');
+    expect(routes).not.toContain('/projects');
+    expect(routes).not.toContain('/scenarios');
+    expect(routes).not.toContain('/archive');
     expect(routes).toContain('/news/2026-06-09-01');
     expect(resolveRoute('/missing', insights).meta.robots).toBe('noindex,nofollow');
   });

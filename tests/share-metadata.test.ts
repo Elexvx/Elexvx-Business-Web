@@ -4,6 +4,7 @@ import { loadNews } from '../src/content/news-loader';
 import { nextMetadata } from '../src/site/routing/metadata';
 import { getStaticRoutes } from '../src/site/routing/routes';
 import { brandedHomepageTitle, brandedPageTitle, metadataForRoute } from '../src/site/routing/metadata-base';
+import { insightArticleStructuredData } from '../src/site/seo/insight-article-json-ld';
 import { newsArticleStructuredData } from '../src/site/seo/news-article-json-ld';
 
 describe('static share metadata', () => {
@@ -100,6 +101,16 @@ describe('static share metadata', () => {
       siteName: '宏翔商道-Elexvx',
     });
   });
+  it('marks published insights as independently indexable article pages', () => {
+    const data = nextMetadata('/insights/question-before-model');
+    expect(data.robots).toMatchObject({ index: true, follow: true, googleBot: { index: true, follow: true } });
+    expect(data.alternates?.canonical).toBe('https://www.elexvx.com/insights/question-before-model/');
+    expect(data.openGraph).toMatchObject({
+      type: 'article',
+      url: 'https://www.elexvx.com/insights/question-before-model/',
+      publishedTime: '2026-09-02',
+    });
+  });
   it('emits localized NewsArticle JSON-LD for Google', () => {
     const item = loadNews().find((news) => news.slug === '2026-06-09-01');
     if (!item) throw new Error('Expected published news fixture');
@@ -120,5 +131,25 @@ describe('static share metadata', () => {
       publisher: { '@id': 'https://www.elexvx.com/#organization' },
     });
     expect(english.headline).not.toMatch(/[\u4e00-\u9fff]/u);
+  });
+  it('emits localized Article JSON-LD for published insights', () => {
+    const insight = loadInsights().find((item) => item.slug === 'question-before-model');
+    if (!insight) throw new Error('Expected published insight fixture');
+
+    const chinese = JSON.parse(insightArticleStructuredData(insight));
+    const english = JSON.parse(insightArticleStructuredData(insight, 'en'));
+
+    expect(chinese).toMatchObject({
+      '@type': 'Article',
+      url: 'https://www.elexvx.com/insights/question-before-model/',
+      inLanguage: 'zh-CN',
+      publisher: { '@id': 'https://www.elexvx.com/#organization' },
+    });
+    expect(english).toMatchObject({
+      '@type': 'Article',
+      url: 'https://www.elexvx.com/en/insights/question-before-model/',
+      inLanguage: 'en',
+      keywords: ['problem framing', 'data intelligence', 'model selection', 'research methods'],
+    });
   });
 });

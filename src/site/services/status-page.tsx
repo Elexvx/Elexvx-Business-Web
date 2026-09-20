@@ -53,7 +53,7 @@ interface StoredStatusData {
 
 const STATUS_CACHE_KEY = 'elexvx-status-data-v1';
 const STATUS_CACHE_MAX_AGE_MS = 10 * 60 * 1000;
-const STATUS_OVERVIEW_DAYS = 14;
+const STATUS_OVERVIEW_DAYS = serviceNavigationConfig.status.historyDays;
 
 const statusCacheKey = (historyDays: number) => `${STATUS_CACHE_KEY}-${historyDays}`;
 
