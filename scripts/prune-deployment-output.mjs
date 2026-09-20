@@ -1,19 +1,20 @@
 import { readdir, readFile, stat, unlink } from 'node:fs/promises';
-import { resolve, sep } from 'node:path';
+import { relative, resolve, sep } from 'node:path';
 
+// Prune only the generated deployment output; source images under public/ stay untouched.
 const root = resolve('dist');
 const manifest = JSON.parse(await readFile('src/data/image-manifest.json', 'utf8'));
 const referencedAssets = new Set();
 const documentExtensions = new Set(['.html', '.css', '.svg']);
 const maxOutputBytes = 160 * 1024 * 1024;
 
-const toLocalPath = (value) => {
+const toLocalPath = (value, basePath) => {
   const trimmed = value.trim().replaceAll('&amp;', '&');
   if (!trimmed || /^(?:data:|blob:|javascript:|mailto:|tel:|#)/i.test(trimmed)) return null;
 
   let url;
   try {
-    url = new URL(trimmed, 'https://local.invalid');
+    url = new URL(trimmed, new URL(basePath, 'https://local.invalid'));
   } catch {
     return null;
   }
@@ -33,10 +34,10 @@ const toLocalPath = (value) => {
   }
 };
 
-const recordUrlList = (value) => {
+const recordUrlList = (value, basePath) => {
   for (const candidate of value.split(',')) {
     const url = candidate.trim().split(/\s+/, 1)[0];
-    const localPath = toLocalPath(url);
+    const localPath = toLocalPath(url, basePath);
     if (localPath) referencedAssets.add(localPath);
   }
 };
@@ -53,13 +54,18 @@ const collectReferences = async (directory) => {
     if (!documentExtensions.has(extension.toLowerCase())) continue;
 
     const text = await readFile(file, 'utf8');
+    const relativeFile = relative(root, file).split(sep).join('/');
+    const basePath =
+      entry.name === 'index.html' && extension.toLowerCase() === '.html'
+        ? `/${relativeFile.slice(0, -'index.html'.length)}`
+        : `/${relativeFile}`;
     for (const match of text.matchAll(
       /(?:src|srcset|imagesrcset|href|xlink:href|content|poster|data-src|data-background)\s*=\s*(["'])(.*?)\1/gi
     )) {
-      recordUrlList(match[2]);
+      recordUrlList(match[2], basePath);
     }
     for (const match of text.matchAll(/url\(\s*(["']?)(.*?)\1\s*\)/gi)) {
-      const localPath = toLocalPath(match[2]);
+      const localPath = toLocalPath(match[2], basePath);
       if (localPath) referencedAssets.add(localPath);
     }
   }
