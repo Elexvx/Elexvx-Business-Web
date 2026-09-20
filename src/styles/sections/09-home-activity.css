@@ -27,7 +27,7 @@
 
 .site-shell-home .home-news-grid {
   column-gap: var(--home-content-gap);
-  row-gap: var(--home-content-gap);
+  row-gap: 24px;
 }
 
 .site-shell-home .home-product-feature {
