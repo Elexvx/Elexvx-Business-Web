@@ -7,7 +7,7 @@
   "scripts": {
     "dev": "next dev --hostname 127.0.0.1 --port 5173",
     "start": "next dev --hostname 127.0.0.1 --port 5173",
-    "build": "next build && tsx scripts/generate-site.tsx && tsx scripts/inline-home-css.ts && npm run i18n:check",
+    "build": "next build && tsx scripts/generate-site.tsx && tsx scripts/inline-home-css.ts && node scripts/prune-deployment-output.mjs && npm run i18n:check",
     "preview": "tsx scripts/preview-static.ts",
     "typecheck": "tsc --noEmit",
     "lint": "eslint api src/app src/site src/server src/content src/data src/main.tsx src/ssg scripts tests vite.config.ts next.config.mjs next-env.d.ts",
