@@ -302,12 +302,16 @@
   background: var(--color-canvas);
   transition:
     border-color 180ms ease,
-    background-color 180ms ease;
+    background-color 180ms ease,
+    box-shadow 180ms ease,
+    transform 180ms ease;
 }
 
-.service-directory-row:hover {
+.service-directory-row:is(:hover, :focus-visible) {
   border-color: var(--color-action);
   background: var(--color-parchment);
+  box-shadow: 0 6px 18px color-mix(in srgb, var(--color-ink) 9%, transparent);
+  transform: translateY(-2px);
 }
 
 .service-directory-row:focus-visible {
@@ -375,7 +379,7 @@
     transform 180ms ease;
 }
 
-.service-directory-row:hover .service-row-arrow {
+.service-directory-row:is(:hover, :focus-visible) .service-row-arrow {
   color: var(--color-action);
   transform: translateX(3px);
 }
