@@ -24,7 +24,7 @@ describe('content publication gates', () => {
     const insights = loadInsights();
     const news = loadNews();
     const routes = getStaticRoutes(insights, news).map((route) => route.path);
-    expect(routes).toContain('/insights');
+    expect(routes).not.toContain('/insights');
     for (const insight of insights.filter((item) => item.status === 'published')) {
       expect(routes).toContain(`/insights/${insight.slug}`);
     }
@@ -80,7 +80,7 @@ describe('content publication gates', () => {
 
   it('validates parameterized catalog references and gives every static subpage a hero visual', () => {
     expect(validateSiteCatalog()).toBe(true);
-    expect(Object.keys(staticPageHeroByPath)).toHaveLength(13);
+    expect(Object.keys(staticPageHeroByPath)).toHaveLength(12);
     for (const hero of Object.values(staticPageHeroByPath)) {
       expect(hero.title).toBeTruthy();
       expect(hero.primaryAction.href).toBeTruthy();

@@ -4,33 +4,13 @@ import { useCategoryFilter } from '../providers/category-filter';
 
 import { getDirection } from '../../data/site';
 import { pageContent } from '../../data/page-content';
-import { useInsights, useNews, usePublishedInsights, usePublishedNews } from '../providers/content-context';
+import { useInsights, useNews, usePublishedNews } from '../providers/content-context';
 
 import { Eyebrow, ResearchTile, SiteShell } from '../components/index';
 import { ArticleBody, ArticleMetadata, ContinueReading } from '../components/article-reading';
 import { LocalizedText as T, LocalizedTitle as Title, useI18n } from '../providers/i18n';
-import { formatNewsDate, NewsCard, PageHero, InsightList, NotFoundPage } from './shared';
+import { formatNewsDate, NewsCard, PageHero, NotFoundPage } from './shared';
 import type { Insight, NewsItem } from '../../content/types';
-
-export const InsightsPage = () => {
-  const insights = usePublishedInsights();
-  return (
-    <SiteShell activePath="/insights">
-      <PageHero content={pageContent.insights.hero} />
-      <section className="research-tile research-tile-light">
-        <div className="section-heading">
-          <Eyebrow>
-            <Translated>{pageContent.insights.list.eyebrow}</Translated>
-          </Eyebrow>
-          <h2>
-            <Title text={pageContent.insights.list.title} />
-          </h2>
-        </div>
-        <InsightList insights={insights} />
-      </section>
-    </SiteShell>
-  );
-};
 
 export const NewsPage = () => {
   const news = usePublishedNews();

@@ -83,7 +83,7 @@ export const homeContent = {
   publications: {
     eyebrow: 'RESEARCH NOTES',
     title: '研究与技术',
-    action: { label: '查看全部发布', href: '/insights' },
+    action: { label: '查看研究总览', href: '/research' },
     standard: {
       image: visuals.research,
       eyebrow: 'PUBLICATION STANDARD',
@@ -272,24 +272,13 @@ export const pageContent = {
     projects: { eyebrow: 'RELATED PROJECTS', title: '在这个场景中产生的成果。' },
     emptyProjects: '相关项目正在整理。',
   },
-  insights: {
-    hero: {
-      eyebrow: 'INSIGHTS',
-      title: '研究要留下记录，技术才不会只存在于一次交付里。',
-      description: '中文优先，保留必要的 English technical terms；只公开已经说明来源和边界的内容。',
-      primaryAction: { label: '查看研究方向', href: '/research' },
-      secondaryAction: { label: '旧文归档', href: '/archive' },
-      media: visuals.aiData,
-    },
-    list: { eyebrow: 'NEW RESEARCH NOTES', title: '从问题、方法和限制开始阅读。' },
-  },
   news: {
     hero: {
       eyebrow: 'LATEST UPDATES',
       title: '最近新闻',
       description: '公司公告、业务动态与阶段性记录统一收录在这里，并按发布时间持续更新。',
       primaryAction: { label: '回到首页', href: '/' },
-      secondaryAction: { label: '技术文章', href: '/insights' },
+      secondaryAction: { label: '技术文章', href: '/research' },
       media: visuals.research,
     },
     list: { eyebrow: 'NEWSROOM', title: '按时间查看全部动态。' },
@@ -414,7 +403,7 @@ export const pageContent = {
       eyebrow: 'ARCHIVE',
       title: '旧内容保留，但不代表新的研究主线。',
       description: '旧文章进入独立归档区；它们不参与首页、研究方向和新博客的内容排序。',
-      primaryAction: { label: '阅读新技术文章', href: '/insights' },
+      primaryAction: { label: '阅读新技术文章', href: '/research' },
       secondaryAction: { label: '了解公司', href: '/company' },
       media: visuals.research,
     },
@@ -446,7 +435,6 @@ export const staticPageHeroByPath: Record<string, PageHeroContent> = {
   '/capabilities': pageContent.capabilities.hero,
   '/projects': pageContent.projects.hero,
   '/scenarios': pageContent.scenarios.hero,
-  '/insights': pageContent.insights.hero,
   '/news': pageContent.news.hero,
   '/company': pageContent.company.hero,
   '/business': pageContent.business.hero,

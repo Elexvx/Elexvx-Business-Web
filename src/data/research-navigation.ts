@@ -46,7 +46,7 @@ const navigationDefinitions: NavigationGroup[] = [
       {
         title: '继续阅读',
         links: [
-          { label: '技术文章', href: '/insights' },
+          { label: '技术文章', href: '/research' },
           { label: '旧文归档', href: '/archive' },
         ],
       },
@@ -200,7 +200,7 @@ const navigationDefinitions: NavigationGroup[] = [
         title: '项目依据',
         links: [
           { label: '研究方向', href: '/research' },
-          { label: '技术文章', href: '/insights' },
+          { label: '技术文章', href: '/research' },
           { label: '开放合作', href: '/contact' },
         ],
       },
@@ -243,13 +243,13 @@ const navigationDefinitions: NavigationGroup[] = [
     englishTitle: 'READ',
     title: '把研究过程写下来',
     intro: '文章、方法与旧内容，构成可被检验和继续讨论的技术记录。',
-    href: '/insights',
+    href: '/research',
     paths: ['/insights', '/news', '/archive'],
     columns: [
       {
         title: '技术文章',
         links: [
-          { label: '总览', href: '/insights' },
+          { label: '总览', href: '/research' },
           { label: '先定义问题，再选择模型', href: '/insights/question-before-model' },
           { label: '让设备数据回到现场', href: '/insights/industrial-safety-data' },
         ],

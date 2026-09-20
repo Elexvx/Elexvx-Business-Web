@@ -181,7 +181,6 @@ const titleContext = (path: string, locale: Locale) => {
   if (path.startsWith('/products/')) return contexts.product;
   if (path === '/research') return contexts.research;
   if (path.startsWith('/research/')) return contexts.researchArticle;
-  if (path === '/insights') return contexts.insights;
   if (path.startsWith('/insights/')) return contexts.insights;
   return locale === 'en' ? 'Company information' : '公司信息';
 };

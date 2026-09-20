@@ -19,7 +19,6 @@ const ProductCatalogPage = dynamic(() =>
 const ProductDetailPage = dynamic(() => import('../pages/product-catalog').then((module) => module.ProductDetailPage));
 const ArchivePage = dynamic(() => import('../pages/publications').then((module) => module.ArchivePage));
 const InsightPage = dynamic(() => import('../pages/publications').then((module) => module.InsightPage));
-const InsightsPage = dynamic(() => import('../pages/publications').then((module) => module.InsightsPage));
 const NewsPage = dynamic(() => import('../pages/publications').then((module) => module.NewsPage));
 const NewsItemPage = dynamic(() => import('../pages/publications').then((module) => module.NewsItemPage));
 const BrandPage = dynamic(() => import('../pages/company').then((module) => module.BrandPage));
@@ -99,11 +98,6 @@ const staticRoutes: SiteRoute[] = [
     path: '/scenarios',
     meta: { title: titleFor('行业场景'), description: '以行业场景组织真实问题，而不是用服务标签替代现场理解。' },
     render: () => <ScenariosPage />,
-  },
-  {
-    path: '/insights',
-    meta: { title: titleFor('技术文章'), description: 'Elexvx Research 的研究记录、工程方法与技术文章。' },
-    render: () => <InsightsPage />,
   },
   {
     path: '/news',
