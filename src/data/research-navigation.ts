@@ -23,7 +23,7 @@ const navigationDefinitions: NavigationGroup[] = [
     title: '探索研究方向',
     intro: '从数据、设备与模型出发，理解技术如何进入真实世界。',
     href: '/research',
-    paths: ['/research'],
+    paths: ['/research', '/insights', '/archive'],
     columns: [
       {
         title: '研究',
@@ -233,40 +233,6 @@ const navigationDefinitions: NavigationGroup[] = [
         links: [
           { label: '起重设备智能安全管理', href: '/projects/industrial-safety' },
           { label: '浏览全部成果', href: '/projects' },
-        ],
-      },
-    ],
-  },
-  {
-    id: 'read',
-    label: '阅读',
-    englishTitle: 'READ',
-    title: '把研究过程写下来',
-    intro: '文章、方法与旧内容，构成可被检验和继续讨论的技术记录。',
-    href: '/research',
-    paths: ['/insights', '/news', '/archive'],
-    columns: [
-      {
-        title: '技术文章',
-        links: [
-          { label: '总览', href: '/research' },
-          { label: '先定义问题，再选择模型', href: '/insights/question-before-model' },
-          { label: '让设备数据回到现场', href: '/insights/industrial-safety-data' },
-        ],
-      },
-      {
-        title: '最新动态',
-        links: [{ label: '总览', href: '/news' }],
-      },
-      {
-        title: '按主题阅读',
-        links: [{ label: 'LLM / AI 安全', href: '/research/llm-ai-safety' }],
-      },
-      {
-        title: '历史内容',
-        links: [
-          { label: '旧文归档', href: '/archive' },
-          { label: '关于内容依据', href: '/company/brand' },
         ],
       },
     ],

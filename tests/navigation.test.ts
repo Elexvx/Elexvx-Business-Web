@@ -9,6 +9,14 @@ describe('shared navigation availability', () => {
     expect(ids.indexOf('services')).toBeLessThan(ids.indexOf('company'));
   });
 
+  it('does not expose a standalone reading menu', () => {
+    const ids = navigationGroups.map((group) => group.id);
+
+    expect(ids).toContain('activities');
+    expect(ids).not.toContain('read');
+    expect(navigationGroups.find((group) => group.id === 'research')?.paths).toContain('/insights');
+  });
+
   it('includes published research articles in search availability', () => {
     expect(createLinkAvailability(['/research/example'], ['example'])('/research/example')).toBe(true);
   });
