@@ -101,7 +101,7 @@
 }
 
 .site-shell-openai .qualification-card figcaption {
-  padding: 0 18px 18px;
+  padding: 0 0 18px;
 }
 
 .site-shell-openai :is(.direction-grid, .home-direction-grid, .home-media-grid) {
@@ -365,7 +365,7 @@
   }
 
   .site-shell-openai .qualification-card figcaption {
-    padding: 0 12px 14px;
+    padding: 0 0 14px;
   }
 
   .site-shell-openai :is(.process-row, .insight-list-item, .principle-row, .evidence-row, .research-index-row) {

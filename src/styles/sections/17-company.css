@@ -248,7 +248,7 @@
   line-height: 1.35;
   letter-spacing: -0.02em;
 }
-.qualification-card h3 { font-size: var(--card-title-size); line-height: 1.45; margin: 12px 0; }
+.qualification-card h3 { font-size: var(--card-title-size); font-weight: 400; line-height: 1.45; margin: 12px 0; text-align: left; }
 .qualification-card { display: flex; flex-direction: column; height: 100%; }
 .qualification-card figcaption { display: flex; flex: 1; flex-direction: column; }
 .qualification-card figcaption > p:first-of-type { margin-top: auto; }
