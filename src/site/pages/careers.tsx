@@ -3,7 +3,7 @@ import { Translated } from '../providers/i18n';
 import { CompanyIntro } from '../components/company-intro';
 import { SiteSelect } from '../components/primitives/select';
 import { useState } from 'react';
-import { jobs, jobsData, jobApplicationEmail, jobApplicationHref } from '../../data/jobs';
+import { jobs, jobsData, jobApplicationHref } from '../../data/jobs';
 import { careersContent } from '../../data/careers';
 import { SiteShell, ActionButton } from '../components/index';
 import { useI18n } from '../providers/i18n';
@@ -141,12 +141,6 @@ export const CareersPage = () => {
               <Translated>{'暂无匹配职位，请尝试其他关键词或筛选条件。'}</Translated>
             </p>
           )}
-          <div className="careers-application-entry">
-            <ActionButton href={jobApplicationHref}>邮件申请</ActionButton>
-            <p className="careers-application-note">
-              <Translated>{'申请材料请发送至'}</Translated> <a href={jobApplicationHref}>{jobApplicationEmail}</a>
-            </p>
-          </div>
         </section>
         <section className="careers-closing">
           <h2>
@@ -217,7 +211,7 @@ export const JobPage = ({ id }: { id: string }) => {
               ) : null
             )}
             <div className="job-detail-apply">
-              <ActionButton href={jobApplicationHref}>立即申请</ActionButton>
+              <ActionButton href={job.applyUrl ?? jobApplicationHref}>立即申请</ActionButton>
             </div>
           </div>
         </div>

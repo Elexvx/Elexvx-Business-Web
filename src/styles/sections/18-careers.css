@@ -79,23 +79,6 @@
 .careers-roles > p {
   color: var(--color-ink-muted);
 }
-.careers-application-entry {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 12px 20px;
-  margin-top: 24px;
-}
-.careers-application-note {
-  margin: 0;
-  color: var(--color-ink-muted);
-  line-height: 1.6;
-}
-.careers-application-note a {
-  color: var(--color-ink);
-  text-decoration: underline;
-  text-underline-offset: 3px;
-}
 .careers-filters {
   display: grid;
   grid-template-columns: 2fr 1fr 1fr;

@@ -12,7 +12,7 @@ export interface Job {
   applyUrl?: string;
 }
 
-export const jobApplicationEmail = 'hr@elexvx.com';
+const jobApplicationEmail = 'hr@elexvx.com';
 export const jobApplicationHref = `mailto:${jobApplicationEmail}`;
 
 export const jobsData: Record<string, Job> = {
