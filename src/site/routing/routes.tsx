@@ -142,7 +142,7 @@ const staticRoutes: SiteRoute[] = [
   },
   {
     path: '/careers',
-    meta: { title: titleFor('加入我们'), description: '加入关注真实问题、技术研发和工程系统的团队。' },
+    meta: { title: titleFor('加入 Elexvx'), description: '加入关注真实问题、技术研发和工程系统的团队。' },
     render: () => <CareersPage />,
   },
   {
@@ -188,6 +188,8 @@ const originalRedirectRoutes: Record<string, string> = {
   '/latest-news/2025-07-17-01': '/news/2025-07-17-01',
   '/latest-news/2025-08-21-01': '/news/2025-08-21-01',
   '/latest-news/2024-12-31-01': '/news/2024-12-31-01',
+  '/activities/elexvxai-lab-established-2026': '/news/elexvxai-lab-established-2026',
+  '/en/activities/elexvxai-lab-established-2026': '/en/news/elexvxai-lab-established-2026',
 };
 
 export const redirectRoutes = Object.fromEntries(
@@ -233,6 +235,7 @@ const configuredRoutes = (insights: Insight[], news: NewsItem[] = []): SiteRoute
         image: item.cover,
         openGraphType: 'article' as const,
         publishedAt: item.publishedAt,
+        updatedAt: item.updatedAt,
         author: item.author,
       },
       render: () => <ActivityPage item={item} related={activityItems} />,

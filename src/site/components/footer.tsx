@@ -1,6 +1,7 @@
 'use client';
 import { Switch } from 'radix-ui';
 import { useState } from 'react';
+import { SiteImage } from './site-image';
 
 import { siteIdentity } from '../../data/site';
 import { navigationGroups, withNewsCategories } from '../../data/research-navigation';
@@ -59,18 +60,41 @@ export const Footer = ({ linkOrigin }: { linkOrigin?: string }) => {
         </div>
         <div className="footer-legal">
           <div className="footer-identity">
-            <span>{t('© 2026 由宏翔商道 / Elexvx 设计，并保留所有权利。')}</span>
+            <span>{t('© 2026 由宏翔商道 / Elexvx® 设计，并保留所有权利。')}</span>
             {registrations.length > 0 && (
               <div className="footer-registrations" aria-label={t('网站备案信息')}>
-                {registrations.map(([kind, entry]) =>
-                  /^https:\/\//.test(entry.url.trim()) ? (
-                    <a key={kind} href={entry.url.trim()} target="_blank" rel="noopener noreferrer">
+                {registrations.map(([kind, entry]) => {
+                  const contents = (
+                    <>
+                      {kind === 'publicSecurity' && (
+                        <SiteImage
+                          className="footer-registration-icon"
+                          src="/images/public-security-registration-icon.png"
+                          alt=""
+                          width={20}
+                          height={20}
+                        />
+                      )}
                       {t(entry.number)}
+                    </>
+                  );
+
+                  return /^https:\/\//.test(entry.url.trim()) ? (
+                    <a
+                      className="footer-registration"
+                      key={kind}
+                      href={entry.url.trim()}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {contents}
                     </a>
                   ) : (
-                    <span key={kind}>{t(entry.number)}</span>
-                  )
-                )}
+                    <span className="footer-registration" key={kind}>
+                      {contents}
+                    </span>
+                  );
+                })}
               </div>
             )}
           </div>

@@ -343,7 +343,7 @@ export const pageContent = {
   careers: {
     hero: {
       eyebrow: 'ELEXVX CAREERS',
-      title: '加入宏翔商道',
+      title: '加入 Elexvx',
       description: '和认真做事的人一起，把真实问题变成可以使用的系统。',
       primaryAction: { label: '联系招聘团队', href: '/contact' },
       secondaryAction: { label: '了解团队', href: '/company/team' },

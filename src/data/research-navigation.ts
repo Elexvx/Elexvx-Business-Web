@@ -138,7 +138,7 @@ const navigationDefinitions: NavigationGroup[] = [
       },
       {
         title: '联系 Elexvx',
-        links: [{ label: '加入我们', href: '/careers' }],
+        links: [{ label: '加入 Elexvx', href: '/careers' }],
       },
     ],
   },
@@ -247,8 +247,13 @@ export const navigationGroups: NavigationGroup[] = navigationDefinitions.map((gr
     ...group,
     columns: [
       {
-        title: group.id === 'services' ? '服务入口' : '总览',
-        links: [{ label: group.id === 'services' ? '服务' : '总览', href: group.href }],
+        title: group.id === 'services' ? '服务入口' : group.id === 'company' ? '关于我们' : '总览',
+        links: [
+          {
+            label: group.id === 'services' ? '服务' : group.id === 'company' ? '关于我们' : '总览',
+            href: group.href,
+          },
+        ],
       },
       ...(uniqueChildren.length
         ? [{ title: group.id === 'research' || group.id === 'activities' ? '分类' : '了解更多', links: uniqueChildren }]

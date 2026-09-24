@@ -9,7 +9,10 @@
     "canonicalOrigin": "https://www.elexvx.com",
     "registrations": {
       "icp": { "number": "苏ICP备2025160017号", "url": "https://beian.miit.gov.cn/" },
-      "publicSecurity": { "number": "", "url": "" }
+      "publicSecurity": {
+        "number": "苏公网安备32010502011583号",
+        "url": "https://beian.mps.gov.cn/#/query/webSearch?code=32010502011583"
+      }
     }
   },
   "retiredResearchDirectionSlugs": ["ai-data", "industrial-intelligence"],
@@ -225,7 +228,7 @@
           "href": "/company/brand"
         },
         {
-          "label": "加入我们",
+          "label": "加入 Elexvx",
           "href": "/careers"
         }
       ]

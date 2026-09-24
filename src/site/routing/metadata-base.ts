@@ -20,7 +20,7 @@ const englishMetadata: Record<string, string> = {
   团队: 'Team',
   品牌: 'Brand',
   并行业务: 'Business',
-  加入我们: 'Careers',
+  '加入 Elexvx': 'Join Elexvx',
   开放合作: 'Collaborate',
   旧文归档: 'Archive',
   'AI 与数据智能、工业智能与安全、LLM / AI 安全三个并列研究方向。':

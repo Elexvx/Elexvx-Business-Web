@@ -30,6 +30,11 @@ export const existingEnglish: Record<string, string> = {
   'ElexvxAI 创新产业研发中心正式成立': 'ElexvxAI Innovation Industry R&D Center officially established',
   'ElexvxAI 创新产业研发中心于 2026 年 3 月 6 日正式成立，我们将持续推进 AI 研究、工程实践与产业落地。':
     'ElexvxAI Innovation Industry R&D Center was officially established on March 6, 2026, and will continue advancing AI research, engineering practice, and industrial applications.',
+  '中心成立后，将持续推进 AI 研究、工程实践与产业落地。':
+    'The center will continue advancing AI research, engineering practice, and industrial applications.',
+  创新产业研发中心: 'Innovation R&D Center',
+  'AI 研究': 'AI research',
+  产业落地: 'Industrial applications',
   服务: 'Services',
   '进入 Elexvx 服务站点': 'Access Elexvx service sites',
   帮助文档: 'Help documentation',
@@ -37,8 +42,9 @@ export const existingEnglish: Record<string, string> = {
   服务状态: 'Service status',
   网站备案信息: 'Website filing information',
   苏ICP备2025160017号: 'Su ICP Filing No. 2025160017',
-  '© 2026 由宏翔商道 / Elexvx 设计，并保留所有权利。':
-    '© 2026 Designed by Hongxiang Shangdao / Elexvx. All rights reserved.',
+  苏公网安备32010502011583号: 'Su Public Security Registration No. 32010502011583',
+  '© 2026 由宏翔商道 / Elexvx® 设计，并保留所有权利。':
+    '© 2026 Designed by Hongxiang Shangdao / Elexvx®. All rights reserved.',
   查看案例: 'View case study',
   'ELEXVX 期刊管理与出版协同系统助力凯城国际':
     'ELEXVX Journal Management & Publishing Collaboration System for Kaicheng International',
@@ -65,6 +71,7 @@ export const existingEnglish: Record<string, string> = {
   全部行业场景: 'All scenarios',
   全部项目成果: 'All projects',
   公司: 'Company',
+  关于我们: 'About us',
   公司与业务: 'Company and business',
   '公司是主体，研究是我们理解未来的一种方式。':
     'The company is the operating entity. Research is how we understand what comes next.',
@@ -74,7 +81,7 @@ export const existingEnglish: Record<string, string> = {
   关于内容依据: 'About our evidence',
   关闭导航菜单: 'Close navigation',
   打开导航菜单: 'Open navigation',
-  加入我们: 'Careers',
+  '加入 Elexvx': 'Join Elexvx',
   发送合作邮件: 'Email our team',
   '合作方名称、项目边界、交付内容和可公开成果确认后，再形成完整案例；未授权信息不使用模糊话术替代。':
     'A full case study is published only after the partner, scope, delivery, and disclosure boundaries are confirmed.',

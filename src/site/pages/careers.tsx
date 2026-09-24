@@ -3,7 +3,7 @@ import { Translated } from '../providers/i18n';
 import { CompanyIntro } from '../components/company-intro';
 import { SiteSelect } from '../components/primitives/select';
 import { useState } from 'react';
-import { jobs, jobsData } from '../../data/jobs';
+import { jobs, jobsData, jobApplicationEmail, jobApplicationHref } from '../../data/jobs';
 import { careersContent } from '../../data/careers';
 import { SiteShell, ActionButton } from '../components/index';
 import { useI18n } from '../providers/i18n';
@@ -25,12 +25,12 @@ export const CareersPage = () => {
   return (
     <SiteShell activePath="/careers">
       <div className="careers-page">
-        <CompanyIntro eyebrow="ELEXVX CAREERS" title="加入宏翔商道" description={careersContent.intro}>
+        <CompanyIntro eyebrow="ELEXVX CAREERS" title="加入 Elexvx" description={careersContent.intro}>
           <ActionButton href="#open-roles">查看热招职位</ActionButton>
         </CompanyIntro>
         <section className="careers-culture" aria-labelledby="culture-title">
           <h2 id="culture-title">
-            <Translated>{'在宏翔商道，你不仅获得一份工作，'}</Translated>
+            <Translated>{'在 Elexvx，你不仅获得一份工作，'}</Translated>
             <br />
             <Translated>{'而是与志同道合者共创价值的旅程。'}</Translated>
           </h2>
@@ -141,10 +141,16 @@ export const CareersPage = () => {
               <Translated>{'暂无匹配职位，请尝试其他关键词或筛选条件。'}</Translated>
             </p>
           )}
+          <div className="careers-application-entry">
+            <ActionButton href={jobApplicationHref}>邮件申请</ActionButton>
+            <p className="careers-application-note">
+              <Translated>{'申请材料请发送至'}</Translated> <a href={jobApplicationHref}>{jobApplicationEmail}</a>
+            </p>
+          </div>
         </section>
         <section className="careers-closing">
           <h2>
-            <Translated>{'与我们一起，创造未来'}</Translated>
+            <Translated>{'加入 Elexvx，共创未来'}</Translated>
           </h2>
           <p>
             <Translated>{careersContent.values}</Translated>
@@ -210,13 +216,10 @@ export const JobPage = ({ id }: { id: string }) => {
                 </section>
               ) : null
             )}
+            <div className="job-detail-apply">
+              <ActionButton href={jobApplicationHref}>立即申请</ActionButton>
+            </div>
           </div>
-          <aside>
-            {job.applyUrl && <ActionButton href={job.applyUrl}>申请职位 ↗</ActionButton>}
-            <p>
-              <Translated>{'通过招聘表单提交申请。'}</Translated>
-            </p>
-          </aside>
         </div>
       </article>
     </SiteShell>

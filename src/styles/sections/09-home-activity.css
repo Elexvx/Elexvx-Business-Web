@@ -319,7 +319,7 @@
 
 /* Both the homepage and activity index render the same ActivitySection. */
 .activities-page-inner {
-  padding: 0 32px;
+  padding: 0 32px 64px;
 }
 .site-shell-home .home-section-topline .activity-section-heading {
   margin: 0;
@@ -332,6 +332,7 @@
 @media (max-width: 720px) {
   .activities-page-inner {
     padding-inline: 20px;
+    padding-bottom: 48px;
   }
 }
 

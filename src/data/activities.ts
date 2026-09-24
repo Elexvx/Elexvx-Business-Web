@@ -5,6 +5,7 @@ export type Activity = {
   title: string;
   excerpt: string;
   publishedAt: string;
+  updatedAt?: string;
   author: string;
   keywords?: string[];
   keywordsEn?: string[];

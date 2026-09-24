@@ -14,6 +14,7 @@
     "format:check": "prettier --check api src/app src/site src/server src/content src/data src/styles scripts tests package.json tsconfig.json next.config.mjs vite.config.ts",
     "content:check": "tsx scripts/content-check.ts",
     "content:new": "tsx scripts/create-insight.ts",
+    "indexnow:submit": "tsx scripts/submit-indexnow.ts",
     "test": "vitest run",
     "check": "npm run typecheck && npm run lint && npm run format:check && npm run content:check && npm test && npm run build",
     "design:sync": "node scripts/sync-design.mjs",

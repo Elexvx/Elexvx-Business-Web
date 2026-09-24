@@ -421,6 +421,12 @@ html[data-theme='light'] .site-shell-openai .site-footer .footer-legal a {
   color: var(--color-ink-muted);
 }
 
+html[data-theme='light'] .site-shell-openai .site-footer .footer-registrations > a:hover,
+html[data-theme='light'] .site-shell-openai .site-footer .footer-registrations > a:focus-visible {
+  color: var(--color-ink);
+  text-decoration: none;
+}
+
 html[data-theme='light'] .site-shell-openai .site-footer .footer-legal {
   border-top-color: var(--color-hairline);
 }

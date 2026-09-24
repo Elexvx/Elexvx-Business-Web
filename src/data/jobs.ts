@@ -12,6 +12,9 @@ export interface Job {
   applyUrl?: string;
 }
 
+export const jobApplicationEmail = 'hr@elexvx.com';
+export const jobApplicationHref = `mailto:${jobApplicationEmail}`;
+
 export const jobsData: Record<string, Job> = {
   llm: {
     id: 'llm',
@@ -20,7 +23,7 @@ export const jobsData: Record<string, Job> = {
     type: '全职',
     experience: '3年以上',
     salary: '10k-30k/月',
-    applyUrl: 'https://wcn31vnfistw.feishu.cn/share/base/form/shrcn4zbpIoR2dRl3MLpRPXeK2f',
+    applyUrl: jobApplicationHref,
     description:
       '负责大模型算法研发和优化，参与AI产品的技术架构设计，确保算法的高效性和准确性，推动技术创新与应用落地。',
     requirements: [
@@ -44,7 +47,7 @@ export const jobsData: Record<string, Job> = {
     type: '全职',
     experience: '2年以上',
     salary: '15k-25k/月',
-    applyUrl: 'https://wcn31vnfistw.feishu.cn/share/base/form/shrcn4zbpIoR2dRl3MLpRPXeK2f',
+    applyUrl: jobApplicationHref,
     description:
       '负责公司信息安全架构设计与建设，开展安全威胁评估和防护工作，确保公司数据和系统的安全性，推动信息安全文化建设。',
     requirements: [
@@ -70,7 +73,7 @@ export const jobsData: Record<string, Job> = {
     type: '全职',
     experience: '2年以上',
     salary: '12k-28k/月',
-    applyUrl: 'https://wcn31vnfistw.feishu.cn/share/base/form/shrcn4zbpIoR2dRl3MLpRPXeK2f',
+    applyUrl: jobApplicationHref,
     description:
       '负责Web应用全栈开发，参与前后端架构设计和优化，打造高性能、高可用的产品，推动技术创新与最佳实践落地。',
     requirements: [
@@ -99,7 +102,7 @@ export const jobsData: Record<string, Job> = {
     type: '全职',
     experience: '按件数',
     salary: '面议',
-    applyUrl: 'https://wcn31vnfistw.feishu.cn/share/base/form/shrcn4zbpIoR2dRl3MLpRPXeK2f',
+    applyUrl: jobApplicationHref,
     description: '负责软件著作权的代理申请和咨询工作，为企业和个人提供专业的知识产权保护服务，推动创新成果的有效保护。',
     requirements: [
       '大专及以上学历，法律、知识产权或相关专业优先',
@@ -124,7 +127,7 @@ export const jobsData: Record<string, Job> = {
     type: '全职',
     experience: '按件数',
     salary: '面议',
-    applyUrl: 'https://wcn31vnfistw.feishu.cn/share/base/form/shrcn4zbpIoR2dRl3MLpRPXeK2f',
+    applyUrl: jobApplicationHref,
     description:
       '负责专利的代理申请、审查意见回复和维护工作，为企业提供全面的专利保护和战略咨询服务，助力创新企业成长。',
     requirements: [
@@ -143,32 +146,6 @@ export const jobsData: Record<string, Job> = {
       '进行专利维护管理，提供专利战略咨询',
     ],
   },
-  trademark_agent: {
-    id: 'trademark_agent',
-    title: '商标代理师',
-    location: '江苏南京建邺',
-    type: '全职',
-    experience: '按件数',
-    salary: '面议',
-    applyUrl: 'https://wcn31vnfistw.feishu.cn/share/base/form/shrcn4zbpIoR2dRl3MLpRPXeK2f',
-    description: '负责商标的注册申请、异议处理和维护工作，为企业品牌提供专业的保护和管理服务，助力品牌建设和保护。',
-    requirements: [
-      '大专及以上学历，法律、商务或市场相关专业优先',
-      '了解商标法律法规和商标局审查规则',
-      '具备良好的文案能力和品牌意识',
-      '熟悉商标分类和注册流程',
-      '具有较强的客户服务和沟通能力',
-      '能够熟练使用大语言模型，会使用ChatGPT、Gemini、Claude等，有成果者优先',
-    ],
-    responsibilities: [
-      '与客户沟通商标策略，了解品牌定位和保护需求',
-      '进行商标近似查询和风险评估，提出申报建议',
-      '准备商标注册申请文件，确保信息准确完整',
-      '处理商标局审查意见，参与商标异议和纠纷处理',
-      '协助客户进行商标续展和维护管理',
-      '跟踪商标进度，及时反馈申报状态',
-    ],
-  },
   hotel_receptionist: {
     id: 'hotel_receptionist',
     title: '酒店前厅员',
@@ -176,7 +153,7 @@ export const jobsData: Record<string, Job> = {
     type: '全职',
     experience: '1年以上',
     salary: '面议',
-    applyUrl: 'https://wcn31vnfistw.feishu.cn/share/base/form/shrcn4zbpIoR2dRl3MLpRPXeK2f',
+    applyUrl: jobApplicationHref,
     description:
       '锦隆国际酒店前台接待员，负责酒店前台各项接待工作，为宾客提供专业、热情的服务，确保客人获得优质的入住体验。',
     requirements: [
@@ -197,28 +174,6 @@ export const jobsData: Record<string, Job> = {
       '为客人提供问询服务，提供有关酒店周边服务设施、市内外交通、旅游景点、娱乐购物等信息',
     ],
   },
-  StartupMentor: {
-    id: 'StartupMentor',
-    title: '创业导师',
-    location: '江苏南京建邺',
-    type: '兼职',
-    experience: '按数量',
-    salary: '面议',
-    applyUrl: 'https://wcn31vnfistw.feishu.cn/share/base/form/shrcn4zbpIoR2dRl3MLpRPXeK2f',
-    description: '为创业创新型企业提供指导和支持，帮助孵化优秀创业项目，推动创新型企业的发展，分享创业经验和行业洞察。',
-    requirements: [
-      '具有创业或企业管理经验3年以上',
-      '在相关领域具有专业知识和成功案例',
-      '具备良好的沟通能力和指导能力',
-      '对创新创业充满热情，愿意分享知识和资源',
-    ],
-    responsibilities: [
-      '为孵化企业提供战略和业务指导，帮助制定发展计划',
-      '分享行业经验和最佳实践，指导企业解决实际问题',
-      '建立导师与创业者的沟通渠道，定期反馈和总结',
-      '支持企业融资、融人、融智等方面的对接与合作',
-    ],
-  },
   anbao: {
     id: 'anbao',
     title: '演唱会看台安保',
@@ -226,7 +181,7 @@ export const jobsData: Record<string, Job> = {
     type: '兼职',
     experience: '按场次',
     salary: '100元/次',
-    applyUrl: 'https://wcn31vnfistw.feishu.cn/share/base/form/shrcn4zbpIoR2dRl3MLpRPXeK2f',
+    applyUrl: jobApplicationHref,
     description: '负责演唱会看台区域秩序维护，确保演唱会的顺利进行，及时处理突发情况，保障观众安全。',
     requirements: ['拥有中华人民共和国保安员证', '年满18周岁', '具备良好的身体素质和应变能力'],
     responsibilities: [

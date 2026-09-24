@@ -17,8 +17,18 @@
     "api/logout.ts": {
       "regions": ["hkg1"],
       "maxDuration": 10
+    },
+    "api/indexnow.ts": {
+      "regions": ["hkg1"],
+      "maxDuration": 30
     }
   },
+  "crons": [
+    {
+      "path": "/api/indexnow/",
+      "schedule": "17 1 * * *"
+    }
+  ],
   "redirects": [
     {
       "source": "/:path*",
@@ -172,6 +182,16 @@
     {
       "source": "/latest-news/2024-12-31-01",
       "destination": "/news/2024-12-31-01",
+      "permanent": true
+    },
+    {
+      "source": "/activities/elexvxai-lab-established-2026",
+      "destination": "/news/elexvxai-lab-established-2026",
+      "permanent": true
+    },
+    {
+      "source": "/en/activities/elexvxai-lab-established-2026",
+      "destination": "/en/news/elexvxai-lab-established-2026",
       "permanent": true
     },
     {
