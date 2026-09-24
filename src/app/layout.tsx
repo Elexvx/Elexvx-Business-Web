@@ -11,7 +11,7 @@ import { ThemeProvider } from '../site/providers/theme-provider';
 const themeInitializer = `
   (() => {
     document.documentElement.lang = /^\\/en(?:\\/|$)/.test(window.location.pathname) ? 'en' : 'zh-CN';
-    const storageKey = 'elexvx-theme';
+    const storageKey = 'elexvx-theme-mode';
     const solarTheme = () => {
       const latitude = 32.0603;
       const longitude = 118.7969;
@@ -63,24 +63,13 @@ const themeInitializer = `
         : currentSolarHour >= sunriseSolarHour || currentSolarHour < sunsetSolarHour;
       return isDaylight ? 'light' : 'dark';
     };
-    const systemTheme = (() => {
-      try {
-        if (typeof window.matchMedia !== 'function') return null;
-        const preference = window.matchMedia('(prefers-color-scheme: dark)');
-        return typeof preference.matches === 'boolean' ? (preference.matches ? 'dark' : 'light') : null;
-      } catch {
-        return null;
-      }
-    })();
     try {
-      const storedTheme = window.localStorage.getItem(storageKey);
-      const theme = storedTheme === 'light' || storedTheme === 'dark'
-        ? storedTheme
-        : systemTheme ?? solarTheme();
+      const storedMode = window.localStorage.getItem(storageKey);
+      const theme = storedMode === 'light' || storedMode === 'dark' ? storedMode : solarTheme();
       document.documentElement.dataset.theme = theme;
       document.documentElement.style.colorScheme = theme;
     } catch {
-      const theme = systemTheme ?? solarTheme();
+      const theme = solarTheme();
       document.documentElement.dataset.theme = theme;
       document.documentElement.style.colorScheme = theme;
     }

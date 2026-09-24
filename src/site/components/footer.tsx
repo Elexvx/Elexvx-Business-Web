@@ -19,7 +19,7 @@ export const Footer = ({ linkOrigin }: { linkOrigin?: string }) => {
     return linkOrigin && localizedHref.startsWith('/') ? new URL(localizedHref, linkOrigin).href : localizedHref;
   };
   const resolvedSwitchHref = resolveHref(switchHref);
-  const { theme, toggleTheme } = useTheme();
+  const { theme, mode, toggleTheme } = useTheme();
   const isAvailableLink = useAvailableLink();
   const newsCategories = usePublishedNews().map((item) => item.category);
   const [languageMenuOpen, setLanguageMenuOpen] = useState(false);
@@ -104,22 +104,18 @@ export const Footer = ({ linkOrigin }: { linkOrigin?: string }) => {
               type="button"
               aria-label={
                 locale === 'en'
-                  ? theme === 'dark'
-                    ? 'Dark mode'
-                    : 'Light mode'
-                  : theme === 'dark'
-                    ? '深色模式'
-                    : '浅色模式'
+                  ? `${mode === 'auto' ? 'Automatic' : 'Manual'} ${theme} mode`
+                  : `${mode === 'auto' ? '自动' : '手动'}${theme === 'dark' ? '深色' : '浅色'}模式`
               }
               checked={theme === 'dark'}
               title={
                 locale === 'en'
-                  ? theme === 'dark'
-                    ? 'Switch to light mode'
-                    : 'Switch to dark mode'
-                  : theme === 'dark'
-                    ? '切换到浅色模式'
-                    : '切换到深色模式'
+                  ? mode === 'auto'
+                    ? 'Theme follows local sunrise and sunset. Click to set a manual mode.'
+                    : `Manual theme. Click to switch to ${theme === 'dark' ? 'light' : 'dark'} mode.`
+                  : mode === 'auto'
+                    ? '主题随本地日出日落自动切换，点击可手动设置。'
+                    : `手动模式，点击切换到${theme === 'dark' ? '浅色' : '深色'}模式。`
               }
               onCheckedChange={toggleTheme}
             >

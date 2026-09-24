@@ -5,7 +5,7 @@ export type SunLocation = {
   longitude: number;
 };
 
-export const THEME_STORAGE_KEY = 'elexvx-theme';
+export const THEME_STORAGE_KEY = 'elexvx-theme-mode';
 
 // Used when location access is unavailable. The site is operated from Nanjing.
 export const DEFAULT_SUN_LOCATION: SunLocation = {
