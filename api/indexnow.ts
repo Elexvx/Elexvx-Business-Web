@@ -1,6 +1,6 @@
 import type { IncomingMessage, ServerResponse } from 'node:http';
 
-import { submitRecentIndexNowArticles } from '../src/server/indexnow.js';
+import { submitRecentIndexNowPages } from '../src/server/indexnow.js';
 
 export default async function handler(request: IncomingMessage, response: ServerResponse) {
   response.setHeader('Content-Type', 'application/json; charset=utf-8');
@@ -21,7 +21,10 @@ export default async function handler(request: IncomingMessage, response: Server
   }
 
   try {
-    const result = await submitRecentIndexNowArticles({ lookbackDays: 3 });
+    const result = await submitRecentIndexNowPages({ lookbackDays: 3 });
+    console.info(
+      JSON.stringify({ event: 'indexnow.submit.completed', status: result.status, submitted: result.urls.length })
+    );
     response.statusCode = 200;
     response.end(
       JSON.stringify({
@@ -30,7 +33,7 @@ export default async function handler(request: IncomingMessage, response: Server
         status: result.status,
         message: result.urls.length
           ? 'IndexNow received the URLs; indexing is not guaranteed.'
-          : 'No recent article URLs.',
+          : 'No recent article or collection URLs.',
       })
     );
   } catch (error) {

@@ -1,8 +1,18 @@
 import { describe, expect, it } from 'vitest';
 import { createLinkAvailability } from '../src/data/navigation-availability';
-import { navigationGroups } from '../src/data/research-navigation';
+import { navigationGroups, withNewsCategories } from '../src/data/research-navigation';
 
 describe('shared navigation availability', () => {
+  it('links category menus to independently crawlable pages', () => {
+    const groups = withNewsCategories(navigationGroups, ['公告']);
+    const links = groups.flatMap((group) => group.columns.flatMap((column) => column.links));
+    expect(links.some((link) => link.href === '/research/category/chip-architecture/')).toBe(true);
+    expect(links.some((link) => link.href === '/news/category/announcements/')).toBe(true);
+    expect(links.some((link) => link.href.includes('?category='))).toBe(false);
+    const available = createLinkAvailability(['/research/category/chip-architecture'], []);
+    expect(available('/research/category/chip-architecture/')).toBe(true);
+    expect(available('/research/category/missing/')).toBe(false);
+  });
   it('places the service hub before the Elexvx company section', () => {
     const ids = navigationGroups.map((group) => group.id);
 

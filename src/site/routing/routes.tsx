@@ -1,4 +1,6 @@
 import { publishedResearch } from '../../data/research-articles';
+import { articleCategories, articleCategoryPath, type ArticleSection } from '../../data/article-categories';
+import { translateEnglish } from '../translation';
 import { homeContent } from '../../data/page-content';
 import { jobs } from '../../data/jobs';
 import { publishedActivities, toActivitySummary } from '../../data/activities';
@@ -45,6 +47,8 @@ const NotFoundPage = dynamic(() => import('../pages/shared').then((module) => mo
 export type RouteMeta = {
   title: string;
   description: string;
+  titleEn?: string;
+  descriptionEn?: string;
   image?: string;
   robots?: 'index,follow' | 'noindex,nofollow';
   openGraphType?: 'website' | 'article';
@@ -65,10 +69,48 @@ const researchItems = publishedResearch.map(toActivitySummary);
 const activityItems = publishedActivities.map(toActivitySummary);
 const caseStudyItems = publishedCaseStudies.map(toCaseStudySummary);
 
+const latestContentDate = (items: Array<{ publishedAt: string; updatedAt?: string }>) =>
+  items
+    .map((item) => item.updatedAt || item.publishedAt)
+    .sort()
+    .at(-1);
+
+const categoryRoutes = (section: ArticleSection, news: NewsItem[]): SiteRoute[] => {
+  const items =
+    section === 'research'
+      ? researchItems
+      : section === 'activities'
+        ? activityItems
+        : news.filter((item) => item.status === 'published');
+  const sectionLabel = { research: '研究', activities: '活动', news: '新闻' }[section];
+  return articleCategories(section, items).map(({ id, label }) => ({
+    path: articleCategoryPath(section, id).replace(/\/$/, ''),
+    meta: {
+      title: `${label} · ${sectionLabel}`,
+      titleEn: `${translateEnglish(label)} · ${translateEnglish(sectionLabel)}`,
+      description: `浏览 Elexvx 已发布的${label}${sectionLabel}内容、文章摘要与发布时间。`,
+      descriptionEn: `Browse published ${translateEnglish(label)} ${translateEnglish(sectionLabel).toLowerCase()} from Elexvx, including article summaries and publication dates.`,
+      updatedAt: latestContentDate(items.filter((item) => articleCategories(section, [item])[0].id === id)),
+    },
+    render: () =>
+      section === 'research' ? (
+        <ResearchPage items={researchItems} initialCategory={id} />
+      ) : section === 'activities' ? (
+        <ActivitiesPage items={activityItems} initialCategory={id} />
+      ) : (
+        <NewsPage initialCategory={id} />
+      ),
+  }));
+};
+
 const staticRoutes: SiteRoute[] = [
   {
     path: '/activities',
-    meta: { title: titleFor('活动'), description: 'Elexvx 活动记录与交流。' },
+    meta: {
+      title: titleFor('活动'),
+      description: 'Elexvx 活动记录与交流。',
+      updatedAt: latestContentDate(activityItems),
+    },
     render: () => <ActivitiesPage items={activityItems} />,
   },
   {
@@ -81,6 +123,7 @@ const staticRoutes: SiteRoute[] = [
     meta: {
       title: titleFor('研究方向'),
       description: '浏览全部已发布的研究文章。',
+      updatedAt: latestContentDate(researchItems),
     },
     render: () => <ResearchPage items={researchItems} />,
   },
@@ -197,7 +240,17 @@ export const redirectRoutes = Object.fromEntries(
 );
 
 const configuredRoutes = (insights: Insight[], news: NewsItem[] = []): SiteRoute[] => [
-  ...staticRoutes,
+  ...staticRoutes.map((route) =>
+    route.path === '/news'
+      ? {
+          ...route,
+          meta: { ...route.meta, updatedAt: latestContentDate(news.filter((item) => item.status === 'published')) },
+        }
+      : route
+  ),
+  ...categoryRoutes('research', news),
+  ...categoryRoutes('activities', news),
+  ...categoryRoutes('news', news),
   {
     path: '/products',
     meta: { title: titleFor('产品'), description: '了解 Elexvx 的产品。' },
@@ -221,6 +274,7 @@ const configuredRoutes = (insights: Insight[], news: NewsItem[] = []): SiteRoute
       image: item.cover,
       openGraphType: 'article' as const,
       publishedAt: item.publishedAt,
+      updatedAt: item.updatedAt,
       author: item.author,
     },
     render: () => <ActivityPage item={item} related={researchItems} research />,

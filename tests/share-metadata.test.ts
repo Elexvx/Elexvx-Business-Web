@@ -6,8 +6,35 @@ import { getStaticRoutes } from '../src/site/routing/routes';
 import { brandedHomepageTitle, brandedPageTitle, metadataForRoute } from '../src/site/routing/metadata-base';
 import { insightArticleStructuredData } from '../src/site/seo/insight-article-json-ld';
 import { newsArticleStructuredData } from '../src/site/seo/news-article-json-ld';
+import { activityArticleStructuredData } from '../src/site/seo/activity-article-json-ld';
+import { publishedResearch } from '../src/data/research-articles';
 
 describe('static share metadata', () => {
+  it('publishes Article structured data for research with a localized author fallback', () => {
+    const item = { ...publishedResearch[0], author: '' };
+    const data = JSON.parse(activityArticleStructuredData(item, 'research', 'en'));
+    expect(data['@type']).toBe('Article');
+    expect(data.mainEntityOfPage).toBe(`https://www.elexvx.com/en/research/${item.slug}/`);
+    expect(data.author.name).toBe('Hongxiang Shangdao-Elexvx');
+    expect(data.inLanguage).toBe('en');
+    expect(data.dateModified).toBe(item.updatedAt || item.publishedAt);
+  });
+  it('gives category pages their own canonical, language alternates and localized metadata', () => {
+    for (const path of [
+      '/research/category/chip-architecture',
+      '/activities/category/roadshows',
+      '/news/category/announcements',
+    ]) {
+      const route = getStaticRoutes(loadInsights(), loadNews()).find((route) => route.path === path);
+      expect(route?.meta.updatedAt).toBeTruthy();
+      for (const locale of ['zh-CN', 'en'] as const) {
+        const data = nextMetadata(path, locale);
+        expect(data.alternates?.canonical).toBe(`https://www.elexvx.com${locale === 'en' ? '/en' : ''}${path}/`);
+        expect(data.robots).toMatchObject({ index: true, follow: true });
+        if (locale === 'en') expect(JSON.stringify([data.title, data.description])).not.toMatch(/[\u4e00-\u9fff]/);
+      }
+    }
+  });
   it('uses article-specific images and production links', () => {
     const data = nextMetadata('/activities/jinxi-entrepreneurship-roadshow-2026');
     expect(data.openGraph?.url).toBe('https://www.elexvx.com/activities/jinxi-entrepreneurship-roadshow-2026/');

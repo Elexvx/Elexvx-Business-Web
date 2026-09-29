@@ -1,4 +1,5 @@
 import catalog from './navigation-catalog.json';
+import { newsCategorySlug } from './article-categories';
 import { homeContent } from './page-content';
 const { research: publishedResearch, activities: publishedActivities } = catalog;
 
@@ -32,7 +33,7 @@ const navigationDefinitions: NavigationGroup[] = [
       {
         title: '研究分类',
         links: Array.from(new Map(publishedResearch.map((item) => [item.categorySlug, item.category])).entries()).map(
-          ([slug, label]) => ({ label: label || '研究', href: `/research?category=${slug}` })
+          ([slug, label]) => ({ label: label || '研究', href: `/research/category/${slug}/` })
         ),
       },
       {
@@ -66,7 +67,7 @@ const navigationDefinitions: NavigationGroup[] = [
         links: [
           { label: '总览', href: '/activities' },
           ...Array.from(new Map(publishedActivities.map((item) => [item.categorySlug, item.category])).entries()).map(
-            ([slug, label]) => ({ label: label || '活动', href: `/activities?category=${slug}` })
+            ([slug, label]) => ({ label: label || '活动', href: `/activities/category/${slug}/` })
           ),
         ],
       },
@@ -269,7 +270,7 @@ export const navigationGroups: NavigationGroup[] = navigationDefinitions.map((gr
 export const withNewsCategories = (groups: NavigationGroup[], categories: string[]) => {
   const categoryLinks = [...new Set(categories.map((category) => category.trim()).filter(Boolean))].map((category) => ({
     label: category,
-    href: `/news?category=${encodeURIComponent(category)}`,
+    href: `/news/category/${newsCategorySlug(category)}/`,
   }));
 
   if (!categoryLinks.length) return groups;

@@ -2,7 +2,8 @@
 import { Translated } from '../providers/i18n';
 
 import { SiteImage } from '../components/site-image';
-import { useCategoryFilter } from '../providers/category-filter';
+import { useArticleCategoryFilter } from '../providers/category-filter';
+import { articleCategories } from '../../data/article-categories';
 import type { Activity, ActivitySummary } from '../../data/activities';
 import { Eyebrow, SiteShell } from '../components/index';
 import { ArticleBody, ArticleMetadata, ContinueReading } from '../components/article-reading';
@@ -42,10 +43,18 @@ export const ActivityHighlights = ({ items }: { items: ActivitySummary[] }) => {
   );
 };
 
-export const ActivitySection = ({ items, page = false }: { items: ActivitySummary[]; page?: boolean }) => {
+export const ActivitySection = ({
+  items,
+  page = false,
+  initialCategory = 'all',
+}: {
+  items: ActivitySummary[];
+  page?: boolean;
+  initialCategory?: string;
+}) => {
   const { locale, t } = useI18n();
-  const [category, selectCategory] = useCategoryFilter();
-  const categories = Array.from(new Map(items.map((item) => [item.categorySlug, item.category])).entries());
+  const categories = articleCategories('activities', items);
+  const [category, , categoryHref] = useArticleCategoryFilter('activities', categories, initialCategory);
   const Heading = page ? 'h1' : 'h2';
   const entries = [...items].sort(
     (a, b) => Number(Boolean(b.pinned)) - Number(Boolean(a.pinned)) || b.publishedAt.localeCompare(a.publishedAt)
@@ -57,21 +66,21 @@ export const ActivitySection = ({ items, page = false }: { items: ActivitySummar
     <section className="home-latest-activity" aria-labelledby="activity-section-title">
       <div className="home-section-topline">
         <Heading className="activity-section-heading" id="activity-section-title">
+          {page && category !== 'all' && <>{t(categories.find((item) => item.id === category)?.label || '')} · </>}
           {locale === 'en' ? (page ? 'Activities' : 'Recent activities') : page ? '活动' : '最近活动'}
         </Heading>
       </div>
       {page && (
         <nav className="research-index-tabs" aria-label={t('活动分类')} style={{ marginBottom: 32 }}>
-          {[['all', '全部'], ...categories].map(([id, label]) => (
-            <button
+          {[{ id: 'all', label: '全部' }, ...categories].map(({ id, label }) => (
+            <a
               key={id}
-              type="button"
+              href={categoryHref(id)}
               className={`research-index-tab ${category === id ? 'research-index-tab-active' : ''}`}
-              aria-pressed={category === id}
-              onClick={() => selectCategory(id || 'all')}
+              aria-current={category === id ? 'page' : undefined}
             >
               {t(label || '')}
-            </button>
+            </a>
           ))}
         </nav>
       )}
@@ -100,10 +109,16 @@ export const ActivitySection = ({ items, page = false }: { items: ActivitySummar
   );
 };
 
-export const ActivitiesPage = ({ items }: { items: ActivitySummary[] }) => (
+export const ActivitiesPage = ({
+  items,
+  initialCategory = 'all',
+}: {
+  items: ActivitySummary[];
+  initialCategory?: string;
+}) => (
   <SiteShell activePath="/activities" className="site-shell-home">
     <div className="activities-page-inner">
-      <ActivitySection items={items} page />
+      <ActivitySection items={items} page initialCategory={initialCategory} />
     </div>
   </SiteShell>
 );

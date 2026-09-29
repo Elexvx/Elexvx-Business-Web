@@ -31,56 +31,485 @@
   ],
   "redirects": [
     {
+      "source": "/news",
+      "has": [
+        {
+          "type": "query",
+          "key": "category",
+          "value": "最新动态"
+        }
+      ],
+      "destination": "/news/category/updates/",
+      "permanent": true
+    },
+    {
+      "source": "/news/",
+      "has": [
+        {
+          "type": "query",
+          "key": "category",
+          "value": "最新动态"
+        }
+      ],
+      "destination": "/news/category/updates/",
+      "permanent": true
+    },
+    {
+      "source": "/en/news",
+      "has": [
+        {
+          "type": "query",
+          "key": "category",
+          "value": "最新动态"
+        }
+      ],
+      "destination": "/en/news/category/updates/",
+      "permanent": true
+    },
+    {
+      "source": "/en/news/",
+      "has": [
+        {
+          "type": "query",
+          "key": "category",
+          "value": "最新动态"
+        }
+      ],
+      "destination": "/en/news/category/updates/",
+      "permanent": true
+    },
+    {
+      "source": "/news",
+      "has": [
+        {
+          "type": "query",
+          "key": "category",
+          "value": "公告"
+        }
+      ],
+      "destination": "/news/category/announcements/",
+      "permanent": true
+    },
+    {
+      "source": "/news/",
+      "has": [
+        {
+          "type": "query",
+          "key": "category",
+          "value": "公告"
+        }
+      ],
+      "destination": "/news/category/announcements/",
+      "permanent": true
+    },
+    {
+      "source": "/en/news",
+      "has": [
+        {
+          "type": "query",
+          "key": "category",
+          "value": "公告"
+        }
+      ],
+      "destination": "/en/news/category/announcements/",
+      "permanent": true
+    },
+    {
+      "source": "/en/news/",
+      "has": [
+        {
+          "type": "query",
+          "key": "category",
+          "value": "公告"
+        }
+      ],
+      "destination": "/en/news/category/announcements/",
+      "permanent": true
+    },
+    {
+      "source": "/research",
+      "has": [
+        {
+          "type": "query",
+          "key": "category",
+          "value": "chip-architecture"
+        }
+      ],
+      "destination": "/research/category/chip-architecture/",
+      "permanent": true
+    },
+    {
+      "source": "/research/",
+      "has": [
+        {
+          "type": "query",
+          "key": "category",
+          "value": "chip-architecture"
+        }
+      ],
+      "destination": "/research/category/chip-architecture/",
+      "permanent": true
+    },
+    {
+      "source": "/en/research",
+      "has": [
+        {
+          "type": "query",
+          "key": "category",
+          "value": "chip-architecture"
+        }
+      ],
+      "destination": "/en/research/category/chip-architecture/",
+      "permanent": true
+    },
+    {
+      "source": "/en/research/",
+      "has": [
+        {
+          "type": "query",
+          "key": "category",
+          "value": "chip-architecture"
+        }
+      ],
+      "destination": "/en/research/category/chip-architecture/",
+      "permanent": true
+    },
+    {
+      "source": "/research",
+      "has": [
+        {
+          "type": "query",
+          "key": "category",
+          "value": "inference-systems"
+        }
+      ],
+      "destination": "/research/category/inference-systems/",
+      "permanent": true
+    },
+    {
+      "source": "/research/",
+      "has": [
+        {
+          "type": "query",
+          "key": "category",
+          "value": "inference-systems"
+        }
+      ],
+      "destination": "/research/category/inference-systems/",
+      "permanent": true
+    },
+    {
+      "source": "/en/research",
+      "has": [
+        {
+          "type": "query",
+          "key": "category",
+          "value": "inference-systems"
+        }
+      ],
+      "destination": "/en/research/category/inference-systems/",
+      "permanent": true
+    },
+    {
+      "source": "/en/research/",
+      "has": [
+        {
+          "type": "query",
+          "key": "category",
+          "value": "inference-systems"
+        }
+      ],
+      "destination": "/en/research/category/inference-systems/",
+      "permanent": true
+    },
+    {
+      "source": "/research",
+      "has": [
+        {
+          "type": "query",
+          "key": "category",
+          "value": "quantization-compilation"
+        }
+      ],
+      "destination": "/research/category/quantization-compilation/",
+      "permanent": true
+    },
+    {
+      "source": "/research/",
+      "has": [
+        {
+          "type": "query",
+          "key": "category",
+          "value": "quantization-compilation"
+        }
+      ],
+      "destination": "/research/category/quantization-compilation/",
+      "permanent": true
+    },
+    {
+      "source": "/en/research",
+      "has": [
+        {
+          "type": "query",
+          "key": "category",
+          "value": "quantization-compilation"
+        }
+      ],
+      "destination": "/en/research/category/quantization-compilation/",
+      "permanent": true
+    },
+    {
+      "source": "/en/research/",
+      "has": [
+        {
+          "type": "query",
+          "key": "category",
+          "value": "quantization-compilation"
+        }
+      ],
+      "destination": "/en/research/category/quantization-compilation/",
+      "permanent": true
+    },
+    {
+      "source": "/activities",
+      "has": [
+        {
+          "type": "query",
+          "key": "category",
+          "value": "technical-exchange"
+        }
+      ],
+      "destination": "/activities/category/technical-exchange/",
+      "permanent": true
+    },
+    {
+      "source": "/activities/",
+      "has": [
+        {
+          "type": "query",
+          "key": "category",
+          "value": "technical-exchange"
+        }
+      ],
+      "destination": "/activities/category/technical-exchange/",
+      "permanent": true
+    },
+    {
+      "source": "/en/activities",
+      "has": [
+        {
+          "type": "query",
+          "key": "category",
+          "value": "technical-exchange"
+        }
+      ],
+      "destination": "/en/activities/category/technical-exchange/",
+      "permanent": true
+    },
+    {
+      "source": "/en/activities/",
+      "has": [
+        {
+          "type": "query",
+          "key": "category",
+          "value": "technical-exchange"
+        }
+      ],
+      "destination": "/en/activities/category/technical-exchange/",
+      "permanent": true
+    },
+    {
+      "source": "/activities",
+      "has": [
+        {
+          "type": "query",
+          "key": "category",
+          "value": "site-updates"
+        }
+      ],
+      "destination": "/activities/category/site-updates/",
+      "permanent": true
+    },
+    {
+      "source": "/activities/",
+      "has": [
+        {
+          "type": "query",
+          "key": "category",
+          "value": "site-updates"
+        }
+      ],
+      "destination": "/activities/category/site-updates/",
+      "permanent": true
+    },
+    {
+      "source": "/en/activities",
+      "has": [
+        {
+          "type": "query",
+          "key": "category",
+          "value": "site-updates"
+        }
+      ],
+      "destination": "/en/activities/category/site-updates/",
+      "permanent": true
+    },
+    {
+      "source": "/en/activities/",
+      "has": [
+        {
+          "type": "query",
+          "key": "category",
+          "value": "site-updates"
+        }
+      ],
+      "destination": "/en/activities/category/site-updates/",
+      "permanent": true
+    },
+    {
+      "source": "/activities",
+      "has": [
+        {
+          "type": "query",
+          "key": "category",
+          "value": "roadshows"
+        }
+      ],
+      "destination": "/activities/category/roadshows/",
+      "permanent": true
+    },
+    {
+      "source": "/activities/",
+      "has": [
+        {
+          "type": "query",
+          "key": "category",
+          "value": "roadshows"
+        }
+      ],
+      "destination": "/activities/category/roadshows/",
+      "permanent": true
+    },
+    {
+      "source": "/en/activities",
+      "has": [
+        {
+          "type": "query",
+          "key": "category",
+          "value": "roadshows"
+        }
+      ],
+      "destination": "/en/activities/category/roadshows/",
+      "permanent": true
+    },
+    {
+      "source": "/en/activities/",
+      "has": [
+        {
+          "type": "query",
+          "key": "category",
+          "value": "roadshows"
+        }
+      ],
+      "destination": "/en/activities/category/roadshows/",
+      "permanent": true
+    },
+    {
       "source": "/:path*",
-      "has": [{ "type": "host", "value": "ai.elexvx.com" }],
+      "has": [
+        {
+          "type": "host",
+          "value": "ai.elexvx.com"
+        }
+      ],
       "destination": "https://www.elexvx.com/:path*",
       "permanent": true
     },
     {
       "source": "/",
-      "has": [{ "type": "host", "value": "nav.elexvx.com" }],
+      "has": [
+        {
+          "type": "host",
+          "value": "nav.elexvx.com"
+        }
+      ],
       "destination": "/navigation/",
       "permanent": true
     },
     {
       "source": "/",
-      "has": [{ "type": "host", "value": "status.elexvx.com" }],
+      "has": [
+        {
+          "type": "host",
+          "value": "status.elexvx.com"
+        }
+      ],
       "destination": "/status/",
       "permanent": true
     },
     {
       "source": "/history",
-      "has": [{ "type": "host", "value": "status.elexvx.com" }],
+      "has": [
+        {
+          "type": "host",
+          "value": "status.elexvx.com"
+        }
+      ],
       "destination": "/status/history/",
       "permanent": true
     },
     {
       "source": "/history/",
-      "has": [{ "type": "host", "value": "status.elexvx.com" }],
+      "has": [
+        {
+          "type": "host",
+          "value": "status.elexvx.com"
+        }
+      ],
       "destination": "/status/history/",
       "permanent": true
     },
     {
       "source": "/sitemap.xml",
-      "has": [{ "type": "host", "value": "nav.elexvx.com" }],
+      "has": [
+        {
+          "type": "host",
+          "value": "nav.elexvx.com"
+        }
+      ],
       "destination": "/navigation-sitemap.xml",
       "permanent": true
     },
     {
       "source": "/robots.txt",
-      "has": [{ "type": "host", "value": "nav.elexvx.com" }],
+      "has": [
+        {
+          "type": "host",
+          "value": "nav.elexvx.com"
+        }
+      ],
       "destination": "/navigation-robots.txt",
       "permanent": true
     },
     {
       "source": "/sitemap.xml",
-      "has": [{ "type": "host", "value": "status.elexvx.com" }],
+      "has": [
+        {
+          "type": "host",
+          "value": "status.elexvx.com"
+        }
+      ],
       "destination": "/status-sitemap.xml",
       "permanent": true
     },
     {
       "source": "/robots.txt",
-      "has": [{ "type": "host", "value": "status.elexvx.com" }],
+      "has": [
+        {
+          "type": "host",
+          "value": "status.elexvx.com"
+        }
+      ],
       "destination": "/status-robots.txt",
       "permanent": true
     },

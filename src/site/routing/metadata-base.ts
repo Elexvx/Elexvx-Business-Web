@@ -246,7 +246,9 @@ export const metadataForRoute = (meta: RouteMeta, path: string, locale: Locale =
   const localePath = locale === 'en' ? `/en${path === '/' ? '' : path}` : path;
   const canonical = `${siteIdentity.canonicalOrigin}${localePath === '/' ? '/' : `${localePath}/`}`;
   const isNoIndex = meta.robots === 'noindex,nofollow';
-  const localizedPageTitle = pageTitle(localizedTitle(meta.title, locale));
+  const localizedPageTitle = pageTitle(
+    locale === 'en' && meta.titleEn ? meta.titleEn : localizedTitle(meta.title, locale)
+  );
   const brandName = localizedBrandName(locale);
   const articleAuthor = meta.author && locale === 'en' ? brandName : meta.author;
   const title =
@@ -254,7 +256,10 @@ export const metadataForRoute = (meta: RouteMeta, path: string, locale: Locale =
       ? brandedHomepageTitle(locale === 'en' ? 'AI & Data Intelligence R&D' : '人工智能与数据智能研发', locale)
       : brandedPageTitle(enrichTitle(localizedPageTitle, path, locale), locale);
   const description = enrichDescription(
-    withBrandDescription(translateMetadata(meta.description, locale), locale),
+    withBrandDescription(
+      locale === 'en' && meta.descriptionEn ? meta.descriptionEn : translateMetadata(meta.description, locale),
+      locale
+    ),
     localizedPageTitle,
     path,
     locale

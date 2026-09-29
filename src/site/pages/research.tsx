@@ -3,8 +3,9 @@ import { Translated } from '../providers/i18n';
 
 import { SiteImage } from '../components/site-image';
 import type { ActivitySummary } from '../../data/activities';
-import { useCategoryFilter } from '../providers/category-filter';
-import { Tabs, Popover } from 'radix-ui';
+import { useArticleCategoryFilter } from '../providers/category-filter';
+import { articleCategories } from '../../data/article-categories';
+import { Popover } from 'radix-ui';
 import { AppstoreOutlined, DownOutlined, FilterOutlined, UnorderedListOutlined } from '@ant-design/icons';
 import { useState } from 'react';
 import { getDirection, projects } from '../../data/site';
@@ -17,10 +18,16 @@ import { formatNewsDate, ProjectCard, PageHero, InsightList, EmptyState, NotFoun
 
 export type ResearchIndexFilter = string;
 
-export const ResearchPage = ({ items }: { items: ActivitySummary[] }) => {
+export const ResearchPage = ({
+  items,
+  initialCategory = 'all',
+}: {
+  items: ActivitySummary[];
+  initialCategory?: string;
+}) => {
   const { href, locale, t } = useI18n();
   const insights = items;
-  const [filter, setFilter] = useCategoryFilter();
+  const researchNotes = usePublishedInsights();
   const [newestFirst, setNewestFirst] = useState(true);
   const [showMedia, setShowMedia] = useState(false);
   const isChinese = locale === 'zh-CN';
@@ -29,14 +36,8 @@ export const ResearchPage = ({ items }: { items: ActivitySummary[] }) => {
     const direction = insight.directionSlug ? getDirection(insight.directionSlug) : undefined;
     return direction ? { id: direction.slug, label: direction.title } : { id: 'uncategorized', label: '技术文章' };
   };
-  const categories = Array.from(
-    new Map(
-      insights.map((insight) => {
-        const category = categoryFor(insight);
-        return [category.id, category] as const;
-      })
-    ).values()
-  );
+  const categories = articleCategories('research', items);
+  const [filter, setFilter, categoryHref] = useArticleCategoryFilter('research', categories, initialCategory);
   const filters = [{ id: 'all', label: isChinese ? '全部' : 'All' }, ...categories];
   const activeFilter = filters.some((item) => item.id === filter) ? filter : 'all';
   const orderedInsights = insights
@@ -51,28 +52,28 @@ export const ResearchPage = ({ items }: { items: ActivitySummary[] }) => {
   return (
     <SiteShell activePath="/research">
       <section className="research-index" aria-labelledby="research-index-title">
-        <Tabs.Root className="research-index-inner" value={activeFilter} onValueChange={setFilter}>
+        <div className="research-index-inner">
           <header className="research-index-header">
-            <h1 id="research-index-title">{isChinese ? '研究' : 'Research'}</h1>
+            <h1 id="research-index-title">
+              {activeFilter !== 'all' && <>{t(categories.find((item) => item.id === activeFilter)?.label || '')} · </>}
+              {isChinese ? '研究' : 'Research'}
+            </h1>
             <div className="research-index-toolbar">
-              <Tabs.List
-                aria-label={isChinese ? '研究内容分类' : 'Research categories'}
-                className="research-index-tabs"
-              >
+              <nav aria-label={isChinese ? '研究内容分类' : 'Research categories'} className="research-index-tabs">
                 {filters.map((item) => (
-                  <Tabs.Trigger
+                  <a
                     className={classNames(
                       'research-index-tab',
                       activeFilter === item.id && 'research-index-tab-active'
                     )}
                     key={item.id}
-                    value={item.id}
-                    type="button"
+                    href={categoryHref(item.id)}
+                    aria-current={activeFilter === item.id ? 'page' : undefined}
                   >
                     <Translated>{item.label}</Translated>
-                  </Tabs.Trigger>
+                  </a>
                 ))}
-              </Tabs.List>
+              </nav>
               <div className="research-index-controls">
                 <Popover.Root>
                   <Popover.Trigger className="research-index-filter-trigger">
@@ -138,7 +139,7 @@ export const ResearchPage = ({ items }: { items: ActivitySummary[] }) => {
             </div>
           </header>
 
-          <Tabs.Content value={activeFilter} className="research-index-list">
+          <div className="research-index-list">
             {orderedInsights.map((insight) => {
               const category = categoryFor(insight);
               const formattedDate = formatNewsDate(insight.publishedAt, locale);
@@ -195,8 +196,26 @@ export const ResearchPage = ({ items }: { items: ActivitySummary[] }) => {
                 {isChinese ? '当前暂无已发布的技术文章' : 'No published insights yet'}
               </p>
             )}
-          </Tabs.Content>
-        </Tabs.Root>
+          </div>
+          {activeFilter === 'all' && researchNotes.length > 0 && (
+            <section aria-labelledby="research-notes-title">
+              <h2 id="research-notes-title">{isChinese ? '研究记录' : 'Research notes'}</h2>
+              <div className="research-index-list">
+                {researchNotes.map((note) => (
+                  <a className="research-index-row" href={href(`/insights/${note.slug}/`)} key={note.slug}>
+                    <div className="research-index-meta">
+                      <time dateTime={note.publishedAt}>{formatNewsDate(note.publishedAt, locale)}</time>
+                    </div>
+                    <div className="research-index-entry research-index-copy">
+                      <h2>{t(note.title)}</h2>
+                      <p>{t(note.excerpt)}</p>
+                    </div>
+                  </a>
+                ))}
+              </div>
+            </section>
+          )}
+        </div>
       </section>
     </SiteShell>
   );

@@ -1,6 +1,7 @@
 'use client';
 import { Translated } from '../providers/i18n';
-import { useCategoryFilter } from '../providers/category-filter';
+import { useArticleCategoryFilter } from '../providers/category-filter';
+import { articleCategories, newsCategorySlug } from '../../data/article-categories';
 
 import { getDirection } from '../../data/site';
 import { pageContent } from '../../data/page-content';
@@ -12,29 +13,31 @@ import { LocalizedText as T, LocalizedTitle as Title, useI18n } from '../provide
 import { formatNewsDate, NewsCard, PageHero, NotFoundPage } from './shared';
 import type { Insight, NewsItem } from '../../content/types';
 
-export const NewsPage = () => {
+export const NewsPage = ({ initialCategory = 'all' }: { initialCategory?: string }) => {
   const news = usePublishedNews();
   const { t } = useI18n();
-  const [category, selectCategory] = useCategoryFilter();
-  const categories = [...new Set(news.map((item) => item.category).filter(Boolean))];
-  const visible = news.filter((item) => category === 'all' || item.category === category);
+  const categories = articleCategories('news', news);
+  const [category, , categoryHref] = useArticleCategoryFilter('news', categories, initialCategory);
+  const visible = news.filter((item) => category === 'all' || newsCategorySlug(item.category) === category);
   return (
     <SiteShell activePath="/news" className="site-shell-news">
       <section className="research-tile research-tile-light news-index-section" aria-labelledby="news-page-title">
         <div className="section-heading news-list-heading">
-          <h1 id="news-page-title">{t('最近新闻')}</h1>
+          <h1 id="news-page-title">
+            {category !== 'all' && <>{t(categories.find((item) => item.id === category)?.label || '')} · </>}
+            {t('最近新闻')}
+          </h1>
         </div>
         <nav className="research-index-tabs news-category-tabs" aria-label={t('新闻分类')}>
-          {['all', ...categories].map((value) => (
-            <button
-              key={value}
-              type="button"
-              className={`research-index-tab ${category === value ? 'research-index-tab-active' : ''}`}
-              aria-pressed={category === value}
-              onClick={() => selectCategory(value)}
+          {[{ id: 'all', label: '全部' }, ...categories].map(({ id, label }) => (
+            <a
+              key={id}
+              href={categoryHref(id)}
+              className={`research-index-tab ${category === id ? 'research-index-tab-active' : ''}`}
+              aria-current={category === id ? 'page' : undefined}
             >
-              {value === 'all' ? t('全部') : t(value)}
-            </button>
+              {t(label)}
+            </a>
           ))}
         </nav>
         {!visible.length && <p role="status">{t('暂无匹配内容')}</p>}
