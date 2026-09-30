@@ -7,14 +7,27 @@ import research from '../content/site/research.json';
 import activities from '../content/site/activities.json';
 
 function Links() {
-  const { href } = useI18n();
+  const { href, switchHref } = useI18n();
   return (
     <>
-      {['/research?category=chip-architecture', '/en/news/', '/brand/logo.svg', '#reference-1'].map((url) => (
+      {[
+        '/research?category=chip-architecture',
+        '/research/moe-chiplet-expert-reuse',
+        '/research/category/chip-architecture?view=list#articles',
+        '/en/news/',
+        '/activities/jinxi-2026/hello.svg',
+        '/brand/logo.svg',
+        '#reference-1',
+        'https://www.elexvx.com/research/moe-chiplet-expert-reuse',
+        'https://example.com/research/article',
+      ].map((url) => (
         <a key={url} href={href(url)}>
           {url}
         </a>
       ))}
+      <a data-language-switch="true" href={switchHref}>
+        Switch language
+      </a>
     </>
   );
 }
@@ -25,11 +38,35 @@ describe('English publishing', () => {
         <Links />
       </LanguageProvider>
     );
-    expect(html).toContain('href="/en/research?category=chip-architecture"');
+    expect(html).toContain('href="/en/research/?category=chip-architecture"');
+    expect(html).toContain('href="/en/research/moe-chiplet-expert-reuse/"');
+    expect(html).toContain('href="/en/research/category/chip-architecture/?view=list#articles"');
     expect(html).toContain('href="/en/news/"');
+    expect(html).toContain('href="/activities/jinxi-2026/hello.svg"');
     expect(html).toContain('href="/brand/logo.svg"');
     expect(html).toContain('href="#reference-1"');
+    expect(html).toContain('href="https://www.elexvx.com/research/moe-chiplet-expert-reuse/"');
+    expect(html).toContain('href="https://example.com/research/article"');
+    expect(html).toContain('data-language-switch="true" href="/research/"');
     expect(html).not.toContain('/en/en/');
+  });
+  it('links Chinese content directly to its trailing-slash canonical URL', () => {
+    const html = renderToStaticMarkup(
+      <LanguageProvider locale="zh-CN" path="/research" autoRedirect={false}>
+        <Links />
+      </LanguageProvider>
+    );
+    expect(html).toContain('href="/research/moe-chiplet-expert-reuse/"');
+    expect(html).toContain('href="/research/?category=chip-architecture"');
+    expect(html).toContain('href="/research/category/chip-architecture/?view=list#articles"');
+    expect(html).toContain('href="/activities/jinxi-2026/hello.svg"');
+    expect(html).toContain('data-language-switch="true" href="/en/research/"');
+  });
+  it('keeps content links canonical in service pages without a language provider', () => {
+    const html = renderToStaticMarkup(<Links />);
+    expect(html).toContain('href="/research/moe-chiplet-expert-reuse/"');
+    expect(html).toContain('href="https://www.elexvx.com/research/moe-chiplet-expert-reuse/"');
+    expect(html).toContain('href="/activities/jinxi-2026/hello.svg"');
   });
   it('preserves English punctuation and natural heading wrapping', () => {
     const html = renderToStaticMarkup(
@@ -42,7 +79,7 @@ describe('English publishing', () => {
   });
   it('inherits the server-provided dictionary through nested language providers', () => {
     const html = renderToStaticMarkup(
-      <LanguageProvider locale="en" path="/" translations={{ '测试内容': 'Content from the server' }}>
+      <LanguageProvider locale="en" path="/" translations={{ 测试内容: 'Content from the server' }}>
         <LanguageProvider locale="en" path="/">
           <LocalizedTitle text="测试内容" />
         </LanguageProvider>

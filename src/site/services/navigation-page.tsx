@@ -16,6 +16,7 @@ import {
   type ServiceLink,
 } from '../../data/service-navigation';
 import { NavigationSearch } from './navigation-search';
+import { canonicalContentHref } from '../routing/content-href';
 
 const CATEGORY_ICONS = {
   企业系统: AppstoreOutlined,
@@ -80,7 +81,7 @@ function DirectoryRow({ link }: { link: ServiceLink }) {
       className="service-directory-row"
       data-link-id={link.id}
       data-search-tags={link.tags.join(' ')}
-      href={link.url}
+      href={canonicalContentHref(link.url)}
       target="_blank"
       rel="noopener noreferrer"
     >

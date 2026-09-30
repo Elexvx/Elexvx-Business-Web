@@ -3,6 +3,7 @@
 import { createContext, Fragment, useContext, useEffect, type ReactNode } from 'react';
 
 import { existingEnglish, translateWithDictionary } from '../translation-base';
+import { canonicalContentHref } from '../routing/content-href';
 
 export type Locale = 'zh-CN' | 'en';
 
@@ -19,7 +20,7 @@ type I18nContextValue = {
 const I18nContext = createContext<I18nContextValue>({
   locale: 'zh-CN',
   t: (value) => value,
-  href: (value) => value,
+  href: canonicalContentHref,
   switchHref: '/en',
 });
 
@@ -63,16 +64,17 @@ export const LanguageProvider = ({
   }, [locale, path, autoRedirect]);
 
   const href = (value: string) => {
+    const target = canonicalContentHref(value);
     if (
       locale !== 'en' ||
-      !isInternalHref(value) ||
-      /^\/en(?:\/|$|[?#])/.test(value) ||
-      /\.[a-z0-9]+(?:[?#]|$)/i.test(value)
+      !isInternalHref(target) ||
+      /^\/en(?:\/|$|[?#])/.test(target) ||
+      /\.[a-z0-9]+(?:[?#]|$)/i.test(target)
     )
-      return value;
-    return value === '/' ? '/en' : `/en${value}`;
+      return target;
+    return target === '/' ? '/en' : `/en${target}`;
   };
-  const switchHref = locale === 'en' ? path : path === '/' ? '/en' : `/en${path}`;
+  const switchHref = canonicalContentHref(locale === 'en' ? path : path === '/' ? '/en' : `/en${path}`);
   const t = (value: string) => (locale === 'en' ? translateWithDictionary(value, dictionary) : value);
 
   return (
