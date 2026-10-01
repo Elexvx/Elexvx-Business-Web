@@ -11,6 +11,12 @@ npm run check      # 类型、Lint、格式、内容、测试、构建
 npm run preview    # 静态产物预览
 ```
 
+## 公开页面部署
+
+ESA Pages 项目 `elexvx-public-pages` 连接本仓库的 `main` 分支，使用 Node.js 24 自动构建并发布。`esa.jsonc` 固定依赖安装、构建命令和 `dist` 静态产物目录；没有配置 SPA 回退，缺失页面返回真实 404。
+
+生产接入使用 ESA 路由，仅匹配 `www.elexvx.com` 的公开页面、抓取文件和静态资源的 GET/HEAD 请求。`/api/`、登录与管理路径继续使用现有 Vercel 服务。需要回退时，在 ESA 控制台停用公开页面的 Pages 路由即可恢复原来的回源链路。
+
 ## 目录职责
 
 | 目录 | 内容 |

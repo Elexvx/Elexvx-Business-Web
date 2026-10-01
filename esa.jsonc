@@ -1,0 +1,8 @@
+{
+  "name": "elexvx-public-pages",
+  "installCommand": "npm ci",
+  "buildCommand": "npm run build",
+  "assets": {
+    "directory": "./dist",
+  },
+}
