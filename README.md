@@ -39,7 +39,6 @@ ESA 项目 `elexvx-site-router` 统一托管页面、静态资源和接口，连
 | scripts / tests     | 构建与内容工具、自动化测试            |
 | docs                | 架构和设计说明                        |
 | parked-pages        | 下线页面内容与恢复说明                |
-| archive             | 旧 Astro 源码、旧设计，不参与现行构建 |
 | posts               | 历史文章迁移输入                      |
 
 ## 常用修改入口

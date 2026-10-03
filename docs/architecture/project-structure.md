@@ -26,7 +26,7 @@ apple-system.css 是唯一导入入口。sections/01 到 15 依次为基础、�
 
 旧 Astro 站点源码和配置已删除，历史版本可通过 Git 历史查看。posts 保留为迁移脚本输入，articles 是现行内容。Vite、src/main.tsx、src/ssg 保留为兼容工具，主开发入口是 Next.js。
 
-public/brand 放品牌，public/visuals 放配图，public/products 放正式 PNG。旧封面源码在 archive/design/product-covers。不要将内部草稿放进 public。保持历史静态 URL，避免文章引用失效。
+public/brand 放品牌，public/visuals 放配图，public/products 放正式 PNG。旧封面源码可通过 Git 历史查看。不要将内部草稿放进 public。保持历史静态 URL，避免文章引用失效。
 
 ## 团队维护
 

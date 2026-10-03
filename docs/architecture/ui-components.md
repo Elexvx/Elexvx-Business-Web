@@ -7,6 +7,6 @@
 - 页脚主题切换、Cookie 偏好：Radix Switch。
 - 公共样式：src/styles/sections/19-primitives.css。Portal 挂载于 body，必须使用 html 定义的主题变量，不能依赖页面父级配色。
 
-antd 组件依赖与 ConfigProvider 已移除，旧主题文件保存于 archive/design/antd-theme.ts。@ant-design/icons 目前仅作为图标包使用。顶部悬停导航仍保留现有延时与动画实现，未在此次接入中重写。
+antd 组件依赖与 ConfigProvider 已移除，旧主题文件可通过 Git 历史查看。@ant-design/icons 目前仅作为图标包使用。顶部悬停导航仍保留现有延时与动画实现，未在此次接入中重写。
 
 新增交互优先复用 Radix 并封装到 primitives；普通链接、文本输入及按钮保留原生语义。检查键盘打开、方向键选择、Escape 关闭与焦点返回，以及浅深主题和窄屏显示。
