@@ -205,13 +205,15 @@ export async function fetchStatusData(options: {
   staleTtlMs?: number;
   timeoutMs?: number;
   rangeBatchSize?: number;
+  deduplicateRequests?: boolean;
 }): Promise<{ data: StatusData; source: 'api' | 'cache' }> {
   const historyDays = normalizeHistoryDays(options.historyDays);
   const now = Date.now();
   const cached = cacheByHistoryDays.get(historyDays);
   if (cached && cached.expiresAt > now) return { data: cached.data, source: 'cache' };
 
-  const inFlightRequest = inFlightRequestsByHistoryDays.get(historyDays);
+  const inFlightRequest =
+    options.deduplicateRequests === false ? undefined : inFlightRequestsByHistoryDays.get(historyDays);
   if (inFlightRequest) {
     try {
       return { data: await inFlightRequest, source: 'cache' };
@@ -246,7 +248,7 @@ export async function fetchStatusData(options: {
     );
     return formatUptimeRobotData(mergeBatchResponses(payloads, batches), ranges);
   })();
-  inFlightRequestsByHistoryDays.set(historyDays, request);
+  if (options.deduplicateRequests !== false) inFlightRequestsByHistoryDays.set(historyDays, request);
 
   try {
     const data = await request;
@@ -261,7 +263,7 @@ export async function fetchStatusData(options: {
     if (cached && cached.staleUntil > Date.now()) return { data: cached.data, source: 'cache' };
     throw error;
   } finally {
-    inFlightRequestsByHistoryDays.delete(historyDays);
+    if (options.deduplicateRequests !== false) inFlightRequestsByHistoryDays.delete(historyDays);
   }
 }
 

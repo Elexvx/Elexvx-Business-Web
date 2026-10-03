@@ -1,11 +1,11 @@
-import vercelConfig from '../vercel.json';
+import redirects from '../src/server/esa/redirects.json';
 import { redirectRoutes } from '../src/site/routing/routes';
 import { describe, expect, it } from 'vitest';
 import { getStaticRoutes } from '../src/site/routing/routes';
 import { loadInsights } from '../src/content/loader';
 import { loadNews } from '../src/content/news-loader';
 
-type VercelRedirect = {
+type HostingRedirect = {
   source: string;
   destination: string;
   permanent?: boolean;
@@ -13,9 +13,9 @@ type VercelRedirect = {
 };
 
 describe('redirect configuration', () => {
-  it('keeps the static fallback pages and Vercel redirects in sync', () => {
+  it('keeps the static fallback pages and ESA redirects in sync', () => {
     const configuredRedirects = Object.fromEntries(
-      (vercelConfig.redirects as VercelRedirect[])
+      (redirects as HostingRedirect[])
         .filter(({ has }) => !has?.length)
         .map(({ source, destination }) => [source, destination])
     );
@@ -25,7 +25,7 @@ describe('redirect configuration', () => {
 
   it('redirects legacy category queries only to published category pages', () => {
     const routes = new Set(getStaticRoutes(loadInsights(), loadNews()).map((route) => route.path));
-    const conditional = vercelConfig.redirects.filter(({ has }) => has?.some(({ type }) => type === 'query'));
+    const conditional = redirects.filter(({ has }) => has?.some(({ type }) => type === 'query'));
     expect(conditional.length).toBe(32);
     for (const redirect of conditional) {
       expect(redirect.has).toEqual([expect.objectContaining({ type: 'query', key: 'category' })]);
@@ -36,7 +36,7 @@ describe('redirect configuration', () => {
   });
 
   it('keeps host-specific navigation and status entry points explicit', () => {
-    const configuredHostRedirects = (vercelConfig.redirects as VercelRedirect[])
+    const configuredHostRedirects = (redirects as HostingRedirect[])
       .filter(({ has }) => has?.some(({ type }) => type === 'host'))
       .map(({ source, destination, has }) => ({
         source,
@@ -56,7 +56,7 @@ describe('redirect configuration', () => {
       { source: '/robots.txt', destination: '/status-robots.txt', host: 'status.elexvx.com' },
     ]);
 
-    const aiHostRedirect = (vercelConfig.redirects as VercelRedirect[]).find(({ has }) =>
+    const aiHostRedirect = (redirects as HostingRedirect[]).find(({ has }) =>
       has?.some(({ type, value }) => type === 'host' && value === 'ai.elexvx.com')
     );
 
