@@ -18,7 +18,7 @@ export const Footer = ({ linkOrigin }: { linkOrigin?: string }) => {
     const localizedHref = href(value);
     return linkOrigin && localizedHref.startsWith('/') ? new URL(localizedHref, linkOrigin).href : localizedHref;
   };
-  const resolvedSwitchHref = resolveHref(switchHref);
+  const resolvedSwitchHref = linkOrigin ? new URL(switchHref, linkOrigin).href : switchHref;
   const { theme, mode, toggleTheme } = useTheme();
   const isAvailableLink = useAvailableLink();
   const newsCategories = usePublishedNews().map((item) => item.category);
