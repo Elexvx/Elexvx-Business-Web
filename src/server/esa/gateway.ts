@@ -141,7 +141,9 @@ export async function handleRequest(
   if (request.method !== 'GET' && request.method !== 'HEAD') {
     return json({ code: 405, message: 'Method not allowed' }, 405, { Allow: 'GET, HEAD' });
   }
-  const upstream = new URL(url.pathname + url.search, staticOrigin);
+  const upstream = new URL(staticOrigin);
+  upstream.pathname = url.pathname;
+  upstream.search = url.search;
   const requestHeaders = new Headers({ 'Accept-Encoding': 'gzip' });
   for (const name of ['accept', 'range', 'if-none-match', 'if-modified-since']) {
     const value = request.headers.get(name);

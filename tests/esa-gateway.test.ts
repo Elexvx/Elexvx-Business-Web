@@ -63,6 +63,13 @@ describe('ESA gateway', () => {
     expect(response.headers.get('location')).toBe('https://www.elexvx.com/research/');
   });
 
+  it('keeps double-slash paths on the fixed ESA origin', async () => {
+    const fetchMock = vi.fn().mockResolvedValue(new Response('missing', { status: 404 }));
+    vi.stubGlobal('fetch', fetchMock);
+    await handleRequest(request('//foreign.example/file'), context, {});
+    expect(fetchMock.mock.calls[0][0]).toBe('https://assets.elexvx.com//foreign.example/file');
+  });
+
   it('returns HEAD and conditional responses without a body', async () => {
     vi.stubGlobal(
       'fetch',
