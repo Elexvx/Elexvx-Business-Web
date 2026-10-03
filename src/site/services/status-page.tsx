@@ -89,14 +89,10 @@ async function parseResponse(response: Response): Promise<StatusApiResponse> {
 }
 
 function useStatusData(historyDays: number) {
-  const [state, setState] = useState<StatusDataState>(() => {
-    const storedData = readStoredStatusData(historyDays);
-    return {
-      ...(storedData ? { data: storedData } : {}),
-      loading: !storedData,
-      refreshing: Boolean(storedData),
-      passwordRequired: false,
-    };
+  const [state, setState] = useState<StatusDataState>({
+    loading: true,
+    refreshing: false,
+    passwordRequired: false,
   });
   const mountedRef = useRef(true);
 
@@ -177,6 +173,11 @@ function useStatusData(historyDays: number) {
 
   useEffect(() => {
     mountedRef.current = true;
+    // Restore browser data after hydration so the initial render matches the export.
+    const storedData = readStoredStatusData(historyDays);
+    if (storedData) {
+      setState({ data: storedData, loading: false, refreshing: true, passwordRequired: false });
+    }
     void load();
     const timer = window.setInterval(() => void load(), serviceNavigationConfig.status.refreshIntervalSeconds * 1000);
     return () => {
