@@ -10,6 +10,54 @@ afterEach(() => {
 });
 
 describe('ESA gateway', () => {
+  const singleProjectAssets = {
+    origin: 'https://www.elexvx.com',
+    prefix: '/_esa-assets',
+    notFoundHtml: '<h1>404</h1>',
+  };
+
+  it('serves the same project static directory and hides its prefix in redirects', async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(new Response('page'))
+      .mockResolvedValueOnce(
+        new Response(null, { status: 301, headers: { Location: '/_esa-assets/research/?ref=test' } })
+      );
+    vi.stubGlobal('fetch', fetchMock);
+    await handleRequest(request('/research/'), context, {}, singleProjectAssets);
+    expect(fetchMock.mock.calls[0][0]).toBe('https://www.elexvx.com/_esa-assets/research/');
+    const response = await handleRequest(request('/research?ref=test'), context, {}, singleProjectAssets);
+    expect(response.headers.get('location')).toBe('https://www.elexvx.com/research/?ref=test');
+  });
+
+  it('terminates missing internal asset requests without another fetch', async () => {
+    const fetchMock = vi.fn();
+    vi.stubGlobal('fetch', fetchMock);
+    const response = await handleRequest(request('/_esa-assets/missing/'), context, {}, singleProjectAssets);
+    expect(response.status).toBe(404);
+    expect(await response.text()).toBe('<h1>404</h1>');
+    expect(response.headers.get('x-robots-tag')).toBe('noindex');
+    expect(fetchMock).not.toHaveBeenCalled();
+    expect(
+      await (
+        await handleRequest(request('/_esa-assets/missing/', { method: 'HEAD' }), context, {}, singleProjectAssets)
+      ).text()
+    ).toBe('');
+  });
+
+  it('keeps host redirects ahead of same-project static requests', async () => {
+    const fetchMock = vi.fn();
+    vi.stubGlobal('fetch', fetchMock);
+    const response = await handleRequest(
+      new Request('https://ai.elexvx.com/research/?ref=old'),
+      context,
+      {},
+      singleProjectAssets
+    );
+    expect(response.status).toBe(308);
+    expect(response.headers.get('location')).toBe('https://www.elexvx.com/research/?ref=old');
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
   it('preserves host entry points, legacy aliases and category redirects', () => {
     expect(resolveRedirect(new URL('https://ai.elexvx.com/research/?ref=old'))).toBe(
       'https://www.elexvx.com/research/?ref=old'

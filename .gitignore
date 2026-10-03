@@ -37,3 +37,4 @@ public/search-index.json
 # ESA router bundle and local dependencies
 esa/router/dist/
 esa/router/node_modules/
+esa/site/

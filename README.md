@@ -13,9 +13,9 @@ npm run preview    # 静态产物预览
 
 ## 公开页面部署
 
-ESA Pages 项目 `elexvx-public-pages` 连接本仓库的 `main` 分支，使用 Node.js 24 自动构建并发布。`esa.jsonc` 固定依赖安装、构建命令和 `dist` 静态产物目录；没有配置 SPA 回退，缺失页面返回真实 404。
+ESA 项目 `elexvx-site-router` 统一托管页面、静态资源和接口，连接本仓库的 `main` 分支，构建根目录为 `/`，使用 Node.js 24、`npm ci` 和 `npm run build:esa` 自动构建并发布。`esa.jsonc` 同时指定函数入口 `./esa/site/index.js` 与静态目录 `./esa/site/assets`，没有配置 SPA 回退。
 
-`elexvx-site-router` 是同一仓库的第二个 ESA 应用，构建根目录为 `esa/router`，函数入口为 `./dist/index.js`。它负责域名和旧网址跳转、状态数据接口，以及新版文章的 IndexNow 通知；页面和资源从绑定到静态 Pages 的 `assets.elexvx.com` 读取。网站内容保持静态发布，未新增用户账号系统。
+构建将 `dist` 原样复制到同一项目的 `/_esa-assets/` 静态目录。公开网址先由函数处理域名和旧网址跳转，再读取当前项目的静态文件；不依赖另一个 ESA 项目或 Vercel。内部缺失资源直接返回真实 404，防止递归回源，`robots.txt` 禁止抓取内部目录。状态数据接口和新版文章 IndexNow 通知也由同一函数承担。网站内容保持静态发布，未新增用户账号系统。`npm run build` 仍生成可独立预览的 `dist`。
 
 函数生产变量 `UPTIMEROBOT_API_KEY` 应使用加密存储。`INDEXNOW_KV_NAMESPACE=elexvx_indexnow` 指定 ESA KV 回执空间；构建生成的 `indexnow-manifest.json` 在内容变化后更新版本，成功页面访问会异步提交文章和集合 URL，成功回执避免重复提交。可选的 `CRON_SECRET` 仅用于保护手动通知接口，不需要 Vercel Cron。提交成功不等于搜索引擎实际收录。
 

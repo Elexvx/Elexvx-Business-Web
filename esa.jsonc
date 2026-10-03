@@ -1,8 +1,9 @@
 {
-  "name": "elexvx-public-pages",
+  "name": "elexvx-site-router",
   "installCommand": "npm ci",
-  "buildCommand": "npm run build",
+  "buildCommand": "npm run build:esa",
+  "entry": "./esa/site/index.js",
   "assets": {
-    "directory": "./dist",
+    "directory": "./esa/site/assets",
   },
 }

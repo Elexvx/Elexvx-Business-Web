@@ -17,8 +17,10 @@ declare const EdgeKV: new (options: { namespace: string }) => EdgeStore;
 
 type ExecutionContext = { waitUntil(task: Promise<unknown>): void };
 type PublishManifest = { version: string; urls: string[] };
+export type AssetSource = { origin: string; prefix: string; notFoundHtml?: string };
 
 const staticOrigin = 'https://assets.elexvx.com';
+const legacyAssets: AssetSource = { origin: staticOrigin, prefix: '' };
 const canonicalOrigin = 'https://www.elexvx.com';
 const previewHost = 'esa-migration-preview.elexvx.com';
 const checkedAtByNamespace = new Map<string, number>();
@@ -68,9 +70,9 @@ export function resolveRedirect(url: URL): string | undefined {
   return undefined;
 }
 
-export async function notifyPublishedContent(namespace: string): Promise<void> {
+export async function notifyPublishedContent(namespace: string, assets: AssetSource = legacyAssets): Promise<void> {
   const store = new EdgeKV({ namespace });
-  const response = await fetch(`${staticOrigin}/indexnow-manifest.json`, { redirect: 'manual' });
+  const response = await fetch(`${assets.origin}${assets.prefix}/indexnow-manifest.json`, { redirect: 'manual' });
   if (!response.ok) throw new Error(`Publish manifest unavailable (${response.status}).`);
   const manifest = (await response.json()) as PublishManifest;
   if (!/^[a-f\d]{64}$/.test(manifest.version) || !Array.isArray(manifest.urls) || manifest.urls.length > 10000) {
@@ -82,7 +84,7 @@ export async function notifyPublishedContent(namespace: string): Promise<void> {
   await store.put(key, JSON.stringify({ status: result.status, submitted: result.urls.length, at: Date.now() }));
 }
 
-async function handleApi(request: Request, url: URL, env: EsaEnvironment): Promise<Response> {
+async function handleApi(request: Request, url: URL, env: EsaEnvironment, assets: AssetSource): Promise<Response> {
   const path = url.pathname.replace(/\/$/, '');
   if (path === '/api/status') {
     if (request.method !== 'GET') return json({ code: 405, message: 'Method not allowed' }, 405, { Allow: 'GET' });
@@ -111,7 +113,7 @@ async function handleApi(request: Request, url: URL, env: EsaEnvironment): Promi
     try {
       if (!env.INDEXNOW_KV_NAMESPACE)
         return json({ ok: false, message: 'Publish notification storage not configured.' }, 503);
-      await notifyPublishedContent(env.INDEXNOW_KV_NAMESPACE);
+      await notifyPublishedContent(env.INDEXNOW_KV_NAMESPACE, assets);
       return json({ ok: true, message: 'Published URLs notified; receipt does not guarantee indexing.' });
     } catch {
       return json({ ok: false, message: 'IndexNow submission failed; the next visit will retry.' }, 502);
@@ -131,18 +133,27 @@ async function handleApi(request: Request, url: URL, env: EsaEnvironment): Promi
 export async function handleRequest(
   request: Request,
   context: ExecutionContext,
-  env: EsaEnvironment
+  env: EsaEnvironment,
+  assets: AssetSource = legacyAssets
 ): Promise<Response> {
   const url = new URL(request.url);
+  // Existing internal files are served directly by ESA. Missing ones reach this
+  // guard, which prevents the static subrequest from recursively invoking itself.
+  if (assets.prefix && (url.pathname === assets.prefix || url.pathname.startsWith(`${assets.prefix}/`))) {
+    return new Response(request.method === 'HEAD' ? null : (assets.notFoundHtml ?? 'Not found'), {
+      status: 404,
+      headers: { 'Content-Type': 'text/html; charset=utf-8', 'X-Robots-Tag': 'noindex', 'X-Elexvx-Hosting': 'ESA' },
+    });
+  }
   const destination = resolveRedirect(url);
   if (destination)
     return new Response(null, { status: 308, headers: { Location: destination, 'X-Elexvx-Hosting': 'ESA' } });
-  if (url.pathname.startsWith('/api/')) return handleApi(request, url, env);
+  if (url.pathname.startsWith('/api/')) return handleApi(request, url, env, assets);
   if (request.method !== 'GET' && request.method !== 'HEAD') {
     return json({ code: 405, message: 'Method not allowed' }, 405, { Allow: 'GET, HEAD' });
   }
-  const upstream = new URL(staticOrigin);
-  upstream.pathname = url.pathname;
+  const upstream = new URL(assets.origin);
+  upstream.pathname = assets.prefix + url.pathname;
   upstream.search = url.search;
   const requestHeaders = new Headers({ 'Accept-Encoding': 'gzip' });
   for (const name of ['accept', 'range', 'if-none-match', 'if-modified-since']) {
@@ -157,8 +168,8 @@ export async function handleRequest(
   const location = headers.get('location');
   if (location) {
     const redirected = new URL(location, upstream);
-    if (redirected.origin === staticOrigin)
-      headers.set('Location', url.origin + redirected.pathname + redirected.search);
+    if (redirected.origin === assets.origin && redirected.pathname.startsWith(`${assets.prefix}/`))
+      headers.set('Location', url.origin + redirected.pathname.slice(assets.prefix.length) + redirected.search);
   }
   if (response.status === 200 && headers.get('content-type')?.includes('text/html')) {
     headers.set('Cache-Control', 'public, max-age=60, s-maxage=300, stale-while-revalidate=600');
@@ -171,7 +182,7 @@ export async function handleRequest(
     ) {
       checkedAtByNamespace.set(namespace, Date.now());
       context.waitUntil(
-        notifyPublishedContent(namespace).catch(() => {
+        notifyPublishedContent(namespace, assets).catch(() => {
           checkedAtByNamespace.delete(namespace);
           console.log('indexnow.publish.failed');
         })
