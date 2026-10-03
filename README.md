@@ -19,7 +19,7 @@ ESA Pages 项目 `elexvx-public-pages` 连接本仓库的 `main` 分支，使用
 
 函数生产变量 `UPTIMEROBOT_API_KEY` 应使用加密存储。`INDEXNOW_KV_NAMESPACE=elexvx_indexnow` 指定 ESA KV 回执空间；构建生成的 `indexnow-manifest.json` 在内容变化后更新版本，成功页面访问会异步提交文章和集合 URL，成功回执避免重复提交。可选的 `CRON_SECRET` 仅用于保护手动通知接口，不需要 Vercel Cron。提交成功不等于搜索引擎实际收录。
 
-2026-10-03 迁移进度：两套 ESA Git 构建均已发布，路由函数暂绑定 `esa-migration-preview.elexvx.com`，已通过完整页面/资源及境内海外探针检查。正式域名仍使用原有公开页面路由；状态密钥和旧 DNS 记录替换尚待完成，因此 Vercel 运行服务尚未停用。Vercel 已配置 `exit 0` 跳过后续 Git 构建。正式切换后需停用旧的公开页面分段路由，再验证接口和全部域名，最后暂停 Vercel 项目与定时任务。邮箱、`bp`、`docs`、`acc` 属于其他业务入口，应保留。
+2026-10-03 已切换正式域名：`www`、`ai`、`nav`、`status` 和泛域名由 `elexvx-site-router` 承担，旧的公开页面分段路由和 Vercel 回源规则已停用。根域名保留邮箱 MX/TXT，用 ESA 代理 DNS 配合 `elexvx.com/*` 函数路由返回 308 到 `www`；不访问旧 Vercel 源站。监控密钥已加密保存并发布，状态与历史数据从 ESA 接口读取。正式站 153 个页面、370 个资源通过检查，中国、美国、德国、新加坡、澳大利亚探针返回 HTTP 200。Vercel 项目已暂停，定时执行已关闭，Git 自动部署连接已断开；邮箱、`bp`、`docs`、`acc` 属于其他业务入口并保留。
 
 ## 目录职责
 

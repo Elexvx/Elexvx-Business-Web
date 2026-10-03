@@ -25,7 +25,6 @@
   },
   "include": [
     "next-env.d.ts",
-    "api",
     "src/app",
     "src/content",
     "src/main.tsx",

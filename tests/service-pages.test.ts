@@ -3,7 +3,7 @@ import { navigationGroups } from '../src/data/research-navigation';
 import { serviceNavigation, serviceNavigationLinks } from '../src/data/service-navigation';
 import { serviceRoutePaths } from '../src/data/service-routes';
 import { availabilityTone, formatDay, groupStatusMonitors } from '../src/site/services/status-utils';
-import vercelConfig from '../vercel.json';
+import esaRedirects from '../src/server/esa/redirects.json';
 import { describe, expect, it } from 'vitest';
 
 describe('integrated service pages', () => {
@@ -74,8 +74,8 @@ describe('integrated service pages', () => {
     expect(serviceRoutePaths).toEqual(['/services', '/services/docs', '/navigation', '/status', '/status/history']);
   });
 
-  it('routes both service domains through the same Vercel project', () => {
-    const redirects = vercelConfig.redirects as Array<{
+  it('routes both service domains through the ESA router', () => {
+    const redirects = esaRedirects as Array<{
       source: string;
       destination: string;
       has?: Array<{ type: string; value: string }>;
