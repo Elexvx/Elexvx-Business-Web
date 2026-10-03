@@ -32,7 +32,14 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   return {
     title: { absolute: title },
     description: page.description,
-    alternates: { canonical: `https://www.elexvx.com${path}/` },
+    alternates: {
+      canonical: `https://www.elexvx.com${path}/`,
+      languages: {
+        'zh-CN': `https://www.elexvx.com${path}/`,
+        en: `https://www.elexvx.com${documentationPath('en', slug)}/`,
+        'x-default': `https://www.elexvx.com${path}/`,
+      },
+    },
     openGraph: {
       title,
       description: page.description,

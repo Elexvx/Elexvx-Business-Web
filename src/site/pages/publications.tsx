@@ -84,7 +84,7 @@ export const InsightPage = ({ insight }: { insight: Insight }) => {
             <span key={item.label}>{t(item.label)}</span>
           ))}
         </div>
-        <ContinueReading items={allInsights} current={insight} base="/insights" />
+        <ContinueReading items={allInsights} current={insight} base="/insights" indexHref="/research/" />
       </article>
     </SiteShell>
   );

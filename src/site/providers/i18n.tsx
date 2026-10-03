@@ -4,6 +4,7 @@ import { createContext, Fragment, useContext, useEffect, type ReactNode } from '
 
 import { existingEnglish, translateWithDictionary } from '../translation-base';
 import { canonicalContentHref } from '../routing/content-href';
+import { serviceRoutePaths } from '../../data/service-routes';
 
 export type Locale = 'zh-CN' | 'en';
 
@@ -65,8 +66,11 @@ export const LanguageProvider = ({
 
   const href = (value: string) => {
     const target = canonicalContentHref(value);
+    const pathname = target.split(/[?#]/, 1)[0].replace(/\/+$/, '');
+    const sharedService = serviceRoutePaths.some((route) => route === pathname && route !== '/services/docs');
     if (
       locale !== 'en' ||
+      sharedService ||
       !isInternalHref(target) ||
       /^\/en(?:\/|$|[?#])/.test(target) ||
       /\.[a-z0-9]+(?:[?#]|$)/i.test(target)

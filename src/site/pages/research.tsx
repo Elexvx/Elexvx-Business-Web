@@ -8,7 +8,7 @@ import { articleCategories } from '../../data/article-categories';
 import { Popover } from 'radix-ui';
 import { AppstoreOutlined, DownOutlined, FilterOutlined, UnorderedListOutlined } from '@ant-design/icons';
 import { useState } from 'react';
-import { getDirection, projects } from '../../data/site';
+import { getDirection, projects, researchDirections } from '../../data/site';
 import { pageContent } from '../../data/page-content';
 import { usePublishedInsights } from '../providers/content-context';
 import { classNames, Eyebrow, ResearchTile, SiteShell } from '../components/index';
@@ -200,6 +200,13 @@ export const ResearchPage = ({
           {activeFilter === 'all' && researchNotes.length > 0 && (
             <section aria-labelledby="research-notes-title">
               <h2 id="research-notes-title">{isChinese ? '研究记录' : 'Research notes'}</h2>
+              <nav className="research-index-tabs" aria-label={isChinese ? '研究方向' : 'Research directions'}>
+                {researchDirections.map((direction) => (
+                  <a className="research-index-tab" href={href(`/research/${direction.slug}/`)} key={direction.slug}>
+                    {t(direction.title)}
+                  </a>
+                ))}
+              </nav>
               <div className="research-index-list">
                 {researchNotes.map((note) => (
                   <a className="research-index-row" href={href(`/insights/${note.slug}/`)} key={note.slug}>

@@ -125,10 +125,12 @@ export const ContinueReading = ({
   items,
   current,
   base,
+  indexHref = base,
 }: {
   items: ReadingItem[];
   current: ReadingItem;
   base: string;
+  indexHref?: string;
 }) => {
   const { href, t, locale } = useI18n();
   const related = items
@@ -144,7 +146,7 @@ export const ContinueReading = ({
     <section className="article-continue" aria-label={locale === 'en' ? 'Continue reading' : '继续阅读'}>
       <div className="home-section-topline">
         <h2>{locale === 'en' ? 'Continue reading' : '继续阅读'}</h2>
-        <a className="text-link" href={href(base)}>
+        <a className="text-link" href={href(indexHref)}>
           {locale === 'en' ? 'View more' : '查看更多'}
         </a>
       </div>

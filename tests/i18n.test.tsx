@@ -17,6 +17,12 @@ function Links() {
         '/en/news/',
         '/activities/jinxi-2026/hello.svg',
         '/brand/logo.svg',
+        '/services/',
+        '/navigation/',
+        '/status/',
+        '/status/history/?days=7',
+        '/services/docs/',
+        '/services/docs/architecture/system-overview/',
         '#reference-1',
         'https://www.elexvx.com/research/moe-chiplet-expert-reuse',
         'https://example.com/research/article',
@@ -49,6 +55,15 @@ describe('English publishing', () => {
     expect(html).toContain('href="https://example.com/research/article"');
     expect(html).toContain('data-language-switch="true" href="/research/"');
     expect(html).not.toContain('/en/en/');
+    expect(html).toContain('href="/services/"');
+    expect(html).toContain('href="/navigation/"');
+    expect(html).toContain('href="/status/"');
+    expect(html).toContain('href="/status/history/?days=7"');
+    expect(html).toContain('href="/en/services/docs/"');
+    expect(html).toContain('href="/en/services/docs/architecture/system-overview/"');
+    expect(html).not.toContain('href="/en/services/"');
+    expect(html).not.toContain('href="/en/navigation/"');
+    expect(html).not.toContain('href="/en/status/"');
   });
   it('links Chinese content directly to its trailing-slash canonical URL', () => {
     const html = renderToStaticMarkup(

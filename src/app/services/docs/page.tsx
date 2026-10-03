@@ -10,7 +10,14 @@ const pageTitle = brandedPageTitle('Legendary Invention 教程总览');
 export const metadata: Metadata = {
   title: { absolute: pageTitle },
   description: 'Legendary Invention 的开发、架构、部署与运维文档。',
-  alternates: { canonical: 'https://www.elexvx.com/services/docs/' },
+  alternates: {
+    canonical: 'https://www.elexvx.com/services/docs/',
+    languages: {
+      'zh-CN': 'https://www.elexvx.com/services/docs/',
+      en: 'https://www.elexvx.com/en/services/docs/',
+      'x-default': 'https://www.elexvx.com/services/docs/',
+    },
+  },
   openGraph: {
     title: pageTitle,
     description: 'Legendary Invention 的开发、架构、部署与运维文档。',
