@@ -3,62 +3,14 @@ import { handleRequest, notifyPublishedContent, resolveRedirect } from '../src/s
 
 const context = { waitUntil: vi.fn() };
 const request = (path: string, init?: RequestInit) => new Request(`https://www.elexvx.com${path}`, init);
-
+const manifest = { version: 'a'.repeat(64), urls: ['https://www.elexvx.com/research/'] };
 afterEach(() => {
   vi.unstubAllGlobals();
   vi.clearAllMocks();
 });
 
-describe('ESA gateway', () => {
-  const singleProjectAssets = {
-    origin: 'https://www.elexvx.com',
-    prefix: '/_esa-assets',
-    notFoundHtml: '<h1>404</h1>',
-  };
-
-  it('serves the same project static directory and hides its prefix in redirects', async () => {
-    const fetchMock = vi
-      .fn()
-      .mockResolvedValueOnce(new Response('page'))
-      .mockResolvedValueOnce(
-        new Response(null, { status: 301, headers: { Location: '/_esa-assets/research/?ref=test' } })
-      );
-    vi.stubGlobal('fetch', fetchMock);
-    await handleRequest(request('/research/'), context, {}, singleProjectAssets);
-    expect(fetchMock.mock.calls[0][0]).toBe('https://www.elexvx.com/_esa-assets/research/');
-    const response = await handleRequest(request('/research?ref=test'), context, {}, singleProjectAssets);
-    expect(response.headers.get('location')).toBe('https://www.elexvx.com/research/?ref=test');
-  });
-
-  it('terminates missing internal asset requests without another fetch', async () => {
-    const fetchMock = vi.fn();
-    vi.stubGlobal('fetch', fetchMock);
-    const response = await handleRequest(request('/_esa-assets/missing/'), context, {}, singleProjectAssets);
-    expect(response.status).toBe(404);
-    expect(await response.text()).toBe('<h1>404</h1>');
-    expect(response.headers.get('x-robots-tag')).toBe('noindex');
-    expect(fetchMock).not.toHaveBeenCalled();
-    expect(
-      await (
-        await handleRequest(request('/_esa-assets/missing/', { method: 'HEAD' }), context, {}, singleProjectAssets)
-      ).text()
-    ).toBe('');
-  });
-
-  it('keeps host redirects ahead of same-project static requests', async () => {
-    const fetchMock = vi.fn();
-    vi.stubGlobal('fetch', fetchMock);
-    const response = await handleRequest(
-      new Request('https://ai.elexvx.com/research/?ref=old'),
-      context,
-      {},
-      singleProjectAssets
-    );
-    expect(response.status).toBe(308);
-    expect(response.headers.get('location')).toBe('https://www.elexvx.com/research/?ref=old');
-    expect(fetchMock).not.toHaveBeenCalled();
-  });
-  it('preserves host entry points, legacy aliases and category redirects', () => {
+describe('single ESA project', () => {
+  it('preserves host, legacy, category and language redirects with query strings', () => {
     expect(resolveRedirect(new URL('https://ai.elexvx.com/research/?ref=old'))).toBe(
       'https://www.elexvx.com/research/?ref=old'
     );
@@ -72,77 +24,32 @@ describe('ESA gateway', () => {
     expect(resolveRedirect(new URL('https://www.elexvx.com/en/research/?category=chip-architecture&ref=old'))).toBe(
       'https://www.elexvx.com/en/research/category/chip-architecture/?ref=old'
     );
-    expect(resolveRedirect(new URL('https://www.elexvx.com/research/?category=unknown'))).toBeUndefined();
     expect(resolveRedirect(new URL('https://www.elexvx.com/research/'))).toBeUndefined();
   });
-
-  it('serves files from ESA without forwarding cookies or authorization', async () => {
-    const fetchMock = vi
-      .fn()
-      .mockResolvedValue(new Response('page', { headers: { 'Content-Type': 'text/html', 'Content-Length': '4' } }));
+  it('returns branded missing pages and HEAD without any static subrequest', async () => {
+    const fetchMock = vi.fn();
     vi.stubGlobal('fetch', fetchMock);
-    const response = await handleRequest(
-      request('/research/', { headers: { Cookie: 'private=data', Authorization: 'Bearer private' } }),
-      context,
-      {}
-    );
-    expect(fetchMock.mock.calls[0][0]).toBe('https://assets.elexvx.com/research/');
-    const headers = fetchMock.mock.calls[0][1].headers as Headers;
-    expect(headers.has('cookie')).toBe(false);
-    expect(headers.has('authorization')).toBe(false);
-    expect(response.headers.get('x-elexvx-hosting')).toBe('ESA');
-    expect(response.headers.has('content-length')).toBe(false);
-    expect(await response.text()).toBe('page');
+    const response = await handleRequest(request('/missing/'), context, {}, manifest, '<h1>404</h1>');
+    expect(response.status).toBe(404);
+    expect(await response.text()).toBe('<h1>404</h1>');
+    expect(response.headers.get('x-robots-tag')).toBe('noindex');
+    expect(await (await handleRequest(request('/missing/', { method: 'HEAD' }), context, {})).text()).toBe('');
+    expect(fetchMock).not.toHaveBeenCalled();
   });
-
-  it('keeps missing pages as HTTP 404 and internal redirects on the visitor host', async () => {
-    vi.stubGlobal(
-      'fetch',
-      vi
-        .fn()
-        .mockResolvedValueOnce(new Response('missing', { status: 404 }))
-        .mockResolvedValueOnce(
-          new Response(null, { status: 307, headers: { Location: 'https://assets.elexvx.com/research/' } })
-        )
-    );
-    expect((await handleRequest(request('/missing/'), context, {})).status).toBe(404);
-    const response = await handleRequest(request('/research'), context, {});
-    expect(response.status).toBe(307);
-    expect(response.headers.get('location')).toBe('https://www.elexvx.com/research/');
+  it('canonicalizes unknown categories instead of returning a missing page', async () => {
+    const response = await handleRequest(request('/research/?category=unknown&ref=old'), context, {});
+    expect(response.status).toBe(308);
+    expect(response.headers.get('location')).toBe('https://www.elexvx.com/research/?ref=old');
   });
-
-  it('keeps double-slash paths on the fixed ESA origin', async () => {
-    const fetchMock = vi.fn().mockResolvedValue(new Response('missing', { status: 404 }));
-    vi.stubGlobal('fetch', fetchMock);
-    await handleRequest(request('//foreign.example/file'), context, {});
-    expect(fetchMock.mock.calls[0][0]).toBe('https://assets.elexvx.com//foreign.example/file');
-  });
-
-  it('returns HEAD and conditional responses without a body', async () => {
-    vi.stubGlobal(
-      'fetch',
-      vi
-        .fn()
-        .mockResolvedValueOnce(new Response('page'))
-        .mockResolvedValueOnce(new Response(null, { status: 304 }))
-    );
-    expect(await (await handleRequest(request('/research/', { method: 'HEAD' }), context, {})).text()).toBe('');
-    expect(
-      (await handleRequest(request('/research/', { headers: { 'If-None-Match': 'tag' } }), context, {})).status
-    ).toBe(304);
-  });
-
-  it('restricts API methods and protects IndexNow from public submission', async () => {
+  it('restricts methods and keeps the manual IndexNow endpoint authenticated', async () => {
     expect((await handleRequest(request('/api/status/', { method: 'POST' }), context, {})).status).toBe(405);
     expect((await handleRequest(request('/api/status/'), context, {})).status).toBe(503);
-    const indexnow = await handleRequest(request('/api/indexnow/'), context, { CRON_SECRET: 'private' });
-    expect(indexnow.status).toBe(401);
-    expect(indexnow.headers.get('cache-control')).toBe('private, no-store');
+    const response = await handleRequest(request('/api/indexnow/'), context, { CRON_SECRET: 'private' });
+    expect(response.status).toBe(401);
+    expect(response.headers.get('cache-control')).toBe('private, no-store');
     expect((await handleRequest(request('/api/unknown/'), context, {})).status).toBe(404);
   });
-
-  it('stores successful publish receipt and skips an already notified version', async () => {
-    const version = 'a'.repeat(64);
+  it('stores a successful publish receipt and skips an already notified version', async () => {
     const get = vi.fn().mockResolvedValueOnce(undefined).mockResolvedValueOnce('received');
     const put = vi.fn();
     vi.stubGlobal(
@@ -152,22 +59,19 @@ describe('ESA gateway', () => {
         put = put;
       }
     );
-    const key = 'f84f594ae29eba5b114a6fe74823cadb422fecf00fdb530ed6c4c6ffaaa3aef4';
-    const fetchMock = vi
-      .fn()
-      .mockResolvedValueOnce(Response.json({ version, urls: ['https://www.elexvx.com/research/'] }))
-      .mockResolvedValueOnce(new Response(key))
-      .mockResolvedValueOnce(new Response(null, { status: 202 }))
-      .mockResolvedValueOnce(Response.json({ version, urls: ['https://www.elexvx.com/research/'] }));
+    const fetchMock = vi.fn().mockResolvedValue(new Response(null, { status: 202 }));
     vi.stubGlobal('fetch', fetchMock);
-    await notifyPublishedContent('public-notification-state');
-    await notifyPublishedContent('public-notification-state');
+    await notifyPublishedContent('receipts', manifest);
+    await notifyPublishedContent('receipts', manifest);
     expect(put).toHaveBeenCalledTimes(1);
-    expect(fetchMock).toHaveBeenCalledTimes(4);
+    expect(fetchMock).toHaveBeenCalledTimes(1);
     expect(JSON.parse(put.mock.calls[0][1])).toMatchObject({ status: 202, submitted: 1 });
+    expect(JSON.parse(fetchMock.mock.calls[0][1].body)).toMatchObject({
+      urlList: manifest.urls,
+      keyLocation: expect.stringContaining('https://www.elexvx.com/'),
+    });
   });
-
-  it('does not record failed IndexNow submissions as completed', async () => {
+  it('rejects external URLs and never records a failed publish submission', async () => {
     const put = vi.fn();
     vi.stubGlobal(
       'EdgeKV',
@@ -176,11 +80,32 @@ describe('ESA gateway', () => {
         put = put;
       }
     );
-    vi.stubGlobal(
-      'fetch',
-      vi.fn().mockResolvedValueOnce(Response.json({ version: 'b'.repeat(64), urls: ['https://evil.example/news/'] }))
-    );
-    await expect(notifyPublishedContent('public-notification-state')).rejects.toThrow('IndexNow URLs must use');
+    const fetchMock = vi.fn().mockResolvedValue(new Response('rejected', { status: 500 }));
+    vi.stubGlobal('fetch', fetchMock);
+    await expect(
+      notifyPublishedContent('failed', { ...manifest, urls: ['https://evil.example/news/'] })
+    ).rejects.toThrow('IndexNow URLs must use');
+    await expect(notifyPublishedContent('failed', manifest)).rejects.toThrow('IndexNow rejected');
     expect(put).not.toHaveBeenCalled();
+  });
+  it('only queues the fixed compiled manifest and ignores caller URL parameters', async () => {
+    vi.stubGlobal(
+      'EdgeKV',
+      class {
+        get = vi.fn().mockResolvedValue(undefined);
+        put = vi.fn();
+      }
+    );
+    const fetchMock = vi.fn().mockResolvedValue(new Response(null, { status: 202 }));
+    vi.stubGlobal('fetch', fetchMock);
+    const response = await handleRequest(
+      request('/api/publish/?url=https://evil.example'),
+      context,
+      { INDEXNOW_KV_NAMESPACE: 'fixed-only' },
+      manifest
+    );
+    expect(response.status).toBe(202);
+    await context.waitUntil.mock.calls[0][0];
+    expect(JSON.parse(fetchMock.mock.calls[0][1].body).urlList).toEqual(manifest.urls);
   });
 });

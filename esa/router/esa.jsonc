@@ -1,6 +1,0 @@
-{
-  "name": "elexvx-site-router",
-  "installCommand": "npm ci",
-  "buildCommand": "npm run build",
-  "entry": "./dist/index.js",
-}

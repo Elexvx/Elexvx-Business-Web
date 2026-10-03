@@ -16,11 +16,8 @@ type EdgeStore = {
 declare const EdgeKV: new (options: { namespace: string }) => EdgeStore;
 
 type ExecutionContext = { waitUntil(task: Promise<unknown>): void };
-type PublishManifest = { version: string; urls: string[] };
-export type AssetSource = { origin: string; prefix: string; notFoundHtml?: string };
+export type PublishManifest = { version: string; urls: string[] };
 
-const staticOrigin = 'https://assets.elexvx.com';
-const legacyAssets: AssetSource = { origin: staticOrigin, prefix: '' };
 const canonicalOrigin = 'https://www.elexvx.com';
 const previewHost = 'esa-migration-preview.elexvx.com';
 const checkedAtByNamespace = new Map<string, number>();
@@ -70,21 +67,23 @@ export function resolveRedirect(url: URL): string | undefined {
   return undefined;
 }
 
-export async function notifyPublishedContent(namespace: string, assets: AssetSource = legacyAssets): Promise<void> {
+export async function notifyPublishedContent(namespace: string, manifest: PublishManifest): Promise<void> {
   const store = new EdgeKV({ namespace });
-  const response = await fetch(`${assets.origin}${assets.prefix}/indexnow-manifest.json`, { redirect: 'manual' });
-  if (!response.ok) throw new Error(`Publish manifest unavailable (${response.status}).`);
-  const manifest = (await response.json()) as PublishManifest;
   if (!/^[a-f\d]{64}$/.test(manifest.version) || !Array.isArray(manifest.urls) || manifest.urls.length > 10000) {
     throw new Error('Invalid publish manifest.');
   }
   const key = `indexnow:${manifest.version}`;
   if (await store.get(key, { type: 'text' })) return;
-  const result = await submitIndexNowUrls(manifest.urls);
+  const result = await submitIndexNowUrls(manifest.urls, false);
   await store.put(key, JSON.stringify({ status: result.status, submitted: result.urls.length, at: Date.now() }));
 }
 
-async function handleApi(request: Request, url: URL, env: EsaEnvironment, assets: AssetSource): Promise<Response> {
+async function handleApi(
+  request: Request,
+  url: URL,
+  env: EsaEnvironment,
+  manifest?: PublishManifest
+): Promise<Response> {
   const path = url.pathname.replace(/\/$/, '');
   if (path === '/api/status') {
     if (request.method !== 'GET') return json({ code: 405, message: 'Method not allowed' }, 405, { Allow: 'GET' });
@@ -111,9 +110,9 @@ async function handleApi(request: Request, url: URL, env: EsaEnvironment, assets
       return json({ ok: false, message: 'Unauthorized' }, 401);
     }
     try {
-      if (!env.INDEXNOW_KV_NAMESPACE)
+      if (!env.INDEXNOW_KV_NAMESPACE || !manifest)
         return json({ ok: false, message: 'Publish notification storage not configured.' }, 503);
-      await notifyPublishedContent(env.INDEXNOW_KV_NAMESPACE, assets);
+      await notifyPublishedContent(env.INDEXNOW_KV_NAMESPACE, manifest);
       return json({ ok: true, message: 'Published URLs notified; receipt does not guarantee indexing.' });
     } catch {
       return json({ ok: false, message: 'IndexNow submission failed; the next visit will retry.' }, 502);
@@ -134,64 +133,43 @@ export async function handleRequest(
   request: Request,
   context: ExecutionContext,
   env: EsaEnvironment,
-  assets: AssetSource = legacyAssets
+  manifest?: PublishManifest,
+  notFoundHtml = 'Not found'
 ): Promise<Response> {
   const url = new URL(request.url);
-  // Existing internal files are served directly by ESA. Missing ones reach this
-  // guard, which prevents the static subrequest from recursively invoking itself.
-  if (assets.prefix && (url.pathname === assets.prefix || url.pathname.startsWith(`${assets.prefix}/`))) {
-    return new Response(request.method === 'HEAD' ? null : (assets.notFoundHtml ?? 'Not found'), {
-      status: 404,
-      headers: { 'Content-Type': 'text/html; charset=utf-8', 'X-Robots-Tag': 'noindex', 'X-Elexvx-Hosting': 'ESA' },
-    });
-  }
   const destination = resolveRedirect(url);
   if (destination)
     return new Response(null, { status: 308, headers: { Location: destination, 'X-Elexvx-Hosting': 'ESA' } });
-  if (url.pathname.startsWith('/api/')) return handleApi(request, url, env, assets);
-  if (request.method !== 'GET' && request.method !== 'HEAD') {
-    return json({ code: 405, message: 'Method not allowed' }, 405, { Allow: 'GET, HEAD' });
-  }
-  const upstream = new URL(assets.origin);
-  upstream.pathname = assets.prefix + url.pathname;
-  upstream.search = url.search;
-  const requestHeaders = new Headers({ 'Accept-Encoding': 'gzip' });
-  for (const name of ['accept', 'range', 'if-none-match', 'if-modified-since']) {
-    const value = request.headers.get(name);
-    if (value) requestHeaders.set(name, value);
-  }
-  const response = await fetch(upstream.href, { method: request.method, headers: requestHeaders, redirect: 'manual' });
-  const headers = new Headers(response.headers);
-  headers.delete('content-length');
-  headers.delete('content-encoding');
-  headers.set('X-Elexvx-Hosting', 'ESA');
-  const location = headers.get('location');
-  if (location) {
-    const redirected = new URL(location, upstream);
-    if (redirected.origin === assets.origin && redirected.pathname.startsWith(`${assets.prefix}/`))
-      headers.set('Location', url.origin + redirected.pathname.slice(assets.prefix.length) + redirected.search);
-  }
-  if (response.status === 200 && headers.get('content-type')?.includes('text/html')) {
-    headers.set('Cache-Control', 'public, max-age=60, s-maxage=300, stale-while-revalidate=600');
-    const namespace = env.INDEXNOW_KV_NAMESPACE;
-    if (
-      url.hostname !== previewHost &&
-      request.method === 'GET' &&
-      namespace &&
-      Date.now() - (checkedAtByNamespace.get(namespace) ?? 0) > 600000
-    ) {
+  const namespace = env.INDEXNOW_KV_NAMESPACE;
+  if (url.pathname.replace(/\/$/, '') === '/api/publish') {
+    if (request.method !== 'GET') return json({ code: 405, message: 'Method not allowed' }, 405, { Allow: 'GET' });
+    if (!namespace || !manifest) return json({ code: 503, message: 'Publish manifest unavailable' }, 503);
+    if (url.hostname !== previewHost && Date.now() - (checkedAtByNamespace.get(namespace) ?? 0) > 600000) {
       checkedAtByNamespace.set(namespace, Date.now());
       context.waitUntil(
-        notifyPublishedContent(namespace, assets).catch(() => {
+        notifyPublishedContent(namespace, manifest).catch(() => {
           checkedAtByNamespace.delete(namespace);
           console.log('indexnow.publish.failed');
         })
       );
     }
+    return json({ ok: true, message: 'Published URLs queued; this does not guarantee indexing.' }, 202);
   }
-  return new Response(request.method === 'HEAD' || [204, 304].includes(response.status) ? null : response.body, {
-    status: response.status,
-    headers,
+  if (url.pathname.startsWith('/api/')) return handleApi(request, url, env, manifest);
+  if (request.method !== 'GET' && request.method !== 'HEAD') {
+    return json({ code: 405, message: 'Method not allowed' }, 405, { Allow: 'GET, HEAD' });
+  }
+  // A category route also receives unknown categories: canonicalize these to the
+  // unfiltered list instead of returning a missing page.
+  if (/^\/(?:en\/)?(?:news|research|activities)\/?$/.test(url.pathname) && url.searchParams.has('category')) {
+    url.searchParams.delete('category');
+    if (!url.pathname.endsWith('/')) url.pathname += '/';
+    return new Response(null, { status: 308, headers: { Location: url.href, 'X-Elexvx-Hosting': 'ESA' } });
+  }
+  // ESA serves every existing file itself. Only unmatched paths reach this code.
+  return new Response(request.method === 'HEAD' ? null : notFoundHtml, {
+    status: 404,
+    headers: { 'Content-Type': 'text/html; charset=utf-8', 'X-Robots-Tag': 'noindex', 'X-Elexvx-Hosting': 'ESA' },
   });
 }
 

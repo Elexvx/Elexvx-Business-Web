@@ -29,18 +29,21 @@ const validateUrls = (urls: string[]) => {
   return uniqueUrls;
 };
 
-const verifyPublishedKey = async () => {
-  const response = await fetch(keyLocation, { cache: 'no-store' });
+const verifyPublishedKey = async (verificationUrl = keyLocation) => {
+  const response = await fetch(verificationUrl, { cache: 'no-store' });
   if (!response.ok || (await response.text()).trim() !== key) {
     throw new Error(`Production IndexNow key verification failed (HTTP ${response.status}).`);
   }
 };
 
-const postIndexNow = async (urls: string[]): Promise<IndexNowSubmission> => {
+const postIndexNow = async (
+  urls: string[],
+  verificationUrl: string | false = keyLocation
+): Promise<IndexNowSubmission> => {
   const uniqueUrls = validateUrls(urls);
   if (uniqueUrls.length === 0) return { status: 204, urls: [] };
 
-  await verifyPublishedKey();
+  if (verificationUrl !== false) await verifyPublishedKey(verificationUrl);
   const response = await fetch('https://api.indexnow.org/indexnow', {
     method: 'POST',
     headers: { 'content-type': 'application/json; charset=utf-8' },
@@ -54,7 +57,8 @@ const postIndexNow = async (urls: string[]): Promise<IndexNowSubmission> => {
   return { status: response.status, urls: uniqueUrls };
 };
 
-export const submitIndexNowUrls = async (urls: string[]) => postIndexNow(urls);
+export const submitIndexNowUrls = async (urls: string[], verificationUrl?: string | false) =>
+  postIndexNow(urls, verificationUrl);
 
 export const selectIndexNowUrls = (
   xml: string,

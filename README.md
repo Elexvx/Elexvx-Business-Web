@@ -15,9 +15,9 @@ npm run preview    # 静态产物预览
 
 ESA 项目 `elexvx-site-router` 统一托管页面、静态资源和接口，连接本仓库的 `main` 分支，构建根目录为 `/`，使用 Node.js 24、`npm ci` 和 `npm run build:esa` 自动构建并发布。`esa.jsonc` 同时指定函数入口 `./esa/site/index.js` 与静态目录 `./esa/site/assets`，没有配置 SPA 回退。
 
-构建将 `dist` 原样复制到同一项目的 `/_esa-assets/` 静态目录。公开网址先由函数处理域名和旧网址跳转，再读取当前项目的静态文件；不依赖另一个 ESA 项目或 Vercel。内部缺失资源直接返回真实 404，防止递归回源，`robots.txt` 禁止抓取内部目录。状态数据接口和新版文章 IndexNow 通知也由同一函数承担。网站内容保持静态发布，未新增用户账号系统。`npm run build` 仍生成可独立预览的 `dist`。
+构建将 `dist` 复制到同一项目的静态目录，页面、JS、CSS 和图片由 ESA 原生静态分发，函数只处理接口、旧网址跳转及缺失页面；不读取另一项目或回源 Vercel。旧网址的静态回退文件从 ESA 产物移除，以确保函数返回永久重定向；域名入口及分类查询通过选择性函数路由处理。网站内容保持静态发布，未新增用户账号系统。`npm run build` 仍生成可独立预览的 `dist`。
 
-函数生产变量 `UPTIMEROBOT_API_KEY` 应使用加密存储。`INDEXNOW_KV_NAMESPACE=elexvx_indexnow` 指定 ESA KV 回执空间；构建生成的 `indexnow-manifest.json` 在内容变化后更新版本，成功页面访问会异步提交文章和集合 URL，成功回执避免重复提交。可选的 `CRON_SECRET` 仅用于保护手动通知接口，不需要 Vercel Cron。提交成功不等于搜索引擎实际收录。
+函数生产变量 `UPTIMEROBOT_API_KEY` 应使用加密存储。`INDEXNOW_KV_NAMESPACE=elexvx_indexnow` 指定 ESA KV 回执空间；构建生成的 `indexnow-manifest.json` 在内容变化后更新版本，静态页面访问 `/api/publish/`，由函数异步提交构建时固定的文章和集合 URL，成功回执避免重复提交。可选的 `CRON_SECRET` 仅用于保护手动通知接口，不需要 Vercel Cron。提交成功不等于搜索引擎实际收录。
 
 2026-10-03 已切换正式域名：`www`、`ai`、`nav`、`status` 和泛域名由 `elexvx-site-router` 承担，旧的公开页面分段路由和 Vercel 回源规则已停用。根域名保留邮箱 MX/TXT，用 ESA 代理 DNS 配合 `elexvx.com/*` 函数路由返回 308 到 `www`；不访问旧 Vercel 源站。监控密钥已加密保存并发布，状态与历史数据从 ESA 接口读取。正式站 153 个页面、370 个资源通过检查，中国、美国、德国、新加坡、澳大利亚探针返回 HTTP 200。Vercel 项目已暂停，定时执行已关闭，Git 自动部署连接已断开；邮箱、`bp`、`docs`、`acc` 属于其他业务入口并保留。
 
