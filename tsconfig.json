@@ -32,6 +32,7 @@
     "scripts",
     "tests",
     "vite.config.ts",
+    "vitest.config.ts",
     "next.config.mjs",
     "dist/types/**/*.ts",
     "dist/dev/types/**/*.ts",

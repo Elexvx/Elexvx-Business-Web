@@ -8,11 +8,11 @@ components 中 navigation、footer、shell、ui 分别负责导航、页脚、�
 
 ## 内容与路由
 
-articles 和 content/site/catalog.json 经内容解析、展示配置进入 routing/routes.tsx，形成有效页面清单。顶部、底部和搜索使用同一个 navigation-availability.ts 判断链接是否可显示。研究方向还需有已发布文章。
+articles 和 content/site/catalog.json 经内容解析、展示配置进入 routing/routes.tsx，形成有效页面清单。顶部、底部和搜索使用同一个 navigation-availability.ts 判断链接是否可显示。正式 catalog 中的研究方向只要生成路由就会显示，不要求先发布文章。
 
 栏目顺序和名称仍由配置维护；这不是扫描任意文件自动推断栏目。新增页面需要同时提供 Next 路由和站点路由记录。
 
-下线内容存入 parked-pages，并移出正式 catalog；已有产品引用的分类标识保留在 retiredResearchDirectionSlugs。恢复按照各目录 README 操作，同时处理英文地址的 404 占位。
+下线内容存入 parked-pages，并移出正式 catalog；若暂时下线的方向仍被项目引用，可在 retiredResearchDirectionSlugs 保留分类标识而不生成页面。恢复时按各目录 README 核对原始资料，并删除英文地址的 404 占位。
 
 ## 样式顺序
 
@@ -20,7 +20,7 @@ apple-system.css 是唯一导入入口。sections/01 到 15 依次为基础、�
 
 此次拆分保留原始 CSS 顺序，以避免视觉回归。部分历史覆盖仍在后段，修改时检查同名选择器，不能随意重排导入。新增规则写入对应分区。
 
-页面配色统一使用主题变量：正文与标题使用 --color-ink，辅助文字使用 --color-ink-muted，背景使用 --color-canvas / --color-parchment，边框使用 --color-hairline，主按钮使用 --color-button-*。默认深色值在 01-foundation.css，浅色值在 10-theme.css。不要为单独页面写死黑白颜色；图片遮罩上的文字和品牌黑白展示可保留固定配色。
+页面配色统一使用主题变量：正文与标题使用 --color-ink，辅助文字使用 --color-ink-muted，背景使用 --color-canvas / --color-parchment，边框使用 --color-hairline，主按钮使用 --color-button-\*。默认深色值在 01-foundation.css，浅色值在 10-theme.css。不要为单独页面写死黑白颜色；图片遮罩上的文字和品牌黑白展示可保留固定配色。
 
 ## 历史和资源
 

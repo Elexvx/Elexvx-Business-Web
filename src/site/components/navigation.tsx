@@ -44,6 +44,8 @@ export const GlobalNav = ({
   const [panelGroup, setPanelGroup] = useState<NavigationGroup | null>(null);
   const [panelContentVisible, setPanelContentVisible] = useState(true);
   const navRef = useRef<HTMLElement>(null);
+  const mobileMenuButtonRef = useRef<HTMLButtonElement>(null);
+  const mobileNavigationRef = useRef<HTMLDivElement>(null);
   const openTimerRef = useRef<number | null>(null);
   const closeTimerRef = useRef<number | null>(null);
   const contentSwapTimerRef = useRef<number | null>(null);
@@ -130,10 +132,53 @@ export const GlobalNav = ({
   };
 
   useEffect(() => {
+    const mobileNavigation = mobileNavigationRef.current;
+    const shell = navRef.current?.parentElement;
+    const inertTargets = shell
+      ? Array.from(shell.children).filter(
+          (element): element is HTMLElement =>
+            element instanceof HTMLElement && element !== navRef.current && element !== mobileNavigation
+        )
+      : [];
+    const previousInert = inertTargets.map((element) => [element, element.inert] as const);
+    let focusFrame: number | null = null;
+
+    const getFocusableMenuItems = () =>
+      Array.from(
+        mobileNavigation?.querySelectorAll<HTMLElement>(
+          'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), summary, [tabindex]:not([tabindex="-1"])'
+        ) || []
+      ).filter(
+        (element) =>
+          !element.hasAttribute('disabled') &&
+          !element.closest('[aria-hidden="true"]') &&
+          element.getClientRects().length > 0
+      );
+
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
         setMenuOpen(false);
         closeDesktopMenu();
+        return;
+      }
+
+      if (!menuOpen || event.key !== 'Tab') return;
+      const items = getFocusableMenuItems();
+      const first = items[0];
+      const last = items[items.length - 1];
+      if (!first || !last) {
+        event.preventDefault();
+        return;
+      }
+      if (!mobileNavigation?.contains(document.activeElement)) {
+        event.preventDefault();
+        (event.shiftKey ? last : first).focus();
+      } else if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
       }
     };
     const onPointerDown = (event: PointerEvent) => {
@@ -141,11 +186,26 @@ export const GlobalNav = ({
     };
     document.addEventListener('keydown', onKeyDown);
     document.addEventListener('pointerdown', onPointerDown);
-    if (menuOpen) document.body.classList.add('menu-is-open');
+    if (menuOpen) {
+      document.body.classList.add('menu-is-open');
+      inertTargets.forEach((element) => {
+        element.inert = true;
+      });
+      focusFrame = window.requestAnimationFrame(() => {
+        const first = getFocusableMenuItems()[0];
+        first?.focus({ preventScroll: true });
+        focusFrame = null;
+      });
+    }
     return () => {
       document.removeEventListener('keydown', onKeyDown);
       document.removeEventListener('pointerdown', onPointerDown);
       document.body.classList.remove('menu-is-open');
+      if (focusFrame !== null) window.cancelAnimationFrame(focusFrame);
+      previousInert.forEach(([element, wasInert]) => {
+        element.inert = wasInert;
+      });
+      if (menuOpen) mobileMenuButtonRef.current?.focus({ preventScroll: true });
       clearInteractionTimers();
       clearContentTransition();
     };
@@ -205,6 +265,7 @@ export const GlobalNav = ({
             */}
             <button
               className="mobile-menu-button"
+              ref={mobileMenuButtonRef}
               type="button"
               aria-label={t(menuOpen ? '关闭导航菜单' : '打开导航菜单')}
               aria-expanded={menuOpen}
@@ -273,8 +334,12 @@ export const GlobalNav = ({
       </header>
 
       <div
+        ref={mobileNavigationRef}
         className={classNames('mobile-navigation', tone === 'dark' && 'mobile-navigation-dark', menuOpen && 'is-open')}
         id="mobile-navigation"
+        role="dialog"
+        aria-modal="true"
+        aria-label={locale === 'en' ? 'Mobile navigation' : '移动端导航菜单'}
         aria-hidden={!menuOpen}
       >
         <div className="mobile-navigation-inner">
@@ -298,19 +363,7 @@ export const GlobalNav = ({
                     setMobileOpenGroup((currentGroup) => (currentGroup === group.id ? null : group.id));
                   }}
                 >
-                  {group.id === 'research' ? (
-                    <a
-                      href={resolveHref(group.href)}
-                      onClick={(event) => {
-                        event.stopPropagation();
-                        setMenuOpen(false);
-                      }}
-                    >
-                      {t(group.label)}
-                    </a>
-                  ) : (
-                    <span>{t(group.label)}</span>
-                  )}
+                  <span>{t(group.label)}</span>
                   <span className="mobile-summary-chevron" aria-hidden="true" />
                 </summary>
                 <div className="mobile-navigation-links">

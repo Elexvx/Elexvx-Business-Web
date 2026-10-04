@@ -134,7 +134,7 @@ export const CookieConsent = () => {
               </div>
               <Switch.Root
                 className="ui-switch"
-                aria-label="分析 Cookie"
+                aria-label={english ? 'Analytics cookies' : '分析 Cookie'}
                 checked={preferences.analytics}
                 onCheckedChange={(checked) => setPreferences((current) => ({ ...current, analytics: checked }))}
               >
@@ -148,7 +148,7 @@ export const CookieConsent = () => {
               </div>
               <Switch.Root
                 className="ui-switch"
-                aria-label="营销 Cookie"
+                aria-label={english ? 'Marketing cookies' : '营销 Cookie'}
                 checked={preferences.marketing}
                 onCheckedChange={(checked) => setPreferences((current) => ({ ...current, marketing: checked }))}
               >

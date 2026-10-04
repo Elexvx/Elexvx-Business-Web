@@ -2,7 +2,6 @@
 
 import { createContext, useContext, useMemo, type ReactNode } from 'react';
 import { isDisabledPath } from '../../data/disabled-sections';
-import catalog from '../../data/navigation-catalog.json';
 import { createLinkAvailability } from '../../data/navigation-availability';
 import { toInsightSummary, toNewsSummary } from '../../content/summaries';
 import type { Insight, InsightSummary, NewsItem, NewsSummary } from '../../content/types';
@@ -54,13 +53,5 @@ export const usePublishedNews = () => {
 
 export const useAvailableLink = () => {
   const routePaths = useContext(RoutePathsContext);
-  const publishedInsights = usePublishedInsights();
-  return useMemo(
-    () =>
-      createLinkAvailability(routePaths, [
-        ...publishedInsights.map((item) => item.directionSlug),
-        ...catalog.research.map((item) => item.slug),
-      ]),
-    [routePaths, publishedInsights]
-  );
+  return useMemo(() => createLinkAvailability(routePaths), [routePaths]);
 };

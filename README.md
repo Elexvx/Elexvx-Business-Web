@@ -9,13 +9,16 @@ npm install
 npm run dev        # http://127.0.0.1:5173
 npm run check      # 类型、Lint、格式、内容、测试、构建
 npm run preview    # 静态产物预览
+npm run build:esa  # 发布门禁、Next 导出、ESA 打包和静态 SEO 自检
 ```
+
+Vitest 仅发现主项目 `tests/` 下的 `*.test.ts` 与 `*.test.tsx`，不会扫描隐藏工作树或 ESA 构建产物。
 
 ## 公开页面部署
 
 ESA 项目 `elexvx-site-router` 统一托管页面、静态资源和接口，连接本仓库的 `main` 分支，构建根目录为 `/`，使用 Node.js 24、`npm ci` 和 `npm run build:esa` 自动构建并发布。`esa.jsonc` 同时指定函数入口 `./esa/site/index.js` 与静态目录 `./esa/site/assets`，没有配置 SPA 回退。
 
-构建将 `dist` 复制到同一项目的静态目录，页面、JS、CSS 和图片由 ESA 原生静态分发，函数只处理接口、旧网址跳转及缺失页面；不读取另一项目或回源 Vercel。旧网址的静态回退文件从 ESA 产物移除，以确保函数返回永久重定向；域名入口、分站 robots/sitemap 和分类查询使用站点的原生重定向规则，优先于静态资源分发；函数路由仅作为缺失资源的回退。ESA 会优先响应存在的静态文件，不能依靠函数路由覆盖它们。网站内容保持静态发布，未新增用户账号系统。`npm run build` 仍生成可独立预览的 `dist`。
+`npm run build:esa` 先刷新生成源文件，再依次运行主项目测试、内容检查、Lint、类型检查、一次 Next 静态构建（含英文内容检查）、ESA 打包和静态产物 SEO 自检。自检确认 sitemap 页面文件、canonical、双语 hreflang 目标及互惠关系和页面主体；无英文版本的独立服务工具页不要求英文配对。ESA 打包保留 `dist/404.html` 供本地预览，同时从公开 ESA 静态目录移除 `404.html` 与 Next 内部 `/_not-found/`。构建将 `dist` 复制到同一项目的静态目录，页面、JS、CSS 和图片由 ESA 原生静态分发，函数只处理接口、旧网址跳转及缺失页面；不读取另一项目或回源 Vercel。旧网址的静态回退文件从 ESA 产物移除，以确保函数返回永久重定向；域名入口、分站 robots/sitemap 和分类查询使用站点的原生重定向规则，优先于静态资源分发；函数路由仅作为缺失资源的回退。ESA 会优先响应存在的静态文件，不能依靠函数路由覆盖它们。网站内容保持静态发布，未新增用户账号系统。`npm run build` 仍生成可独立预览的 `dist`。
 
 函数生产变量 `UPTIMEROBOT_API_KEY` 应使用加密存储。`INDEXNOW_KV_NAMESPACE=elexvx_indexnow` 指定 ESA KV 回执空间；构建生成的 `indexnow-manifest.json` 在内容变化后更新版本，静态页面访问 `/api/publish/`，由函数异步提交构建时固定的文章和集合 URL，成功回执避免重复提交。可选的 `CRON_SECRET` 仅用于保护手动通知接口，不需要 Vercel Cron。提交成功不等于搜索引擎实际收录。
 
@@ -23,23 +26,23 @@ ESA 项目 `elexvx-site-router` 统一托管页面、静态资源和接口，连
 
 ## 目录职责
 
-| 目录                | 内容                                  |
-| ------------------- | ------------------------------------- |
-| src/app             | Next.js 路由入口、根布局、404         |
-| src/site/pages      | 首页、研究、产品、文章、公司页面实现  |
-| src/site/components | 导航、页脚、公共 UI、搜索、Cookie     |
-| src/site/providers  | 语言、主题、内容状态                  |
-| src/site/routing    | 路由目录、重定向、SEO                 |
-| src/data            | 文案、导航、结构化展示配置            |
-| src/content         | Markdown 读取、解析、校验             |
-| src/styles          | 样式入口和有序分区                    |
-| articles            | 当前研究文章与新闻                    |
-| content/site        | 正式 catalog.json                     |
-| public              | 对外提供的品牌、配图和产品 PNG        |
-| scripts / tests     | 构建与内容工具、自动化测试            |
-| docs                | 架构和设计说明                        |
-| parked-pages        | 下线页面内容与恢复说明                |
-| posts               | 历史文章迁移输入                      |
+| 目录                | 内容                                 |
+| ------------------- | ------------------------------------ |
+| src/app             | Next.js 路由入口、根布局、404        |
+| src/site/pages      | 首页、研究、产品、文章、公司页面实现 |
+| src/site/components | 导航、页脚、公共 UI、搜索、Cookie    |
+| src/site/providers  | 语言、主题、内容状态                 |
+| src/site/routing    | 路由目录、重定向、SEO                |
+| src/data            | 文案、导航、结构化展示配置           |
+| src/content         | Markdown 读取、解析、校验            |
+| src/styles          | 样式入口和有序分区                   |
+| articles            | 当前研究文章与新闻                   |
+| content/site        | 正式 catalog.json                    |
+| public              | 对外提供的品牌、配图和产品 PNG       |
+| scripts / tests     | 构建与内容工具、自动化测试           |
+| docs                | 架构和设计说明                       |
+| parked-pages        | 下线页面内容与恢复说明               |
+| posts               | 历史文章迁移输入                     |
 
 ## 常用修改入口
 

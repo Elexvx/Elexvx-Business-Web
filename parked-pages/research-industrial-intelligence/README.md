@@ -1,5 +1,7 @@
 # 工业智能与安全页面暂存
 
+状态更新（2026-10-04）：此方向已按下方原始 `direction.json` 恢复到正式 catalog，页面路径重新生效；此目录继续保留原始资料和 2026-09-05 下线记录。旧英文 notFound 占位已移除，英文页面由共享动态路由静态生成。
+
 暂时移除日期：2026-09-05。原路径：`/research/industrial-intelligence/` 与 `/en/research/industrial-intelligence/`。
 
 - direction.json：页面专属内容，已从正式 researchDirections 移出。

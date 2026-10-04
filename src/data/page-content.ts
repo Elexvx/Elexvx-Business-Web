@@ -1,3 +1,5 @@
+import { primaryContactEmail } from './contact';
+
 export type ContentAction = {
   label: string;
   href: string;
@@ -366,7 +368,7 @@ export const pageContent = {
       eyebrow: 'ELEXVX CONTACT',
       title: '联系我们',
       description: '从一个真实问题开始，让一次对话走向可验证的合作。',
-      primaryAction: { label: '发送合作邮件', href: 'mailto:contact@elexvx.com' },
+      primaryAction: { label: '发送合作邮件', href: `mailto:${primaryContactEmail}` },
       secondaryAction: { label: '查看研究方向', href: '/research' },
       media: visuals.system,
     },

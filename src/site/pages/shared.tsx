@@ -7,6 +7,7 @@ import { SiteImage } from '../components/site-image';
 import { ArrowRightOutlined } from '@ant-design/icons';
 
 import { getDirection } from '../../data/site';
+import { isDisabledPath } from '../../data/disabled-sections';
 import { type PageHeroContent } from '../../data/page-content';
 
 import type {
@@ -101,9 +102,11 @@ export const ProjectCard = ({ project }: { project: Project }) => {
         <span className="card-index">
           <Translated>{`${project.evidence.length} EVIDENCE`}</Translated>
         </span>
-        <a className="card-link" href={href(`/projects/${project.slug}`)}>
-          {t('阅读项目')} <ArrowRightOutlined aria-hidden="true" />
-        </a>
+        {!isDisabledPath(`/projects/${project.slug}`) && (
+          <a className="card-link" href={href(`/projects/${project.slug}`)}>
+            {t('阅读项目')} <ArrowRightOutlined aria-hidden="true" />
+          </a>
+        )}
       </div>
     </article>
   );

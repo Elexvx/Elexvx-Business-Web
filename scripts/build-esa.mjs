@@ -4,7 +4,12 @@ import { build } from 'esbuild';
 const output = 'esa/site';
 await rm(output, { recursive: true, force: true });
 await mkdir(output, { recursive: true });
+const notFoundHtml = await readFile('dist/404.html', 'utf8');
 await cp('dist', `${output}/assets`, { recursive: true });
+// The function embeds this fallback for actual misses. Leaving either file in
+// the static directory would let ESA answer direct requests with HTTP 200.
+await rm(`${output}/assets/404.html`, { force: true });
+await rm(`${output}/assets/_not-found`, { recursive: true, force: true });
 const redirects = JSON.parse(await readFile('src/server/esa/redirects.json', 'utf8'));
 // Legacy fallback HTML must not shadow the function's permanent redirects.
 for (const redirect of redirects) {
@@ -36,7 +41,7 @@ await build({
   target: 'es2022',
   minify: true,
   define: {
-    __ESA_NOT_FOUND_HTML__: JSON.stringify(await readFile('dist/404.html', 'utf8')),
+    __ESA_NOT_FOUND_HTML__: JSON.stringify(notFoundHtml),
     __ESA_PUBLISH_MANIFEST__: publishedManifest,
   },
 });

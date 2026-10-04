@@ -1,8 +1,7 @@
 import { serviceRoutePaths } from './service-routes';
 
-export const createLinkAvailability = (routePaths: string[], publishedDirectionSlugs: (string | undefined)[]) => {
+export const createLinkAvailability = (routePaths: string[]) => {
   const paths = new Set([...routePaths, ...serviceRoutePaths]);
-  const populatedDirections = new Set(publishedDirectionSlugs);
   return (href: string) => {
     if (/^(https?:|mailto:|tel:)/.test(href)) return true;
     const path = href.split(/[?#]/)[0].replace(/\/+$/, '') || '/';
@@ -15,7 +14,6 @@ export const createLinkAvailability = (routePaths: string[], publishedDirectionS
       return true;
     }
     if (!paths.has(path)) return false;
-    if (path.startsWith('/research/category/')) return true;
-    return !path.startsWith('/research/') || populatedDirections.has(path.slice('/research/'.length));
+    return true;
   };
 };

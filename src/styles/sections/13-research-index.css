@@ -136,6 +136,12 @@
 }
 
 .research-index-view-toggle button {
+  display: grid;
+  width: 44px;
+  height: 44px;
+  flex: 0 0 44px;
+  place-items: center;
+  border-radius: 50%;
   font-size: 1rem;
   opacity: 0.22;
 }

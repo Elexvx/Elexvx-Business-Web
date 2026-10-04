@@ -5,6 +5,7 @@ import { ContentProvider } from '../site/providers/content-context';
 import routePaths from '../data/route-paths.json';
 import type { Metadata } from 'next';
 import '../styles/apple-system.css';
+import { primaryContactEmail } from '../data/contact';
 import { siteIdentity } from '../data/site';
 import { ThemeProvider } from '../site/providers/theme-provider';
 
@@ -91,7 +92,7 @@ const structuredData = JSON.stringify({
       description: siteIdentity.seoDescription,
       url: `${siteIdentity.canonicalOrigin}/`,
       logo: `${siteIdentity.canonicalOrigin}/brand/elexvx-logo-black-600.webp`,
-      email: 'contact@elexvx.com',
+      email: primaryContactEmail,
     },
     {
       '@type': 'WebSite',

@@ -1,6 +1,7 @@
 import catalog from './navigation-catalog.json';
 import { newsCategorySlug } from './article-categories';
 import { homeContent } from './page-content';
+import { researchDirections } from './site';
 const { research: publishedResearch, activities: publishedActivities } = catalog;
 
 export type NavigationLink = { label: string; href: string };
@@ -37,8 +38,9 @@ const navigationDefinitions: NavigationGroup[] = [
         ),
       },
       {
-        title: '研究入口',
+        title: '研究方向与入口',
         links: [
+          ...researchDirections.map((direction) => ({ label: direction.title, href: `/research/${direction.slug}` })),
           { label: '研发能力', href: '/capabilities' },
           { label: '产品与成果', href: '/projects' },
           { label: '行业场景', href: '/scenarios' },
@@ -139,7 +141,10 @@ const navigationDefinitions: NavigationGroup[] = [
       },
       {
         title: '联系 Elexvx',
-        links: [{ label: '加入 Elexvx', href: '/careers' }],
+        links: [
+          { label: '联系我们', href: '/contact' },
+          { label: '加入 Elexvx', href: '/careers' },
+        ],
       },
     ],
   },
@@ -257,7 +262,12 @@ export const navigationGroups: NavigationGroup[] = navigationDefinitions.map((gr
         ],
       },
       ...(uniqueChildren.length
-        ? [{ title: group.id === 'research' || group.id === 'activities' ? '分类' : '了解更多', links: uniqueChildren }]
+        ? [
+            {
+              title: group.id === 'research' ? '研究方向与入口' : group.id === 'activities' ? '分类' : '了解更多',
+              links: uniqueChildren,
+            },
+          ]
         : []),
     ],
   };
