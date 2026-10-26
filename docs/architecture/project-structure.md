@@ -12,11 +12,11 @@ articles 和 content/site/catalog.json 经内容解析、展示配置进入 rout
 
 栏目顺序和名称仍由配置维护；这不是扫描任意文件自动推断栏目。新增页面需要同时提供 Next 路由和站点路由记录。
 
-下线内容存入 parked-pages，并移出正式 catalog；若暂时下线的方向仍被项目引用，可在 retiredResearchDirectionSlugs 保留分类标识而不生成页面。恢复时按各目录 README 核对原始资料，并删除英文地址的 404 占位。
+parked-pages 保存下线时的路由快照、原始资料和恢复记录，供后续核对；具体状态以各目录 README 为准。AI 与数据智能、工业智能与安全方向已恢复，当前路由清单包含这两个路径，英文页面由共享动态路由生成。历史恢复步骤已执行，后续维护时无需重复导入归档资料或删除逐页英文占位。其他仍下线且被项目引用的方向，可在 retiredResearchDirectionSlugs 保留分类标识而不生成页面。
 
 ## 样式顺序
 
-apple-system.css 是唯一导入入口。sections/01 到 15 依次为基础、首页编辑布局、门户组件、门户外观、媒体卡片、页面入口、首页布局、新闻、活动、主题、导航布局、Cookie、研究索引、内容细节和导航半透明背景。
+apple-system.css 是唯一导入入口；当前 sections 编号为 01–28。各分区名称和加载顺序以该文件中的 import 列表为准，修改时保持顺序并检查后置覆盖。
 
 此次拆分保留原始 CSS 顺序，以避免视觉回归。部分历史覆盖仍在后段，修改时检查同名选择器，不能随意重排导入。新增规则写入对应分区。
 
@@ -24,7 +24,7 @@ apple-system.css 是唯一导入入口。sections/01 到 15 依次为基础、�
 
 ## 历史和资源
 
-旧 Astro 站点源码和配置已删除，历史版本可通过 Git 历史查看。posts 保留为迁移脚本输入，articles 是现行内容。Vite、src/main.tsx、src/ssg 保留为兼容工具，主开发入口是 Next.js。
+旧 Astro 站点源码和配置已删除，历史版本可通过 Git 历史查看。posts 保留为迁移脚本输入，articles 是现行内容。主开发和构建入口是 Next.js；Vite 兼容链仍可手动运行，入口为 index.html → src/main.tsx，配置见 vite.config.ts。src/ssg/document.tsx 当前没有应用或构建调用点，只列入 lint 和 TypeScript 检查；作为历史实现留待核对，不据此直接删除。
 
 public/brand 放品牌，public/visuals 放配图，public/products 放正式 PNG。旧封面源码可通过 Git 历史查看。不要将内部草稿放进 public。保持历史静态 URL，避免文章引用失效。
 

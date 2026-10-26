@@ -4,6 +4,7 @@ import { toInsightSummary, toNewsSummary } from '../content/summaries';
 import { ContentProvider } from '../site/providers/content-context';
 import routePaths from '../data/route-paths.json';
 import type { Metadata } from 'next';
+import Script from 'next/script';
 import '../styles/apple-system.css';
 import { primaryContactEmail } from '../data/contact';
 import { siteIdentity } from '../data/site';
@@ -165,7 +166,11 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     <html lang="zh-CN" suppressHydrationWarning>
       <head>
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: structuredData }} />
-        <script dangerouslySetInnerHTML={{ __html: themeInitializer }} />
+        <Script
+          id="elexvx-theme-initializer"
+          strategy="beforeInteractive"
+          dangerouslySetInnerHTML={{ __html: themeInitializer }}
+        />
       </head>
       <body>
         <ThemeProvider>

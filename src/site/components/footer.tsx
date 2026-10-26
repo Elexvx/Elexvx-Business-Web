@@ -1,7 +1,9 @@
 'use client';
 import { Switch } from 'radix-ui';
 import { useState } from 'react';
+import { PlusOutlined } from '@ant-design/icons';
 import { SiteImage } from './site-image';
+import { Logo } from './ui';
 
 import { siteIdentity } from '../../data/site';
 import { navigationGroups, withNewsCategories } from '../../data/research-navigation';
@@ -23,14 +25,22 @@ export const Footer = ({ linkOrigin }: { linkOrigin?: string }) => {
   const isAvailableLink = useAvailableLink();
   const newsCategories = usePublishedNews().map((item) => item.category);
   const [languageMenuOpen, setLanguageMenuOpen] = useState(false);
+  const [expandedGroups, setExpandedGroups] = useState<string[]>([]);
   const registrations = Object.entries(siteIdentity.registrations ?? {}).filter(([, entry]) => entry.number.trim());
   const visibleFooterColumns = withNewsCategories(navigationGroups, newsCategories)
     .filter((group) => isAvailableLink(group.href))
     .map((group) => ({
+      id: group.id,
       title: group.label,
       links: group.columns.flatMap((column) => column.links).filter((link) => isAvailableLink(link.href)),
     }))
     .filter((column) => column.links.length > 0);
+  // Reuse the shared destinations, arranged as three balanced desktop stacks.
+  const columnStacks = [
+    ['research', 'activities'],
+    ['products', 'services'],
+    ['company', 'news'],
+  ].map((ids) => visibleFooterColumns.filter((column) => ids.includes(column.id)));
   const languageOptions =
     locale === 'en'
       ? [
@@ -42,22 +52,66 @@ export const Footer = ({ linkOrigin }: { linkOrigin?: string }) => {
           { code: 'en', label: 'English', href: switchHref },
         ];
   return (
-    <footer className="site-footer">
+    <footer className="site-footer footer-landscape" id="site-footer">
       <div className="footer-inner">
-        <div className="footer-columns">
-          {visibleFooterColumns.map((column) => (
-            <div className="footer-column" key={column.title}>
-              <h2>
-                <Title text={column.title} />
-              </h2>
-              {column.links.map((link) => (
-                <a href={resolveHref(link.href)} key={link.href}>
-                  {t(link.label)}
-                </a>
-              ))}
-            </div>
-          ))}
+        <div className="footer-main">
+          <div className="footer-intro">
+            <a className="footer-brand" href={resolveHref('/')} aria-label="Elexvx">
+              <Logo inverse={theme === 'dark'} />
+            </a>
+            <p className="footer-description">{t(siteIdentity.description)}</p>
+          </div>
+          <nav className="footer-columns" aria-label={locale === 'en' ? 'Footer navigation' : '页脚导航'}>
+            {columnStacks.map((columns, index) => (
+              <div className="footer-column-stack" key={index}>
+                {columns.map((column) => {
+                  const expanded = expandedGroups.includes(column.id);
+                  return (
+                    <div className={`footer-column${expanded ? ' is-expanded' : ''}`} key={column.id}>
+                      <h3>
+                        <span className="footer-desktop-heading">
+                          <Title text={column.title} />
+                        </span>
+                        <button
+                          className="footer-group-toggle"
+                          type="button"
+                          aria-expanded={expanded}
+                          aria-controls={`footer-links-${column.id}`}
+                          onClick={() =>
+                            setExpandedGroups((groups) =>
+                              expanded ? groups.filter((id) => id !== column.id) : [...groups, column.id]
+                            )
+                          }
+                        >
+                          <Title text={column.title} />
+                          <PlusOutlined aria-hidden="true" />
+                        </button>
+                      </h3>
+                      <div className="footer-column-links" id={`footer-links-${column.id}`}>
+                        {column.links.map((link) => (
+                          <a href={resolveHref(link.href)} key={link.href}>
+                            {t(link.label)}
+                          </a>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            ))}
+          </nav>
         </div>
+      </div>
+      <div className="footer-panorama" aria-hidden="true">
+        <SiteImage
+          src="/visuals/footer/footer-knowledge-landscape-riders.webp"
+          alt=""
+          width={2171}
+          height={724}
+          sizes="100vw"
+        />
+      </div>
+      <div className="footer-inner footer-bottom">
         <div className="footer-legal">
           <div className="footer-identity">
             <span>{t('© 2026 由宏翔商道 / Elexvx® 设计，并保留所有权利。')}</span>

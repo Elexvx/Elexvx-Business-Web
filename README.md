@@ -26,23 +26,27 @@ ESA 项目 `elexvx-site-router` 统一托管页面、静态资源和接口，连
 
 ## 目录职责
 
-| 目录                | 内容                                 |
-| ------------------- | ------------------------------------ |
-| src/app             | Next.js 路由入口、根布局、404        |
-| src/site/pages      | 首页、研究、产品、文章、公司页面实现 |
-| src/site/components | 导航、页脚、公共 UI、搜索、Cookie    |
-| src/site/providers  | 语言、主题、内容状态                 |
-| src/site/routing    | 路由目录、重定向、SEO                |
-| src/data            | 文案、导航、结构化展示配置           |
-| src/content         | Markdown 读取、解析、校验            |
-| src/styles          | 样式入口和有序分区                   |
-| articles            | 当前研究文章与新闻                   |
-| content/site        | 正式 catalog.json                    |
-| public              | 对外提供的品牌、配图和产品 PNG       |
-| scripts / tests     | 构建与内容工具、自动化测试           |
-| docs                | 架构和设计说明                       |
-| parked-pages        | 下线页面内容与恢复说明               |
-| posts               | 历史文章迁移输入                     |
+| 目录                | 内容                                   |
+| ------------------- | -------------------------------------- |
+| src/app             | Next.js 路由入口、根布局、404          |
+| src/site/pages      | 首页、研究、产品、文章、公司页面实现   |
+| src/site/components | 导航、页脚、公共 UI、搜索、Cookie      |
+| src/site/providers  | 语言、主题、内容状态                   |
+| src/site/routing    | 路由目录、重定向、SEO                  |
+| src/data            | 文案、导航、结构化展示配置             |
+| src/content         | Markdown 读取、解析、校验              |
+| src/styles          | 样式入口和有序分区                     |
+| articles            | 当前研究文章与新闻                     |
+| content/site        | 正式 catalog.json                      |
+| public              | 对外提供的品牌、配图和产品 PNG         |
+| scripts / tests     | 构建与内容工具、自动化测试             |
+| docs                | 架构和设计说明                         |
+| docs/brand/footer   | 页脚生成记录与旧版设计参考，不对外发布 |
+| docs/qa             | 按主题归档的本地验收记录               |
+| parked-pages        | 下线页面内容与恢复说明                 |
+| posts               | 历史文章迁移输入                       |
+
+存储分类、可再生目录与本次整理结果见 [存储整理记录](docs/maintenance/storage-audit-2026-10-24.md)。页脚调整的验收状态见 [页脚验收记录](docs/qa/footer-2026-10-23.md)。
 
 ## 常用修改入口
 

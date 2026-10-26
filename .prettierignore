@@ -3,3 +3,9 @@ node_modules
 .github
 .changeset
 parked-pages
+.claude
+.local
+.next
+dist-dev
+.vercel
+esa/site
