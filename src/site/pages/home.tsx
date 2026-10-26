@@ -252,35 +252,37 @@ export const HomeProductsSection = () => {
           </TextLink>
         </div>
         <div className="home-media-grid home-products-grid">
-          {content.items.map((product) => (
-            <article className="home-product-feature" key={product.name}>
-              <a
-                className="home-product-media"
-                href={href(product.href)}
-                aria-label={`${product.name} · ${t(product.category)} · ${t(product.description)}`}
-              >
-                <SiteImage
-                  src={product.image}
-                  alt={product.name}
-                  width={1600}
-                  height={1600}
-                  sizes="(max-width: 720px) 80vw, (max-width: 1024px) 45vw, 420px"
-                  loading="lazy"
-                  decoding="async"
-                />
-              </a>
+          {content.items
+            .filter((product) => product.slug !== 'lumira')
+            .map((product) => (
+              <article className="home-product-feature" key={product.name}>
+                <a
+                  className="home-product-media"
+                  href={href(product.href)}
+                  aria-label={`${product.name} · ${t(product.category)} · ${t(product.description)}`}
+                >
+                  <SiteImage
+                    src={product.image}
+                    alt={product.name}
+                    width={1600}
+                    height={1600}
+                    sizes="(max-width: 720px) 80vw, (max-width: 1024px) 45vw, 420px"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </a>
 
-              <div className="home-media-card-body home-product-copy">
-                <h3>
-                  <Translated>{product.name}</Translated>
-                </h3>
-                <Eyebrow>
-                  <Translated>{product.category}</Translated>
-                </Eyebrow>
-                <p>{t(product.description)}</p>
-              </div>
-            </article>
-          ))}
+                <div className="home-media-card-body home-product-copy">
+                  <h3>
+                    <Translated>{product.name}</Translated>
+                  </h3>
+                  <Eyebrow>
+                    <Translated>{product.category}</Translated>
+                  </Eyebrow>
+                  <p>{t(product.description)}</p>
+                </div>
+              </article>
+            ))}
         </div>
       </div>
     </section>
