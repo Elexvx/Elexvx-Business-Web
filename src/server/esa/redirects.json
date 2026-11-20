@@ -1,5 +1,10 @@
 [
   {
+    "source": "/services/docs",
+    "destination": "https://project-atlas.elexvx-johntao.chatgpt.site/",
+    "permanent": true
+  },
+  {
     "source": "/news",
     "has": [
       {
@@ -483,6 +488,16 @@
     "permanent": true
   },
   {
+    "source": "/products/bookkin",
+    "destination": "/products/humite",
+    "permanent": true
+  },
+  {
+    "source": "/en/products/bookkin",
+    "destination": "/en/products/humite",
+    "permanent": true
+  },
+  {
     "source": "/service/ai-design",
     "destination": "/research",
     "permanent": true
@@ -628,17 +643,7 @@
     "permanent": true
   },
   {
-    "source": "/products/bookkin/",
-    "destination": "/products/humite",
-    "permanent": true
-  },
-  {
     "source": "/en/products/bookkin",
-    "destination": "/en/products/humite",
-    "permanent": true
-  },
-  {
-    "source": "/en/products/bookkin/",
     "destination": "/en/products/humite",
     "permanent": true
   }

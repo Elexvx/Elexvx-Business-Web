@@ -1,4 +1,3 @@
-// Copy and assets restored from the original brand page.
 export const brandContent = {
   sections: [
     {

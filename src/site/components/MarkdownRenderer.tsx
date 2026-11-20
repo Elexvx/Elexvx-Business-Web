@@ -60,6 +60,15 @@ const renderInline = (
     }
   });
 
+const paragraphVariant = (children: InlineNode[]): { id?: string; className?: string } => {
+  const label = children.map((node) => (node.type === 'text' ? node.value : '')).join('');
+  const reference = label.match(/^\[(\d+)\]\s/);
+  if (reference) return { id: `reference-${reference[1]}`, className: 'paper-reference' };
+  if (/^(图|表)\s*\d+\s+/.test(label)) return { className: 'paper-caption' };
+  if (/^(注[：:]|说明[：:]|数据来源[：:])/.test(label)) return { className: 'paper-note' };
+  return {};
+};
+
 const renderBlocks = (
   blocks: BlockNode[],
   t: (value: string) => string,
@@ -73,16 +82,9 @@ const renderBlocks = (
         return createElement(`h${block.level}`, { key }, renderInline(block.children, t, href, key));
       }
       case 'paragraph': {
-        const label = block.children.map((node) => (node.type === 'text' ? node.value : '')).join('');
-        const reference = label.match(/^\[(\d+)\]\s/);
-        const caption = /^(图|表)\s*\d+\s+/.test(label);
-        const note = /^(注[：:]|说明[：:]|数据来源[：:])/.test(label);
+        const variant = paragraphVariant(block.children);
         return (
-          <p
-            id={reference ? `reference-${reference[1]}` : undefined}
-            className={reference ? 'paper-reference' : caption ? 'paper-caption' : note ? 'paper-note' : undefined}
-            key={key}
-          >
+          <p id={variant.id} className={variant.className} key={key}>
             {renderInline(block.children, t, href, key)}
           </p>
         );
@@ -101,28 +103,30 @@ const renderBlocks = (
       }
       case 'table':
         return (
-          <table key={key}>
-            <thead>
-              <tr>
-                {block.headers.map((header, headerIndex) => (
-                  <th key={`${key}-header-${headerIndex}`}>
-                    {renderInline(header, t, href, `${key}-header-${headerIndex}`)}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {block.rows.map((row, rowIndex) => (
-                <tr key={`${key}-row-${rowIndex}`}>
-                  {row.map((cell, cellIndex) => (
-                    <td key={`${key}-row-${rowIndex}-cell-${cellIndex}`}>
-                      {renderInline(cell, t, href, `${key}-row-${rowIndex}-cell-${cellIndex}`)}
-                    </td>
+          <div className="markdown-table-wrap" key={key}>
+            <table>
+              <thead>
+                <tr>
+                  {block.headers.map((header, headerIndex) => (
+                    <th key={`${key}-header-${headerIndex}`}>
+                      {renderInline(header, t, href, `${key}-header-${headerIndex}`)}
+                    </th>
                   ))}
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {block.rows.map((row, rowIndex) => (
+                  <tr key={`${key}-row-${rowIndex}`}>
+                    {row.map((cell, cellIndex) => (
+                      <td key={`${key}-row-${rowIndex}-cell-${cellIndex}`}>
+                        {renderInline(cell, t, href, `${key}-row-${rowIndex}-cell-${cellIndex}`)}
+                      </td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         );
       case 'code':
         if (block.language === 'math')

@@ -1,36 +1,18 @@
-import type { Metadata } from 'next';
-
 import { serviceNavigationConfig } from '../../data/service-navigation';
+import { CANONICAL_ORIGIN } from '../../data/site-origins';
 import { SiteShell } from '../../site/components/shell';
+import { serviceMetadata } from '../../site/routing/metadata-base';
 import { NavigationPage } from '../../site/services/navigation-page';
-import { brandedPageTitle } from '../../site/routing/metadata-base';
 
-const pageTitle = brandedPageTitle(serviceNavigationConfig.seo.defaultTitle);
-
-export const metadata: Metadata = {
-  title: { absolute: pageTitle },
+export const metadata = serviceMetadata({
+  title: serviceNavigationConfig.seo.defaultTitle,
   description: serviceNavigationConfig.site.description,
-  alternates: { canonical: 'https://www.elexvx.com/navigation/' },
-  openGraph: {
-    title: pageTitle,
-    description: serviceNavigationConfig.site.description,
-    url: 'https://www.elexvx.com/navigation/',
-    siteName: '宏翔商道-Elexvx',
-    locale: 'zh_CN',
-    type: 'website',
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: pageTitle,
-    description: serviceNavigationConfig.site.description,
-    images: ['/share/elexvx.png'],
-  },
-  robots: { index: true, follow: true },
-};
+  path: '/navigation/',
+});
 
 export default function Page() {
   return (
-    <SiteShell activePath="/navigation" className="service-site-shell" linkOrigin="https://www.elexvx.com">
+    <SiteShell activePath="/navigation" className="service-site-shell" linkOrigin={CANONICAL_ORIGIN}>
       <NavigationPage />
     </SiteShell>
   );

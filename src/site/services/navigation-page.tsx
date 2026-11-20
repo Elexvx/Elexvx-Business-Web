@@ -1,5 +1,4 @@
 import AppstoreOutlined from '@ant-design/icons-svg/es/asn/AppstoreOutlined';
-import ArrowRightOutlined from '@ant-design/icons-svg/es/asn/ArrowRightOutlined';
 import AuditOutlined from '@ant-design/icons-svg/es/asn/AuditOutlined';
 import BankOutlined from '@ant-design/icons-svg/es/asn/BankOutlined';
 import PartitionOutlined from '@ant-design/icons-svg/es/asn/PartitionOutlined';
@@ -15,7 +14,7 @@ import {
   type ServiceCategory,
   type ServiceLink,
 } from '../../data/service-navigation';
-import { NavigationSearch } from './navigation-search';
+import { DirectorySearch } from './navigation-search';
 import { canonicalContentHref } from '../routing/content-href';
 
 const CATEGORY_ICONS = {
@@ -92,7 +91,6 @@ function DirectoryRow({ link }: { link: ServiceLink }) {
         <span className="service-link-title">{link.name}</span>
         <span className="service-link-description">{link.description || '打开链接'}</span>
       </span>
-      <ServiceIcon definition={ArrowRightOutlined} className="service-row-arrow" />
     </a>
   );
 }
@@ -142,7 +140,7 @@ export const NavigationPage = () => {
           <p className="eyebrow">ELEXVX / BUSINESS DIRECTORY</p>
           <h1>企业服务导航</h1>
           <p className="service-page-hero-description">{serviceNavigationConfig.site.description}</p>
-          <NavigationSearch searchConfig={serviceNavigationConfig.search} />
+          <DirectorySearch searchConfig={serviceNavigationConfig.search} />
         </div>
       </section>
 

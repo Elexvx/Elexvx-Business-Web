@@ -1,20 +1,22 @@
 'use client';
 
 import { useEffect, useId, useState } from 'react';
+import { useNearViewport } from './use-near-viewport';
 
 export const MermaidDiagram = ({ chart }: { chart: string }) => {
   const rawId = useId();
   const diagramId = `mermaid-${rawId.replace(/[^a-zA-Z0-9_-]/g, '')}`;
-  const [mounted, setMounted] = useState(false);
-  const [svg, setSvg] = useState('');
+  const { ref, isNear } = useNearViewport<HTMLDivElement>();
+  const [rendered, setRendered] = useState<{ chart: string; svg: string }>();
 
   useEffect(() => {
+    if (!isNear) return;
     let active = true;
-    setMounted(true);
     const theme = document.documentElement.dataset.theme === 'dark' ? 'dark' : 'base';
 
     void import('mermaid')
       .then(({ default: mermaid }) => {
+        if (!active) return;
         mermaid.initialize({
           startOnLoad: false,
           securityLevel: 'strict',
@@ -24,30 +26,26 @@ export const MermaidDiagram = ({ chart }: { chart: string }) => {
         return mermaid.render(diagramId, chart);
       })
       .then((result) => {
-        if (active) setSvg(result.svg);
+        if (active && result) setRendered({ chart, svg: result.svg });
       })
       .catch(() => {
-        if (active) setSvg('');
+        // The source remains readable if the diagram cannot be loaded or rendered.
       });
 
     return () => {
       active = false;
     };
-  }, [chart, diagramId]);
+  }, [chart, diagramId, isNear]);
 
-  // Keep the server HTML and the first client render identical. Mermaid mutates
-  // the DOM while rendering, so it must only be introduced after hydration.
-  if (!mounted) {
-    return <div className="mermaid-diagram-placeholder" aria-label="Mermaid diagram" />;
-  }
-
-  if (!svg) {
-    return (
-      <pre className="mermaid-diagram-fallback" data-language="mermaid">
-        <code>{chart}</code>
-      </pre>
-    );
-  }
-
-  return <div className="mermaid-diagram" dangerouslySetInnerHTML={{ __html: svg }} />;
+  return (
+    <div ref={ref}>
+      {rendered?.chart === chart ? (
+        <div className="mermaid-diagram" dangerouslySetInnerHTML={{ __html: rendered.svg }} />
+      ) : (
+        <pre className="mermaid-diagram-fallback" data-language="mermaid">
+          <code>{chart}</code>
+        </pre>
+      )}
+    </div>
+  );
 };

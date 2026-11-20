@@ -1,7 +1,14 @@
 import { serviceNavigationConfig } from './service-navigation';
+import type { MonitorState, MonitorType } from './status-constants';
 
-export type MonitorState = 0 | 1 | 2 | 8 | 9;
-export type MonitorType = 1 | 2 | 3 | 4 | 5;
+export {
+  isMonitorDown,
+  isMonitorUp,
+  MONITOR_STATE,
+  STATUS_HISTORY_LIMITS,
+  type MonitorState,
+  type MonitorType,
+} from './status-constants';
 
 export interface AvailabilityDay {
   date: number;
@@ -21,7 +28,7 @@ export interface StatusMonitor {
   down: { times: number; duration: number };
 }
 
-export interface StatusSummary {
+interface StatusSummary {
   count: number;
   ok: number;
   error: number;

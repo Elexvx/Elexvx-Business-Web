@@ -4,43 +4,35 @@ import { useState } from 'react';
 import { PlusOutlined } from '@ant-design/icons';
 import { SiteImage } from './site-image';
 import { Logo } from './ui';
+import { FooterSocial } from './footer-social';
 
 import { siteIdentity } from '../../data/site';
-import { navigationGroups, withNewsCategories } from '../../data/research-navigation';
 
 import { LANGUAGE_STORAGE_KEY, LocalizedTitle as Title, useI18n } from '../providers/i18n';
+import { resolveOriginHref } from '../routing/content-href';
 import { useTheme } from '../providers/theme-provider';
 import { COOKIE_SETTINGS_EVENT } from './cookie-consent';
 
-import { useAvailableLink, usePublishedNews } from '../providers/content-context';
+import { useVisibleNavigationGroups } from '../providers/content-context';
 
 export const Footer = ({ linkOrigin }: { linkOrigin?: string }) => {
   const { locale, t, href, switchHref } = useI18n();
-  const resolveHref = (value: string) => {
-    const localizedHref = href(value);
-    return linkOrigin && localizedHref.startsWith('/') ? new URL(localizedHref, linkOrigin).href : localizedHref;
-  };
-  const resolvedSwitchHref = linkOrigin ? new URL(switchHref, linkOrigin).href : switchHref;
+  const resolveHref = (value: string) => resolveOriginHref(href(value), linkOrigin);
+  const resolvedSwitchHref = resolveOriginHref(switchHref, linkOrigin);
   const { theme, mode, toggleTheme } = useTheme();
-  const isAvailableLink = useAvailableLink();
-  const newsCategories = usePublishedNews().map((item) => item.category);
+  const visibleNavigationGroups = useVisibleNavigationGroups();
   const [languageMenuOpen, setLanguageMenuOpen] = useState(false);
   const [expandedGroups, setExpandedGroups] = useState<string[]>([]);
   const registrations = Object.entries(siteIdentity.registrations ?? {}).filter(([, entry]) => entry.number.trim());
-  const visibleFooterColumns = withNewsCategories(navigationGroups, newsCategories)
-    .filter((group) => isAvailableLink(group.href))
-    .map((group) => ({
-      id: group.id,
-      title: group.label,
-      links: group.columns.flatMap((column) => column.links).filter((link) => isAvailableLink(link.href)),
-    }))
-    .filter((column) => column.links.length > 0);
-  // Reuse the shared destinations, arranged as three balanced desktop stacks.
-  const columnStacks = [
-    ['research', 'activities'],
-    ['products', 'services'],
-    ['company', 'news'],
-  ].map((ids) => visibleFooterColumns.filter((column) => ids.includes(column.id)));
+  const visibleFooterColumns = visibleNavigationGroups.map((group) => ({
+    id: group.id,
+    title: group.label,
+    links: group.columns.flatMap((column) => column.links),
+  }));
+  // Reuse the shared destinations, arranged as four balanced desktop columns.
+  const columnStacks = [['research'], ['activities', 'news'], ['products', 'services'], ['company']]
+    .map((ids) => visibleFooterColumns.filter((column) => ids.includes(column.id)))
+    .filter((columns) => columns.length > 0);
   const languageOptions =
     locale === 'en'
       ? [
@@ -60,6 +52,7 @@ export const Footer = ({ linkOrigin }: { linkOrigin?: string }) => {
               <Logo inverse={theme === 'dark'} />
             </a>
             <p className="footer-description">{t(siteIdentity.description)}</p>
+            <FooterSocial />
           </div>
           <nav className="footer-columns" aria-label={locale === 'en' ? 'Footer navigation' : '页脚导航'}>
             {columnStacks.map((columns, index) => (
@@ -101,15 +94,17 @@ export const Footer = ({ linkOrigin }: { linkOrigin?: string }) => {
             ))}
           </nav>
         </div>
-      </div>
-      <div className="footer-panorama" aria-hidden="true">
-        <SiteImage
-          src="/visuals/footer/footer-knowledge-landscape-riders.webp"
-          alt=""
-          width={2171}
-          height={724}
-          sizes="100vw"
-        />
+        <svg className="footer-wordmark" viewBox="0 0 1000 218" aria-hidden="true">
+          {/* The outline meets the viewBox edges without font side bearings. */}
+          <path
+            d="M0 215V10H137V45H37V90H130V125H37V181H141V215Z
+               M173 215V12H211V181H303V215Z
+               M330 215V10H467V45H367V90H460V125H367V181H471V215Z
+               M484 215L547 108 489 10H533L570 76 607 10H650L592 110 655 215H610L569 144 528 215Z
+               M722 215L656 10H696L743 162 788 10H828L762 215Z
+               M828 215L891 108 834 10H878L915 76 951 10H994L937 110 1000 215H955L914 144 873 215Z"
+          />
+        </svg>
       </div>
       <div className="footer-inner footer-bottom">
         <div className="footer-legal">

@@ -11,3 +11,7 @@ export const canonicalContentHref = (value: string) => {
     ? `${origin}${pathname.replace(/\/?$/, '/')}${relative.slice(pathname.length)}`
     : value;
 };
+
+/** Resolves an internal localized path against an optional alternate host origin. */
+export const resolveOriginHref = (localizedHref: string, linkOrigin?: string): string =>
+  linkOrigin && localizedHref.startsWith('/') ? new URL(localizedHref, linkOrigin).href : localizedHref;

@@ -1,16 +1,23 @@
 import { publishedResearch } from '../../data/research-articles';
-import { articleCategories, articleCategoryPath, type ArticleSection } from '../../data/article-categories';
+import {
+  articleCategories,
+  articleCategoryId,
+  articleCategoryPath,
+  type ArticleSection,
+} from '../../data/article-categories';
 import { translateEnglish } from '../translation';
 import { homeContent } from '../../data/page-content';
 import { isHumiteProductPath } from '../../data/humite-launch.mjs';
+import { startCollaborationAction } from '../../data/contact';
 import { jobs } from '../../data/jobs';
 import { publishedActivities, toActivitySummary } from '../../data/activities';
 import { publishedCaseStudies, toCaseStudySummary } from '../../data/case-studies';
 import { isDisabledPath } from '../../data/disabled-sections';
+import redirects from '../../server/esa/redirects.json';
 import dynamic from 'next/dynamic';
 import type { ReactNode } from 'react';
 import { teamMembers } from '../../data/team';
-import { businessLines, getProject, getScenario, researchDirections, siteIdentity } from '../../data/site';
+import { businessLines, projects, researchDirections, scenarios, siteIdentity } from '../../data/site';
 import type { Insight, NewsItem } from '../../content/types';
 
 const ActivitiesPage = dynamic(() => import('../pages/activities').then((module) => module.ActivitiesPage));
@@ -58,13 +65,17 @@ export type RouteMeta = {
   author?: string;
 };
 
-export type SiteRoute = {
+type SiteRoute = {
   path: string;
   meta: RouteMeta;
   render: () => ReactNode;
 };
 
-const titleFor = (section: string) => section;
+type RedirectRule = {
+  source: string;
+  destination: string;
+  has?: Array<{ type: string }>;
+};
 
 const researchItems = publishedResearch.map(toActivitySummary);
 const activityItems = publishedActivities.map(toActivitySummary);
@@ -75,6 +86,23 @@ const latestContentDate = (items: Array<{ publishedAt: string; updatedAt?: strin
     .map((item) => item.updatedAt || item.publishedAt)
     .sort()
     .at(-1);
+
+const articleMeta = (item: {
+  title: string;
+  excerpt: string;
+  cover?: string;
+  publishedAt: string;
+  updatedAt?: string;
+  author: string;
+}): RouteMeta => ({
+  title: item.title,
+  description: item.excerpt,
+  image: item.cover,
+  openGraphType: 'article',
+  publishedAt: item.publishedAt,
+  ...(item.updatedAt ? { updatedAt: item.updatedAt } : {}),
+  author: item.author,
+});
 
 const categoryRoutes = (section: ArticleSection, news: NewsItem[]): SiteRoute[] => {
   const items =
@@ -91,7 +119,7 @@ const categoryRoutes = (section: ArticleSection, news: NewsItem[]): SiteRoute[] 
       titleEn: `${translateEnglish(label)} · ${translateEnglish(sectionLabel)}`,
       description: `浏览 Elexvx 已发布的${label}${sectionLabel}内容、文章摘要与发布时间。`,
       descriptionEn: `Browse published ${translateEnglish(label)} ${translateEnglish(sectionLabel).toLowerCase()} from Elexvx, including article summaries and publication dates.`,
-      updatedAt: latestContentDate(items.filter((item) => articleCategories(section, [item])[0].id === id)),
+      updatedAt: latestContentDate(items.filter((item) => articleCategoryId(section, item) === id)),
     },
     render: () =>
       section === 'research' ? (
@@ -108,7 +136,7 @@ const staticRoutes: SiteRoute[] = [
   {
     path: '/activities',
     meta: {
-      title: titleFor('活动'),
+      title: '活动',
       description: 'Elexvx 活动记录与交流。',
       updatedAt: latestContentDate(activityItems),
     },
@@ -122,7 +150,7 @@ const staticRoutes: SiteRoute[] = [
   {
     path: '/research',
     meta: {
-      title: titleFor('研究方向'),
+      title: '研究方向',
       description: '浏览全部已发布的研究文章。',
       updatedAt: latestContentDate(researchItems),
     },
@@ -130,74 +158,74 @@ const staticRoutes: SiteRoute[] = [
   },
   {
     path: '/capabilities',
-    meta: { title: titleFor('研发能力'), description: '从问题定义、数据与模型，到真实场景验证的研发方法。' },
+    meta: { title: '研发能力', description: '从问题定义、数据与模型，到真实场景验证的研发方法。' },
     render: () => <CapabilitiesPage />,
   },
   {
     path: '/projects',
-    meta: { title: titleFor('产品与成果'), description: '以项目、产品和系统原型说明研究如何进入现实。' },
+    meta: { title: '产品与成果', description: '以项目、产品和系统原型说明研究如何进入现实。' },
     render: () => <ProjectsPage />,
   },
   {
     path: '/scenarios',
-    meta: { title: titleFor('行业场景'), description: '以行业场景组织真实问题，而不是用服务标签替代现场理解。' },
+    meta: { title: '行业场景', description: '以行业场景组织真实问题，而不是用服务标签替代现场理解。' },
     render: () => <ScenariosPage />,
   },
   {
     path: '/news',
-    meta: { title: titleFor('最新动态'), description: '宏翔商道-Elexvx 的公司公告、业务动态与历史新闻。' },
+    meta: { title: '最新动态', description: '宏翔商道-Elexvx 的公司公告、业务动态与历史新闻。' },
     render: () => <NewsPage />,
   },
   {
     path: '/company',
     meta: {
-      title: titleFor('公司与业务'),
+      title: '公司与业务',
       description: '宏翔商道-Elexvx 与 Elexvx Research 的公司主体、研究关系和并行业务。',
     },
     render: () => <CompanyPage />,
   },
   {
     path: '/company/team',
-    meta: { title: titleFor('团队'), description: 'Elexvx Research 的研究与工程协作结构。' },
+    meta: { title: '团队', description: 'Elexvx Research 的研究与工程协作结构。' },
     render: () => <TeamPage />,
   },
   {
     path: '/company/design',
     meta: {
-      title: titleFor('设计规范'),
+      title: '设计规范',
       description: 'Elexvx 官网的标题、页面布局、间距与响应式设计规范，提供 design.md 下载。',
     },
     render: () => <DesignPage />,
   },
   {
     path: '/company/qualifications',
-    meta: { title: titleFor('企业资质'), description: '宏翔商道-Elexvx 企业资质与证书展示。' },
+    meta: { title: '企业资质', description: '宏翔商道-Elexvx 企业资质与证书展示。' },
     render: () => <QualificationsPage />,
   },
   {
     path: '/company/brand',
-    meta: { title: titleFor('品牌'), description: 'Elexvx 与 Elexvx Research 的网页品牌使用方式。' },
+    meta: { title: '品牌', description: 'Elexvx 与 Elexvx Research 的网页品牌使用方式。' },
     render: () => <BrandPage />,
   },
   {
     path: '/business',
-    meta: { title: titleFor('并行业务'), description: 'Elexvx 公司主体的人力、知识产权和供应链并行业务。' },
+    meta: { title: '并行业务', description: 'Elexvx 公司主体的人力、知识产权和供应链并行业务。' },
     render: () => <BusinessPage />,
   },
   {
     path: '/careers',
-    meta: { title: titleFor('加入 Elexvx'), description: '加入关注真实问题、技术研发和工程系统的团队。' },
+    meta: { title: '加入 Elexvx', description: '加入关注真实问题、技术研发和工程系统的团队。' },
     render: () => <CareersPage />,
   },
   {
     path: '/contact',
-    meta: { title: titleFor('开放合作'), description: '从一个真实的技术问题开始，开启研究合作。' },
+    meta: { title: startCollaborationAction.label, description: '从一个真实的技术问题开始，开启研究合作。' },
     render: () => <ContactPage />,
   },
   {
     path: '/archive',
     meta: {
-      title: titleFor('旧文归档'),
+      title: '旧文归档',
       description: '旧站内容归档，不代表 Elexvx Research 的新研究主线。',
       robots: 'noindex,nofollow',
     },
@@ -205,49 +233,16 @@ const staticRoutes: SiteRoute[] = [
   },
 ];
 
-const originalRedirectRoutes: Record<string, string> = {
-  '/service/ai-design': '/research',
-  '/service/hr-services': '/business/human-resources',
-  '/service/trademark-agency': '/business/intellectual-property',
-  '/service/supply-chain': '/business/supply-chain',
-  '/company/about': '/company',
-  '/company/leadership': '/company/team',
-  '/company/contact': '/contact',
-  '/company/careers': '/careers',
-  '/blog': '/research',
-  '/latest-news': '/news',
-  '/stories': '/news',
-  '/technology': '/news',
-  '/company/team/tjc': '/company/team/taojincheng',
-  '/company/team/mxh': '/company/team/mengxiaohua',
-  '/company/team/gkr': '/company/team/gongkairui',
-  '/en/company/team/tjc': '/en/company/team/taojincheng',
-  '/en/company/team/mxh': '/en/company/team/mengxiaohua',
-  '/en/company/team/gkr': '/en/company/team/gongkairui',
-  '/exam': '/news',
-  '/latest-news/2026-01-01-01': '/news/2026-01-01-01',
-  '/latest-news/2026-01-14-01': '/news/2026-01-14-01',
-  '/latest-news/2026-06-09-01': '/news/2026-06-09-01',
-  '/latest-news/2025-07-16-01': '/news/2025-07-16-01',
-  '/latest-news/2025-07-17-01': '/news/2025-07-17-01',
-  '/latest-news/2025-08-21-01': '/news/2025-08-21-01',
-  '/latest-news/2024-12-31-01': '/news/2024-12-31-01',
-  '/activities/elexvxai-lab-established-2026': '/news/elexvxai-lab-established-2026',
-  '/en/activities/elexvxai-lab-established-2026': '/en/news/elexvxai-lab-established-2026',
-  '/products/bookkin': '/products/humite',
-  '/en/products/bookkin': '/en/products/humite',
-};
-
-export const redirectRoutes = Object.fromEntries(
-  Object.entries(originalRedirectRoutes).filter(
-    ([from, to]) =>
-      !isDisabledPath(from) &&
-      !isDisabledPath(to) &&
-      (process.env.NEXT_PUBLIC_HUMITE_PUBLISHED === 'true' || !isHumiteProductPath(to))
-  )
+export const redirectRoutes: Record<string, string> = Object.fromEntries(
+  (redirects as RedirectRule[])
+    .filter(({ has, source, destination }) => !has?.length && !isDisabledPath(source) && !isDisabledPath(destination))
+    .filter(
+      ({ destination }) => process.env.NEXT_PUBLIC_HUMITE_PUBLISHED === 'true' || !isHumiteProductPath(destination)
+    )
+    .map(({ source, destination }) => [source, destination])
 );
 
-const configuredRoutes = (insights: Insight[], news: NewsItem[] = []): SiteRoute[] => [
+const staticSectionRoutes = (news: NewsItem[]): SiteRoute[] => [
   ...staticRoutes.map((route) =>
     route.path === '/news'
       ? {
@@ -259,125 +254,97 @@ const configuredRoutes = (insights: Insight[], news: NewsItem[] = []): SiteRoute
   ...categoryRoutes('research', news),
   ...categoryRoutes('activities', news),
   ...categoryRoutes('news', news),
+];
+
+const productRoutes = (): SiteRoute[] => [
   {
     path: '/products',
-    meta: { title: titleFor('产品'), description: '了解 Elexvx 的产品。' },
+    meta: { title: '产品', description: '了解 Elexvx 的产品。' },
     render: () => <ProductCatalogPage />,
   },
   ...homeContent.product.items.map((product) => ({
     path: product.href,
-    meta: { title: titleFor(product.name), description: product.description },
+    meta: { title: product.name, description: product.description },
     render: () => <ProductDetailPage slug={product.slug} />,
   })),
-  ...jobs.map((job) => ({
-    path: `/careers/${job.id}`,
-    meta: { title: titleFor(job.title), description: job.description || job.title },
-    render: () => <JobPage id={job.id} />,
-  })),
+];
+
+const publicationRoutes = (insights: Insight[], news: NewsItem[]): SiteRoute[] => [
   ...publishedResearch.map((item) => ({
     path: `/research/${item.slug}`,
-    meta: {
-      title: titleFor(item.title),
-      description: item.excerpt,
-      image: item.cover,
-      openGraphType: 'article' as const,
-      publishedAt: item.publishedAt,
-      updatedAt: item.updatedAt,
-      author: item.author,
-    },
+    meta: articleMeta(item),
     render: () => <ActivityPage item={item} related={researchItems} research />,
   })),
   ...publishedActivities
     .filter((item) => !item.externalUrl)
     .map((item) => ({
       path: `/activities/${item.slug}`,
-      meta: {
-        title: titleFor(item.title),
-        description: item.excerpt,
-        image: item.cover,
-        openGraphType: 'article' as const,
-        publishedAt: item.publishedAt,
-        updatedAt: item.updatedAt,
-        author: item.author,
-      },
+      meta: articleMeta(item),
       render: () => <ActivityPage item={item} related={activityItems} />,
     })),
   ...publishedCaseStudies.map((item) => ({
     path: `/cases/${item.slug}`,
-    meta: {
-      title: titleFor(item.title),
-      description: item.excerpt,
-      image: item.cover,
-      openGraphType: 'article' as const,
-      publishedAt: item.publishedAt,
-      author: item.author,
-    },
+    meta: articleMeta({ ...item, updatedAt: undefined }),
     render: () => <CaseStudyPage item={item} related={caseStudyItems} />,
-  })),
-  ...teamMembers.map((member) => ({
-    path: `/company/team/${member.id}`,
-    meta: { title: titleFor(member.name), description: member.position },
-    render: () => <TeamMemberPage id={member.id} />,
-  })),
-  ...researchDirections.map((direction) => {
-    const { slug } = direction;
-    return {
-      path: `/research/${slug}`,
-      meta: { title: titleFor(direction.title), description: direction.summary },
-      render: () => <ResearchDirectionPage slug={slug} />,
-    };
-  }),
-  ...['industrial-safety'].map((slug) => {
-    const project = getProject(slug)!;
-    return {
-      path: `/projects/${slug}`,
-      meta: { title: titleFor(project.title), description: project.output },
-      render: () => <ProjectPage slug={slug} />,
-    };
-  }),
-  ...['industrial-operations', 'knowledge-work', 'responsible-ai'].map((slug) => {
-    const scenario = getScenario(slug)!;
-    return {
-      path: `/scenarios/${slug}`,
-      meta: { title: titleFor(scenario.title), description: scenario.summary },
-      render: () => <ScenarioPage slug={slug} />,
-    };
-  }),
-  ...businessLines.map((line) => ({
-    path: line.href,
-    meta: { title: titleFor(line.title), description: line.summary },
-    render: () => <BusinessLinePage slug={line.slug} />,
   })),
   ...insights
     .filter((insight) => insight.status === 'published')
     .map((insight) => ({
       path: `/insights/${insight.slug}`,
-      meta: {
-        title: titleFor(insight.title),
-        description: insight.excerpt,
-        image: insight.cover,
-        openGraphType: 'article' as const,
-        publishedAt: insight.publishedAt,
-        updatedAt: insight.updatedAt,
-        author: insight.author,
-      },
+      meta: articleMeta(insight),
       render: () => <InsightPage insight={insight} />,
     })),
   ...news
     .filter((item) => item.status === 'published')
     .map((item) => ({
       path: `/news/${item.slug}`,
-      meta: {
-        title: titleFor(item.title),
-        description: item.excerpt,
-        image: item.cover,
-        openGraphType: 'article' as const,
-        publishedAt: item.publishedAt,
-        updatedAt: item.updatedAt,
-        author: item.author,
-      },
+      meta: articleMeta(item),
       render: () => <NewsItemPage item={item} />,
     })),
+];
+
+const organizationRoutes = (): SiteRoute[] => [
+  ...jobs.map((job) => ({
+    path: `/careers/${job.id}`,
+    meta: { title: job.title, description: job.description || job.title },
+    render: () => <JobPage id={job.id} />,
+  })),
+  ...teamMembers.map((member) => ({
+    path: `/company/team/${member.id}`,
+    meta: { title: member.name, description: member.position },
+    render: () => <TeamMemberPage id={member.id} />,
+  })),
+  ...researchDirections.map((direction) => ({
+    path: `/research/${direction.slug}`,
+    meta: { title: direction.title, description: direction.summary },
+    render: () => <ResearchDirectionPage slug={direction.slug} />,
+  })),
+  ...businessLines.map((line) => ({
+    path: line.href,
+    meta: { title: line.title, description: line.summary },
+    render: () => <BusinessLinePage slug={line.slug} />,
+  })),
+];
+
+const disabledCatalogRoutes = (): SiteRoute[] => [
+  ...projects.map((project) => ({
+    path: `/projects/${project.slug}`,
+    meta: { title: project.title, description: project.output },
+    render: () => <ProjectPage slug={project.slug} />,
+  })),
+  ...scenarios.map((scenario) => ({
+    path: `/scenarios/${scenario.slug}`,
+    meta: { title: scenario.title, description: scenario.summary },
+    render: () => <ScenarioPage slug={scenario.slug} />,
+  })),
+];
+
+const configuredRoutes = (insights: Insight[], news: NewsItem[] = []): SiteRoute[] => [
+  ...staticSectionRoutes(news),
+  ...productRoutes(),
+  ...publicationRoutes(insights, news),
+  ...organizationRoutes(),
+  ...disabledCatalogRoutes(),
 ];
 
 type RouteIndex = {
@@ -396,17 +363,14 @@ const getRouteIndex = (insights: Insight[], news: NewsItem[] = []): RouteIndex =
   return index;
 };
 
-export const allRoutes = (insights: Insight[], news: NewsItem[] = []): SiteRoute[] =>
-  getRouteIndex(insights, news).routes;
-
-const normalizePath = (path: string) => {
+export const normalizeRoutePath = (path: string) => {
   const pathname = path.split('?')[0].split('#')[0] || '/';
   if (pathname === '/') return pathname;
   return pathname.replace(/\/+$/, '');
 };
 
 export const resolveRoute = (path: string, insights: Insight[], news: NewsItem[] = []): SiteRoute => {
-  const normalized = normalizePath(path);
+  const normalized = normalizeRoutePath(path);
   const route = getRouteIndex(insights, news).byPath.get(normalized);
   return (
     route ?? {
@@ -421,5 +385,5 @@ export const resolveRoute = (path: string, insights: Insight[], news: NewsItem[]
   );
 };
 
-export const getStaticRoutes = (insights: Insight[], news: NewsItem[] = []) => allRoutes(insights, news);
-export const normalizeRoutePath = normalizePath;
+export const getStaticRoutes = (insights: Insight[], news: NewsItem[] = []): SiteRoute[] =>
+  getRouteIndex(insights, news).routes;

@@ -1,5 +1,6 @@
 import { cp, mkdir, readFile, readdir, rm, writeFile } from 'node:fs/promises';
 import { build } from 'esbuild';
+import { INDEXNOW_KEY } from '../src/data/site-origins-constants.mjs';
 import { assertHumiteEmbargo, isHumitePublicBuild } from './humite-export.mjs';
 
 const output = 'esa/site';
@@ -13,7 +14,11 @@ await cp('dist', `${output}/assets`, { recursive: true });
 // the static directory would let ESA answer direct requests with HTTP 200.
 await rm(`${output}/assets/404.html`, { force: true });
 await rm(`${output}/assets/_not-found`, { recursive: true, force: true });
-await rm(`${output}/assets/products/__empty__`, { recursive: true, force: true });
+for (const prefix of ['', '/en']) {
+  for (const section of ['insights', 'activities', 'products']) {
+    await rm(`${output}/assets${prefix}/${section}/__empty__`, { recursive: true, force: true });
+  }
+}
 const redirects = JSON.parse(await readFile('src/server/esa/redirects.json', 'utf8'));
 // Legacy fallback HTML must not shadow the function's permanent redirects.
 for (const redirect of redirects) {
@@ -21,8 +26,7 @@ for (const redirect of redirects) {
   await rm(`${output}/assets${redirect.source.replace(/\/$/, '')}/index.html`, { force: true });
 }
 const publishedManifest = await readFile('dist/indexnow-manifest.json', 'utf8');
-const key = 'f84f594ae29eba5b114a6fe74823cadb422fecf00fdb530ed6c4c6ffaaa3aef4';
-if ((await readFile(`${output}/assets/${key}.txt`, 'utf8')).trim() !== key)
+if ((await readFile(`${output}/assets/${INDEXNOW_KEY}.txt`, 'utf8')).trim() !== INDEXNOW_KEY)
   throw new Error('Invalid deployed IndexNow key.');
 const notification = `<script>if(location.hostname==='www.elexvx.com'){fetch('/api/publish/',{credentials:'omit',cache:'no-store'}).catch(()=>{});}</script>`;
 async function addNotification(directory) {

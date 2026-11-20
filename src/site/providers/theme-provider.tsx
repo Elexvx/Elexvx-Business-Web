@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 
 import {
   DEFAULT_SUN_LOCATION,
@@ -13,7 +13,9 @@ import {
 } from '../theme';
 
 export type { ColorTheme } from '../theme';
-export type ThemeMode = 'auto' | ColorTheme;
+type ThemeMode = 'auto' | ColorTheme;
+
+const AUTOMATIC_THEME_REFRESH_INTERVAL_MS = 60_000;
 
 type ThemeContextValue = {
   theme: ColorTheme;
@@ -45,16 +47,16 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
   const modeRef = useRef<ThemeMode>('auto');
   const sunLocationRef = useRef<SunLocation>(DEFAULT_SUN_LOCATION);
 
+  const applyMode = useCallback((nextMode: ThemeMode) => {
+    modeRef.current = nextMode;
+    setModeState(nextMode);
+    const nextTheme = nextMode === 'auto' ? getSolarTheme(new Date(), sunLocationRef.current) : nextMode;
+    setThemeState(nextTheme);
+    applyTheme(nextTheme);
+  }, []);
+
   useEffect(() => {
     const readyFrame = window.requestAnimationFrame(() => document.documentElement.classList.add('theme-ready'));
-
-    const applyMode = (nextMode: ThemeMode) => {
-      modeRef.current = nextMode;
-      setModeState(nextMode);
-      const nextTheme = nextMode === 'auto' ? getSolarTheme(new Date(), sunLocationRef.current) : nextMode;
-      setThemeState(nextTheme);
-      applyTheme(nextTheme);
-    };
 
     applyMode(readStoredThemeMode() ?? 'auto');
 
@@ -68,9 +70,7 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
     const handleStoredTheme = (event: StorageEvent) => {
       if (event.key !== THEME_STORAGE_KEY) return;
       const nextMode =
-        event.newValue === 'light' || event.newValue === 'dark' || event.newValue === 'auto'
-          ? event.newValue
-          : 'auto';
+        event.newValue === 'light' || event.newValue === 'dark' || event.newValue === 'auto' ? event.newValue : 'auto';
       applyMode(nextMode);
     };
 
@@ -84,7 +84,7 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
       if (document.visibilityState === 'visible') applyAutomaticTheme();
     };
 
-    const automaticThemeTimer = window.setInterval(applyAutomaticTheme, 60_000);
+    const automaticThemeTimer = window.setInterval(applyAutomaticTheme, AUTOMATIC_THEME_REFRESH_INTERVAL_MS);
     window.addEventListener('storage', handleStoredTheme);
     window.addEventListener('focus', applyAutomaticTheme);
     document.addEventListener('visibilitychange', handleVisibilityChange);
@@ -96,14 +96,10 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
       window.removeEventListener('focus', applyAutomaticTheme);
       document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
-  }, []);
+  }, [applyMode]);
 
   const setMode = (nextMode: ThemeMode) => {
-    modeRef.current = nextMode;
-    setModeState(nextMode);
-    const nextTheme = nextMode === 'auto' ? getSolarTheme(new Date(), sunLocationRef.current) : nextMode;
-    setThemeState(nextTheme);
-    applyTheme(nextTheme);
+    applyMode(nextMode);
     try {
       window.localStorage.setItem(THEME_STORAGE_KEY, nextMode);
     } catch {

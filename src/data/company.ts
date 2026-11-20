@@ -1,4 +1,3 @@
-// Original about-page copy, including historical figures, migrated without re-verification.
 export const companyContent = {
   introduction: [
     '宏翔商道（Elexvx Inc）是一家以人工智能为核心驱动力的全球化科技企业。',

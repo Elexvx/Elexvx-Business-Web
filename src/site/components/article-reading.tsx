@@ -1,11 +1,13 @@
 'use client';
 
 import { ArticleShare } from './article-share';
-import { SiteImage } from './site-image';
+import { ArticleCard } from './article-card';
 import { ArticleGallery } from './article-gallery';
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { MarkdownRenderer } from './lazy-markdown-renderer';
 import { useI18n } from '../providers/i18n';
+
+const ACTIVE_HEADING_SCROLL_OFFSET_PX = 150;
 
 type ReadingItem = {
   slug: string;
@@ -40,7 +42,7 @@ export const ArticleBody = ({
     const update = () => {
       let id = entries[0]?.id || 'article-content';
       nodes.forEach((node) => {
-        if (node.getBoundingClientRect().top <= 150) id = node.id;
+        if (node.getBoundingClientRect().top <= ACTIVE_HEADING_SCROLL_OFFSET_PX) id = node.id;
       });
       setActive(id);
     };
@@ -52,28 +54,26 @@ export const ArticleBody = ({
   }, [source, locale]);
   const hasHeadings = showToc && headings.length > 0;
   return (
-    <>
-      <div className={`article-reading-layout${hasHeadings ? '' : ' article-reading-layout-no-toc'}`}>
-        {hasHeadings && (
-          <aside className="article-toc">
-            <nav aria-label={locale === 'en' ? 'Table of contents' : '文章目录'}>
-              <p>{locale === 'en' ? 'Contents' : '目录'}</p>
-              {headings.map((entry) => (
-                <a key={entry.id} href={`#${entry.id}`} aria-current={active === entry.id ? 'location' : undefined}>
-                  {entry.text}
-                </a>
-              ))}
-            </nav>
-          </aside>
-        )}
-        <div className="article-body" id="article-content" lang={locale} ref={ref}>
-          <ArticleGallery>
-            <MarkdownRenderer source={source} />
-            {children}
-          </ArticleGallery>
-        </div>
+    <div className={`article-reading-layout${hasHeadings ? '' : ' article-reading-layout-no-toc'}`}>
+      {hasHeadings && (
+        <aside className="article-toc">
+          <nav aria-label={locale === 'en' ? 'Table of contents' : '文章目录'}>
+            <p>{locale === 'en' ? 'Contents' : '目录'}</p>
+            {headings.map((entry) => (
+              <a key={entry.id} href={`#${entry.id}`} aria-current={active === entry.id ? 'location' : undefined}>
+                {entry.text}
+              </a>
+            ))}
+          </nav>
+        </aside>
+      )}
+      <div className="article-body" id="article-content" lang={locale} ref={ref}>
+        <ArticleGallery>
+          <MarkdownRenderer source={source} />
+          {children}
+        </ArticleGallery>
       </div>
-    </>
+    </div>
   );
 };
 
@@ -132,7 +132,7 @@ export const ContinueReading = ({
   base: string;
   indexHref?: string;
 }) => {
-  const { href, t, locale } = useI18n();
+  const { href, locale } = useI18n();
   const related = items
     .filter((item) => item.status === 'published' && item.slug !== current.slug)
     .sort(
@@ -152,14 +152,15 @@ export const ContinueReading = ({
       </div>
       <div className="article-continue-grid">
         {related.map((item) => (
-          <a key={item.slug} href={item.externalUrl || href(`${base}/${item.slug}`)}>
-            <SiteImage src={item.cover || '/visuals/research-gradient.jpg'} alt={t(item.title)} loading="lazy" />
-            <h3>{t(item.title)}</h3>
-            <p>
-              {item.category && <span>{t(item.category)} · </span>}
-              <time dateTime={item.publishedAt}>{item.publishedAt}</time>
-            </p>
-          </a>
+          <ArticleCard
+            key={item.slug}
+            variant="related"
+            href={item.externalUrl || `${base}/${item.slug}`}
+            title={item.title}
+            cover={item.cover}
+            category={item.category}
+            publishedAt={item.publishedAt}
+          />
         ))}
       </div>
     </section>

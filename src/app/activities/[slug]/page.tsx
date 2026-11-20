@@ -7,7 +7,7 @@ export const dynamicParams = false;
 // The placeholder renders notFound and is never added to navigation or sitemap.
 export const generateStaticParams = () => {
   const internalActivities = publishedActivities.filter((item) => !item.externalUrl);
-  return internalActivities.length ? internalActivities.map(({ slug }) => ({ slug })) : [{ slug: '_empty' }];
+  return internalActivities.length ? internalActivities.map(({ slug }) => ({ slug })) : [{ slug: '__empty__' }];
 };
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;

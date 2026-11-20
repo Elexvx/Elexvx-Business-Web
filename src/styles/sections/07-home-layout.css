@@ -43,17 +43,6 @@
   left: 10px;
 }
 
-.site-shell-openai .desktop-menu-lead,
-.site-shell-openai .desktop-menu-column a + a {
-  border-color: transparent;
-}
-
-.site-shell-openai .desktop-menu-column {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
 .site-shell-home .home-welcome-inner {
   width: 100%;
   max-width: none;
@@ -67,22 +56,10 @@
   letter-spacing: -0.035em;
 }
 
-.site-shell-home .home-welcome-description {
-  max-width: 720px;
-  margin-top: 20px;
-  font-size: 17px;
-}
-
-.site-shell-home .home-hero-media {
-  aspect-ratio: 1.92 / 1;
-  margin-top: 64px;
-  border-radius: 8px;
-}
-
 .site-shell-home .home-content-section,
 .site-shell-home .home-content-section-alt {
   padding: 92px 32px 116px;
-  background: #000;
+  background: var(--color-canvas);
 }
 
 .site-shell-home .home-section-topline,
@@ -98,14 +75,13 @@
 .site-shell-home .home-section-topline h2,
 .article-continue .home-section-topline h2 {
   margin: 0;
-  font-size: clamp(22px, 2vw, 28px);
+  font-size: var(--section-title-size);
   letter-spacing: -0.025em;
   line-height: 1.2;
 }
 
 .site-shell-home .home-section-topline .text-link,
-.article-continue .home-section-topline .text-link,
-.site-shell-home .home-section-status {
+.article-continue .home-section-topline .text-link {
   min-height: 44px;
   padding: 0;
   color: #d0d0d0;
@@ -113,13 +89,11 @@
   letter-spacing: 0;
 }
 
-.site-shell-home .home-direction-grid,
 .site-shell-home .home-media-grid {
   gap: 24px;
   margin-top: 0;
 }
 
-.site-shell-home .home-direction-card,
 .site-shell-home .home-media-card {
   min-height: 0;
   overflow: visible;
@@ -128,8 +102,6 @@
   transform: none;
 }
 
-.site-shell-home .home-direction-card:hover,
-.site-shell-home .home-direction-card:focus-visible,
 .site-shell-home .home-media-card:hover,
 .site-shell-home .home-media-card:focus-visible {
   background: transparent;
@@ -147,7 +119,7 @@
 }
 
 .site-shell-home .home-media-card-body h3 {
-  font-size: clamp(18px, 1.6vw, 21px);
+  font-size: var(--card-title-size);
   letter-spacing: -0.02em;
   line-height: 1.25;
 }
@@ -167,15 +139,11 @@
   display: -webkit-box;
   margin: 10px 0 0;
   overflow: hidden;
-  color: #b3b3b3;
+  color: var(--color-ink-muted);
   font-size: 14px;
   line-height: 1.45;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
-}
-
-.site-shell-home .home-media-card-link {
-  display: none;
 }
 
 .site-shell-home .home-product-feature {
@@ -193,10 +161,6 @@
   border-radius: 8px;
 }
 
-.site-shell-home .home-product-media-label {
-  display: none;
-}
-
 .site-shell-home .home-product-copy {
   min-height: 0;
   padding: 18px 0 0;
@@ -207,7 +171,7 @@
 
 .site-shell-home .home-product-copy h3 {
   order: 1;
-  font-size: clamp(22px, 2.2vw, 30px);
+  font-size: var(--lead-title-size);
   letter-spacing: -0.025em;
   line-height: 1.2;
 }
@@ -238,7 +202,7 @@
 
 .site-shell-home .home-company-section {
   padding: 0 32px 32px;
-  background: #000;
+  background: var(--color-canvas);
 }
 
 .site-shell-home .home-company-inner {
@@ -252,18 +216,18 @@
   overflow: hidden;
   border: 0;
   border-radius: 8px;
-  background: #1f1f1f;
+  background: var(--color-surface-neutral);
   text-align: center;
 }
 
 .site-shell-home .home-company-inner h2 {
   max-width: 720px;
   margin: 0;
-  color: #fff;
-  font-size: clamp(38px, 4.2vw, 52px);
-  font-weight: 400;
-  letter-spacing: -0.045em;
-  line-height: 1.05;
+  color: var(--color-ink);
+  font-size: var(--section-title-size);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: 1.3;
 }
 
 .site-shell-home .home-company-cta {
@@ -295,25 +259,11 @@
   .site-shell-openai .nav-link {
     padding-inline: 7px;
   }
-
-  .site-shell-home .home-hero-media {
-    margin-top: 56px;
-  }
 }
 
 @media (max-width: 720px) {
   .site-shell-home .home-welcome-inner {
     padding: 112px 20px 0;
-  }
-
-  .site-shell-home .home-welcome h1 {
-    font-size: 32px;
-  }
-
-  .site-shell-home .home-hero-media {
-    aspect-ratio: 1.15 / 1;
-    margin-top: 48px;
-    border-radius: 6px;
   }
 
   .site-shell-home .home-content-section,
@@ -347,9 +297,5 @@
     min-height: 320px;
     padding: 28px;
     border-radius: 6px;
-  }
-
-  .site-shell-home .home-company-inner h2 {
-    font-size: 38px;
   }
 }

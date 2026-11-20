@@ -29,7 +29,6 @@
     gap: clamp(28px, 3vw, 44px);
   }
 
-  .site-shell-openai .desktop-menu-lead,
   .site-shell-openai .desktop-menu-secondary-group {
     min-width: 0;
   }
@@ -90,12 +89,6 @@
   }
 }
 
-/* Homepage direction cards keep only the title and research index. */
-.site-shell-home .home-direction-card .home-media-card-body > p:not(.eyebrow) {
-  display: none;
-}
-
-.site-shell-home .home-insight-card .home-media-card-body > p:not(.eyebrow),
 .site-shell-home #cooperation-cases .home-media-card-body > p:not(.eyebrow) {
   display: none;
 }

@@ -9,8 +9,12 @@ export type HomeStaticMarkup = {
 
 export const HomeStaticMain = ({ markup, initialReleased }: { markup: HomeStaticMarkup; initialReleased: boolean }) => (
   <HomeLaunchProvider initialReleased={initialReleased}>
-    <HomeHero />
-    <div className="home-static-fragment" dangerouslySetInnerHTML={{ __html: markup.welcomeRest }} />
+    <section className="home-welcome">
+      <div className="home-welcome-inner">
+        <HomeHero />
+        <div className="home-static-fragment" dangerouslySetInnerHTML={{ __html: markup.welcomeRest }} />
+      </div>
+    </section>
     <div className="home-static-fragment" dangerouslySetInnerHTML={{ __html: markup.newsAndResearch }} />
     <HomeProductsLaunch>
       <div className="home-static-fragment" dangerouslySetInnerHTML={{ __html: markup.products }} />

@@ -6,9 +6,17 @@ export const newsCategorySlug = (category: string) => {
   return (
     known[category] ||
     `topic-${Array.from(category)
-      .map((char) => char.codePointAt(0)!.toString(16))
+      .map((char) => (char.codePointAt(0) ?? 0).toString(16))
       .join('-')}`
   );
+};
+
+export const articleCategoryId = (
+  section: ArticleSection,
+  item: { category?: string; categorySlug?: string; directionSlug?: string }
+): string => {
+  const label = item.category || '技术文章';
+  return section === 'news' ? newsCategorySlug(label) : item.categorySlug || item.directionSlug || 'uncategorized';
 };
 
 export const articleCategories = (
@@ -19,8 +27,7 @@ export const articleCategories = (
     new Map(
       items.map((item) => {
         const label = item.category || '技术文章';
-        const id =
-          section === 'news' ? newsCategorySlug(label) : item.categorySlug || item.directionSlug || 'uncategorized';
+        const id = articleCategoryId(section, item);
         return [id, { id, label }] as const;
       })
     ).values()

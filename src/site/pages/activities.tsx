@@ -1,43 +1,47 @@
 'use client';
-import { Translated } from '../providers/i18n';
 
-import { SiteImage } from '../components/site-image';
+import { ArticleCard } from '../components/article-card';
+import { IndexHeading } from '../components/index-heading';
 import { useArticleCategoryFilter } from '../providers/category-filter';
 import { articleCategories } from '../../data/article-categories';
 import type { Activity, ActivitySummary } from '../../data/activities';
 import { Eyebrow, SiteShell } from '../components/index';
 import { ArticleBody, ArticleMetadata, ContinueReading } from '../components/article-reading';
-import { useI18n } from '../providers/i18n';
-import { HomeEmptyContent, HomeMediaCard } from './shared';
+import { Translated, useI18n } from '../providers/i18n';
+import { HomeEmptyContent } from './shared';
 
-export const ActivityHighlights = ({ items }: { items: ActivitySummary[] }) => {
-  const { href, t } = useI18n();
-  const card = (item: ActivitySummary, lead = false) => (
-    <article className={lead ? 'activity-highlight activity-highlight-lead' : 'activity-highlight'} key={item.slug}>
-      <a href={item.externalUrl || href(`/activities/${item.slug}`)}>
-        <SiteImage src={item.cover || '/visuals/research-gradient.jpg'} alt={t(item.title)} loading="lazy" />
-        <div>
-          <h3>{t(item.title)}</h3>
-          <p>
-            {item.pinned && (
-              <>
-                <Translated>置顶</Translated> ·{' '}
-              </>
-            )}
-            {t(item.category || '活动')} ·<Translated> </Translated>
-            <time dateTime={item.publishedAt}>
-              <Translated>{item.publishedAt}</Translated>
-            </time>
-          </p>
-        </div>
-      </a>
-    </article>
+const highlightImageSizes = {
+  lead: '(max-width: 720px) calc(100vw - 40px), (max-width: 1068px) calc(100vw - 64px), min(1026px, calc(75vw - 54px))',
+  highlight: '(max-width: 720px) 112px, (max-width: 1068px) calc((100vw - 112px) / 3), min(326px, calc(25vw - 34px))',
+} as const;
+
+function ActivityCard({ item, placement }: { item: ActivitySummary; placement: 'lead' | 'highlight' | 'grid' }) {
+  const { t } = useI18n();
+  const category = item.category || '活动';
+  return (
+    <ArticleCard
+      variant={placement === 'grid' ? 'grid' : 'highlight'}
+      className={placement === 'lead' ? 'activity-highlight-lead' : undefined}
+      href={item.externalUrl || `/activities/${item.slug}`}
+      title={item.title}
+      cover={item.cover}
+      imageSizes={placement === 'grid' ? undefined : highlightImageSizes[placement]}
+      category={placement === 'grid' && item.pinned ? `${t('置顶')} · ${t(category)}` : category}
+      publishedAt={item.publishedAt}
+    />
   );
+}
+
+const ActivityHighlights = ({ items }: { items: ActivitySummary[] }) => {
   return (
     <div className="activity-highlights">
-      {items[0] && card(items[0], true)}
+      {items[0] && <ActivityCard item={items[0]} placement="lead" />}
       {items.length > 1 && (
-        <div className="activity-highlights-side">{items.slice(1, 4).map((item) => card(item))}</div>
+        <div className="activity-highlights-side">
+          {items.slice(1, 4).map((item) => (
+            <ActivityCard key={item.slug} item={item} placement="highlight" />
+          ))}
+        </div>
       )}
     </div>
   );
@@ -55,7 +59,6 @@ export const ActivitySection = ({
   const { locale, t } = useI18n();
   const categories = articleCategories('activities', items);
   const [category, , categoryHref] = useArticleCategoryFilter('activities', categories, initialCategory);
-  const Heading = page ? 'h1' : 'h2';
   const entries = [...items].sort(
     (a, b) => Number(Boolean(b.pinned)) - Number(Boolean(a.pinned)) || b.publishedAt.localeCompare(a.publishedAt)
   );
@@ -64,14 +67,21 @@ export const ActivitySection = ({
     : entries.slice(0, 4);
   return (
     <section className="home-latest-activity" aria-labelledby="activity-section-title">
-      <div className="home-section-topline">
-        <Heading className="activity-section-heading" id="activity-section-title">
-          {page && category !== 'all' && <>{t(categories.find((item) => item.id === category)?.label || '')} · </>}
-          {locale === 'en' ? (page ? 'Activities' : 'Recent activities') : page ? '活动' : '最近活动'}
-        </Heading>
-      </div>
+      {page ? (
+        <IndexHeading
+          id="activity-section-title"
+          title={locale === 'en' ? 'Activities' : '活动'}
+          category={t(categories.find((item) => item.id === category)?.label || '')}
+        />
+      ) : (
+        <div className="home-section-topline">
+          <h2 className="activity-section-heading" id="activity-section-title">
+            {locale === 'en' ? 'Recent activities' : '最近活动'}
+          </h2>
+        </div>
+      )}
       {page && (
-        <nav className="research-index-tabs" aria-label={t('活动分类')} style={{ marginBottom: 32 }}>
+        <nav className="research-index-tabs index-category-tabs" aria-label={t('活动分类')}>
           {[{ id: 'all', label: '全部' }, ...categories].map(({ id, label }) => (
             <a
               key={id}
@@ -90,15 +100,7 @@ export const ActivitySection = ({
         ) : (
           <div className="home-media-grid home-products-grid">
             {shown.map((item) => (
-              <HomeMediaCard
-                key={item.slug}
-                image={item.cover || '/visuals/research-gradient.jpg'}
-                imageAlt={item.title}
-                title={item.title}
-                eyebrow={`${item.pinned ? `${t('置顶')} · ` : ''}${t(item.category || '活动')} · ${item.publishedAt}`}
-                naturalTitle
-                href={item.externalUrl || `/activities/${item.slug}`}
-              />
+              <ActivityCard key={item.slug} item={item} placement="grid" />
             ))}
           </div>
         )
@@ -146,7 +148,6 @@ export const ActivityPage = ({
           </div>
           <h1>{t(item.title)}</h1>
           <p className="article-excerpt">{t(item.excerpt)}</p>
-          <div className="article-meta">{t(item.author)}</div>
         </header>
         <ArticleBody source={item.body}>
           <ArticleMetadata author={item.author} keywords={item.keywords} keywordsEn={item.keywordsEn} />

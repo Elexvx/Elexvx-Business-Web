@@ -4,7 +4,7 @@ import tseslint from 'typescript-eslint';
 
 export default [
   {
-    ignores: ['dist', 'node_modules', '.astro', 'vendor', 'legacy-astro', 'archive'],
+    ignores: ['dist', 'dist-dev', '.next', 'esa', '.claude', '.local', 'public', 'node_modules'],
   },
   js.configs.recommended,
   ...tseslint.configs.recommended,
@@ -32,7 +32,7 @@ export default [
     },
   },
   {
-    files: ['**/*.{mjs,js}'],
+    files: ['**/*.{mjs,cjs,js}'],
     languageOptions: {
       globals: {
         ...globals.node,

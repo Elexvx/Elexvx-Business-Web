@@ -1,4 +1,5 @@
 import records from '../../content/site/activities.json';
+import { omitFields } from '../content/summaries';
 
 export type Activity = {
   slug: string;
@@ -21,11 +22,7 @@ export type Activity = {
 
 export type ActivitySummary = Omit<Activity, 'body'>;
 
-export const toActivitySummary = (item: Activity): ActivitySummary => {
-  const { body, ...summary } = item;
-  void body;
-  return summary;
-};
+export const toActivitySummary = (item: Activity): ActivitySummary => omitFields(item, 'body');
 
-export const activities = records as Activity[];
+const activities = records as Activity[];
 export const publishedActivities = activities.filter((item) => item.status === 'published');

@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import type { Insight } from '../src/content/types';
 import { loadInsights } from '../src/content/loader';
 import { loadNews } from '../src/content/news-loader';
 import { nextMetadata } from '../src/site/routing/metadata';
@@ -128,15 +129,14 @@ describe('static share metadata', () => {
       siteName: '宏翔商道-Elexvx',
     });
   });
-  it('marks published insights as independently indexable article pages', () => {
-    const data = nextMetadata('/insights/question-before-model');
-    expect(data.robots).toMatchObject({ index: true, follow: true, googleBot: { index: true, follow: true } });
-    expect(data.alternates?.canonical).toBe('https://www.elexvx.com/insights/question-before-model/');
-    expect(data.openGraph).toMatchObject({
-      type: 'article',
-      url: 'https://www.elexvx.com/insights/question-before-model/',
-      publishedTime: '2026-09-02',
-    });
+  it('does not index removed demonstration research notes', () => {
+    for (const slug of ['question-before-model', 'industrial-safety-data']) {
+      for (const locale of ['zh-CN', 'en'] as const) {
+        const data = nextMetadata(`/insights/${slug}`, locale);
+        expect(data.robots).toMatchObject({ index: false, follow: false });
+        expect(data.openGraph).not.toMatchObject({ type: 'article' });
+      }
+    }
   });
   it('emits localized NewsArticle JSON-LD for Google', () => {
     const item = loadNews().find((news) => news.slug === '2026-06-09-01');
@@ -160,23 +160,34 @@ describe('static share metadata', () => {
     expect(english.headline).not.toMatch(/[\u4e00-\u9fff]/u);
   });
   it('emits localized Article JSON-LD for published insights', () => {
-    const insight = loadInsights().find((item) => item.slug === 'question-before-model');
-    if (!insight) throw new Error('Expected published insight fixture');
+    const insight: Insight = {
+      slug: 'metadata-test',
+      title: 'Metadata test',
+      excerpt: 'An isolated test fixture.',
+      publishedAt: '2026-09-02',
+      author: 'Elexvx Research',
+      status: 'published',
+      evidence: [{ label: 'Test evidence', kind: 'internal', verified: true }],
+      keywords: ['测试'],
+      keywordsEn: ['metadata test'],
+      body: 'Test article body.',
+      readingTime: 1,
+    };
 
     const chinese = JSON.parse(insightArticleStructuredData(insight));
     const english = JSON.parse(insightArticleStructuredData(insight, 'en'));
 
     expect(chinese).toMatchObject({
       '@type': 'Article',
-      url: 'https://www.elexvx.com/insights/question-before-model/',
+      url: 'https://www.elexvx.com/insights/metadata-test/',
       inLanguage: 'zh-CN',
       publisher: { '@id': 'https://www.elexvx.com/#organization' },
     });
     expect(english).toMatchObject({
       '@type': 'Article',
-      url: 'https://www.elexvx.com/en/insights/question-before-model/',
+      url: 'https://www.elexvx.com/en/insights/metadata-test/',
       inLanguage: 'en',
-      keywords: ['problem framing', 'data intelligence', 'model selection', 'research methods'],
+      keywords: ['metadata test'],
     });
   });
 });

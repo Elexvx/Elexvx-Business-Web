@@ -4,7 +4,7 @@
 
 每篇文章的 category 为显示名称，categorySlug 为稳定的分类标识。同一分类使用相同标识和名称。分类从已发布文章中自动汇总，列表与顶部菜单同步更新。
 
-分类链接使用 `/research?category=ai-safety` 或 `/activities?category=roadshows`。分类不生成独立页面，直接在对应列表筛选；切换分类更新 URL，刷新和浏览器前进后退保留筛选。无 category 参数显示全部，未知分类显示空结果。
+分类链接使用 `/research/category/ai-safety/`、`/activities/category/roadshows/` 等静态分类路由（旧版 `/research?category=ai-safety`、`/activities?category=roadshows` 查询参数通过 `src/server/esa/redirects.json` 永久重定向至对应分类页）。切换分类跳转到对应分类页，刷新和浏览器前进后退保留筛选；无分类页显示全部，未知分类参数规范化回未筛选列表。
 
 当前每个栏目各有三篇明确标注的示例文章，用于预览布局与筛选，可在真实内容准备好后删除。研究示例不是已完成研究成果，活动示例不是已举办活动。
 

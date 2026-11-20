@@ -1,5 +1,7 @@
-export type FrontmatterPrimitive = string | number | boolean | null;
-export type FrontmatterValue = FrontmatterPrimitive | FrontmatterPrimitive[] | Record<string, unknown>;
+import type { ContentStatus, EvidenceRef } from './types';
+
+type FrontmatterPrimitive = string | number | boolean | null;
+type FrontmatterValue = FrontmatterPrimitive | FrontmatterPrimitive[] | Record<string, unknown>;
 
 const unquote = (value: string) => {
   const trimmed = value.trim();
@@ -9,6 +11,26 @@ const unquote = (value: string) => {
   return trimmed;
 };
 
+// Prettier formats inline YAML objects with single quotes. Accept that
+// common YAML spelling while keeping the structured value strict.
+const normalizeYamlInlineQuotes = (value: string) =>
+  value
+    .replace(/([{,]\s*)'([^']*)'\s*:/g, '$1"$2":')
+    .replace(/:\s*'([^']*)'/g, ': "$1"')
+    .replace(/([[, ]\s*)'([^']*)'/g, '$1"$2"');
+
+const parseStructuredScalar = (value: string): FrontmatterValue => {
+  try {
+    return JSON.parse(value) as FrontmatterValue;
+  } catch {
+    try {
+      return JSON.parse(normalizeYamlInlineQuotes(value)) as FrontmatterValue;
+    } catch {
+      throw new Error(`Invalid JSON frontmatter value: ${value}`);
+    }
+  }
+};
+
 const parseScalar = (rawValue: string): FrontmatterValue => {
   const value = rawValue.trim();
   if (!value) return '';
@@ -16,26 +38,39 @@ const parseScalar = (rawValue: string): FrontmatterValue => {
   if (value === 'false') return false;
   if (value === 'null') return null;
   if (/^-?\d+(\.\d+)?$/.test(value)) return Number(value);
-
   if ((value.startsWith('[') && value.endsWith(']')) || (value.startsWith('{') && value.endsWith('}'))) {
-    try {
-      return JSON.parse(value) as FrontmatterValue;
-    } catch {
-      try {
-        // Prettier formats inline YAML objects with single quotes. Accept that
-        // common YAML spelling while keeping the structured value strict.
-        const yamlCompatible = value
-          .replace(/([{,]\s*)'([^']*)'\s*:/g, '$1"$2":')
-          .replace(/:\s*'([^']*)'/g, ': "$1"')
-          .replace(/([[, ]\s*)'([^']*)'/g, '$1"$2"');
-        return JSON.parse(yamlCompatible) as FrontmatterValue;
-      } catch {
-        throw new Error(`Invalid JSON frontmatter value: ${value}`);
-      }
-    }
+    return parseStructuredScalar(value);
   }
-
   return unquote(value);
+};
+
+const appendFrontmatterListItem = (
+  trimmed: string,
+  line: string,
+  index: number,
+  data: Record<string, FrontmatterValue>,
+  activeListKey: string | undefined
+) => {
+  const list = activeListKey ? data[activeListKey] : undefined;
+  if (!Array.isArray(list)) {
+    throw new Error(`Invalid frontmatter list item ${index + 1}: ${line}`);
+  }
+  list.push(parseScalar(trimmed.slice(2)) as FrontmatterPrimitive);
+};
+
+const assignFrontmatterKey = (
+  trimmed: string,
+  line: string,
+  index: number,
+  data: Record<string, FrontmatterValue>
+): string | undefined => {
+  const separator = trimmed.indexOf(':');
+  if (separator <= 0) throw new Error(`Invalid frontmatter line ${index + 1}: ${line}`);
+  const key = trimmed.slice(0, separator).trim();
+  if (!/^[A-Za-z][A-Za-z0-9_-]*$/.test(key)) throw new Error(`Invalid frontmatter key: ${key}`);
+  const rawValue = trimmed.slice(separator + 1);
+  data[key] = rawValue.trim() ? parseScalar(rawValue) : [];
+  return rawValue.trim() ? undefined : key;
 };
 
 export const parseFrontmatter = (source: string): { data: Record<string, FrontmatterValue>; body: string } => {
@@ -55,20 +90,10 @@ export const parseFrontmatter = (source: string): { data: Record<string, Frontma
     const trimmed = line.trim();
     if (!trimmed || trimmed.startsWith('#')) continue;
     if (trimmed.startsWith('- ')) {
-      const list = activeListKey ? data[activeListKey] : undefined;
-      if (!Array.isArray(list)) {
-        throw new Error(`Invalid frontmatter list item ${index + 1}: ${line}`);
-      }
-      list.push(parseScalar(trimmed.slice(2)) as FrontmatterPrimitive);
+      appendFrontmatterListItem(trimmed, line, index, data, activeListKey);
       continue;
     }
-    const separator = trimmed.indexOf(':');
-    if (separator <= 0) throw new Error(`Invalid frontmatter line ${index + 1}: ${line}`);
-    const key = trimmed.slice(0, separator).trim();
-    if (!/^[A-Za-z][A-Za-z0-9_-]*$/.test(key)) throw new Error(`Invalid frontmatter key: ${key}`);
-    const rawValue = trimmed.slice(separator + 1);
-    activeListKey = rawValue.trim() ? undefined : key;
-    data[key] = rawValue.trim() ? parseScalar(rawValue) : [];
+    activeListKey = assignFrontmatterKey(trimmed, line, index, data);
   }
 
   return {
@@ -83,36 +108,60 @@ export const asString = (value: FrontmatterValue | undefined, field: string, req
   throw new Error(`${field} must be a non-empty string`);
 };
 
-export const asStringArray = (value: FrontmatterValue | undefined, field: string): string[] => {
-  if (!Array.isArray(value) || value.some((item) => typeof item !== 'string')) {
+const isStringArray = (value: FrontmatterValue | undefined): value is string[] =>
+  Array.isArray(value) && value.every((item): item is string => typeof item === 'string');
+
+const asStringArray = (value: FrontmatterValue | undefined, field: string): string[] => {
+  if (!isStringArray(value)) {
     throw new Error(`${field} must be an array of strings`);
   }
-  return value.map((item) => (typeof item === 'string' ? item.trim() : '')).filter(Boolean);
+  return value.map((item) => item.trim()).filter(Boolean);
 };
 
-export const asEvidenceArray = (value: FrontmatterValue | undefined, field: string) => {
-  if (!Array.isArray(value)) throw new Error(`${field} must be an array`);
-  return value.map((item, index) => {
-    if (!item || typeof item !== 'object' || Array.isArray(item)) {
-      throw new Error(`${field}[${index}] must be an object`);
+const isEvidenceKind = (value: unknown): value is EvidenceRef['kind'] =>
+  value === 'official' || value === 'internal' || value === 'asset';
+
+const parseEvidenceItem = (item: unknown, field: string, index: number): EvidenceRef => {
+  if (!item || typeof item !== 'object' || Array.isArray(item)) {
+    throw new Error(`${field}[${index}] must be an object`);
+  }
+  const record = item as Record<string, unknown>;
+  const label = typeof record.label === 'string' ? record.label.trim() : '';
+  if (!label || !isEvidenceKind(record.kind) || typeof record.verified !== 'boolean') {
+    throw new Error(`${field}[${index}] must contain label, kind and verified`);
+  }
+  const result: EvidenceRef = { label, kind: record.kind, verified: record.verified };
+  if (record.url !== undefined) {
+    if (typeof record.url !== 'string' || !record.url.trim()) {
+      throw new Error(`${field}[${index}].url must be a string`);
     }
-    const record = item as Record<string, unknown>;
-    const label = typeof record.label === 'string' ? record.label.trim() : '';
-    const kind = record.kind;
-    const verified = record.verified;
-    if (!label || !['official', 'internal', 'asset'].includes(String(kind)) || typeof verified !== 'boolean') {
-      throw new Error(`${field}[${index}] must contain label, kind and verified`);
-    }
-    const result: { label: string; kind: 'official' | 'internal' | 'asset'; verified: boolean; url?: string } = {
-      label,
-      kind: kind as 'official' | 'internal' | 'asset',
-      verified,
-    };
-    if (record.url !== undefined) {
-      if (typeof record.url !== 'string' || !record.url.trim())
-        throw new Error(`${field}[${index}].url must be a string`);
-      result.url = record.url.trim();
-    }
-    return result;
-  });
+    result.url = record.url.trim();
+  }
+  return result;
 };
+
+export const asEvidenceArray = (value: FrontmatterValue | undefined, field: string): EvidenceRef[] => {
+  if (!Array.isArray(value)) throw new Error(`${field} must be an array`);
+  return value.map((item, index) => parseEvidenceItem(item, field, index));
+};
+
+export const asOptionalString = (value: FrontmatterValue | undefined, field: string): string | undefined =>
+  asString(value, field, false) || undefined;
+
+export const asOptionalStringArray = (value: FrontmatterValue | undefined, field: string): string[] | undefined =>
+  typeof value === 'undefined' ? undefined : asStringArray(value, field);
+
+export const asContentStatus = (value: FrontmatterValue | undefined, filename: string): ContentStatus => {
+  const status = asString(value, 'status');
+  if (!['draft', 'published', 'archived'].includes(status)) throw new Error(`${filename}: invalid status`);
+  return status as ContentStatus;
+};
+
+export const asPublishedDate = (value: FrontmatterValue | undefined, filename: string): string => {
+  const publishedAt = asString(value, 'publishedAt');
+  if (Number.isNaN(Date.parse(publishedAt))) throw new Error(`${filename}: publishedAt must be an ISO date`);
+  return publishedAt;
+};
+
+export const sortByPublishedAtDesc = <T extends { publishedAt: string }>(items: T[]): T[] =>
+  [...items].sort((a, b) => Date.parse(b.publishedAt) - Date.parse(a.publishedAt));

@@ -1,5 +1,5 @@
 'use client';
-import { Translated } from '../providers/i18n';
+import { LocalizedText as T, LocalizedTitle as Title, Translated } from '../providers/i18n';
 import { CheckOutlined } from '@ant-design/icons';
 
 import { capabilities, getDirection, getProject, getScenario, projects, scenarios } from '../../data/site';
@@ -7,7 +7,6 @@ import { getScenarioHeroMedia, pageContent } from '../../data/page-content';
 
 import { classNames, EvidenceList, Eyebrow, ResearchTile, SiteShell, TechnicalFigure } from '../components/index';
 
-import { LocalizedText as T, LocalizedTitle as Title } from '../providers/i18n';
 import { ProjectCard, PageHero, ScenarioCard, EmptyState, NotFoundPage } from './shared';
 
 export const CapabilitiesPage = () => (

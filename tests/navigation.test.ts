@@ -43,6 +43,10 @@ describe('shared navigation availability', () => {
   });
   it('keeps shared service routes available even when the content route index is generated separately', () => {
     const available = createLinkAvailability(['/research']);
+    expect(available('/services/docs/')).toBe(false);
+    expect(available('/services/docs/architecture/system-overview/')).toBe(false);
+    expect(available('/en/services/docs/')).toBe(false);
+    expect(available('/en/services/docs/quick-start/local-setup/')).toBe(false);
     expect(available('/navigation/')).toBe(true);
     expect(available('/status/')).toBe(true);
     expect(available('/status/history/')).toBe(true);

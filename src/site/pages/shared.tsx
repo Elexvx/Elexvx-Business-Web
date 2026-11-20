@@ -1,68 +1,17 @@
 'use client';
-import { Translated } from '../providers/i18n';
 import { CompanyIntro } from '../components/company-intro';
 
 import { ErrorPage } from '../components/error-page';
 import { SiteImage } from '../components/site-image';
-import { ArrowRightOutlined } from '@ant-design/icons';
 
-import { getDirection } from '../../data/site';
+import { ArticleCard } from '../components/article-card';
 import { isDisabledPath } from '../../data/disabled-sections';
 import { type PageHeroContent } from '../../data/page-content';
 
-import type {
-  BusinessLine,
-  InsightSummary,
-  NewsSummary,
-  Project,
-  ResearchDirection,
-  Scenario,
-} from '../../content/types';
+import type { BusinessLine, InsightSummary, Project, Scenario } from '../../content/types';
 import { ActionButton, classNames, Eyebrow } from '../components/index';
 
-import { LocalizedText as T, LocalizedTitle as Title, useI18n } from '../providers/i18n';
-
-export const DirectionCard = ({ direction, index }: { direction: ResearchDirection; index: number }) => {
-  const { t, href } = useI18n();
-  return (
-    <article
-      className={classNames(
-        'direction-card',
-        direction.accent === 'dark' && 'direction-card-dark',
-        direction.accent === 'parchment' && 'direction-card-parchment'
-      )}
-    >
-      {direction.image && (
-        <div className="direction-card-media">
-          <SiteImage
-            src={direction.image}
-            alt={t(direction.imageAlt ?? direction.title)}
-            loading="lazy"
-            decoding="async"
-          />
-        </div>
-      )}
-      <Eyebrow onDark={direction.accent === 'dark'}>
-        <Translated>{`RESEARCH ${String(index + 1).padStart(2, '0')}`}</Translated>
-      </Eyebrow>
-      <h2>
-        <Title text={direction.title} />
-      </h2>
-      <p className="card-english">
-        <Translated>{direction.englishTitle}</Translated>
-      </p>
-      <p>{t(direction.summary)}</p>
-      <div className="card-footer">
-        <span className="card-index">
-          <Translated>{`${direction.methods.length} METHODS`}</Translated>
-        </span>
-        <a className="card-link" href={href(`/research/${direction.slug}`)}>
-          {t('进入方向')} <ArrowRightOutlined aria-hidden="true" />
-        </a>
-      </div>
-    </article>
-  );
-};
+import { LocalizedText as T, LocalizedTitle as Title, Translated, useI18n } from '../providers/i18n';
 
 export const ProjectCard = ({ project }: { project: Project }) => {
   const { t, href } = useI18n();
@@ -104,151 +53,11 @@ export const ProjectCard = ({ project }: { project: Project }) => {
         </span>
         {!isDisabledPath(`/projects/${project.slug}`) && (
           <a className="card-link" href={href(`/projects/${project.slug}`)}>
-            {t('阅读项目')} <ArrowRightOutlined aria-hidden="true" />
+            {t('阅读项目')}
           </a>
         )}
       </div>
     </article>
-  );
-};
-
-export const InsightRow = ({ insight }: { insight: InsightSummary }) => {
-  const { t, href } = useI18n();
-  return (
-    <a className="insight-list-item" href={href(`/insights/${insight.slug}`)}>
-      <span className="insight-list-date">
-        <Translated>{insight.publishedAt}</Translated>
-      </span>
-      <span>
-        <strong>{t(insight.title)}</strong>
-        <span className="insight-list-meta">{t(insight.excerpt)}</span>
-      </span>
-      <ArrowRightOutlined className="insight-list-arrow" aria-hidden="true" />
-    </a>
-  );
-};
-
-export type HomeMediaCardProps = {
-  image: string;
-  imageAlt: string;
-  eyebrow: string;
-  title: string;
-  description?: string;
-  naturalTitle?: boolean;
-  href?: string;
-  className?: string;
-};
-
-export const HomeMediaCard = ({
-  image,
-  imageAlt,
-  eyebrow,
-  title,
-  description,
-  naturalTitle = false,
-  href,
-  className,
-}: HomeMediaCardProps) => {
-  const { t, href: localizedHref } = useI18n();
-  const content = (
-    <>
-      <div className="home-media-card-media">
-        <SiteImage src={image} alt={t(imageAlt)} loading="lazy" decoding="async" />
-      </div>
-      <div className="home-media-card-body">
-        <h3>{naturalTitle ? t(title) : <Title text={title} />}</h3>
-        <Eyebrow>
-          <Translated>{eyebrow}</Translated>
-        </Eyebrow>
-        {description && <p>{t(description)}</p>}
-      </div>
-    </>
-  );
-
-  return href ? (
-    <a className={classNames('home-media-card', className)} href={localizedHref(href)}>
-      <Translated>{content}</Translated>
-    </a>
-  ) : (
-    <article className={classNames('home-media-card', className)}>
-      <Translated>{content}</Translated>
-    </article>
-  );
-};
-
-export const HomeDirectionCard = ({ direction, index }: { direction: ResearchDirection; index: number }) => {
-  const { t, href } = useI18n();
-  return (
-    <a className="home-direction-card" href={href(`/research/${direction.slug}`)}>
-      <div className="home-media-card-media">
-        <SiteImage
-          src={direction.image ?? '/visuals/research-gradient.jpg'}
-          alt={t(direction.imageAlt ?? direction.title)}
-          loading="lazy"
-          decoding="async"
-        />
-      </div>
-      <div className="home-media-card-body">
-        <h3>
-          <Title text={direction.title} />
-        </h3>
-        <Eyebrow>
-          <Translated>{`RESEARCH ${String(index + 1).padStart(2, '0')}`}</Translated>
-        </Eyebrow>
-        <p>{t(direction.summary)}</p>
-      </div>
-    </a>
-  );
-};
-
-export const HomeInsightCard = ({ insight }: { insight: InsightSummary }) => {
-  const direction = insight.directionSlug ? getDirection(insight.directionSlug) : undefined;
-  const { t } = useI18n();
-  return (
-    <HomeMediaCard
-      className="home-insight-card"
-      image={insight.cover ?? direction?.image ?? '/visuals/research-gradient.jpg'}
-      imageAlt={`${t(insight.title)} ${t('文章配图')}`}
-      eyebrow={`${direction?.englishTitle ?? 'ELEXVX RESEARCH'} / ${insight.publishedAt}`}
-      title={insight.title}
-      description={insight.excerpt}
-      href={`/insights/${insight.slug}`}
-    />
-  );
-};
-
-export const formatNewsDate = (date: string, locale: 'zh-CN' | 'en') =>
-  new Intl.DateTimeFormat(locale === 'en' ? 'en-US' : 'zh-CN', {
-    year: 'numeric',
-    month: locale === 'en' ? 'long' : 'numeric',
-    day: 'numeric',
-  }).format(new Date(`${date}T00:00:00`));
-
-export const NewsCard = ({ item, showExcerpt = true }: { item: NewsSummary; showExcerpt?: boolean }) => {
-  const { t, href, locale } = useI18n();
-  const cover = item.cover ?? '/visuals/research-gradient.jpg';
-  return (
-    <a className="home-media-card home-news-card news-card" href={href(`/news/${item.slug}`)}>
-      <div className="home-media-card-media">
-        <SiteImage
-          sizes="(max-width: 640px) 120px, 180px"
-          src={cover}
-          alt={`${t(item.title)} ${t('新闻配图')}`}
-          loading="lazy"
-          decoding="async"
-        />
-      </div>
-      <div className="home-media-card-body">
-        <h3>
-          <Title text={item.title} />
-        </h3>
-        <p className="home-news-card-meta">
-          <span>{t(item.category)}</span>
-          <span>{formatNewsDate(item.publishedAt, locale)}</span>
-        </p>
-        {showExcerpt && <p>{t(item.excerpt)}</p>}
-      </div>
-    </a>
   );
 };
 
@@ -295,7 +104,14 @@ export const PageHero = ({ content, className }: { content: PageHeroContent; cla
 export const InsightList = ({ insights }: { insights: InsightSummary[] }) => (
   <div className="insight-list">
     {insights.map((insight) => (
-      <InsightRow insight={insight} key={insight.slug} />
+      <ArticleCard
+        key={insight.slug}
+        variant="compact"
+        href={`/insights/${insight.slug}`}
+        title={insight.title}
+        publishedAt={insight.publishedAt}
+        excerpt={insight.excerpt}
+      />
     ))}
   </div>
 );
@@ -317,7 +133,7 @@ export const ScenarioCard = ({ scenario }: { scenario: Scenario }) => {
           <Translated>{`${scenario.projectSlugs.length} PROJECTS`}</Translated>
         </span>
         <a className="card-link" href={href(`/scenarios/${scenario.slug}`)}>
-          {t('查看场景')} <ArrowRightOutlined aria-hidden="true" />
+          {t('查看场景')}
         </a>
       </div>
     </article>
@@ -339,7 +155,7 @@ export const BusinessCard = ({ line }: { line: BusinessLine }) => {
       <div className="card-footer">
         <span className="card-index">PARALLEL LINE</span>
         <a className="card-link" href={href(line.href)}>
-          {t('进入业务')} <ArrowRightOutlined aria-hidden="true" />
+          {t('进入业务')}
         </a>
       </div>
     </article>

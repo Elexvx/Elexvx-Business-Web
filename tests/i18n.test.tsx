@@ -3,6 +3,7 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { LanguageProvider, LocalizedTitle, useI18n } from '../src/site/providers/i18n';
 import { translateEnglish } from '../src/site/translation';
 import { parseMarkdown } from '../src/content/markdown';
+import { documentationUrl } from '../src/data/service-routes';
 import research from '../content/site/research.json';
 import activities from '../content/site/activities.json';
 
@@ -21,8 +22,7 @@ function Links() {
         '/navigation/',
         '/status/',
         '/status/history/?days=7',
-        '/services/docs/',
-        '/services/docs/architecture/system-overview/',
+        documentationUrl,
         '#reference-1',
         'https://www.elexvx.com/research/moe-chiplet-expert-reuse',
         'https://example.com/research/article',
@@ -59,8 +59,7 @@ describe('English publishing', () => {
     expect(html).toContain('href="/navigation/"');
     expect(html).toContain('href="/status/"');
     expect(html).toContain('href="/status/history/?days=7"');
-    expect(html).toContain('href="/en/services/docs/"');
-    expect(html).toContain('href="/en/services/docs/architecture/system-overview/"');
+    expect(html).toContain(`href="${documentationUrl}"`);
     expect(html).not.toContain('href="/en/services/"');
     expect(html).not.toContain('href="/en/navigation/"');
     expect(html).not.toContain('href="/en/status/"');

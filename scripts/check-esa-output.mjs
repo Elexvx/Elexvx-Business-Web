@@ -1,32 +1,15 @@
 import { readFile, readdir, stat } from 'node:fs/promises';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
-
-const defaultOrigin = 'https://www.elexvx.com';
-
-function decodeEntities(value) {
-  return value.replace(/&(#x[\da-f]+|#\d+|amp|lt|gt|quot|apos);/gi, (entity, name) => {
-    const normalized = name.toLowerCase();
-    if (normalized === 'amp') return '&';
-    if (normalized === 'lt') return '<';
-    if (normalized === 'gt') return '>';
-    if (normalized === 'quot') return '"';
-    if (normalized === 'apos') return "'";
-    const codePoint = normalized.startsWith('#x')
-      ? Number.parseInt(normalized.slice(2), 16)
-      : Number.parseInt(normalized.slice(1), 10);
-    return Number.isInteger(codePoint) && codePoint >= 0 && codePoint <= 0x10ffff
-      ? String.fromCodePoint(codePoint)
-      : entity;
-  });
-}
+import { decodeHtmlEntities, decodeXmlEntities } from '../src/content/html-entities.mjs';
+import { CANONICAL_ORIGIN } from '../src/data/site-origins-constants.mjs';
 
 function parseAttributes(tag) {
   const attributes = new Map();
   const body = tag.replace(/^<\w+\b|\s*\/?\s*>$/g, '');
   const matcher = /([^\s=/>]+)(?:\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s>]+)))?/g;
   for (const match of body.matchAll(matcher)) {
-    attributes.set(match[1].toLowerCase(), decodeEntities(match[2] ?? match[3] ?? match[4] ?? ''));
+    attributes.set(match[1].toLowerCase(), decodeHtmlEntities(match[2] ?? match[3] ?? match[4] ?? ''));
   }
   return attributes;
 }
@@ -49,7 +32,7 @@ function linksFromHtml(html) {
 }
 
 function parseSitemap(xml) {
-  return [...xml.matchAll(/<loc\b[^>]*>([\s\S]*?)<\/loc\s*>/gi)].map((match) => decodeEntities(match[1].trim()));
+  return [...xml.matchAll(/<loc\b[^>]*>([\s\S]*?)<\/loc\s*>/gi)].map((match) => decodeXmlEntities(match[1].trim()));
 }
 
 function normalizedUrl(value, origin) {
@@ -90,7 +73,7 @@ function staticFileForUrl(root, value) {
 }
 
 function pageText(html) {
-  return decodeEntities(
+  return decodeHtmlEntities(
     html
       .replace(/<!--([\s\S]*?)-->/g, ' ')
       .replace(/<(script|style|svg|template)\b[^>]*>[\s\S]*?<\/\1\s*>/gi, ' ')
@@ -174,8 +157,8 @@ function expectedBackLanguage(sourceUrl, language) {
 }
 
 function redirectFallbackFile(root, source) {
-  const asUrl = new URL(source, defaultOrigin);
-  if (asUrl.origin !== defaultOrigin || asUrl.search || asUrl.hash) return null;
+  const asUrl = new URL(source, CANONICAL_ORIGIN);
+  if (asUrl.origin !== CANONICAL_ORIGIN || asUrl.search || asUrl.hash) return null;
   try {
     return staticFileForUrl(root, asUrl.href);
   } catch {
@@ -183,36 +166,8 @@ function redirectFallbackFile(root, source) {
   }
 }
 
-export async function inspectEsaOutput({
-  root = 'esa/site/assets',
-  origin = defaultOrigin,
-  redirects,
-  redirectsFile = 'src/server/esa/redirects.json',
-} = {}) {
-  const staticRoot = path.resolve(root);
-  const errors = [];
+async function validateSitemapPages({ staticRoot, origin, urls, errors }) {
   const pages = new Map();
-  let sourceRedirects = redirects;
-
-  if (!sourceRedirects) {
-    try {
-      sourceRedirects = JSON.parse(await readFile(redirectsFile, 'utf8'));
-    } catch (error) {
-      return {
-        pages: 0,
-        errors: [`Cannot read ESA redirect rules: ${error.message}`],
-      };
-    }
-  }
-
-  const sitemapFile = path.join(staticRoot, 'sitemap.xml');
-  let urls;
-  try {
-    urls = parseSitemap(await readFile(sitemapFile, 'utf8'));
-  } catch (error) {
-    return { pages: 0, errors: [`Cannot read ESA sitemap at ${sitemapFile}: ${error.message}`] };
-  }
-  if (urls.length === 0) errors.push('sitemap.xml contains no <loc> URLs.');
 
   for (const url of urls) {
     let identity;
@@ -247,7 +202,8 @@ export async function inspectEsaOutput({
       errors.push(`Published page is a Next.js error document: ${url}`);
     }
 
-    const canonicalLinks = linksFromHtml(html).filter((link) => link.kind === 'canonical');
+    const links = linksFromHtml(html);
+    const canonicalLinks = links.filter((link) => link.kind === 'canonical');
     if (canonicalLinks.length !== 1) {
       errors.push(`Published page must have exactly one canonical link: ${url} (found ${canonicalLinks.length})`);
     } else {
@@ -278,14 +234,17 @@ export async function inspectEsaOutput({
       url,
       file,
       html,
-      alternates: languageMap(linksFromHtml(html), origin),
+      alternates: languageMap(links, origin),
     });
   }
 
+  return pages;
+}
+
+async function validateNoStrayErrorHtml({ staticRoot, sitemapFiles, errors }) {
   // Next can emit an error document as a regular route file. Such a file may
   // be missing from the sitemap and still be served by ESA with HTTP 200, so
   // scan every exported HTML file as well as the published URL list.
-  const sitemapFiles = new Set([...pages.values()].map((page) => page.file));
   for (const file of await collectHtmlFiles(staticRoot)) {
     if (sitemapFiles.has(file)) continue;
     const html = await readFile(file, 'utf8');
@@ -298,6 +257,17 @@ export async function inspectEsaOutput({
     }
   }
 
+  const notFoundHtml = path.join(staticRoot, '404.html');
+  if (await existsAsFile(notFoundHtml)) {
+    errors.push('ESA assets expose 404.html as a static 200 path; embed it in the function and remove it from assets.');
+  }
+  const nextNotFoundHtml = path.join(staticRoot, '_not-found', 'index.html');
+  if (await existsAsFile(nextNotFoundHtml)) {
+    errors.push('ESA assets expose Next.js internal /_not-found/ as a static path; remove it from assets.');
+  }
+}
+
+async function validateReciprocalHreflangs({ staticRoot, origin, pages, errors }) {
   const loadedAlternates = new Map();
   for (const page of pages.values()) {
     for (const alternate of page.alternates) {
@@ -371,16 +341,9 @@ export async function inspectEsaOutput({
       errors.push(`Chinese page is missing its English hreflang alternate: ${chinesePage.url}`);
     }
   }
+}
 
-  const notFoundHtml = path.join(staticRoot, '404.html');
-  if (await existsAsFile(notFoundHtml)) {
-    errors.push('ESA assets expose 404.html as a static 200 path; embed it in the function and remove it from assets.');
-  }
-  const nextNotFoundHtml = path.join(staticRoot, '_not-found', 'index.html');
-  if (await existsAsFile(nextNotFoundHtml)) {
-    errors.push('ESA assets expose Next.js internal /_not-found/ as a static path; remove it from assets.');
-  }
-
+async function validateRedirects({ staticRoot, sourceRedirects, errors }) {
   for (const redirect of sourceRedirects) {
     if (redirect.has || redirect.source.includes(':')) continue;
     const fallbackFile = redirectFallbackFile(staticRoot, redirect.source);
@@ -388,6 +351,43 @@ export async function inspectEsaOutput({
       errors.push(`Redirect source still has a static fallback that can shadow its redirect: ${redirect.source}`);
     }
   }
+}
+
+export async function inspectEsaOutput({
+  root = 'esa/site/assets',
+  origin = CANONICAL_ORIGIN,
+  redirects,
+  redirectsFile = 'src/server/esa/redirects.json',
+} = {}) {
+  const staticRoot = path.resolve(root);
+  const errors = [];
+  let sourceRedirects = redirects;
+
+  if (!sourceRedirects) {
+    try {
+      sourceRedirects = JSON.parse(await readFile(redirectsFile, 'utf8'));
+    } catch (error) {
+      return {
+        pages: 0,
+        errors: [`Cannot read ESA redirect rules: ${error.message}`],
+      };
+    }
+  }
+
+  const sitemapFile = path.join(staticRoot, 'sitemap.xml');
+  let urls;
+  try {
+    urls = parseSitemap(await readFile(sitemapFile, 'utf8'));
+  } catch (error) {
+    return { pages: 0, errors: [`Cannot read ESA sitemap at ${sitemapFile}: ${error.message}`] };
+  }
+  if (urls.length === 0) errors.push('sitemap.xml contains no <loc> URLs.');
+
+  const pages = await validateSitemapPages({ staticRoot, origin, urls, errors });
+  const sitemapFiles = new Set([...pages.values()].map((page) => page.file));
+  await validateNoStrayErrorHtml({ staticRoot, sitemapFiles, errors });
+  await validateReciprocalHreflangs({ staticRoot, origin, pages, errors });
+  await validateRedirects({ staticRoot, sourceRedirects, errors });
 
   return { pages: pages.size, errors };
 }

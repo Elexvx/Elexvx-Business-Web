@@ -9,6 +9,6 @@ English routes use `/en` and share the Chinese page structure. Public articles r
 - Search includes translated bodies of published research, activities and news. Filter values retain stable source identifiers while labels are translated.
 - Original photographs, certificates and manuscript figures remain source assets. Their surrounding article text and captions are localized; text embedded in original raster images is not rewritten.
 
-When publishing or changing Chinese content, add its English translation in the same change. Run `npm test` and `npm run build`. The build runs `npm run i18n:check`, which checks all generated English pages for untranslated visible text, image descriptions, accessible labels and metadata. The language-switch label is intentionally displayed as `中文 · 中国`.
+When publishing or changing Chinese content, add its English translation in the same change. Run `npm test` and `npm run build`. The build runs `npm run i18n:check`, which checks all generated English pages for untranslated visible text, image descriptions, accessible labels and metadata. The language-switch label displays `简体中文` on English pages and `English` on Chinese pages.
 
 Browser verification should include a long article, an image preview, English body search, a category filter, language switching at an article anchor, and 390px/desktop overflow checks. Chinese prose retains a two-character first-line indent; English prose does not.

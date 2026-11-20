@@ -104,7 +104,7 @@ export const BusinessLinePage = ({ slug }: { slug: string }) => {
   );
 };
 
-export const ContactPage = () => {
+const ContactEmailsSection = () => {
   const { t } = useI18n();
   const [copyStatus, setCopyStatus] = useState<{ email: string; result: 'copied' | 'failed' } | null>(null);
 
@@ -122,119 +122,126 @@ export const ContactPage = () => {
   };
 
   return (
-    <SiteShell activePath="/contact">
-      <section className="team-page contact-page">
-        <CompanyIntro
-          eyebrow="ELEXVX CONTACT"
-          title="联系我们"
-          description="从一个真实问题开始，让一次对话走向可验证的合作。"
-        />
-        <section className="contact-section" aria-labelledby="contact-departments-title">
-          <div className="contact-section-heading">
-            <span className="eyebrow">ELEXVX / EMAIL</span>
-            <h2 id="contact-departments-title">
-              <Translated>{'部门邮箱'}</Translated>
-            </h2>
-            <p className="contact-note">
-              <Translated>{'邮件中请留下姓名、联系方式与合作事项。'}</Translated>
-            </p>
-          </div>
-          <div className="contact-email-grid">
-            {departmentContactEmails.map((contact) => {
-              const isPrimary = contact.email === primaryContactEmail;
-              return (
-                <article
-                  className={`contact-email-card${isPrimary ? ' contact-email-card-primary' : ''}`}
-                  key={contact.id}
+    <section className="contact-section" aria-labelledby="contact-departments-title">
+      <div className="contact-section-heading">
+        <span className="eyebrow">ELEXVX / EMAIL</span>
+        <h2 id="contact-departments-title">
+          <Translated>{'部门邮箱'}</Translated>
+        </h2>
+        <p className="contact-note">
+          <Translated>{'邮件中请留下姓名、联系方式与合作事项。'}</Translated>
+        </p>
+      </div>
+      <div className="contact-email-grid">
+        {departmentContactEmails.map((contact) => {
+          const isPrimary = contact.email === primaryContactEmail;
+          return (
+            <article className={`contact-email-card${isPrimary ? ' contact-email-card-primary' : ''}`} key={contact.id}>
+              <div className="contact-email-card-heading">
+                {isPrimary && (
+                  <span className="contact-primary-label">
+                    <Translated>{'主要联系邮箱'}</Translated>
+                  </span>
+                )}
+                <h3>
+                  <Translated>{contact.department}</Translated>
+                </h3>
+              </div>
+              <a className="contact-email-link" href={`mailto:${contact.email}`}>
+                {contact.email}
+              </a>
+              <div className="contact-actions">
+                {isPrimary && (
+                  <a className="contact-email-button" href={`mailto:${primaryContactEmail}`}>
+                    <Translated>{'发送邮件'}</Translated>
+                  </a>
+                )}
+                <button
+                  aria-label={`${t('复制邮箱地址')} ${t(contact.department)}: ${contact.email}`}
+                  className="contact-copy-button"
+                  type="button"
+                  onClick={() => void copyEmail(contact.email)}
                 >
-                  <div className="contact-email-card-heading">
-                    {isPrimary && (
-                      <span className="contact-primary-label">
-                        <Translated>{'主要联系邮箱'}</Translated>
-                      </span>
-                    )}
-                    <h3>
-                      <Translated>{contact.department}</Translated>
-                    </h3>
-                  </div>
-                  <a className="contact-email-link" href={`mailto:${contact.email}`}>
-                    {contact.email}
-                  </a>
-                  <div className="contact-actions">
-                    {isPrimary && (
-                      <a className="contact-email-button" href={`mailto:${primaryContactEmail}`}>
-                        <Translated>{'发送邮件'}</Translated>
-                      </a>
-                    )}
-                    <button
-                      aria-label={`${t('复制邮箱地址')} ${t(contact.department)}: ${contact.email}`}
-                      className="contact-copy-button"
-                      type="button"
-                      onClick={() => void copyEmail(contact.email)}
-                    >
-                      <Translated>{'复制邮箱地址'}</Translated>
-                    </button>
-                  </div>
-                </article>
-              );
-            })}
-          </div>
-          <p className="contact-copy-status" role="status" aria-live="polite" aria-atomic="true">
-            {copyStatus && (
-              <>
-                <Translated>
-                  {copyStatus.result === 'copied' ? '邮箱地址已复制。' : '复制失败，请手动复制邮箱地址。'}
-                </Translated>{' '}
-                <span>{copyStatus.email}</span>
-              </>
-            )}
-          </p>
-        </section>
-
-        <section className="contact-section" aria-labelledby="contact-offices-title">
-          <div className="contact-section-heading">
-            <span className="eyebrow">ELEXVX / LOCATIONS</span>
-            <h2 id="contact-offices-title">
-              <Translated>{'办公地点'}</Translated>
-            </h2>
-          </div>
-          <div className="contact-office-grid">
-            {contactOffices.map((office) => (
-              <article className="contact-office-card" key={office.id}>
-                <div className="contact-office-heading">
-                  <h3>
-                    <Translated>{office.title}</Translated>
-                  </h3>
-                  {'organizationName' in office && office.organizationName && (
-                    <p className="contact-office-organization">
-                      <Translated>{office.organizationName}</Translated>
-                    </p>
-                  )}
-                </div>
-                <p className="contact-office-region">
-                  <Translated>{office.region}</Translated>
-                </p>
-                <p className="contact-office-address">
-                  <Translated>{office.address}</Translated>
-                </p>
-                <div className="contact-office-links">
-                  <a href={office.mapHref} target="_blank" rel="noopener noreferrer">
-                    <Translated>{'查看地图'}</Translated>
-                    <span className="sr-only"> — {t(office.title)}</span>
-                  </a>
-                  <a href={office.businessCreditHref} target="_blank" rel="noopener noreferrer">
-                    <Translated>{'企业信用'}</Translated>
-                    <span className="sr-only"> — {t(office.title)}</span>
-                  </a>
-                </div>
-              </article>
-            ))}
-          </div>
-        </section>
-      </section>
-    </SiteShell>
+                  <Translated>{'复制邮箱地址'}</Translated>
+                </button>
+              </div>
+            </article>
+          );
+        })}
+      </div>
+      <p className="contact-copy-status" role="status" aria-live="polite" aria-atomic="true">
+        {copyStatus && (
+          <>
+            <Translated>
+              {copyStatus.result === 'copied' ? '邮箱地址已复制。' : '复制失败，请手动复制邮箱地址。'}
+            </Translated>{' '}
+            <span>{copyStatus.email}</span>
+          </>
+        )}
+      </p>
+    </section>
   );
 };
+
+const ContactOfficesSection = () => {
+  const { t } = useI18n();
+  return (
+    <section className="contact-section" aria-labelledby="contact-offices-title">
+      <div className="contact-section-heading">
+        <span className="eyebrow">ELEXVX / LOCATIONS</span>
+        <h2 id="contact-offices-title">
+          <Translated>{'办公地点'}</Translated>
+        </h2>
+      </div>
+      <div className="contact-office-grid">
+        {contactOffices.map((office) => (
+          <article className="contact-office-card" key={office.id}>
+            <div className="contact-office-heading">
+              <h3>
+                <Translated>{office.title}</Translated>
+              </h3>
+              {'organizationName' in office && office.organizationName && (
+                <p className="contact-office-organization">
+                  <Translated>{office.organizationName}</Translated>
+                </p>
+              )}
+            </div>
+            <p className="contact-office-region">
+              <Translated>{office.region}</Translated>
+            </p>
+            <p className="contact-office-address">
+              <Translated>{office.address}</Translated>
+            </p>
+            <div className="contact-office-links">
+              <a href={office.mapHref} target="_blank" rel="noopener noreferrer">
+                <Translated>{'查看地图'}</Translated>
+                <span className="sr-only"> — {t(office.title)}</span>
+              </a>
+              <a href={office.businessCreditHref} target="_blank" rel="noopener noreferrer">
+                <Translated>{'企业信用'}</Translated>
+                <span className="sr-only"> — {t(office.title)}</span>
+              </a>
+            </div>
+          </article>
+        ))}
+      </div>
+    </section>
+  );
+};
+
+export const ContactPage = () => (
+  <SiteShell activePath="/contact">
+    <section className="team-page contact-page">
+      <CompanyIntro
+        eyebrow="ELEXVX CONTACT"
+        title="联系我们"
+        description="从一个真实问题开始，让一次对话走向可验证的合作。"
+      />
+      <ContactEmailsSection />
+      <ContactOfficesSection />
+    </section>
+  </SiteShell>
+);
 
 export const BrandPage = () => (
   <SiteShell activePath="/company" className="company-overview brand-overview">

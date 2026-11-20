@@ -1,5 +1,13 @@
-import { statusConfig } from '../../data/service-status';
+import { isMonitorDown, isMonitorUp, MONITOR_STATE, statusConfig } from '../../data/service-status';
 import type { AvailabilityDay, MonitorState, StatusMonitor } from '../../data/service-status';
+
+const HEALTHY_AVAILABILITY_PERCENT = 99.9;
+const WARNING_AVAILABILITY_PERCENT = 95;
+const STATUS_DAY_CACHE_LIMIT = 240;
+const SECONDS_PER_MINUTE = 60;
+const SECONDS_PER_HOUR = 3600;
+const SECONDS_PER_DAY = 24 * SECONDS_PER_HOUR;
+const MILLISECONDS_PER_SECOND = 1000;
 
 const statusDayFormatter = new Intl.DateTimeFormat('zh-CN', { month: 'short', day: 'numeric' });
 const statusDayLabelCache = new Map<number, string>();
@@ -24,22 +32,22 @@ function monitorPrefix(name: string): string | undefined {
 }
 
 export function statusTone(status: MonitorState): StatusTone {
-  if (status === 2) return 'healthy';
-  if (status === 8 || status === 9) return 'error';
+  if (isMonitorUp(status)) return 'healthy';
+  if (isMonitorDown(status)) return 'error';
   return 'unknown';
 }
 
 export function availabilityTone(percent: number, currentDayDown = false): StatusTone {
-  if (percent >= 99.9) return 'healthy';
-  if (percent >= 95) return 'warning';
+  if (percent >= HEALTHY_AVAILABILITY_PERCENT) return 'healthy';
+  if (percent >= WARNING_AVAILABILITY_PERCENT) return 'warning';
   if (percent > 0) return 'error';
   return currentDayDown ? 'error' : 'unknown';
 }
 
 function aggregateStatus(monitors: StatusMonitor[]): MonitorState {
-  if (monitors.some((monitor) => monitor.status === 8 || monitor.status === 9)) return 9;
-  if (monitors.some((monitor) => monitor.status !== 2)) return 1;
-  return 2;
+  if (monitors.some((monitor) => isMonitorDown(monitor.status))) return MONITOR_STATE.down;
+  if (monitors.some((monitor) => !isMonitorUp(monitor.status))) return MONITOR_STATE.notCheckedYet;
+  return MONITOR_STATE.up;
 }
 
 function aggregateDays(monitors: StatusMonitor[]): AvailabilityDay[] {
@@ -116,27 +124,21 @@ export function formatDay(timestamp: number): string {
   const cachedLabel = statusDayLabelCache.get(timestamp);
   if (cachedLabel) return cachedLabel;
 
-  const label = statusDayFormatter.format(new Date(timestamp * 1000));
-  if (statusDayLabelCache.size >= 240) statusDayLabelCache.clear();
+  const label = statusDayFormatter.format(new Date(timestamp * MILLISECONDS_PER_SECOND));
+  if (statusDayLabelCache.size >= STATUS_DAY_CACHE_LIMIT) statusDayLabelCache.clear();
   statusDayLabelCache.set(timestamp, label);
   return label;
 }
 
 export function formatDuration(seconds: number): string {
-  const days = Math.floor(seconds / (24 * 3600));
-  const hours = Math.floor((seconds % (24 * 3600)) / 3600);
-  const minutes = Math.floor((seconds % 3600) / 60);
-  const remainingSeconds = seconds % 60;
+  const days = Math.floor(seconds / SECONDS_PER_DAY);
+  const hours = Math.floor((seconds % SECONDS_PER_DAY) / SECONDS_PER_HOUR);
+  const minutes = Math.floor((seconds % SECONDS_PER_HOUR) / SECONDS_PER_MINUTE);
+  const remainingSeconds = seconds % SECONDS_PER_MINUTE;
   const parts: string[] = [];
   if (days > 0) parts.push(`${days}天`);
   if (hours > 0 || days > 0) parts.push(`${hours}小时`);
   if (minutes > 0 || hours > 0 || days > 0) parts.push(`${minutes}分钟`);
   parts.push(`${remainingSeconds}秒`);
   return parts.join(' ');
-}
-
-export function formatInterval(interval: number): string {
-  if (interval >= 3600) return `${Math.floor(interval / 3600)}小时`;
-  if (interval >= 60) return `${Math.floor(interval / 60)}分钟`;
-  return `${interval}秒`;
 }

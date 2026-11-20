@@ -2,7 +2,6 @@ import { notFound } from 'next/navigation';
 import { loadNews } from '../../../content/news-loader';
 import { NextSitePage } from '../../../site/NextSitePage';
 import { nextMetadata } from '../../../site/routing/metadata';
-import { NewsArticleJsonLd } from '../../../site/seo/news-article-json-ld';
 
 export const dynamicParams = false;
 
@@ -19,13 +18,8 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 export default async function Page({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const item = loadNews().find((news) => news.slug === slug && news.status === 'published');
-  if (!item) notFound();
+  const news = loadNews();
+  if (!news.some((item) => item.slug === slug && item.status === 'published')) notFound();
 
-  return (
-    <>
-      <NewsArticleJsonLd item={item} />
-      <NextSitePage path={`/news/${slug}`} />
-    </>
-  );
+  return <NextSitePage path={`/news/${slug}`} news={news} />;
 }

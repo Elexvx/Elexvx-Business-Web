@@ -3,8 +3,7 @@ import { loadInsights } from '../../../content/loader';
 import { loadNews } from '../../../content/news-loader';
 import { nextMetadata } from '../../../site/routing/metadata';
 import { getStaticRoutes, normalizeRoutePath } from '../../../site/routing/routes';
-import { InsightArticleJsonLd } from '../../../site/seo/insight-article-json-ld';
-import { NewsArticleJsonLd } from '../../../site/seo/news-article-json-ld';
+import { EnglishLanguageProvider } from '../../../site/providers/english-i18n';
 
 export const dynamicParams = false;
 
@@ -24,22 +23,14 @@ export async function generateMetadata({ params }: { params: Promise<{ path: str
 export default async function Page({ params }: { params: Promise<{ path: string[] }> }) {
   const { path } = await params;
   const resolvedPath = routePath(path);
-  if (!getStaticRoutes(loadInsights(), loadNews()).some((route) => route.path === resolvedPath)) notFound();
+  const insights = loadInsights();
+  const news = loadNews();
+  if (!getStaticRoutes(insights, news).some((route) => route.path === resolvedPath)) notFound();
 
   const { NextSitePage } = await import('../../../site/NextSitePage');
-  const newsItem = resolvedPath.startsWith('/news/')
-    ? loadNews().find((item) => item.slug === resolvedPath.slice('/news/'.length) && item.status === 'published')
-    : undefined;
-  const insight = resolvedPath.startsWith('/insights/')
-    ? loadInsights().find(
-        (item) => item.slug === resolvedPath.slice('/insights/'.length) && item.status === 'published'
-      )
-    : undefined;
   return (
-    <>
-      {newsItem ? <NewsArticleJsonLd item={newsItem} locale="en" /> : null}
-      {insight ? <InsightArticleJsonLd insight={insight} locale="en" /> : null}
-      <NextSitePage path={resolvedPath} locale="en" />
-    </>
+    <EnglishLanguageProvider path={resolvedPath}>
+      <NextSitePage path={resolvedPath} locale="en" insights={insights} news={news} />
+    </EnglishLanguageProvider>
   );
 }

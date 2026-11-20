@@ -1,15 +1,13 @@
 'use client';
-import { ArrowRightOutlined, MenuOutlined } from '@ant-design/icons';
+import { MenuOutlined } from '@ant-design/icons';
 
-import { useEffect, useRef, useState } from 'react';
-
-import { navigationGroups, withNewsCategories, type NavigationGroup } from '../../data/research-navigation';
 import { useI18n } from '../providers/i18n';
-
-import dynamic from 'next/dynamic';
-import { useAvailableLink, usePublishedNews } from '../providers/content-context';
+import { useVisibleNavigationGroups } from '../providers/content-context';
+import { resolveOriginHref } from '../routing/content-href';
+import { DesktopMenuPanel } from './desktop-menu-panel';
+import { MobileNavigationDrawer } from './mobile-navigation-drawer';
 import { classNames, Logo } from './ui';
-const NavigationSearch = dynamic(() => import('./navigation-search').then((module) => module.NavigationSearch));
+import { useNavigationMenus } from './use-navigation-menus';
 
 export const GlobalNav = ({
   activePath = '/',
@@ -21,210 +19,39 @@ export const GlobalNav = ({
   linkOrigin?: string;
 }) => {
   const { locale, t, href } = useI18n();
-  const resolveHref = (value: string) => {
-    const localizedHref = href(value);
-    return linkOrigin && localizedHref.startsWith('/') ? new URL(localizedHref, linkOrigin).href : localizedHref;
-  };
-  const isAvailableLink = useAvailableLink();
-  const newsCategories = usePublishedNews().map((item) => item.category);
-  const visibleNavigationGroups = withNewsCategories(navigationGroups, newsCategories)
-    .map((group) => ({
-      ...group,
-      columns: group.columns
-        .map((column) => ({
-          ...column,
-          links: column.links.filter((link) => isAvailableLink(link.href)),
-        }))
-        .filter((column) => column.links.length > 0),
-    }))
-    .filter((group) => isAvailableLink(group.href) && group.columns.length > 0);
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [openGroup, setOpenGroup] = useState<string | null>(null);
-  const [mobileOpenGroup, setMobileOpenGroup] = useState<string | null>(null);
-  const [panelGroup, setPanelGroup] = useState<NavigationGroup | null>(null);
-  const [panelContentVisible, setPanelContentVisible] = useState(true);
-  const navRef = useRef<HTMLElement>(null);
-  const mobileMenuButtonRef = useRef<HTMLButtonElement>(null);
-  const mobileNavigationRef = useRef<HTMLDivElement>(null);
-  const openTimerRef = useRef<number | null>(null);
-  const closeTimerRef = useRef<number | null>(null);
-  const contentSwapTimerRef = useRef<number | null>(null);
-  const contentFrameRef = useRef<number | null>(null);
-
-  const clearInteractionTimers = () => {
-    if (openTimerRef.current !== null) window.clearTimeout(openTimerRef.current);
-    if (closeTimerRef.current !== null) window.clearTimeout(closeTimerRef.current);
-    openTimerRef.current = null;
-    closeTimerRef.current = null;
-  };
-
-  const clearContentTransition = () => {
-    if (contentSwapTimerRef.current !== null) window.clearTimeout(contentSwapTimerRef.current);
-    if (contentFrameRef.current !== null) window.cancelAnimationFrame(contentFrameRef.current);
-    contentSwapTimerRef.current = null;
-    contentFrameRef.current = null;
-  };
-
-  const revealPanelContent = () => {
-    contentFrameRef.current = window.requestAnimationFrame(() => {
-      contentFrameRef.current = window.requestAnimationFrame(() => {
-        setPanelContentVisible(true);
-        contentFrameRef.current = null;
-      });
-    });
-  };
-
-  const activateGroup = (groupId: string) => {
-    const nextGroup = visibleNavigationGroups.find((group) => group.id === groupId);
-    if (!nextGroup) return;
-
-    clearInteractionTimers();
-    if (openGroup && panelGroup && panelGroup.id !== groupId) {
-      clearContentTransition();
-      setPanelContentVisible(false);
-      contentSwapTimerRef.current = window.setTimeout(() => {
-        setPanelGroup(nextGroup);
-        contentSwapTimerRef.current = null;
-        revealPanelContent();
-      }, 180);
-    } else {
-      clearContentTransition();
-      setPanelGroup(nextGroup);
-      setPanelContentVisible(true);
-      if (!panelGroup) {
-        contentFrameRef.current = window.requestAnimationFrame(() => {
-          contentFrameRef.current = window.requestAnimationFrame(() => {
-            setOpenGroup(groupId);
-            contentFrameRef.current = null;
-          });
-        });
-        return;
-      }
-    }
-    setOpenGroup(groupId);
-  };
-
-  const scheduleOpen = (groupId: string) => {
-    clearInteractionTimers();
-    if (openGroup === groupId) return;
-    openTimerRef.current = window.setTimeout(() => {
-      openTimerRef.current = null;
-      activateGroup(groupId);
-    }, 280);
-  };
-
-  const cancelScheduledOpen = () => {
-    if (openTimerRef.current !== null) window.clearTimeout(openTimerRef.current);
-    openTimerRef.current = null;
-  };
-
-  const closeDesktopMenu = () => {
-    clearInteractionTimers();
-    clearContentTransition();
-    setPanelContentVisible(true);
-    setOpenGroup(null);
-  };
-
-  const scheduleClose = () => {
-    clearInteractionTimers();
-    clearContentTransition();
-    closeTimerRef.current = window.setTimeout(() => setOpenGroup(null), 240);
-  };
-
-  useEffect(() => {
-    const mobileNavigation = mobileNavigationRef.current;
-    const shell = navRef.current?.parentElement;
-    const inertTargets = shell
-      ? Array.from(shell.children).filter(
-          (element): element is HTMLElement =>
-            element instanceof HTMLElement && element !== navRef.current && element !== mobileNavigation
-        )
-      : [];
-    const previousInert = inertTargets.map((element) => [element, element.inert] as const);
-    let focusFrame: number | null = null;
-
-    const getFocusableMenuItems = () =>
-      Array.from(
-        mobileNavigation?.querySelectorAll<HTMLElement>(
-          'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), summary, [tabindex]:not([tabindex="-1"])'
-        ) || []
-      ).filter(
-        (element) =>
-          !element.hasAttribute('disabled') &&
-          !element.closest('[aria-hidden="true"]') &&
-          element.getClientRects().length > 0
-      );
-
-    const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
-        setMenuOpen(false);
-        closeDesktopMenu();
-        return;
-      }
-
-      if (!menuOpen || event.key !== 'Tab') return;
-      const items = getFocusableMenuItems();
-      const first = items[0];
-      const last = items[items.length - 1];
-      if (!first || !last) {
-        event.preventDefault();
-        return;
-      }
-      if (!mobileNavigation?.contains(document.activeElement)) {
-        event.preventDefault();
-        (event.shiftKey ? last : first).focus();
-      } else if (event.shiftKey && document.activeElement === first) {
-        event.preventDefault();
-        last.focus();
-      } else if (!event.shiftKey && document.activeElement === last) {
-        event.preventDefault();
-        first.focus();
-      }
-    };
-    const onPointerDown = (event: PointerEvent) => {
-      if (!navRef.current?.contains(event.target as Node)) closeDesktopMenu();
-    };
-    document.addEventListener('keydown', onKeyDown);
-    document.addEventListener('pointerdown', onPointerDown);
-    if (menuOpen) {
-      document.body.classList.add('menu-is-open');
-      inertTargets.forEach((element) => {
-        element.inert = true;
-      });
-      focusFrame = window.requestAnimationFrame(() => {
-        const first = getFocusableMenuItems()[0];
-        first?.focus({ preventScroll: true });
-        focusFrame = null;
-      });
-    }
-    return () => {
-      document.removeEventListener('keydown', onKeyDown);
-      document.removeEventListener('pointerdown', onPointerDown);
-      document.body.classList.remove('menu-is-open');
-      if (focusFrame !== null) window.cancelAnimationFrame(focusFrame);
-      previousInert.forEach(([element, wasInert]) => {
-        element.inert = wasInert;
-      });
-      if (menuOpen) mobileMenuButtonRef.current?.focus({ preventScroll: true });
-      clearInteractionTimers();
-      clearContentTransition();
-    };
-  }, [menuOpen]);
+  const resolveHref = (value: string) => resolveOriginHref(href(value), linkOrigin);
+  const visibleNavigationGroups = useVisibleNavigationGroups();
+  const {
+    menuOpen,
+    setMenuOpen,
+    openGroup,
+    mobileOpenGroup,
+    setMobileOpenGroup,
+    panelGroup,
+    panelContentVisible,
+    navRef,
+    mobileMenuButtonRef,
+    mobileNavigationRef,
+    activateGroup,
+    scheduleOpen,
+    cancelScheduledOpen,
+    closeDesktopMenu,
+    scheduleClose,
+    cancelScheduledClose,
+    toggleMobileMenu,
+  } = useNavigationMenus(visibleNavigationGroups);
 
   return (
     <>
       <header
         className={classNames('global-nav', tone === 'dark' && 'global-nav-dark')}
         ref={navRef}
-        onMouseEnter={() => {
-          if (closeTimerRef.current !== null) window.clearTimeout(closeTimerRef.current);
-          closeTimerRef.current = null;
-        }}
+        onMouseEnter={cancelScheduledClose}
         onMouseLeave={scheduleClose}
       >
         <div className="global-nav-inner">
           <a className="brand-lockup" href={resolveHref('/')} aria-label={t('Elexvx Research 首页')}>
-            <Logo inverse={tone === 'dark'} />
+            <Logo inverse={tone === 'dark'} eager />
             <span className="brand-divider" aria-hidden="true" />
             <span className="research-wordmark">Research</span>
           </a>
@@ -252,17 +79,6 @@ export const GlobalNav = ({
           </nav>
 
           <div className="nav-actions">
-            {/* Temporarily hidden; keep both action links available for restoration. */}
-            {/*
-              <>
-                <a className="nav-utility-link" href={href('/company')}>
-                  {t('关于公司')}
-                </a>
-                <a className="nav-primary-link" href={href('/contact')}>
-                  {t('开放合作')}
-                </a>
-              </>
-            */}
             <button
               className="mobile-menu-button"
               ref={mobileMenuButtonRef}
@@ -270,10 +86,7 @@ export const GlobalNav = ({
               aria-label={t(menuOpen ? '关闭导航菜单' : '打开导航菜单')}
               aria-expanded={menuOpen}
               aria-controls="mobile-navigation"
-              onClick={() => {
-                setMobileOpenGroup(null);
-                setMenuOpen((value) => !value);
-              }}
+              onClick={toggleMobileMenu}
             >
               <MenuOutlined aria-hidden="true" />
             </button>
@@ -281,110 +94,30 @@ export const GlobalNav = ({
         </div>
 
         {panelGroup && (
-          <div
-            className={classNames('desktop-menu-panel', openGroup && 'is-open')}
-            id="desktop-menu-panel"
-            role="region"
-            aria-label={`${t(panelGroup.label)} navigation`}
-            aria-hidden={!openGroup}
-          >
-            <div className="desktop-menu-panel-inner" key={panelGroup.id}>
-              <div className={classNames('desktop-menu-panel-content', !panelContentVisible && 'is-content-hidden')}>
-                {panelGroup.columns[0] && (
-                  <div className="desktop-menu-primary-group">
-                    <p className="desktop-menu-group-label">
-                      {locale === 'en' ? 'Explore ' : '探索'}
-                      {t(panelGroup.label)}
-                    </p>
-                    <div className="desktop-menu-primary-links">
-                      {panelGroup.columns[0].links.map((link) => (
-                        <a
-                          href={resolveHref(link.href)}
-                          key={`${panelGroup.id}-primary-${link.href}-${link.label}`}
-                          onClick={closeDesktopMenu}
-                        >
-                          {t(link.label)}
-                        </a>
-                      ))}
-                    </div>
-                  </div>
-                )}
-                {panelGroup.columns.length > 1 && (
-                  <div className="desktop-menu-secondary-group">
-                    <p className="desktop-menu-group-label">{t(panelGroup.columns[1].title)}</p>
-                    <div className="desktop-menu-secondary-links">
-                      {panelGroup.columns.slice(1).flatMap((column) =>
-                        column.links.map((link) => (
-                          <a
-                            href={resolveHref(link.href)}
-                            key={`${panelGroup.id}-${column.title}-${link.href}-${link.label}`}
-                            onClick={closeDesktopMenu}
-                          >
-                            {t(link.label)}
-                          </a>
-                        ))
-                      )}
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
+          <DesktopMenuPanel
+            panelGroup={panelGroup}
+            openGroup={openGroup}
+            panelContentVisible={panelContentVisible}
+            locale={locale}
+            t={t}
+            resolveHref={resolveHref}
+            onNavigate={closeDesktopMenu}
+          />
         )}
       </header>
 
-      <div
-        ref={mobileNavigationRef}
-        className={classNames('mobile-navigation', tone === 'dark' && 'mobile-navigation-dark', menuOpen && 'is-open')}
-        id="mobile-navigation"
-        role="dialog"
-        aria-modal="true"
-        aria-label={locale === 'en' ? 'Mobile navigation' : '移动端导航菜单'}
-        aria-hidden={!menuOpen}
-      >
-        <div className="mobile-navigation-inner">
-          <div className="mobile-navigation-heading">
-            {menuOpen && <NavigationSearch onNavigate={() => setMenuOpen(false)} />}
-            <button
-              type="button"
-              className="mobile-close-button"
-              onClick={() => setMenuOpen(false)}
-              aria-label={t('关闭导航菜单')}
-            >
-              ×
-            </button>
-          </div>
-          <nav className="mobile-navigation-groups" aria-label={t('移动端主导航')}>
-            {visibleNavigationGroups.map((group) => (
-              <details className="mobile-navigation-group" key={group.id} open={mobileOpenGroup === group.id}>
-                <summary
-                  onClick={(event) => {
-                    event.preventDefault();
-                    setMobileOpenGroup((currentGroup) => (currentGroup === group.id ? null : group.id));
-                  }}
-                >
-                  <span>{t(group.label)}</span>
-                  <span className="mobile-summary-chevron" aria-hidden="true" />
-                </summary>
-                <div className="mobile-navigation-links">
-                  {group.columns
-                    .flatMap((column) => column.links)
-                    .map((link, linkIndex) => (
-                      <a
-                        href={resolveHref(link.href)}
-                        key={`${group.id}-${link.href}-${linkIndex}`}
-                        onClick={() => setMenuOpen(false)}
-                      >
-                        <span>{t(link.label)}</span>
-                        <ArrowRightOutlined aria-hidden="true" />
-                      </a>
-                    ))}
-                </div>
-              </details>
-            ))}
-          </nav>
-        </div>
-      </div>
+      <MobileNavigationDrawer
+        drawerRef={mobileNavigationRef}
+        tone={tone}
+        menuOpen={menuOpen}
+        locale={locale}
+        t={t}
+        visibleNavigationGroups={visibleNavigationGroups}
+        mobileOpenGroup={mobileOpenGroup}
+        onToggleGroup={(groupId) => setMobileOpenGroup((currentGroup) => (currentGroup === groupId ? null : groupId))}
+        resolveHref={resolveHref}
+        onClose={() => setMenuOpen(false)}
+      />
     </>
   );
 };

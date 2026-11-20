@@ -16,6 +16,7 @@ type I18nContextValue = {
   href: (value: string) => string;
   switchHref: string;
   dictionary?: Record<string, string>;
+  hasProvider?: boolean;
 };
 
 const I18nContext = createContext<I18nContextValue>({
@@ -26,6 +27,14 @@ const I18nContext = createContext<I18nContextValue>({
 });
 
 const isInternalHref = (value: string) => value.startsWith('/') && !value.startsWith('//');
+
+const shouldLocalizeEnglishHref = (locale: Locale, target: string): boolean => {
+  if (locale !== 'en') return false;
+  if (!isInternalHref(target)) return false;
+  if (/^\/en(?:\/|$|[?#])/.test(target) || /\.[a-z0-9]+(?:[?#]|$)/i.test(target)) return false;
+  const pathname = target.split(/[?#]/, 1)[0].replace(/\/+$/, '');
+  return !serviceRoutePaths.some((route) => route === pathname);
+};
 
 export const LanguageProvider = ({
   locale,
@@ -41,6 +50,7 @@ export const LanguageProvider = ({
   translations?: Record<string, string>;
 }) => {
   const parent = useContext(I18nContext);
+  const hasParentProvider = Boolean(parent.hasProvider);
   const dictionary = translations ?? parent.dictionary ?? existingEnglish;
   useEffect(() => {
     if (!autoRedirect || locale === 'en' || path !== '/') return;
@@ -66,26 +76,21 @@ export const LanguageProvider = ({
 
   const href = (value: string) => {
     const target = canonicalContentHref(value);
-    const pathname = target.split(/[?#]/, 1)[0].replace(/\/+$/, '');
-    const sharedService = serviceRoutePaths.some((route) => route === pathname && route !== '/services/docs');
-    if (
-      locale !== 'en' ||
-      sharedService ||
-      !isInternalHref(target) ||
-      /^\/en(?:\/|$|[?#])/.test(target) ||
-      /\.[a-z0-9]+(?:[?#]|$)/i.test(target)
-    )
-      return target;
+    if (!shouldLocalizeEnglishHref(locale, target)) return target;
     return target === '/' ? '/en' : `/en${target}`;
   };
   const switchHref = canonicalContentHref(locale === 'en' ? path : path === '/' ? '/en' : `/en${path}`);
   const t = (value: string) => (locale === 'en' ? translateWithDictionary(value, dictionary) : value);
 
   return (
-    <I18nContext.Provider value={{ locale, t, href, switchHref, dictionary }}>
-      <div className="locale-root" lang={locale}>
-        {children}
-      </div>
+    <I18nContext.Provider value={{ locale, t, href, switchHref, dictionary, hasProvider: true }}>
+      {hasParentProvider ? (
+        children
+      ) : (
+        <div className="locale-root" lang={locale}>
+          {children}
+        </div>
+      )}
     </I18nContext.Provider>
   );
 };
@@ -99,10 +104,11 @@ export const LocalizedText = ({ children, text }: { children?: string; text?: st
 
 export const LocalizedTitle = ({ children, text }: { children?: string; text?: string }) => {
   const { t, locale } = useI18n();
-  if (locale === 'en') return <>{t(text ?? children ?? '')}</>;
-  const segments = t(text ?? children ?? '')
-    .split(/[，,]/u)
-    .map((segment) => segment.replace(/[。！？；：.!?;:]/gu, '').trim())
+  const value = t(text ?? children ?? '');
+  if (locale === 'en') return <>{value}</>;
+  const segments = value
+    .split(/[，,。！？；：.!?;:]/u)
+    .map((segment) => segment.trim())
     .filter(Boolean);
 
   return (

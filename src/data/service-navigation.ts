@@ -1,6 +1,6 @@
 import config from './service-navigation.json';
 
-export type LinkStatus = 'available' | 'maintenance' | 'unavailable' | 'beta' | 'deprecated';
+type LinkStatus = 'available' | 'maintenance' | 'unavailable' | 'beta' | 'deprecated';
 
 export interface ServiceLink {
   id: string;
@@ -12,7 +12,7 @@ export interface ServiceLink {
   status: LinkStatus;
 }
 
-export interface ServiceSubcategory {
+interface ServiceSubcategory {
   id: string;
   name: string;
   links: ServiceLink[];
@@ -25,7 +25,7 @@ export interface ServiceCategory {
   subcategories: ServiceSubcategory[];
 }
 
-export interface SearchEngine {
+interface SearchEngine {
   name: string;
   displayName: string;
   baseUrl: string;
@@ -78,7 +78,3 @@ export const serviceNavigationLinks = serviceNavigation.flatMap((category) => [
   ...category.links,
   ...category.subcategories.flatMap((subcategory) => subcategory.links),
 ]);
-
-export const enabledSearchEngines = serviceNavigationConfig.search.engines.filter((engine) =>
-  serviceNavigationConfig.search.enabledEngines.includes(engine.name)
-);

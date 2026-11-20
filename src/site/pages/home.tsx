@@ -1,133 +1,85 @@
 'use client';
-import { Translated } from '../providers/i18n';
+import { LocalizedText as T, LocalizedTitle as Title, Translated, useI18n } from '../providers/i18n';
 
 import { SiteImage } from '../components/site-image';
-import homeHeroInline from '../../data/home-hero-inline.json';
+import { HomeHero, HomeLaunchProvider, HomeProductsLaunch } from '../components/home-hero';
+import { homeBrands } from '../../data/home-intro';
 
 import { ActivitySection } from './activities';
 import { CaseStudyCard } from './case-studies';
-import { researchDirections } from '../../data/site';
 import { homeContent } from '../../data/page-content';
 import { usePublishedNews } from '../providers/content-context';
-import type { InsightSummary, NewsSummary } from '../../content/types';
+import type { NewsSummary } from '../../content/types';
 import type { ActivitySummary } from '../../data/activities';
 import type { CaseStudySummary } from '../../data/case-studies';
 import { Eyebrow, SiteShell, TextLink } from '../components/index';
 
-import { LocalizedText as T, LocalizedTitle as Title, useI18n } from '../providers/i18n';
-import { HomeDirectionCard, HomeInsightCard, NewsCard, HomeEmptyContent } from './shared';
+import { HomeEmptyContent } from './shared';
+import { ArticleCard, NewsCard } from '../components/article-card';
 
-export const isCompanyActivity = (item: NewsSummary) =>
-  ['活动', '公司活动', '最近活动', 'activity', 'event'].includes(item.category.toLowerCase()) ||
-  item.tags.some((tag) => ['公司活动', 'activity', 'event'].includes(tag.toLowerCase()));
-
-export const HomeLatestActivity = ({ items }: { items: ActivitySummary[] }) => <ActivitySection items={items} />;
-
-export const HomeWelcome = ({ items, secondary = false }: { items: ActivitySummary[]; secondary?: boolean }) => {
-  const Heading = secondary ? 'h2' : 'h1';
+export const HomeWelcomeRest = ({ items }: { items: ActivitySummary[] }) => {
   const { hero } = homeContent;
-  const important = hero.important.enabled && hero.important.title.trim() ? hero.important : null;
-  const title = important?.title || hero.title;
-  const description = important ? important.description : hero.description;
-  const image = important?.image || hero.image;
+  const { t } = useI18n();
   return (
-    <section className="home-welcome">
-      <div className="home-welcome-inner">
-        <div className={`home-hero-banner${image ? ' has-image' : ''}`}>
-          {image && (
-            <SiteImage
-              className="home-hero-background"
-              src={image === '/visuals/research-gradient.jpg' ? homeHeroInline : image}
-              alt=""
-              loading="eager"
-              fetchPriority="high"
-              decoding="sync"
-            />
-          )}
-          <div className="home-hero-content">
-            <Heading>
-              <T text={title} />
-            </Heading>
-            {description && (
-              <p className="home-welcome-description">
-                <T text={description} />
-              </p>
-            )}
-            {important?.action.href && important.action.label && (
-              <TextLink href={important.action.href} showArrow={false}>
-                <Translated>{important.action.label}</Translated>
-              </TextLink>
-            )}
-          </div>
+    <>
+      <section className="home-ecosystem" aria-labelledby="home-ecosystem-title">
+        <div className="home-ecosystem-inner">
+          <h2 id="home-ecosystem-title">
+            <Title text={hero.title} />
+          </h2>
+          <p className="home-ecosystem-description">
+            <T text={hero.description} />
+          </p>
+          <ul className="home-partner-grid" aria-label={t('生态合作伙伴')}>
+            {homeBrands.map((brand) => {
+              const { src, darkSrc, width, height, format } = brand.logo;
+              return (
+                <li key={brand.name}>
+                  <span
+                    className="home-brand-mark"
+                    data-brand={brand.name}
+                    data-format={format}
+                    data-colorful={brand.colorful || undefined}
+                    role="img"
+                    aria-label={t(brand.name)}
+                  >
+                    <SiteImage
+                      className={darkSrc ? 'home-brand-light' : undefined}
+                      src={src}
+                      alt=""
+                      width={width}
+                      height={height}
+                    />
+                    {darkSrc && (
+                      <SiteImage className="home-brand-dark" src={darkSrc} alt="" width={width} height={height} />
+                    )}
+                    {brand.showName && <span>{t(brand.name)}</span>}
+                  </span>
+                </li>
+              );
+            })}
+          </ul>
+          <small className="home-partner-caption" role="note">
+            <span aria-hidden="true">* </span>
+            <T text="以上均为生态合作伙伴" />
+          </small>
         </div>
-        <HomeLatestActivity items={items} />
-      </div>
-    </section>
+      </section>
+      <ActivitySection items={items} />
+    </>
   );
 };
 
-export const HomeDirectionsSection = () => {
-  const content = homeContent.directions;
-  return (
-    <section
-      className="home-content-section home-directions-section"
-      id="research-directions"
-      aria-labelledby="research-directions-title"
-    >
-      <div className="home-content-inner">
-        <div className="home-section-topline">
-          <div>
-            <Eyebrow>
-              <Translated>{content.eyebrow}</Translated>
-            </Eyebrow>
-            <h2 id="research-directions-title">
-              <Title text={content.title} />
-            </h2>
-          </div>
-          <TextLink href={content.action.href}>
-            <Translated>{content.action.label}</Translated>
-          </TextLink>
-        </div>
-        <div className="home-direction-grid">
-          {researchDirections.map((direction, index) => (
-            <HomeDirectionCard direction={direction} index={index} key={direction.slug} />
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-};
+const HomeWelcome = ({ items }: { items: ActivitySummary[] }) => (
+  <section className="home-welcome">
+    <div className="home-welcome-inner">
+      <HomeHero />
+      <HomeWelcomeRest items={items} />
+    </div>
+  </section>
+);
 
-export const HomePublicationsSection = ({ insights }: { insights: InsightSummary[] }) => {
-  const content = homeContent.publications;
-  return (
-    <section className="home-content-section" id="research-publications" aria-labelledby="research-publications-title">
-      <div className="home-content-inner">
-        <div className="home-section-topline">
-          <div>
-            <Eyebrow>
-              <Translated>{content.eyebrow}</Translated>
-            </Eyebrow>
-            <h2 id="research-publications-title">
-              <Title text={content.title} />
-            </h2>
-          </div>
-          <TextLink href={content.action.href}>
-            <Translated>{content.action.label}</Translated>
-          </TextLink>
-        </div>
-        {!insights.length && <HomeEmptyContent />}
-        <div className="home-media-grid home-insight-grid">
-          {insights.map((insight) => (
-            <HomeInsightCard insight={insight} key={insight.slug} />
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-};
-
-export const HomeNewsSection = ({ news }: { news: NewsSummary[] }) => {
+const HomeNewsSection = ({ news }: { news: NewsSummary[] }) => {
   const content = homeContent.news;
   return (
     <section
@@ -145,9 +97,7 @@ export const HomeNewsSection = ({ news }: { news: NewsSummary[] }) => {
               <Title text={content.title} />
             </h2>
           </div>
-          <TextLink href={content.action.href} showArrow={false}>
-            查看更多
-          </TextLink>
+          <TextLink href={content.action.href}>查看更多</TextLink>
         </div>
         <div className="home-news-grid">
           {news.map((item) => (
@@ -160,7 +110,7 @@ export const HomeNewsSection = ({ news }: { news: NewsSummary[] }) => {
   );
 };
 
-export const HomeCasesSection = ({ items }: { items: CaseStudySummary[] }) => {
+const HomeCasesSection = ({ items }: { items: CaseStudySummary[] }) => {
   const content = homeContent.cases;
   const caseStudy = items[0];
   return (
@@ -176,7 +126,7 @@ export const HomeCasesSection = ({ items }: { items: CaseStudySummary[] }) => {
             </h2>
           </div>
           {caseStudy && (
-            <TextLink href={content.action.href} showArrow={false}>
+            <TextLink href={content.action.href}>
               <Translated>{content.action.label}</Translated>
             </TextLink>
           )}
@@ -193,8 +143,7 @@ export const HomeCasesSection = ({ items }: { items: CaseStudySummary[] }) => {
   );
 };
 
-export const HomeResearchSection = ({ items }: { items: ActivitySummary[] }) => {
-  const { t, href } = useI18n();
+const HomeResearchSection = ({ items }: { items: ActivitySummary[] }) => {
   const papers = [...items].sort((a, b) => b.publishedAt.localeCompare(a.publishedAt)).slice(0, 3);
   return (
     <section className="home-content-section home-products-section" id="research" aria-labelledby="home-research-title">
@@ -203,29 +152,18 @@ export const HomeResearchSection = ({ items }: { items: ActivitySummary[] }) => 
           <h2 id="home-research-title">
             <Title text="研究" />
           </h2>
-          <TextLink href="/research" showArrow={false}>
-            查看更多
-          </TextLink>
+          <TextLink href="/research">查看更多</TextLink>
         </div>
         <div className="home-media-grid home-products-grid">
           {papers.map((paper) => (
-            <article className="home-product-feature" key={paper.slug}>
-              <a className="home-product-media" href={href(`/research/${paper.slug}`)} aria-label={t(paper.title)}>
-                <SiteImage
-                  src={paper.cover || '/visuals/research-gradient.jpg'}
-                  alt={t(paper.title)}
-                  width={1600}
-                  height={1600}
-                  sizes="(max-width: 720px) 80vw, (max-width: 1024px) 45vw, 420px"
-                />
-              </a>
-              <div className="home-media-card-body home-product-copy">
-                <h3>
-                  <a href={href(`/research/${paper.slug}`)}>{t(paper.title)}</a>
-                </h3>
-                <Eyebrow>{paper.category || '研究'}</Eyebrow>
-              </div>
-            </article>
+            <ArticleCard
+              key={paper.slug}
+              variant="feature"
+              href={`/research/${paper.slug}`}
+              title={paper.title}
+              cover={paper.cover}
+              category={paper.category || '研究'}
+            />
           ))}
         </div>
       </div>
@@ -234,7 +172,7 @@ export const HomeResearchSection = ({ items }: { items: ActivitySummary[] }) => 
 };
 
 export const HomeProductsSection = () => {
-  const { t, href } = useI18n();
+  const { t } = useI18n();
   const content = homeContent.product;
   return (
     <section className="home-content-section home-products-section" id="products" aria-labelledby="products-title">
@@ -248,47 +186,29 @@ export const HomeProductsSection = () => {
               <Title text={content.title} />
             </h2>
           </div>
-          <TextLink href={content.action.href} showArrow={false}>
-            查看更多
-          </TextLink>
+          <TextLink href={content.action.href}>查看更多</TextLink>
         </div>
         <div className="home-media-grid home-products-grid">
-          {content.items.map((product) => (
-            <article className="home-product-feature" key={product.name}>
-              <a
-                className="home-product-media"
-                href={href(product.href)}
-                aria-label={`${product.name} · ${t(product.category)} · ${t(product.description)}`}
-              >
-                <SiteImage
-                  src={product.image}
-                  alt={product.name}
-                  width={1600}
-                  height={1600}
-                  sizes="(max-width: 720px) 80vw, (max-width: 1024px) 45vw, 420px"
-                  loading="lazy"
-                  decoding="async"
-                />
-              </a>
-
-              <div className="home-media-card-body home-product-copy">
-                <h3>
-                  <Translated>{product.name}</Translated>
-                </h3>
-                <Eyebrow>
-                  <Translated>{product.category}</Translated>
-                </Eyebrow>
-                <p>{t(product.description)}</p>
-              </div>
-            </article>
-          ))}
+          {content.items
+            .map((product) => (
+              <ArticleCard
+                key={product.slug}
+                variant="feature"
+                href={product.href}
+                title={product.name}
+                cover={product.image}
+                category={product.category}
+                excerpt={product.description}
+                imageLinkLabel={`${product.name} · ${t(product.category)} · ${t(product.description)}`}
+              />
+            ))}
         </div>
       </div>
     </section>
   );
 };
 
-export const HomeCompanyEntry = () => {
+const HomeCompanyEntry = () => {
   const { t, href } = useI18n();
   const content = homeContent.closing;
   return (
@@ -305,24 +225,42 @@ export const HomeCompanyEntry = () => {
   );
 };
 
-export const HomePage = ({
-  activities,
-  research,
-  caseStudies,
-}: {
+type HomeContentProps = {
   activities: ActivitySummary[];
   research: ActivitySummary[];
   caseStudies: CaseStudySummary[];
-}) => {
+};
+
+export const HomeNewsAndResearch = ({ research }: Pick<HomeContentProps, 'research'>) => {
   const news = [...usePublishedNews()].sort((a, b) => b.publishedAt.localeCompare(a.publishedAt)).slice(0, 6);
   return (
-    <SiteShell activePath="/" navTone="dark" className="site-shell-home">
-      <HomeWelcome items={activities} />
+    <>
       <HomeNewsSection news={news} />
       <HomeResearchSection items={research} />
-      <HomeProductsSection />
-      <HomeCasesSection items={caseStudies} />
-      <HomeCompanyEntry />
-    </SiteShell>
+    </>
   );
 };
+
+export const HomeCasesAndCompany = ({ caseStudies }: Pick<HomeContentProps, 'caseStudies'>) => (
+  <>
+    <HomeCasesSection items={caseStudies} />
+    <HomeCompanyEntry />
+  </>
+);
+
+const HomeContent = ({ activities, research, caseStudies }: HomeContentProps) => (
+  <HomeLaunchProvider>
+    <HomeWelcome items={activities} />
+    <HomeNewsAndResearch research={research} />
+    <HomeProductsLaunch>
+      <HomeProductsSection />
+    </HomeProductsLaunch>
+    <HomeCasesAndCompany caseStudies={caseStudies} />
+  </HomeLaunchProvider>
+);
+
+export const HomePage = (props: HomeContentProps) => (
+  <SiteShell activePath="/" navTone="dark" className="site-shell-home">
+    <HomeContent {...props} />
+  </SiteShell>
+);

@@ -19,9 +19,7 @@ describe('redirect configuration', () => {
       (redirects as HostingRedirect[])
         .filter(({ has }) => !has?.length)
         .filter(
-          ({ source, destination }) =>
-            !isHumiteProductPath(destination) ||
-            (process.env.NEXT_PUBLIC_HUMITE_PUBLISHED === 'true' && !source.endsWith('/'))
+          ({ destination }) => process.env.NEXT_PUBLIC_HUMITE_PUBLISHED === 'true' || !isHumiteProductPath(destination)
         )
         .map(({ source, destination }) => [source, destination])
     );

@@ -12,10 +12,6 @@
   background: var(--color-canvas);
 }
 
-.site-shell-openai.site-shell-has-subnav main {
-  padding-top: 0;
-}
-
 .site-shell-openai .global-nav {
   position: fixed;
   top: 0;
@@ -113,7 +109,6 @@
   color: var(--color-ink-muted);
 }
 
-.site-shell-openai .direction-card,
 .site-shell-openai .project-card,
 .site-shell-openai .business-card,
 .site-shell-openai .scenario-card {
@@ -122,14 +117,6 @@
   border-color: var(--color-hairline);
 }
 
-.site-shell-openai .direction-card-dark,
-.site-shell-openai .direction-card-parchment {
-  color: var(--color-ink);
-  background: var(--color-tile-dark-2);
-  border-color: var(--color-hairline);
-}
-
-.site-shell-openai .direction-card h2,
 .site-shell-openai .project-card h2,
 .site-shell-openai .business-card h2,
 .site-shell-openai .scenario-card h2,
@@ -143,13 +130,10 @@
 .site-shell-openai .article-body h4,
 .site-shell-openai .delivery-item h2,
 .site-shell-openai .method-item strong,
-.site-shell-openai .principle-row strong,
-.site-shell-openai .empty-state strong,
-.site-shell-openai .not-found h1 {
+.site-shell-openai .empty-state strong {
   color: var(--color-ink);
 }
 
-.site-shell-openai .direction-card p,
 .site-shell-openai .project-card p,
 .site-shell-openai .business-card p,
 .site-shell-openai .scenario-card p,
@@ -161,8 +145,7 @@
 .site-shell-openai .article-body p,
 .site-shell-openai .article-body li,
 .site-shell-openai .delivery-item p,
-.site-shell-openai .empty-state p,
-.site-shell-openai .not-found p {
+.site-shell-openai .empty-state p {
   color: var(--color-ink-muted);
 }
 
@@ -181,13 +164,9 @@
 .site-shell-openai .insight-list-item,
 .site-shell-openai .method-item,
 .site-shell-openai .delivery-item,
-.site-shell-openai .principle-row,
 .site-shell-openai .evidence-list,
 .site-shell-openai .evidence-row,
-.site-shell-openai .article-evidence,
-.site-shell-openai .home-rail-links,
-.site-shell-openai .home-company-links,
-.site-shell-openai .business-strip-links a {
+.site-shell-openai .article-evidence {
   border-color: var(--color-hairline);
 }
 
@@ -210,13 +189,10 @@
 
 .site-shell-openai .technical-figure-status,
 .site-shell-openai .technical-figure-state p,
-.site-shell-openai .technical-figure-facts dt,
-.site-shell-openai .featured-project-note,
-.site-shell-openai .featured-project-note small {
+.site-shell-openai .technical-figure-facts dt {
   color: var(--color-ink-muted);
 }
 
-.site-shell-openai .featured-project-note strong,
 .site-shell-openai .technical-figure-facts dd,
 .site-shell-openai .technical-figure-state strong {
   color: var(--color-ink);
@@ -247,33 +223,9 @@
   border-color: var(--color-hairline);
 }
 
-.site-shell-openai .business-strip {
-  color: var(--color-ink);
-}
-
-.site-shell-openai .business-strip-heading h2,
-.site-shell-openai .home-company-copy h2,
-.site-shell-openai .home-explore-rail h3 {
-  color: var(--color-ink);
-}
-
-.site-shell-openai .home-explore-rail > p,
-.site-shell-openai .home-company-links a,
-.site-shell-openai .home-rail-links a {
-  color: var(--color-ink-muted);
-}
-
 .site-shell-openai .home-company-section {
   color: var(--color-ink);
   background: var(--color-parchment);
-}
-
-.site-shell-openai .brand-showcase img:first-child {
-  background: #fff;
-}
-
-.site-shell-openai .brand-showcase img:last-child {
-  background: #000;
 }
 
 .site-shell-openai .site-footer {
@@ -337,15 +289,6 @@
     background-color 160ms ease;
 }
 
-.site-shell-openai .global-nav-dark .nav-language-link {
-  color: var(--color-ink-muted);
-}
-
-.site-shell-openai .global-nav-dark .nav-language-link:hover,
-.site-shell-openai .global-nav-dark .nav-language-link:focus-visible {
-  color: var(--color-ink);
-}
-
 .site-shell-openai .nav-link::after {
   position: absolute;
   right: 12px;
@@ -378,10 +321,6 @@
 
 .site-shell-openai .nav-link.is-open::after {
   opacity: 1;
-}
-
-.site-shell-openai .nav-chevron {
-  transition: transform var(--motion-duration-nav-swap) var(--motion-ease-in-out);
 }
 
 .site-shell-openai .desktop-menu-panel {
@@ -421,20 +360,6 @@
   opacity: 0;
 }
 
-.site-shell-openai .nav-utility-link,
-.site-shell-openai .nav-primary-link {
-  transition:
-    color 180ms ease,
-    background-color 180ms ease,
-    transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-.site-shell-openai .nav-utility-link:hover,
-.site-shell-openai .nav-primary-link:hover,
-.site-shell-openai .nav-primary-link:focus-visible {
-  transform: translateY(-1px);
-}
-
 .site-shell-openai .mobile-navigation-inner {
   opacity: 0;
   transform: translate3d(22px, 0, 0) scale(0.985);
@@ -451,8 +376,6 @@
 @media (prefers-reduced-motion: reduce) {
   .site-shell-openai .desktop-menu-panel,
   .site-shell-openai .desktop-menu-panel-content,
-  .site-shell-openai .desktop-menu-panel-content > .desktop-menu-lead,
-  .site-shell-openai .desktop-menu-panel-content .desktop-menu-column,
   .site-shell-openai .mobile-navigation-inner {
     animation: none;
     transform: none;

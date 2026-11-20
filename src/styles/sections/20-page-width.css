@@ -3,25 +3,61 @@
   --page-max-width: 1440px;
   --page-gutter: 32px;
 }
-@media (max-width: 720px) { :root { --page-gutter: 20px; } }
+@media (max-width: 720px) {
+  :root {
+    --page-gutter: 20px;
+  }
+}
 .site-shell-openai > main {
-  width: 100%; max-width: var(--page-max-width); margin-inline: auto;
+  width: 100%;
+  max-width: var(--page-max-width);
+  margin-inline: auto;
 }
 .site-shell-openai :is(.global-nav-inner, .footer-inner, .desktop-menu-panel-inner, .cookie-consent-inner) {
-  width: 100%; max-width: var(--page-max-width); margin-inline: auto;
+  width: 100%;
+  max-width: var(--page-max-width);
+  margin-inline: auto;
   padding-inline: var(--page-gutter);
 }
-.site-shell-openai :is(.home-welcome-inner, .home-content-inner, .home-company-inner,
-.page-hero, .article-layout, .team-page, .team-profile, .careers-page, .job-detail,
-.lumira-product, .research-tile) {
-  width: 100%; max-width: none; margin-inline: auto; padding-inline: var(--page-gutter);
+.site-shell-openai
+  :is(
+    .home-welcome-inner,
+    .home-content-inner,
+    .home-company-inner,
+    .page-hero,
+    .article-layout,
+    .team-page,
+    .team-profile,
+    .careers-page,
+    .job-detail,
+    .lumira-product,
+    .research-tile
+  ) {
+  width: 100%;
+  max-width: none;
+  margin-inline: auto;
+  padding-inline: var(--page-gutter);
 }
-.site-shell-openai :is(.page-hero-inner, .tile-inner, .article-continue,
-.company-introduction, .company-content-list, .company-stats, .careers-culture) {
-  width: 100%; max-width: none; margin-inline: 0; padding-inline: 0;
+.site-shell-openai
+  :is(
+    .page-hero-inner,
+    .tile-inner,
+    .article-continue,
+    .company-introduction,
+    .company-content-list,
+    .company-stats,
+    .careers-culture
+  ) {
+  width: 100%;
+  max-width: none;
+  margin-inline: 0;
+  padding-inline: 0;
 }
 .site-shell-openai .research-index-inner {
-  width: 100%; max-width: none; margin-inline: auto; padding-inline: var(--page-gutter);
+  width: 100%;
+  max-width: none;
+  margin-inline: auto;
+  padding-inline: var(--page-gutter);
 }
 .site-shell-openai .article-reading-layout {
   width: 100%;
@@ -30,21 +66,45 @@
 .site-shell-openai .article-reading-layout-no-toc {
   grid-template-columns: minmax(0, 1fr);
 }
-.site-shell-openai .article-toc { min-width: 0; }
-.site-shell-openai .article-reading-layout .article-body { max-width: none; margin-inline: 0; }
+.site-shell-openai .article-toc {
+  min-width: 0;
+}
+.site-shell-openai .article-reading-layout .article-body {
+  max-width: none;
+  margin-inline: 0;
+}
 @media (max-width: 1100px) {
-  .site-shell-openai .article-reading-layout { grid-template-columns: 1fr; }
-  .site-shell-openai .article-toc { position: static; max-height: none; }
+  .site-shell-openai .article-reading-layout {
+    grid-template-columns: 1fr;
+  }
+  .site-shell-openai .article-toc {
+    position: static;
+    max-height: none;
+  }
 }
 /* Card padding remains internal to the full-width module. */
-.site-shell-openai.company-overview .company-introduction { padding: clamp(24px, 4vw, 48px); }
-.site-shell-openai .home-content-section { padding-inline: 0; }
-.site-shell-openai.brand-overview .page-hero-inner { width: 100%; max-width: none; margin-inline: 0; }
-.site-shell-openai :is(.news-index-section .section-heading, .news-index-section .news-list-grid) {
-  width: 100%; max-width: none; padding-inline: var(--page-gutter); margin-inline: auto;
+.site-shell-openai.company-overview .company-introduction {
+  padding: clamp(24px, 4vw, 48px);
+}
+.site-shell-openai .home-content-section {
+  padding-inline: 0;
+}
+.site-shell-openai.brand-overview .page-hero-inner {
+  width: 100%;
+  max-width: none;
+  margin-inline: 0;
+}
+.site-shell-openai .news-index-section .news-list-grid {
+  width: 100%;
+  max-width: none;
+  padding-inline: var(--page-gutter);
+  margin-inline: auto;
 }
 .site-shell-openai .activities-page-inner {
-  width: 100%; max-width: var(--page-max-width); padding-inline: var(--page-gutter); margin-inline: auto;
+  width: 100%;
+  max-width: var(--page-max-width);
+  padding-inline: var(--page-gutter);
+  margin-inline: auto;
 }
 
 /* Article end modules align with the same content edges as the home sections. */
@@ -54,8 +114,15 @@
   margin: 48px 0 0;
   padding: 24px 0 0;
 }
-.site-shell-openai .article-layout { padding-bottom: 48px; }
+.site-shell-openai .article-layout {
+  padding-bottom: 48px;
+}
 @media (max-width: 720px) {
-  .site-shell-openai .article-evidence { margin-top: 32px; padding-top: 20px; }
-  .site-shell-openai .article-layout { padding-bottom: 32px; }
+  .site-shell-openai .article-evidence {
+    margin-top: 32px;
+    padding-top: 20px;
+  }
+  .site-shell-openai .article-layout {
+    padding-bottom: 32px;
+  }
 }

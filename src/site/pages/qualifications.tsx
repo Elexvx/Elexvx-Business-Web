@@ -35,23 +35,26 @@ export const QualificationsPage = () => {
           {qualificationCategories.map((category) => {
             const categoryItems = qualifications.filter((item) => item.category === category.id);
             return (
-              <section className="qualification-section" key={category.id} aria-labelledby={`qualification-${category.id}`}>
+              <section
+                className="qualification-section"
+                key={category.id}
+                aria-labelledby={`qualification-${category.id}`}
+              >
                 <h2 id={`qualification-${category.id}`}>{english ? category.englishTitle : category.title}</h2>
                 {category.id === 'ip' ? (
                   <div className="qualification-subsections">
                     {intellectualPropertyCategories.map((subtype) => {
                       const subtypeItems = categoryItems.filter((item) => item.subtype === subtype.id);
                       if (subtypeItems.length === 0) return null;
-                      const layout = subtype.id === 'copyright' ? 'qualification-grid-short' : 'qualification-grid-long';
+                      const layout =
+                        subtype.id === 'copyright' ? 'qualification-grid-short' : 'qualification-grid-long';
                       return (
                         <section
                           className={`qualification-subsection qualification-subsection-${subtype.id}`}
                           key={subtype.id}
                           aria-labelledby={`qualification-${subtype.id}`}
                         >
-                          <h3 id={`qualification-${subtype.id}`}>
-                            {english ? subtype.englishTitle : subtype.title}
-                          </h3>
+                          <h3 id={`qualification-${subtype.id}`}>{english ? subtype.englishTitle : subtype.title}</h3>
                           <div className={`team-grid qualifications-grid ${layout}`}>
                             {subtypeItems.map(renderQualificationCard)}
                           </div>

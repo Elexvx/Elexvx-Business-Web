@@ -1,4 +1,6 @@
-export type EvidenceKind = 'official' | 'internal' | 'asset';
+type EvidenceKind = 'official' | 'internal' | 'asset';
+
+export type ContentStatus = 'draft' | 'published' | 'archived';
 
 export type EvidenceRef = {
   label: string;
@@ -20,7 +22,7 @@ export type ResearchDirection = {
   imageAlt?: string;
 };
 
-export type ProjectStatus = 'exploration' | 'prototype' | 'deployed' | 'archived';
+type ProjectStatus = 'exploration' | 'prototype' | 'deployed' | 'archived';
 
 export type Project = {
   slug: string;
@@ -37,8 +39,6 @@ export type Project = {
   featured?: boolean;
 };
 
-export type InsightStatus = 'draft' | 'published' | 'archived';
-
 export type InsightFrontmatter = {
   slug: string;
   title: string;
@@ -49,7 +49,7 @@ export type InsightFrontmatter = {
   author: string;
   keywords?: string[];
   keywordsEn?: string[];
-  status: InsightStatus;
+  status: ContentStatus;
   evidence: EvidenceRef[];
   cover?: string;
 };
@@ -61,8 +61,6 @@ export type Insight = InsightFrontmatter & {
 
 export type InsightSummary = Omit<Insight, 'body'>;
 
-export type NewsStatus = 'draft' | 'published' | 'archived';
-
 export type NewsFrontmatter = {
   slug: string;
   title: string;
@@ -72,7 +70,7 @@ export type NewsFrontmatter = {
   author: string;
   category: string;
   tags: string[];
-  status: NewsStatus;
+  status: ContentStatus;
   cover?: string;
   legacyPath?: string;
   sourceUrl?: string;

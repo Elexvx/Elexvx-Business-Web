@@ -2,13 +2,13 @@
 
 ## 运行边界
 
-src/app 只保留 Next.js 入口。src/site/NextSitePage.tsx 在服务端加载内容，App.tsx 组合状态并选择页面。页面实现按 home、research、projects、publications、company 分组，shared 放共用卡片和空状态，index 仅导出。
+src/app 只保留 Next.js 入口（含错误边界与独立服务/演示路由）。src/site/NextSitePage.tsx 在服务端加载内容，App.tsx 组合状态并选择页面。页面实现位于 src/site/pages/（含 home、research、activities、publications、product-catalog、case-studies、company、team、qualifications、design、careers、projects 及共用卡片/空状态 shared.tsx），导航、服务与状态页位于 src/site/services/。
 
-components 中 navigation、footer、shell、ui 分别负责导航、页脚、页面外壳和基础组件。providers 存语言、主题、内容状态。客户端组件不直接读取磁盘。
+components 中 navigation、footer、shell、ui 等负责导航、页脚、页面外壳、基础组件与交互部件；providers 存语言、主题、内容状态；server 负责 ESA 边缘网关、状态聚合与 IndexNow。客户端组件不直接读取磁盘。
 
 ## 内容与路由
 
-articles 和 content/site/catalog.json 经内容解析、展示配置进入 routing/routes.tsx，形成有效页面清单。顶部、底部和搜索使用同一个 navigation-availability.ts 判断链接是否可显示。正式 catalog 中的研究方向只要生成路由就会显示，不要求先发布文章。
+articles 与 content/site/{catalog,research,activities}.json 经内容解析、展示配置进入 routing/routes.tsx，形成有效页面清单。顶部、底部和搜索使用同一个 navigation-availability.ts 判断链接是否可显示。正式 catalog 中的研究方向只要生成路由就会显示，不要求先发布文章。
 
 栏目顺序和名称仍由配置维护；这不是扫描任意文件自动推断栏目。新增页面需要同时提供 Next 路由和站点路由记录。
 
@@ -16,7 +16,7 @@ parked-pages 保存下线时的路由快照、原始资料和恢复记录，供�
 
 ## 样式顺序
 
-apple-system.css 是唯一导入入口；当前 sections 编号为 01–28。各分区名称和加载顺序以该文件中的 import 列表为准，修改时保持顺序并检查后置覆盖。
+apple-system.css 是唯一导入入口；当前 sections 编号为 01–30。各分区名称和加载顺序以该文件中的 import 列表为准，修改时保持顺序并检查后置覆盖。
 
 此次拆分保留原始 CSS 顺序，以避免视觉回归。部分历史覆盖仍在后段，修改时检查同名选择器，不能随意重排导入。新增规则写入对应分区。
 
@@ -24,7 +24,7 @@ apple-system.css 是唯一导入入口；当前 sections 编号为 01–28。各
 
 ## 历史和资源
 
-旧 Astro 站点源码和配置已删除，历史版本可通过 Git 历史查看。posts 保留为迁移脚本输入，articles 是现行内容。主开发和构建入口是 Next.js；Vite 兼容链仍可手动运行，入口为 index.html → src/main.tsx，配置见 vite.config.ts。src/ssg/document.tsx 当前没有应用或构建调用点，只列入 lint 和 TypeScript 检查；作为历史实现留待核对，不据此直接删除。
+旧 Astro 站点源码与 Vite/SSG 兼容链（index.html、src/main.tsx、vite.config.ts、src/ssg/document.tsx）已退役并移除，历史版本可通过 Git 历史查看。posts 保留为历史迁移脚本输入，articles 是现行内容。Next.js App Router（output: 'export'）为唯一开发与构建入口，单元测试由 vitest.config.ts 独立运行。
 
 public/brand 放品牌，public/visuals 放配图，public/products 放正式 PNG。旧封面源码可通过 Git 历史查看。不要将内部草稿放进 public。保持历史静态 URL，避免文章引用失效。
 
@@ -34,4 +34,4 @@ public/brand 放品牌，public/visuals 放配图，public/products 放正式 PN
 
 ## 验证
 
-结构修改运行 npm run check，再检查首页、研究列表、详情页和下线地址。本地验证不代表线上已部署。
+结构修改运行 npm run check（涉及部署路由或静态产物检查时运行 npm run build:esa），再检查首页、研究列表、详情页和下线地址。本地验证不代表线上已部署。

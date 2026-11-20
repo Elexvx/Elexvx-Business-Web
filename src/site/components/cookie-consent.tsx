@@ -3,6 +3,7 @@ import { Switch } from 'radix-ui';
 
 import { useEffect, useRef, useState } from 'react';
 import { useI18n } from '../providers/i18n';
+import { trapFocusOnTab } from './focus-trap';
 
 const COOKIE_PREFERENCE_KEY = 'elexvx-cookie-preferences-v1';
 export const COOKIE_SETTINGS_EVENT = 'elexvx:open-cookie-settings';
@@ -81,17 +82,7 @@ export const CookieConsent = () => {
         return;
       }
       if (event.key !== 'Tab') return;
-      const elements = focusable();
-      if (!elements.length) return;
-      const first = elements[0];
-      const last = elements[elements.length - 1];
-      if (event.shiftKey && document.activeElement === first) {
-        event.preventDefault();
-        last.focus();
-      } else if (!event.shiftKey && document.activeElement === last) {
-        event.preventDefault();
-        first.focus();
-      }
+      trapFocusOnTab(event, focusable());
     };
     document.addEventListener('keydown', onKeyDown);
     return () => document.removeEventListener('keydown', onKeyDown);

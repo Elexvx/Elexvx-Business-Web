@@ -28,6 +28,90 @@ const pushText = (nodes: InlineNode[], value: string) => {
 
 const findClosing = (source: string, marker: string, start: number) => source.indexOf(marker, start);
 
+type InlineMatch = {
+  nextIndex: number;
+  emit: (nodes: InlineNode[]) => void;
+};
+
+const tryParseInlineMath = (rest: string, index: number): InlineMatch | null => {
+  const match = rest.match(/^\$([^$\n]+)\$/);
+  if (!match) return null;
+  return {
+    nextIndex: index + match[0].length,
+    emit: (nodes) => nodes.push({ type: 'math', value: match[1] }),
+  };
+};
+
+const tryParseInlineImage = (rest: string, index: number): InlineMatch | null => {
+  const match = rest.match(/^!\[([^\]]*)\]\(([^\s)]+)(?:\s+["']([^"']*)["'])?\)/);
+  if (!match) return null;
+  const href = safeHref(match[2]);
+  return {
+    nextIndex: index + match[0].length,
+    emit: (nodes) => {
+      if (href) nodes.push({ type: 'image', href, alt: match[1], children: [] });
+      else pushText(nodes, match[1]);
+    },
+  };
+};
+
+const tryParseInlineLink = (rest: string, index: number): InlineMatch | null => {
+  const match = rest.match(/^\[([^\]]+)\]\(([^\s)]+)(?:\s+["']([^"']*)["'])?\)/);
+  if (!match) return null;
+  const href = safeHref(match[2]);
+  return {
+    nextIndex: index + match[0].length,
+    emit: (nodes) => {
+      const children = parseInline(match[1]);
+      if (href) nodes.push({ type: 'link', href, children });
+      else nodes.push(...children);
+    },
+  };
+};
+
+const tryParseInlineCode = (rest: string, index: number): InlineMatch | null => {
+  const match = rest.match(/^`([^`\n]+)`/);
+  if (!match) return null;
+  return {
+    nextIndex: index + match[0].length,
+    emit: (nodes) => nodes.push({ type: 'code', value: match[1], children: [] }),
+  };
+};
+
+const tryParseDelimited = (
+  source: string,
+  index: number,
+  marker: string,
+  type: 'strong' | 'emphasis'
+): InlineMatch | null => {
+  const start = index + marker.length;
+  const closing = findClosing(source, marker, start);
+  if (closing <= start) return null;
+  return {
+    nextIndex: closing + marker.length,
+    emit: (nodes) => nodes.push({ type, children: parseInline(source.slice(start, closing)) }),
+  };
+};
+
+const tryParseInlineEmphasis = (source: string, rest: string, index: number): InlineMatch | null => {
+  const strongMarker = rest.startsWith('**') ? '**' : rest.startsWith('__') ? '__' : '';
+  if (strongMarker) return tryParseDelimited(source, index, strongMarker, 'strong');
+
+  const emphasisMarker = rest.startsWith('*') ? '*' : rest.startsWith('_') ? '_' : '';
+  if (emphasisMarker && !rest.startsWith(`${emphasisMarker}${emphasisMarker}`)) {
+    return tryParseDelimited(source, index, emphasisMarker, 'emphasis');
+  }
+
+  return null;
+};
+
+const tryParseInlineToken = (source: string, rest: string, index: number): InlineMatch | null =>
+  tryParseInlineMath(rest, index) ??
+  tryParseInlineImage(rest, index) ??
+  tryParseInlineLink(rest, index) ??
+  tryParseInlineCode(rest, index) ??
+  tryParseInlineEmphasis(source, rest, index);
+
 export const parseInline = (source: string): InlineNode[] => {
   const nodes: InlineNode[] = [];
   let index = 0;
@@ -45,69 +129,13 @@ export const parseInline = (source: string): InlineNode[] => {
       continue;
     }
 
-    const mathMatch = rest.match(/^\$([^$\n]+)\$/);
-    if (mathMatch) {
+    const match = tryParseInlineToken(source, rest, index);
+    if (match) {
       flushText(index);
-      nodes.push({ type: 'math', value: mathMatch[1] });
-      index += mathMatch[0].length;
+      match.emit(nodes);
+      index = match.nextIndex;
       textStart = index;
       continue;
-    }
-
-    const imageMatch = rest.match(/^!\[([^\]]*)\]\(([^\s)]+)(?:\s+["']([^"']*)["'])?\)/);
-    if (imageMatch) {
-      flushText(index);
-      const href = safeHref(imageMatch[2]);
-      if (href) nodes.push({ type: 'image', href, alt: imageMatch[1], children: [] });
-      else pushText(nodes, imageMatch[1]);
-      index += imageMatch[0].length;
-      textStart = index;
-      continue;
-    }
-
-    const linkMatch = rest.match(/^\[([^\]]+)\]\(([^\s)]+)(?:\s+["']([^"']*)["'])?\)/);
-    if (linkMatch) {
-      flushText(index);
-      const href = safeHref(linkMatch[2]);
-      const children = parseInline(linkMatch[1]);
-      if (href) nodes.push({ type: 'link', href, children });
-      else nodes.push(...children);
-      index += linkMatch[0].length;
-      textStart = index;
-      continue;
-    }
-
-    const codeMatch = rest.match(/^`([^`\n]+)`/);
-    if (codeMatch) {
-      flushText(index);
-      nodes.push({ type: 'code', value: codeMatch[1], children: [] });
-      index += codeMatch[0].length;
-      textStart = index;
-      continue;
-    }
-
-    const strongMarker = rest.startsWith('**') ? '**' : rest.startsWith('__') ? '__' : '';
-    if (strongMarker) {
-      const closing = findClosing(source, strongMarker, index + 2);
-      if (closing > index + 2) {
-        flushText(index);
-        nodes.push({ type: 'strong', children: parseInline(source.slice(index + 2, closing)) });
-        index = closing + 2;
-        textStart = index;
-        continue;
-      }
-    }
-
-    const emphasisMarker = rest.startsWith('*') ? '*' : rest.startsWith('_') ? '_' : '';
-    if (emphasisMarker && !rest.startsWith(`${emphasisMarker}${emphasisMarker}`)) {
-      const closing = findClosing(source, emphasisMarker, index + 1);
-      if (closing > index + 1) {
-        flushText(index);
-        nodes.push({ type: 'emphasis', children: parseInline(source.slice(index + 1, closing)) });
-        index = closing + 1;
-        textStart = index;
-        continue;
-      }
     }
 
     index += 1;
@@ -129,95 +157,112 @@ const splitTableRow = (line: string) => {
   return trimmed.split('|').map((cell) => parseInline(cell.trim()));
 };
 
+type BlockMatch = {
+  block: BlockNode;
+  nextIndex: number;
+};
+
+const parseFenceBlock = (lines: string[], index: number): BlockMatch | null => {
+  if (!isFence(lines[index])) return null;
+  const language = lines[index].trim().slice(3).trim() || undefined;
+  const code: string[] = [];
+  let cursor = index + 1;
+  while (cursor < lines.length && !isFence(lines[cursor])) {
+    code.push(lines[cursor]);
+    cursor += 1;
+  }
+  if (cursor < lines.length) cursor += 1;
+  return { block: { type: 'code', language, value: code.join('\n') }, nextIndex: cursor };
+};
+
+const parseHeadingBlock = (line: string, index: number): BlockMatch | null => {
+  const heading = line.match(/^\s*(#{1,4})\s+(.+?)\s*#*\s*$/);
+  if (!heading) return null;
+  return {
+    block: { type: 'heading', level: heading[1].length as 1 | 2 | 3 | 4, children: parseInline(heading[2]) },
+    nextIndex: index + 1,
+  };
+};
+
+const parseRuleBlock = (line: string, index: number): BlockMatch | null => {
+  if (!isRule(line)) return null;
+  return { block: { type: 'rule' }, nextIndex: index + 1 };
+};
+
+const parseBlockquoteBlock = (lines: string[], index: number): BlockMatch | null => {
+  if (!/^\s*>/.test(lines[index])) return null;
+  const quote: string[] = [];
+  let cursor = index;
+  while (cursor < lines.length && (/^\s*>/.test(lines[cursor]) || isBlank(lines[cursor]))) {
+    quote.push(lines[cursor].replace(/^\s*>\s?/, ''));
+    cursor += 1;
+  }
+  return { block: { type: 'blockquote', children: parseMarkdown(quote.join('\n')) }, nextIndex: cursor };
+};
+
+const parseTableBlock = (lines: string[], index: number): BlockMatch | null => {
+  const line = lines[index];
+  if (!line.includes('|') || index + 1 >= lines.length || !isTableDelimiter(lines[index + 1])) return null;
+  const headers = splitTableRow(line);
+  const rows: InlineNode[][][] = [];
+  let cursor = index + 2;
+  while (cursor < lines.length && lines[cursor].includes('|') && !isBlank(lines[cursor])) {
+    rows.push(splitTableRow(lines[cursor]));
+    cursor += 1;
+  }
+  return { block: { type: 'table', headers, rows }, nextIndex: cursor };
+};
+
+const parseListBlock = (lines: string[], index: number): BlockMatch | null => {
+  const firstList = listMatch(lines[index]);
+  if (!firstList) return null;
+  const ordered = Boolean(firstList[2]);
+  const items: BlockNode[][] = [];
+  let cursor = index;
+  while (cursor < lines.length) {
+    const match = listMatch(lines[cursor]);
+    if (!match || Boolean(match[2]) !== ordered) break;
+    items.push(parseMarkdown(match[3]));
+    cursor += 1;
+  }
+  return { block: { type: 'list', ordered, items }, nextIndex: cursor };
+};
+
+const isParagraphContinuationLine = (line: string): boolean =>
+  !isBlank(line) && !isFence(line) && !isHeading(line) && !isRule(line) && !/^\s*>/.test(line) && !listMatch(line);
+
+const parseParagraphBlock = (lines: string[], index: number): BlockMatch => {
+  const paragraph: string[] = [lines[index].trim()];
+  let cursor = index + 1;
+  while (cursor < lines.length && isParagraphContinuationLine(lines[cursor])) {
+    paragraph.push(lines[cursor].trim());
+    cursor += 1;
+  }
+  return { block: { type: 'paragraph', children: parseInline(paragraph.join('\n')) }, nextIndex: cursor };
+};
+
+const parseNextBlock = (lines: string[], index: number): BlockMatch =>
+  parseFenceBlock(lines, index) ??
+  parseHeadingBlock(lines[index], index) ??
+  parseRuleBlock(lines[index], index) ??
+  parseBlockquoteBlock(lines, index) ??
+  parseTableBlock(lines, index) ??
+  parseListBlock(lines, index) ??
+  parseParagraphBlock(lines, index);
+
 export const parseMarkdown = (source: string): BlockNode[] => {
   const lines = source.replace(/\r\n/g, '\n').split('\n');
   const blocks: BlockNode[] = [];
   let index = 0;
 
   while (index < lines.length) {
-    const line = lines[index];
-    if (isBlank(line)) {
+    if (isBlank(lines[index])) {
       index += 1;
       continue;
     }
-
-    if (isFence(line)) {
-      const language = line.trim().slice(3).trim() || undefined;
-      const code: string[] = [];
-      index += 1;
-      while (index < lines.length && !isFence(lines[index])) {
-        code.push(lines[index]);
-        index += 1;
-      }
-      if (index < lines.length) index += 1;
-      blocks.push({ type: 'code', language, value: code.join('\n') });
-      continue;
-    }
-
-    const heading = line.match(/^\s*(#{1,4})\s+(.+?)\s*#*\s*$/);
-    if (heading) {
-      blocks.push({ type: 'heading', level: heading[1].length as 1 | 2 | 3 | 4, children: parseInline(heading[2]) });
-      index += 1;
-      continue;
-    }
-
-    if (isRule(line)) {
-      blocks.push({ type: 'rule' });
-      index += 1;
-      continue;
-    }
-
-    if (/^\s*>/.test(line)) {
-      const quote: string[] = [];
-      while (index < lines.length && (/^\s*>/.test(lines[index]) || isBlank(lines[index]))) {
-        quote.push(lines[index].replace(/^\s*>\s?/, ''));
-        index += 1;
-      }
-      blocks.push({ type: 'blockquote', children: parseMarkdown(quote.join('\n')) });
-      continue;
-    }
-
-    if (line.includes('|') && index + 1 < lines.length && isTableDelimiter(lines[index + 1])) {
-      const headers = splitTableRow(line);
-      const rows: InlineNode[][][] = [];
-      index += 2;
-      while (index < lines.length && lines[index].includes('|') && !isBlank(lines[index])) {
-        rows.push(splitTableRow(lines[index]));
-        index += 1;
-      }
-      blocks.push({ type: 'table', headers, rows });
-      continue;
-    }
-
-    const firstList = listMatch(line);
-    if (firstList) {
-      const ordered = Boolean(firstList[2]);
-      const items: BlockNode[][] = [];
-      while (index < lines.length) {
-        const match = listMatch(lines[index]);
-        if (!match || Boolean(match[2]) !== ordered) break;
-        items.push(parseMarkdown(match[3]));
-        index += 1;
-      }
-      blocks.push({ type: 'list', ordered, items });
-      continue;
-    }
-
-    const paragraph: string[] = [line.trim()];
-    index += 1;
-    while (
-      index < lines.length &&
-      !isBlank(lines[index]) &&
-      !isFence(lines[index]) &&
-      !isHeading(lines[index]) &&
-      !isRule(lines[index]) &&
-      !/^\s*>/.test(lines[index]) &&
-      !listMatch(lines[index])
-    ) {
-      paragraph.push(lines[index].trim());
-      index += 1;
-    }
-    blocks.push({ type: 'paragraph', children: parseInline(paragraph.join('\n')) });
+    const { block, nextIndex } = parseNextBlock(lines, index);
+    blocks.push(block);
+    index = nextIndex;
   }
 
   return blocks;

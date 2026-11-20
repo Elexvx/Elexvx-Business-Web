@@ -1,7 +1,7 @@
 import type { StatusMonitor } from '../src/data/service-status';
 import { navigationGroups } from '../src/data/research-navigation';
 import { serviceNavigation, serviceNavigationLinks } from '../src/data/service-navigation';
-import { serviceRoutePaths } from '../src/data/service-routes';
+import { documentationUrl, serviceRoutePaths } from '../src/data/service-routes';
 import { availabilityTone, formatDay, groupStatusMonitors } from '../src/site/services/status-utils';
 import esaRedirects from '../src/server/esa/redirects.json';
 import { describe, expect, it } from 'vitest';
@@ -61,17 +61,17 @@ describe('integrated service pages', () => {
   it('keeps service entry points in the same navigation source as the main site', () => {
     const services = navigationGroups.find((group) => group.id === 'services');
 
-    expect(services?.paths).toEqual(['/services', '/services/docs', '/navigation', '/status', '/status/history']);
+    expect(services?.paths).toEqual(['/services', '/navigation', '/status', '/status/history']);
     expect(services?.columns.flatMap((column) => column.links)).toEqual([
       { label: '服务', href: '/services/' },
-      { label: '帮助文档', href: '/services/docs/' },
+      { label: '帮助文档', href: documentationUrl },
       { label: '企业导航', href: '/navigation/' },
       { label: '服务状态', href: '/status/' },
     ]);
   });
 
-  it('keeps the service hub and documentation route in shared availability', () => {
-    expect(serviceRoutePaths).toEqual(['/services', '/services/docs', '/navigation', '/status', '/status/history']);
+  it('keeps the shared route availability limited to internal service pages', () => {
+    expect(serviceRoutePaths).toEqual(['/services', '/navigation', '/status', '/status/history']);
   });
 
   it('routes both service domains through the ESA router', () => {

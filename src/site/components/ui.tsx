@@ -3,21 +3,18 @@
 import { SiteImage } from './site-image';
 
 import { isDisabledPath } from '../../data/disabled-sections';
-import { ArrowRightOutlined } from '@ant-design/icons';
 
 import { type ReactNode } from 'react';
 
-import { businessLines } from '../../data/site';
-
 import { LocalizedTitle as Title, useI18n } from '../providers/i18n';
 
-export type TileTone = 'light' | 'dark' | 'parchment';
+type TileTone = 'light' | 'dark' | 'parchment';
 
 export const classNames = (...values: Array<string | false | null | undefined>) => values.filter(Boolean).join(' ');
 
-export const Logo = ({ inverse = false }: { inverse?: boolean }) => (
+export const Logo = ({ inverse = false, eager = false }: { inverse?: boolean; eager?: boolean }) => (
   <SiteImage
-    loading="eager"
+    loading={eager ? 'eager' : 'lazy'}
     className="site-logo"
     src={inverse ? '/brand/elexvx-logo-white-600.webp' : '/brand/elexvx-logo-black-600.webp'}
     alt="Elexvx"
@@ -53,19 +50,16 @@ export const TextLink = ({
   href,
   children,
   onDark = false,
-  showArrow = true,
 }: {
   href: string;
   children: ReactNode;
   onDark?: boolean;
-  showArrow?: boolean;
 }) => {
   const { t, href: localizedHref } = useI18n();
   if (isDisabledPath(href)) return null;
   return (
     <a className={classNames('text-link', onDark && 'text-link-on-dark')} href={localizedHref(href)}>
       {typeof children === 'string' ? t(children) : children}
-      {showArrow && <ArrowRightOutlined aria-hidden="true" />}
     </a>
   );
 };
@@ -190,30 +184,5 @@ export const ResearchTile = ({
         {children}
       </div>
     </section>
-  );
-};
-
-export const BusinessStrip = ({ onDark = false }: { onDark?: boolean }) => {
-  const { t, href } = useI18n();
-  return (
-    <div className={classNames('business-strip', onDark && 'business-strip-on-dark')}>
-      <div className="business-strip-heading">
-        <Eyebrow onDark={onDark}>ELEXVX COMPANY</Eyebrow>
-        <h2>
-          <Title text="研究之外，我们也在承接真实世界的复杂工作。" />
-        </h2>
-      </div>
-      <div className="business-strip-links">
-        {businessLines.map((line) => (
-          <a href={href(line.href)} key={line.slug}>
-            <span>
-              <strong>{t(line.title)}</strong>
-              <small>{line.englishTitle}</small>
-            </span>
-            <ArrowRightOutlined aria-hidden="true" />
-          </a>
-        ))}
-      </div>
-    </div>
   );
 };

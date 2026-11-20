@@ -29,6 +29,8 @@ describe('content publication gates', () => {
     }
     expect(routes).toContain('/research/moe-chiplet-expert-reuse');
     expect(routes).not.toContain('/insights/llm-safety-boundaries');
+    expect(routes).not.toContain('/insights/question-before-model');
+    expect(routes).not.toContain('/insights/industrial-safety-data');
     expect(routes).not.toContain('/capabilities');
     expect(routes).not.toContain('/projects');
     expect(routes).not.toContain('/scenarios');
@@ -75,9 +77,9 @@ describe('content publication gates', () => {
       title: 'ElexvxAI 创新产业研发中心正式成立',
       publishedAt: '2026-03-06',
       updatedAt: '2026-09-24',
-      cover: '/activities/elexvxai-2026/hello.svg',
+      cover: '/activities/elexvxai-2026/hello.webp',
     });
-    expect(item?.body).toContain('![ElexvxAI 创新产业研发中心正式成立](/activities/elexvxai-2026/hello.svg)');
+    expect(item?.body).toContain('![ElexvxAI 创新产业研发中心正式成立](/activities/elexvxai-2026/hello.webp)');
     const staticRoutes = getStaticRoutes(loadInsights(), news);
     const routes = staticRoutes.map((route) => route.path);
     expect(routes).toContain('/news/elexvxai-lab-established-2026');

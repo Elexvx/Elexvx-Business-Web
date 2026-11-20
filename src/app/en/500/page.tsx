@@ -1,5 +1,4 @@
 import { ErrorPage } from '../../../site/components/error-page';
-import { LanguageProvider } from '../../../site/providers/i18n';
 import { metadataForRoute } from '../../../site/routing/metadata-base';
 
 export const metadata = metadataForRoute(
@@ -12,9 +11,5 @@ export const metadata = metadataForRoute(
   'en'
 );
 export default function Page() {
-  return (
-    <LanguageProvider locale="en" path="/500">
-      <ErrorPage code={500} />
-    </LanguageProvider>
-  );
+  return <ErrorPage code={500} locale="en" />;
 }

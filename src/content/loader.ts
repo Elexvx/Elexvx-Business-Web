@@ -1,39 +1,24 @@
-import { existsSync, readdirSync, readFileSync } from 'node:fs';
-import { basename, join, resolve } from 'node:path';
-import { insightFromSource, sortInsights } from './normalize';
+import { existsSync } from 'node:fs';
+import { resolve } from 'node:path';
+import { createCachedMarkdownCollectionLoader } from './collection-loader';
+import { insightFromSource } from './normalize';
 import type { Insight } from './types';
 
 const articleRoot = resolve(process.cwd(), 'articles', 'insights');
 const legacyContentRoot = resolve(process.cwd(), 'content', 'insights');
 const contentRoot = existsSync(articleRoot) ? articleRoot : legacyContentRoot;
 
-let insightsCache: Insight[] | undefined;
-
-export const loadInsights = (): Insight[] => {
-  if (insightsCache) return insightsCache;
-
-  const files = readdirSync(contentRoot)
-    .filter((filename) => filename.endsWith('.md'))
-    .sort();
-  const insights = files.map((filename) =>
-    insightFromSource(readFileSync(join(contentRoot, filename), 'utf8'), filename)
-  );
-  const seen = new Set<string>();
-  for (const insight of insights) {
-    if (seen.has(insight.slug)) throw new Error(`Duplicate insight slug: ${insight.slug}`);
-    seen.add(insight.slug);
-    if (
-      insight.status === 'published' &&
-      (!insight.evidence.length || insight.evidence.some((item) => !item.verified))
-    ) {
-      throw new Error(`Published insight requires verified evidence: ${insight.slug}`);
-    }
+const validateInsightEvidence = (insight: Insight) => {
+  if (insight.status === 'published' && (!insight.evidence.length || insight.evidence.some((item) => !item.verified))) {
+    throw new Error(`Published insight requires verified evidence: ${insight.slug}`);
   }
-  insightsCache = sortInsights(insights);
-  return insightsCache;
 };
 
-export const publishedInsights = () => loadInsights().filter((insight) => insight.status === 'published');
-export const findInsight = (slug: string) => loadInsights().find((insight) => insight.slug === slug);
-export const contentSourceName = (slug: string) => basename(slug);
+export const loadInsights = createCachedMarkdownCollectionLoader({
+  root: contentRoot,
+  kind: 'insight',
+  fromSource: insightFromSource,
+  validateItem: validateInsightEvidence,
+});
+
 export const contentPath = () => contentRoot;

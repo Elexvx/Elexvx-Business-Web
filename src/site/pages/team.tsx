@@ -1,44 +1,85 @@
 'use client';
-import { Translated } from '../providers/i18n';
+import { Translated, useI18n } from '../providers/i18n';
 import { CompanyIntro } from '../components/company-intro';
 
 import { SiteImage } from '../components/site-image';
 
-import { leadersData, teamMembers } from '../../data/team';
+import { leadersData, serviceProviders, teamMembers, type TeamGroup } from '../../data/team';
 import { SiteShell } from '../components/index';
-import { useI18n } from '../providers/i18n';
 import { NotFoundPage } from './shared';
 
+const teamGroups = [
+  { id: 'executive', zh: '执行团队', en: 'Executive Team' },
+  { id: 'partners', zh: '合作伙伴', en: 'Partners' },
+] as const satisfies ReadonlyArray<{ id: TeamGroup; zh: string; en: string }>;
+
 export const TeamPage = () => {
-  const { href } = useI18n();
+  const { href, locale } = useI18n();
   return (
     <SiteShell activePath="/company">
       <section className="team-page">
         <CompanyIntro eyebrow="ELEXVX TEAM" title="团队" description="研究、工程与现场经验，在同一个问题上相遇。" />
-        <div className="team-grid">
-          {teamMembers.map((member) => (
-            <a className="team-card" data-member={member.id} href={href(`/company/team/${member.id}`)} key={member.id}>
-              <div className="team-portrait-stage">
-                <SiteImage
-                  style={member.mirrorPortrait ? { transform: 'scaleX(-1)' } : undefined}
-                  src={member.image}
-                  alt={member.name}
-                  loading="lazy"
-                  width="600"
-                  height="600"
-                />
+        {teamGroups.map(({ id, zh, en }) => {
+          const members = teamMembers.filter((member) => member.group === id);
+          const headingId = `team-${id}`;
+
+          return (
+            <section className="team-group" aria-labelledby={headingId} key={id}>
+              <h2 id={headingId}>{locale === 'en' ? en : zh}</h2>
+              <div className="team-grid">
+                {members.map((member) => (
+                  <a
+                    className="team-card"
+                    data-member={member.id}
+                    href={href(`/company/team/${member.id}`)}
+                    key={member.id}
+                  >
+                    <div className="team-portrait-stage">
+                      <SiteImage src={member.image} alt={member.name} loading="lazy" width="600" height="600" />
+                    </div>
+                    <h3>
+                      <Translated>{member.name}</Translated>
+                    </h3>
+                    {member.position && (
+                      <p>
+                        <Translated>{member.position}</Translated>
+                      </p>
+                    )}
+                  </a>
+                ))}
               </div>
-              <h2>
-                <Translated>{member.name}</Translated>
-              </h2>
-              {member.position && (
-                <p>
-                  <Translated>{member.position}</Translated>
-                </p>
-              )}
-            </a>
-          ))}
-        </div>
+            </section>
+          );
+        })}
+        <section className="team-group" aria-labelledby="team-service-providers">
+          <h2 id="team-service-providers">{locale === 'en' ? 'Service Providers' : '服务商'}</h2>
+          <div className="team-provider-grid">
+            {serviceProviders.map(({ id, zh, en, href: providerHref }) => {
+              const { company, service } = locale === 'en' ? en : zh;
+              const content = (
+                <>
+                  <h3>{company}</h3>
+                  <p>{service}</p>
+                </>
+              );
+              return providerHref ? (
+                <a
+                  className="team-provider-card team-provider-link"
+                  key={id}
+                  href={providerHref}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {content}
+                </a>
+              ) : (
+                <article className="team-provider-card" key={id}>
+                  {content}
+                </article>
+              );
+            })}
+          </div>
+        </section>
       </section>
     </SiteShell>
   );
@@ -54,18 +95,11 @@ export const TeamMemberPage = ({ id }: { id: string }) => {
         <div className="team-member-hero">
           <div className="team-member-hero-inner">
             <a className="team-back" href={href('/company/team')}>
-              ← {locale === 'en' ? 'All team members' : '全部团队成员'}
+              {locale === 'en' ? 'Back to Team' : '返回团队页'}
             </a>
             <header className="team-member-header">
               <div className="team-portrait-stage team-portrait">
-                <SiteImage
-                  style={member.mirrorPortrait ? { transform: 'scaleX(-1)' } : undefined}
-                  src={member.image}
-                  alt={member.name}
-                  width="600"
-                  height="600"
-                  loading="eager"
-                />
+                <SiteImage src={member.image} alt={member.name} width="600" height="600" loading="eager" />
               </div>
               <div className="team-member-identity">
                 <h1>

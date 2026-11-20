@@ -11,6 +11,7 @@ import {
 } from '../src/site/components/hero-schedule';
 import { HomeHero, HomeLaunchProvider } from '../src/site/components/home-hero';
 import { HomeStaticMain } from '../src/site/components/home-static-main';
+import { HomeWelcomeRest } from '../src/site/pages/home';
 import { LanguageProvider } from '../src/site/providers/i18n';
 
 vi.mock('#humite-content', () => ({
@@ -176,6 +177,19 @@ describe('HomeHero rendering', () => {
     expect(html).not.toContain('Unlocks at');
     expect(html).not.toContain('Example');
     expect(html).not.toMatch(/[\u4e00-\u9fff]/);
+  });
+
+  it('splits Chinese ecosystem heading and description on punctuation below the hero', () => {
+    const html = renderToStaticMarkup(
+      <LanguageProvider locale="zh-CN" path="/" autoRedirect={false}>
+        <HomeWelcomeRest items={[]} />
+      </LanguageProvider>
+    );
+
+    expect(html).toContain('<h2 id="home-ecosystem-title">想象力<br/>真的没有边界</h2>');
+    expect(html).toContain(
+      '<p class="home-ecosystem-description">宏翔商道-Elexvx 是一家跨行业研发公司，以 AI 与数据智能为核心，聚焦企业管理、知识工作与负责任的 AI 应用，持续构建可验证的产品与系统。</p>'
+    );
   });
 });
 

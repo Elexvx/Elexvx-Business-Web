@@ -4,4 +4,4 @@
 
 现行入口：src/site/pages/careers.tsx；职位：src/data/jobs.ts；文化与准则：src/data/careers.ts；样式：src/styles/sections/18-careers.css。
 
-/careers 支持关键词、工作地点、职位类型组合筛选。/careers/[id] 展示完整职责、要求及福利；申请按钮沿用旧站飞书表单，不在站内收集简历。新增职位后重新构建，中英文详情路由随数据生成。
+/careers 支持关键词、工作地点、职位类型组合筛选。`/careers/[id]` 详情页路由目前已退役（`src/data/jobs.ts` 中 `jobsData` 为空、`src/app/careers/[id]/` 已移除；`JobPage` 仍保留于 `src/site/pages/careers.tsx` 供后续恢复时使用）；申请按钮沿用旧站飞书表单，不在站内收集简历。新增职位后可按需恢复详情路由并重新构建。

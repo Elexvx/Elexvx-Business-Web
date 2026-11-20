@@ -2,6 +2,7 @@
 import { useRef, useState } from 'react';
 import { LinkOutlined, QrcodeOutlined, CloseOutlined } from '@ant-design/icons';
 import { useI18n } from '../providers/i18n';
+import { shareDataFromDocument } from '../sharing/card';
 export function ArticleShare() {
   const { locale } = useI18n();
   const en = locale === 'en';
@@ -11,18 +12,9 @@ export function ArticleShare() {
   const [card, setCard] = useState('');
   const [url, setUrl] = useState('');
   const [busy, setBusy] = useState(false);
-  const data = () => {
-    const meta = (key: string) => document.querySelector<HTMLMetaElement>(`meta[property="${key}"]`)?.content || '';
-    return {
-      title: (meta('og:title') || document.title).replace(/\s*(?:·\s*Elexvx Research|\|\s*宏翔商道-Elexvx)$/u, ''),
-      description: meta('og:description'),
-      url: document.querySelector<HTMLLinkElement>('link[rel="canonical"]')?.href || location.href.split('#')[0],
-      image: new URL(meta('og:image') || '/share/elexvx.png', location.origin).href,
-    };
-  };
   const open = async (next: typeof mode) => {
     if (busy) return;
-    const current = data();
+    const current = shareDataFromDocument();
     setMode(next);
     setUrl(current.url);
     setStatus('');
@@ -41,7 +33,7 @@ export function ArticleShare() {
     setStatus(en ? 'Creating card…' : '正在生成卡片…');
     try {
       const { createShareCard } = await import('../sharing/card');
-      setCard(await createShareCard(current, en));
+      setCard(await createShareCard(current, locale));
       setStatus(en ? 'Long-press to save, or download below.' : '长按图片保存，或点击下方下载，再发送给朋友。');
     } catch {
       setStatus(en ? 'Could not create card. Please try again.' : '卡片生成失败，请关闭后重试。');

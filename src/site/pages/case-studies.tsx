@@ -3,7 +3,7 @@
 import type { CaseStudy, CaseStudySummary } from '../../data/case-studies';
 import { Eyebrow } from '../components/index';
 import { ArticleBody, ArticleMetadata, ContinueReading } from '../components/article-reading';
-import { HomeMediaCard } from './shared';
+import { ArticleCard } from '../components/article-card';
 import { useI18n } from '../providers/i18n';
 import { SiteShell } from '../components/shell';
 
@@ -24,14 +24,13 @@ export const CaseStudyCard = ({ item }: { item: CaseStudySummary }) => {
   const { locale } = useI18n();
   const copy = localizedCaseSummary(item, locale);
   return (
-    <HomeMediaCard
+    <ArticleCard
       className="home-case-card"
-      image={item.cover}
-      imageAlt={copy.title}
-      eyebrow={`${copy.category} · ${item.publishedAt}`}
+      cover={item.cover}
+      category={copy.category}
+      publishedAt={item.publishedAt}
       title={copy.title}
-      description={copy.excerpt}
-      naturalTitle
+      excerpt={copy.excerpt}
       href={`/cases/${item.slug}`}
     />
   );
@@ -58,7 +57,7 @@ export const CaseStudyPage = ({ item, related }: { item: CaseStudy; related: Cas
         <div className="article-evidence">
           <Eyebrow>CASE STUDY</Eyebrow>
           <span>{locale === 'en' ? 'Publishing systems' : '出版数字化'}</span>
-          <a href={href('/')}>{locale === 'en' ? '← Back to home' : '← 返回首页'}</a>
+          <a href={href('/')}>{locale === 'en' ? 'Back to home' : '返回首页'}</a>
         </div>
         <ContinueReading items={related} current={item} base="/cases" />
       </article>

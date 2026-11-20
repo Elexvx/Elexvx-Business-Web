@@ -19,7 +19,6 @@
   padding-bottom: 28px;
 }
 
-.site-shell-home .home-direction-grid,
 .site-shell-home .home-media-grid {
   gap: var(--home-content-gap);
   margin-top: 0;
@@ -50,134 +49,7 @@
   padding-bottom: 0;
 }
 
-.home-activity-grid {
-  display: grid;
-  grid-template-columns: minmax(0, 2.1fr) minmax(260px, 0.7fr);
-  gap: 32px;
-  align-items: start;
-}
-
-.home-activity-grid-single {
-  grid-template-columns: minmax(0, 1fr);
-}
-
-.home-activity-grid-single .home-activity-card-lead {
-  position: static;
-}
-
-.home-activity-card,
-.home-activity-card a {
-  min-width: 0;
-}
-
-.home-activity-card a {
-  display: block;
-  color: #fff;
-  text-decoration: none;
-}
-
-.home-activity-media {
-  margin: 0;
-  overflow: hidden;
-  border-radius: 8px;
-  background: #151515;
-}
-
-.home-activity-card-lead .home-activity-media {
-  aspect-ratio: 1.72 / 1;
-}
-
-.home-activity-card-lead {
-  position: sticky;
-  top: 64px;
-  align-self: start;
-}
-
-.home-activity-card-side .home-activity-media {
-  aspect-ratio: 1.18 / 1;
-}
-
-.home-activity-media img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform 600ms cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-.home-activity-copy {
-  padding-top: 22px;
-}
-
-.home-activity-copy h2,
-.home-activity-copy h3 {
-  margin: 0;
-  color: #fff;
-  font-family: var(--font-display);
-  font-weight: 600;
-  letter-spacing: -0.04em;
-  line-height: 1.08;
-}
-
-.home-activity-copy h2 {
-  max-width: 780px;
-  font-size: clamp(38px, 4.1vw, 58px);
-}
-
-.home-activity-copy h3 {
-  font-size: clamp(21px, 2vw, 28px);
-}
-
-.home-activity-meta {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px 16px;
-  margin: 18px 0 0;
-  color: #a8a8a8;
-  font-size: 15px;
-  line-height: 1.4;
-}
-
-.home-activity-meta span:first-child {
-  color: #fff;
-  font-weight: 600;
-}
-
-.home-activity-side {
-  display: grid;
-  gap: 52px;
-}
-
-@media (max-width: 1068px) {
-  .home-activity-grid {
-    grid-template-columns: minmax(0, 1.7fr) minmax(240px, 0.7fr);
-    gap: 26px;
-  }
-}
-
-@media (min-width: 721px) and (max-width: 900px) {
-  .home-activity-card-lead {
-    position: static;
-  }
-
-  .home-activity-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .home-activity-side {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 20px;
-  }
-
-  .home-activity-card-side .home-activity-media {
-    aspect-ratio: 1.35 / 1;
-  }
-}
-
 @media (max-width: 720px) {
-  .home-activity-card-lead {
-    position: static;
-  }
-
   .site-shell-home .home-content-section,
   .site-shell-home .home-content-section-alt {
     padding: var(--home-section-space-mobile) 20px 0;
@@ -199,45 +71,6 @@
 
   .site-shell-home .home-latest-activity {
     padding-bottom: 0;
-  }
-
-  .home-activity-grid {
-    grid-template-columns: 1fr;
-    gap: 44px;
-  }
-
-  .home-activity-side {
-    grid-template-columns: 1fr;
-    gap: 44px;
-  }
-
-  .home-activity-media,
-  .home-activity-card-lead .home-activity-media,
-  .home-activity-card-side .home-activity-media {
-    aspect-ratio: 1.28 / 1;
-    border-radius: 6px;
-  }
-
-  .home-activity-copy {
-    padding-top: 18px;
-  }
-
-  .home-activity-copy h2 {
-    font-size: 34px;
-  }
-
-  .home-activity-copy h3 {
-    font-size: 24px;
-  }
-
-  .home-activity-meta {
-    margin-top: 12px;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .home-activity-media img {
-    transition: none;
   }
 }
 
@@ -270,13 +103,6 @@
   padding-inline: 32px;
 }
 
-.site-shell-news .page-hero-copy {
-  width: 100%;
-  max-width: 900px;
-  margin-inline: 0;
-  text-align: left;
-}
-
 .site-shell-news .page-hero h1 {
   margin-inline: 0;
 }
@@ -289,15 +115,6 @@
   justify-content: flex-start;
 }
 
-.site-shell-news .page-hero-media {
-  margin-inline: 0;
-}
-
-.news-index-section .section-heading {
-  width: min(100%, 1240px);
-  padding: var(--home-section-space) 32px 28px;
-}
-
 .news-index-section .news-list-grid {
   width: min(100%, 1240px);
   padding: 0 32px 96px;
@@ -306,10 +123,6 @@
 @media (max-width: 720px) {
   .site-shell-news .page-hero-inner {
     padding-inline: 20px;
-  }
-
-  .news-index-section .section-heading {
-    padding: var(--home-section-space-mobile) 20px 20px;
   }
 
   .news-index-section .news-list-grid {
@@ -321,13 +134,22 @@
 .activities-page-inner {
   padding: 0 32px 64px;
 }
+
+.site-shell-home .activities-page-inner .home-media-card-body {
+  row-gap: 12px;
+}
+
+.site-shell-home .activities-page-inner .home-media-card-body > .eyebrow {
+  margin-top: auto;
+}
+
 .site-shell-home .home-section-topline .activity-section-heading {
   margin: 0;
   color: var(--color-ink);
-  font-size: clamp(22px, 2vw, 28px);
-  font-weight: 600;
+  font-size: var(--section-title-size);
+  font-weight: 500;
   letter-spacing: -0.025em;
-  line-height: 1.2;
+  line-height: 1.25;
 }
 @media (max-width: 720px) {
   .activities-page-inner {
@@ -367,14 +189,14 @@
 .activity-highlight h3 {
   margin: 0;
   font-weight: 400;
-  font-size: 20px;
+  font-size: var(--card-title-size);
   line-height: 1.4;
   overflow-wrap: anywhere;
 }
 .activity-highlight p {
   margin: 12px 0 0;
   color: var(--color-ink-muted);
-  font-size: 14px;
+  font-size: var(--small-text-size);
   line-height: 1.6;
 }
 .activity-highlight-lead a {
@@ -386,10 +208,10 @@
 }
 .activity-highlight-lead h3 {
   margin-top: 12px;
-  font-size: clamp(26px, 3vw, 40px);
+  font-size: var(--lead-title-size);
 }
 .activity-highlight-lead p {
-  font-size: 16px;
+  font-size: var(--body-text-size);
 }
 @media (min-width: 721px) and (max-width: 1068px) {
   .activity-highlights {
@@ -404,9 +226,6 @@
     display: flex;
     flex-direction: column;
     gap: 12px;
-  }
-  .activity-highlights-side .activity-highlight h3 {
-    font-size: 18px;
   }
   .activity-highlight-lead img {
     aspect-ratio: 16 / 9;
@@ -427,12 +246,6 @@
   }
   .activity-highlight-lead a {
     display: block;
-  }
-  .activity-highlight h3 {
-    font-size: 18px;
-  }
-  .activity-highlight-lead h3 {
-    font-size: 28px;
   }
 }
 
@@ -457,8 +270,5 @@
     display: flex;
     flex-direction: column;
     gap: 16px;
-  }
-  .activity-highlights-side .activity-highlight h3 {
-    font-size: 18px;
   }
 }

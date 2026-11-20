@@ -1,47 +1,39 @@
-import { mkdir, writeFile, readFile, readdir } from 'node:fs/promises';
+import { mkdir, readFile, readdir, writeFile } from 'node:fs/promises';
 import { join, resolve } from 'node:path';
+import { escapeHtml, escapeXml } from '../src/content/html-entities.mjs';
 import { loadInsights } from '../src/content/loader';
 import { loadNews } from '../src/content/news-loader';
-import { loadDocumentation } from '../src/content/documentation';
-import { documentationPath } from '../src/content/documentation-model';
-import { getStaticRoutes, redirectRoutes } from '../src/site/routing/routes';
+import { serviceRoutePaths } from '../src/data/service-routes';
 import { siteIdentity } from '../src/data/site';
-
+import { ENGLISH_BRAND_NAME } from '../src/data/site-origins';
+import { ROOT_METADATA_DEFAULTS } from '../src/site/routing/metadata-base';
+import { getStaticRoutes, redirectRoutes } from '../src/site/routing/routes';
 import { translateEnglish } from '../src/site/translation';
 
 const distRoot = resolve(process.cwd(), 'dist');
 const insights = loadInsights();
 const news = loadNews();
 const routes = getStaticRoutes(insights, news);
-const documentationPaths = loadDocumentation('zh-CN').flatMap((page) => {
-  const path = documentationPath('zh-CN', page.slug);
-  return [
-    { path: `${path}/`, lastmod: undefined },
-    { path: `${documentationPath('en', page.slug)}/`, lastmod: undefined },
-  ];
-});
-const servicePagePaths = ['/services/', '/navigation/', '/status/', '/status/history/'];
+const servicePagePaths = serviceRoutePaths.map((path) => `${path}/`);
 
-const escapeHtml = (value: string) =>
-  value
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;');
-
-const escapeXml = (value: string) =>
-  value
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&apos;');
+const chineseRoot = ROOT_METADATA_DEFAULTS['zh-CN'];
+const englishRoot = ROOT_METADATA_DEFAULTS.en;
+const chineseRootTitleHtml = escapeHtml(chineseRoot.title);
+const englishRootTitleHtml = escapeHtml(englishRoot.title);
+const chineseRootDescriptionHtml = escapeHtml(chineseRoot.description);
+const englishRootDescriptionHtml = escapeHtml(englishRoot.description);
+const chineseRootKeywordsHtml = escapeHtml(chineseRoot.keywords.join(','));
+const englishRootKeywordsHtml = escapeHtml(englishRoot.keywords.join(','));
+const chineseSeoNameHtml = escapeHtml(siteIdentity.seoName);
+const chineseCompanyNameHtml = escapeHtml(siteIdentity.companyName);
+const englishBrandNameHtml = escapeHtml(ENGLISH_BRAND_NAME);
+const chineseSiteDescriptionHtml = escapeHtml(siteIdentity.description);
+const englishSiteDescriptionHtml = escapeHtml(translateEnglish(siteIdentity.description));
 
 const redirectDocument = (target: string) => {
   const safeTarget = escapeHtml(target);
   const en = target.startsWith('/en/');
-  const brand = en ? 'Hongxiang Shangdao-Elexvx' : siteIdentity.seoName;
+  const brand = en ? ENGLISH_BRAND_NAME : siteIdentity.seoName;
   return `<!doctype html>
 <html lang="${en ? 'en' : 'zh-CN'}">
   <head>
@@ -78,7 +70,6 @@ const localizedIndexablePaths = [
       { path: englishPath, lastmod },
     ];
   }),
-  ...documentationPaths,
   ...servicePagePaths.map((path) => ({ path, lastmod: undefined })),
 ];
 const sitemap = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${localizedIndexablePaths
@@ -123,23 +114,14 @@ const localizeDocumentLanguage = async (directory: string): Promise<void> => {
     if (entry.isDirectory()) await localizeDocumentLanguage(file);
     else if (entry.name.endsWith('.html')) {
       const html = await readFile(file, 'utf8');
-      const englishRootTitle = 'AI & Data Intelligence R&D | Hongxiang Shangdao-Elexvx';
-      const englishRootDescription =
-        'Hongxiang Shangdao-Elexvx is an AI and data intelligence R&D company publishing research, products, company news, and collaboration opportunities.';
-      const englishRootKeywords = 'Hongxiang Shangdao-Elexvx,Elexvx,AI,data intelligence';
-      const chineseRootTitle = `人工智能与数据智能研发 | ${siteIdentity.seoName}`;
-      const chineseRootKeywords = ['宏翔商道-Elexvx', '宏翔商道', 'Elexvx', '人工智能', '数据智能'].join(',');
       const englishErrorMetadata = html.includes('id="__next_error__"')
         ? html
-            .replaceAll(
-              `<title>${escapeHtml(chineseRootTitle)}</title>`,
-              `<title>${escapeHtml(englishRootTitle)}</title>`
-            )
-            .replaceAll(`content="${escapeHtml(chineseRootTitle)}"`, `content="${escapeHtml(englishRootTitle)}"`)
-            .replaceAll(escapeHtml(siteIdentity.seoDescription), escapeHtml(englishRootDescription))
-            .replaceAll(`content="${escapeHtml(chineseRootKeywords)}"`, `content="${escapeHtml(englishRootKeywords)}"`)
-            .replaceAll(`content="${escapeHtml(siteIdentity.seoName)}"`, 'content="Hongxiang Shangdao-Elexvx"')
-            .replaceAll(`content="${escapeHtml(siteIdentity.companyName)}"`, 'content="Hongxiang Shangdao-Elexvx"')
+            .replaceAll(`<title>${chineseRootTitleHtml}</title>`, `<title>${englishRootTitleHtml}</title>`)
+            .replaceAll(`content="${chineseRootTitleHtml}"`, `content="${englishRootTitleHtml}"`)
+            .replaceAll(chineseRootDescriptionHtml, englishRootDescriptionHtml)
+            .replaceAll(`content="${chineseRootKeywordsHtml}"`, `content="${englishRootKeywordsHtml}"`)
+            .replaceAll(`content="${chineseSeoNameHtml}"`, `content="${englishBrandNameHtml}"`)
+            .replaceAll(`content="${chineseCompanyNameHtml}"`, `content="${englishBrandNameHtml}"`)
         : html;
       await writeFile(
         file,
@@ -148,7 +130,7 @@ const localizeDocumentLanguage = async (directory: string): Promise<void> => {
             /<html\b([^>]*)>/,
             (_, attributes: string) => `<html${attributes.replace(/\s+lang="[^"]*"/, '')} lang="en">`
           )
-          .replaceAll(escapeHtml(siteIdentity.description), escapeHtml(translateEnglish(siteIdentity.description))),
+          .replaceAll(chineseSiteDescriptionHtml, englishSiteDescriptionHtml),
         'utf8'
       );
     }

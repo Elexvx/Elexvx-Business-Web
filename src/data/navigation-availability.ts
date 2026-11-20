@@ -5,15 +5,6 @@ export const createLinkAvailability = (routePaths: string[]) => {
   return (href: string) => {
     if (/^(https?:|mailto:|tel:)/.test(href)) return true;
     const path = href.split(/[?#]/)[0].replace(/\/+$/, '') || '/';
-    if (
-      path === '/services/docs' ||
-      path.startsWith('/services/docs/') ||
-      path === '/en/services/docs' ||
-      path.startsWith('/en/services/docs/')
-    ) {
-      return true;
-    }
-    if (!paths.has(path)) return false;
-    return true;
+    return paths.has(path);
   };
 };

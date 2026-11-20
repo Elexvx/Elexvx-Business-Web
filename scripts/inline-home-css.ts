@@ -4,7 +4,7 @@ import Beasties from 'beasties';
 
 // Inline critical rules only for high-impact landing routes. Keep the complete
 // stylesheet available as a deferred/no-JavaScript fallback on every route.
-const sharedAllowRules = [/data-theme/, /\.cookie-/, /\.mobile-/, /\.global-nav/];
+const sharedAllowRules = [/data-theme/, /data-festival/, /\.cookie-/, /\.mobile-/, /\.global-nav/];
 const pages = [
   { file: 'dist/index.html', allowRules: sharedAllowRules },
   { file: 'dist/en/index.html', allowRules: sharedAllowRules },

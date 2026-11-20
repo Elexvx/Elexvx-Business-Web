@@ -4,14 +4,7 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { loadInsights } from '../src/content/loader';
 import { loadNews } from '../src/content/news-loader';
 import { toInsightSummary, toNewsSummary } from '../src/content/summaries';
-import {
-  HomeCasesSection,
-  HomeCompanyEntry,
-  HomeNewsSection,
-  HomeProductsSection,
-  HomeResearchSection,
-  HomeWelcome,
-} from '../src/site/pages/home';
+import { HomeCasesAndCompany, HomeNewsAndResearch, HomeProductsSection, HomeWelcomeRest } from '../src/site/pages/home';
 import type { HomeStaticMarkup } from '../src/site/components/home-static-main';
 import { ContentProvider } from '../src/site/providers/content-context';
 import { LanguageProvider, type Locale } from '../src/site/providers/i18n';
@@ -27,11 +20,6 @@ import { serviceRoutePaths } from '../src/data/service-routes';
 // avoiding shipping the large translation dictionary in the homepage client bundle.
 const insights = loadInsights();
 const news = loadNews();
-const newsItems = news
-  .filter((item) => item.status === 'published')
-  .map(toNewsSummary)
-  .sort((left, right) => right.publishedAt.localeCompare(left.publishedAt))
-  .slice(0, 6);
 const routePaths = [...getStaticRoutes(insights, news).map((route) => route.path), ...serviceRoutePaths];
 const activityItems = publishedActivities.map(toActivitySummary);
 const researchItems = publishedResearch.map(toActivitySummary);
@@ -65,30 +53,18 @@ const renderFragment = (locale: Locale, node: React.ReactNode) =>
 const output: Partial<Record<Locale, HomeStaticMarkup>> = {};
 for (const locale of ['zh-CN', 'en'] as const) {
   const welcomeRest = extractMain(
-    renderFragment(locale, <HomeWelcome items={activityItems} secondary />),
+    renderFragment(locale, <HomeWelcomeRest items={activityItems} />),
     'welcomeRest',
     locale
   );
   const newsAndResearch = extractMain(
-    renderFragment(
-      locale,
-      <>
-        <HomeNewsSection news={newsItems} />
-        <HomeResearchSection items={researchItems} />
-      </>
-    ),
+    renderFragment(locale, <HomeNewsAndResearch research={researchItems} />),
     'newsAndResearch',
     locale
   );
   const products = extractMain(renderFragment(locale, <HomeProductsSection />), 'products', locale);
   const casesAndCompany = extractMain(
-    renderFragment(
-      locale,
-      <>
-        <HomeCasesSection items={caseStudyItems} />
-        <HomeCompanyEntry />
-      </>
-    ),
+    renderFragment(locale, <HomeCasesAndCompany caseStudies={caseStudyItems} />),
     'casesAndCompany',
     locale
   );

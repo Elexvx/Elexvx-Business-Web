@@ -1,27 +1,31 @@
 'use client';
-import { humiteContent } from '#humite-content';
-import { ProductShowcase } from './product-showcase';
-import { Translated } from '../providers/i18n';
 
-import { SiteImage } from '../components/site-image';
+import { humiteContent } from '#humite-content';
 import { homeContent } from '../../data/page-content';
+import { ArticleCard } from '../components/article-card';
 import { SiteShell } from '../components/index';
-import { useI18n } from '../providers/i18n';
+import { IndexHeading } from '../components/index-heading';
+import { SiteImage } from '../components/site-image';
 import { useCategoryFilter } from '../providers/category-filter';
-import { HomeMediaCard } from './shared';
+import { Translated, useI18n } from '../providers/i18n';
+import { ProductShowcase } from './product-showcase';
 import { NotFoundPage } from './shared';
 
 export const ProductCatalogPage = () => {
   const [category, selectCategory] = useCategoryFilter();
-  const { t } = useI18n();
+  const { locale, t } = useI18n();
   const products = homeContent.product.items;
   const categories = [...new Set(products.map((product) => product.category))];
+  const activeCategory = categories.find((value) => value === category);
   const visible = products.filter((product) => category === 'all' || product.category === category);
   return (
     <SiteShell activePath="/products">
       <section className="product-index" aria-labelledby="product-index-title">
-        <h1 id="product-index-title">{t('产品')}</h1>
-        <nav className="research-index-tabs" aria-label={t('产品分类')}>
+        <IndexHeading id="product-index-title" title={t('产品')} category={activeCategory && t(activeCategory)} />
+        <nav
+          className="research-index-tabs index-category-tabs"
+          aria-label={locale === 'en' ? 'Product categories' : '产品分类'}
+        >
           {['all', ...categories].map((value) => (
             <button
               key={value}
@@ -36,14 +40,12 @@ export const ProductCatalogPage = () => {
         </nav>
         <div className="home-media-grid home-products-grid">
           {visible.map((product) => (
-            <HomeMediaCard
+            <ArticleCard
               key={product.slug}
-              image={product.image}
-              imageAlt={product.name}
+              cover={product.image}
               title={product.name}
-              eyebrow={product.category}
+              category={product.category}
               href={product.href}
-              naturalTitle
             />
           ))}
         </div>
@@ -56,6 +58,7 @@ export const ProductCatalogPage = () => {
     </SiteShell>
   );
 };
+
 export const ProductDetailPage = ({ slug }: { slug: string }) => {
   const { href, t } = useI18n();
   const product = homeContent.product.items.find((item) => item.slug === slug);
@@ -66,7 +69,7 @@ export const ProductDetailPage = ({ slug }: { slug: string }) => {
     <SiteShell activePath="/products">
       <article className="team-profile">
         <a className="team-back" href={href('/products')}>
-          <Translated>{'← 全部产品'}</Translated>
+          <Translated>{'全部产品'}</Translated>
         </a>
         <div className="team-profile-layout">
           <SiteImage className="team-portrait" src={product.image} alt={product.name} width={1600} height={1600} />

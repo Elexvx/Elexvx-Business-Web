@@ -1,4 +1,3 @@
-// Recruitment copy restored from the original careers page.
 export const careersContent = {
   intro: '和认真做事的人一起，把真实问题变成可以使用的系统。',
   culture: [

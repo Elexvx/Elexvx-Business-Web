@@ -1,3 +1,5 @@
+import { omitFields } from '../content/summaries';
+
 export type CaseStudy = {
   slug: string;
   title: string;
@@ -18,14 +20,9 @@ export type CaseStudy = {
 
 export type CaseStudySummary = Omit<CaseStudy, 'body' | 'bodyEn'>;
 
-export const toCaseStudySummary = (item: CaseStudy): CaseStudySummary => {
-  const { body, bodyEn, ...summary } = item;
-  void body;
-  void bodyEn;
-  return summary;
-};
+export const toCaseStudySummary = (item: CaseStudy): CaseStudySummary => omitFields(item, 'body', 'bodyEn');
 
-export const caseStudies: CaseStudy[] = [
+const caseStudies: CaseStudy[] = [
   {
     slug: 'kaicheng-international-journal-publishing-system',
     title: 'ELEXVX 期刊管理与出版协同系统助力凯城国际',

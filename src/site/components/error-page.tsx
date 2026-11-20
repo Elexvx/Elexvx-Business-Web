@@ -2,90 +2,91 @@
 
 import { useSyncExternalStore } from 'react';
 import { siteIdentity } from '../../data/site';
+import { ENGLISH_BRAND_NAME } from '../../data/site-origins';
 import { SiteShell } from './shell';
-import { LanguageProvider, useI18n } from '../providers/i18n';
+import { LanguageProvider, useI18n, type Locale } from '../providers/i18n';
 
 const copy = {
   403: {
-    label: 'ACCESS RESTRICTED',
     title: '此处暂不开放访问',
     enTitle: 'Access is restricted',
-    description: '你暂时无法访问此页面。如需了解相关内容，请与我们联系。',
-    enDescription: 'This page is not available to you. Contact us if you need access to this information.',
   },
   404: {
-    label: 'PAGE NOT FOUND',
     title: '这一页，暂时找不到了',
     enTitle: 'This page could not be found',
-    description: '页面可能已移动、下线，或链接地址有误。你可以返回首页，继续探索我们的研究与成果。',
-    enDescription:
-      'The page may have moved, been removed, or the address may be incorrect. Return home to explore our research and projects.',
   },
   500: {
-    label: 'SOMETHING WENT WRONG',
     title: '页面暂时遇到了一点问题',
     enTitle: 'Something went wrong',
-    description: '请稍后重试，或先返回首页。如果问题持续出现，欢迎联系我们。',
-    enDescription: 'Please try again shortly or return home. If the problem persists, contact us.',
   },
 };
 const subscribe = () => () => {};
 
-export function ErrorPage({ code = 404, retry }: { code?: 403 | 404 | 500; retry?: () => void }) {
-  const { locale } = useI18n();
+export function ErrorPage({
+  code = 404,
+  locale: initialLocale,
+  retry,
+}: {
+  code?: 403 | 404 | 500;
+  locale?: Locale;
+  retry?: () => void;
+}) {
+  const { locale: parentLocale, hasProvider } = useI18n();
   const pathname = useSyncExternalStore(
     subscribe,
     () => window.location.pathname,
     () => `/${code}`
   );
-  const english = locale === 'en' || /^\/en(?:\/|$)/.test(pathname);
+  const english = (initialLocale ?? parentLocale) === 'en' || /^\/en(?:\/|$)/.test(pathname);
+  const targetLocale: Locale = english ? 'en' : 'zh-CN';
   const path = pathname.replace(/^\/en(?=\/|$)/, '') || '/';
   const content = copy[code];
-  const brand = english ? 'Hongxiang Shangdao-Elexvx' : siteIdentity.seoName;
-  const href = (path: string) => (english ? `/en${path === '/' ? '/' : path}` : path);
-  return (
-    <LanguageProvider locale={english ? 'en' : 'zh-CN'} path={path} autoRedirect={false}>
-      <SiteShell activePath={path}>
-        <section className="status-page">
-          <title>
-            {brand} — {english ? content.enTitle : content.title}
-          </title>
-          <meta name="robots" content="noindex,nofollow" />
-          <div className="status-main">
-            <div className="status-visual" aria-hidden="true">
-              <span>{code}</span>
-              <i />
-            </div>
-            <div className="status-copy">
-              <p className="status-eyebrow">{content.label}</p>
-              <h1>{english ? content.enTitle : content.title}</h1>
-              <p className="status-description">{english ? content.enDescription : content.description}</p>
-              <div className="status-actions">
-                {code === 500 && (
-                  <button type="button" onClick={retry ?? (() => window.location.reload())}>
-                    {english ? 'Try again' : '重新尝试'} <span aria-hidden="true">↻</span>
-                  </button>
-                )}
-                <a className={code === 500 ? 'status-secondary' : 'status-primary'} href={href('/')}>
-                  {english ? 'Return home' : '返回首页'} <span aria-hidden="true">↗</span>
+  const brand = english ? ENGLISH_BRAND_NAME : siteIdentity.seoName;
+  const href = (target: string) => (english ? `/en${target === '/' ? '/' : target}` : target);
+  const shell = (
+    <SiteShell activePath={path}>
+      <section className="status-page">
+        <title>{`${brand} — ${english ? content.enTitle : content.title}`}</title>
+        <meta name="robots" content="noindex,nofollow" />
+        <div className="status-main">
+          <div className="status-visual" aria-hidden="true">
+            <span>{code}</span>
+            <i />
+          </div>
+          <div className="status-copy">
+            <h1>{english ? content.enTitle : content.title}</h1>
+            <div className="status-actions">
+              {code === 500 && (
+                <button type="button" onClick={retry ?? (() => window.location.reload())}>
+                  {english ? 'Try again' : '重新尝试'} <span aria-hidden="true">↻</span>
+                </button>
+              )}
+              <a className={code === 500 ? 'status-secondary' : 'status-primary'} href={href('/')}>
+                {english ? 'Return home' : '返回首页'}
+              </a>
+              {code !== 500 && (
+                <a className="status-secondary" href={href(code === 403 ? '/contact' : '/research')}>
+                  {english
+                    ? code === 403
+                      ? 'Contact us'
+                      : 'Explore research'
+                    : code === 403
+                      ? '联系我们'
+                      : '探索研究'}
                 </a>
-                {code !== 500 && (
-                  <a className="status-secondary" href={href(code === 403 ? '/contact' : '/research')}>
-                    {english
-                      ? code === 403
-                        ? 'Contact us'
-                        : 'Explore research'
-                      : code === 403
-                        ? '联系我们'
-                        : '探索研究'}{' '}
-                    <span aria-hidden="true">→</span>
-                  </a>
-                )}
-              </div>
+              )}
             </div>
           </div>
-        </section>
-      </SiteShell>
+        </div>
+      </section>
+    </SiteShell>
+  );
+
+  if (hasProvider && parentLocale === targetLocale) return shell;
+
+  return (
+    <LanguageProvider locale={targetLocale} path={path} autoRedirect={false}>
+      {shell}
     </LanguageProvider>
   );
 }

@@ -2,13 +2,14 @@ import { readdir, mkdir, writeFile, stat } from 'node:fs/promises';
 import { join, relative } from 'node:path';
 import { createHash } from 'node:crypto';
 import sharp from 'sharp';
-const root = 'public';
+import { humiteAssetRoot } from './humite-export.mjs';
+
 const manifest = {};
-async function walk(dir) {
+async function walk(root, dir) {
   for (const entry of await readdir(dir, { withFileTypes: true })) {
     const file = join(dir, entry.name);
     if (entry.isDirectory()) {
-      if (entry.name !== 'optimized') await walk(file);
+      if (entry.name !== 'optimized') await walk(root, file);
       continue;
     }
     if (!/\.(png|jpe?g)$/i.test(file)) continue;
@@ -33,7 +34,9 @@ async function walk(dir) {
     manifest[key] = { width: meta.width, height: meta.height, variants };
   }
 }
-await mkdir(join(root, 'optimized'), { recursive: true });
-await walk(root);
+for (const root of ['public', humiteAssetRoot]) {
+  await mkdir(join(root, 'optimized'), { recursive: true });
+  await walk(root, root);
+}
 await writeFile('src/data/image-manifest.json', JSON.stringify(manifest));
 console.log(`Optimized ${Object.keys(manifest).length} images`);

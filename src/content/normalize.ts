@@ -1,11 +1,13 @@
-import { asEvidenceArray, asString, asStringArray, parseFrontmatter, type FrontmatterValue } from './frontmatter';
-import type { EvidenceRef, Insight, InsightFrontmatter } from './types';
-
-const asOptionalString = (value: FrontmatterValue | undefined, field: string) =>
-  asString(value, field, false) || undefined;
-
-const asOptionalStringArray = (value: FrontmatterValue | undefined, field: string) =>
-  typeof value === 'undefined' ? undefined : asStringArray(value, field);
+import {
+  asContentStatus,
+  asEvidenceArray,
+  asOptionalString,
+  asOptionalStringArray,
+  asPublishedDate,
+  asString,
+  parseFrontmatter,
+} from './frontmatter';
+import type { Insight, InsightFrontmatter } from './types';
 
 export const calculateReadingTime = (body: string) => {
   const clean = body.replace(/```[\s\S]*?```/g, '').replace(/`[^`]*`/g, '');
@@ -16,11 +18,9 @@ export const calculateReadingTime = (body: string) => {
 
 export const insightFromSource = (source: string, filename: string): Insight => {
   const { data, body } = parseFrontmatter(source);
-  const evidence = asEvidenceArray(data.evidence, 'evidence') as EvidenceRef[];
-  const status = asString(data.status, 'status');
-  if (!['draft', 'published', 'archived'].includes(status)) throw new Error(`${filename}: invalid status`);
-  const publishedAt = asString(data.publishedAt, 'publishedAt');
-  if (Number.isNaN(Date.parse(publishedAt))) throw new Error(`${filename}: publishedAt must be an ISO date`);
+  const evidence = asEvidenceArray(data.evidence, 'evidence');
+  const status = asContentStatus(data.status, filename);
+  const publishedAt = asPublishedDate(data.publishedAt, filename);
 
   const frontmatter: InsightFrontmatter = {
     slug: asString(data.slug, 'slug'),
@@ -32,13 +32,10 @@ export const insightFromSource = (source: string, filename: string): Insight => 
     author: asString(data.author, 'author'),
     keywords: asOptionalStringArray(data.keywords, 'keywords'),
     keywordsEn: asOptionalStringArray(data.keywordsEn, 'keywordsEn'),
-    status: status as InsightFrontmatter['status'],
+    status,
     evidence,
     cover: asOptionalString(data.cover, 'cover'),
   };
 
   return { ...frontmatter, body, readingTime: calculateReadingTime(body) };
 };
-
-export const sortInsights = (insights: Insight[]) =>
-  [...insights].sort((a, b) => Date.parse(b.publishedAt) - Date.parse(a.publishedAt));

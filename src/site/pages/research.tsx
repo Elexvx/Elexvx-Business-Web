@@ -1,22 +1,139 @@
 'use client';
-import { Translated } from '../providers/i18n';
 
-import { SiteImage } from '../components/site-image';
-import type { ActivitySummary } from '../../data/activities';
-import { useArticleCategoryFilter } from '../providers/category-filter';
-import { articleCategories } from '../../data/article-categories';
-import { Popover } from 'radix-ui';
 import { AppstoreOutlined, DownOutlined, FilterOutlined, UnorderedListOutlined } from '@ant-design/icons';
+import { Popover } from 'radix-ui';
 import { useState } from 'react';
-import { getDirection, projects, researchDirections } from '../../data/site';
+
+import type { ActivitySummary } from '../../data/activities';
+import { articleCategories, articleCategoryId, type ArticleCategory } from '../../data/article-categories';
+import type { InsightSummary } from '../../content/types';
 import { pageContent } from '../../data/page-content';
-import { usePublishedInsights } from '../providers/content-context';
+import { getDirection, projects, researchDirections } from '../../data/site';
+import { ArticleCard } from '../components/article-card';
 import { classNames, Eyebrow, ResearchTile, SiteShell } from '../components/index';
+import { IndexHeading } from '../components/index-heading';
+import { useArticleCategoryFilter } from '../providers/category-filter';
+import { usePublishedInsights } from '../providers/content-context';
+import { LocalizedText as T, LocalizedTitle as Title, Translated, useI18n } from '../providers/i18n';
+import { EmptyState, InsightList, NotFoundPage, PageHero, ProjectCard } from './shared';
 
-import { LocalizedText as T, LocalizedTitle as Title, useI18n } from '../providers/i18n';
-import { formatNewsDate, ProjectCard, PageHero, InsightList, EmptyState, NotFoundPage } from './shared';
+const ResearchToolbar = ({
+  isChinese,
+  filters,
+  activeFilter,
+  categoryHref,
+  onSelectFilter,
+  newestFirst,
+  onToggleSort,
+  showMedia,
+  onToggleMedia,
+}: {
+  isChinese: boolean;
+  filters: ArticleCategory[];
+  activeFilter: string;
+  categoryHref: (category: string) => string;
+  onSelectFilter: (category: string) => void;
+  newestFirst: boolean;
+  onToggleSort: () => void;
+  showMedia: boolean;
+  onToggleMedia: (show: boolean) => void;
+}) => (
+  <div className="research-index-toolbar">
+    <nav aria-label={isChinese ? '研究内容分类' : 'Research categories'} className="research-index-tabs">
+      {filters.map((item) => (
+        <a
+          className={classNames('research-index-tab', activeFilter === item.id && 'research-index-tab-active')}
+          key={item.id}
+          href={categoryHref(item.id)}
+          aria-current={activeFilter === item.id ? 'page' : undefined}
+        >
+          <Translated>{item.label}</Translated>
+        </a>
+      ))}
+    </nav>
+    <div className="research-index-controls">
+      <Popover.Root>
+        <Popover.Trigger className="research-index-filter-trigger">
+          <span>{isChinese ? '筛选' : 'Filter'}</span>
+          <FilterOutlined aria-hidden="true" />
+        </Popover.Trigger>
+        <Popover.Portal>
+          <Popover.Content className="ui-filter-content" sideOffset={12} align="end" collisionPadding={16}>
+            {filters.map((item) => (
+              <Popover.Close asChild key={`menu-${item.id}`}>
+                <button onClick={() => onSelectFilter(item.id)} type="button">
+                  <Translated>{item.label}</Translated>
+                </button>
+              </Popover.Close>
+            ))}
+          </Popover.Content>
+        </Popover.Portal>
+      </Popover.Root>
+      <button
+        aria-label={
+          isChinese ? `按${newestFirst ? '最新' : '最早'}发布排序` : `Sort ${newestFirst ? 'newest' : 'oldest'} first`
+        }
+        aria-pressed={newestFirst}
+        className="research-index-sort"
+        onClick={onToggleSort}
+        type="button"
+      >
+        <span>{newestFirst ? (isChinese ? '最新发布' : 'Newest') : isChinese ? '最早发布' : 'Oldest'}</span>
+        <DownOutlined className={classNames(!newestFirst && 'research-index-sort-reversed')} aria-hidden="true" />
+      </button>
+      <div
+        className="research-index-view-toggle"
+        role="group"
+        aria-label={isChinese ? '列表显示方式' : 'List display mode'}
+      >
+        <button
+          aria-label={isChinese ? '显示媒体' : 'Show media'}
+          aria-pressed={showMedia}
+          onClick={() => onToggleMedia(true)}
+          type="button"
+        >
+          <AppstoreOutlined aria-hidden="true" />
+        </button>
+        <button
+          aria-label={isChinese ? '隐藏媒体' : 'Hide media'}
+          aria-pressed={!showMedia}
+          onClick={() => onToggleMedia(false)}
+          type="button"
+        >
+          <UnorderedListOutlined aria-hidden="true" />
+        </button>
+      </div>
+    </div>
+  </div>
+);
 
-export type ResearchIndexFilter = string;
+const ResearchNotesSection = ({ isChinese, notes }: { isChinese: boolean; notes: InsightSummary[] }) => {
+  const { href, t } = useI18n();
+  return (
+    <section aria-labelledby="research-notes-title">
+      <h2 id="research-notes-title">{isChinese ? '研究记录' : 'Research notes'}</h2>
+      <nav className="research-index-tabs" aria-label={isChinese ? '研究方向' : 'Research directions'}>
+        {researchDirections.map((direction) => (
+          <a className="research-index-tab" href={href(`/research/${direction.slug}/`)} key={direction.slug}>
+            {t(direction.title)}
+          </a>
+        ))}
+      </nav>
+      <div className="research-index-list">
+        {notes.map((note) => (
+          <ArticleCard
+            key={note.slug}
+            variant="editorial"
+            href={`/insights/${note.slug}/`}
+            title={note.title}
+            excerpt={note.excerpt}
+            publishedAt={note.publishedAt}
+          />
+        ))}
+      </div>
+    </section>
+  );
+};
 
 export const ResearchPage = ({
   items,
@@ -25,23 +142,19 @@ export const ResearchPage = ({
   items: ActivitySummary[];
   initialCategory?: string;
 }) => {
-  const { href, locale, t } = useI18n();
-  const insights = items;
+  const { locale, t } = useI18n();
   const researchNotes = usePublishedInsights();
   const [newestFirst, setNewestFirst] = useState(true);
   const [showMedia, setShowMedia] = useState(false);
   const isChinese = locale === 'zh-CN';
-  const categoryFor = (insight: ActivitySummary & { categorySlug?: string; category?: string }) => {
-    if (insight.categorySlug) return { id: insight.categorySlug, label: insight.category || insight.categorySlug };
-    const direction = insight.directionSlug ? getDirection(insight.directionSlug) : undefined;
-    return direction ? { id: direction.slug, label: direction.title } : { id: 'uncategorized', label: '技术文章' };
-  };
   const categories = articleCategories('research', items);
+  const categoryLabels = new Map(categories.map((item) => [item.id, item.label]));
   const [filter, setFilter, categoryHref] = useArticleCategoryFilter('research', categories, initialCategory);
-  const filters = [{ id: 'all', label: isChinese ? '全部' : 'All' }, ...categories];
+  const filters: ArticleCategory[] = [{ id: 'all', label: isChinese ? '全部' : 'All' }, ...categories];
   const activeFilter = filters.some((item) => item.id === filter) ? filter : 'all';
-  const orderedInsights = insights
-    .filter((insight) => activeFilter === 'all' || categoryFor(insight).id === activeFilter)
+
+  const orderedInsights = items
+    .filter((insight) => activeFilter === 'all' || articleCategoryId('research', insight) === activeFilter)
     .sort((left, right) => {
       const comparison = right.publishedAt.localeCompare(left.publishedAt);
       if (comparison !== 0) return newestFirst ? comparison : -comparison;
@@ -53,141 +166,45 @@ export const ResearchPage = ({
     <SiteShell activePath="/research">
       <section className="research-index" aria-labelledby="research-index-title">
         <div className="research-index-inner">
-          <header className="research-index-header">
-            <h1 id="research-index-title">
-              {activeFilter !== 'all' && <>{t(categories.find((item) => item.id === activeFilter)?.label || '')} · </>}
-              {isChinese ? '研究' : 'Research'}
-            </h1>
-            <div className="research-index-toolbar">
-              <nav aria-label={isChinese ? '研究内容分类' : 'Research categories'} className="research-index-tabs">
-                {filters.map((item) => (
-                  <a
-                    className={classNames(
-                      'research-index-tab',
-                      activeFilter === item.id && 'research-index-tab-active'
-                    )}
-                    key={item.id}
-                    href={categoryHref(item.id)}
-                    aria-current={activeFilter === item.id ? 'page' : undefined}
-                  >
-                    <Translated>{item.label}</Translated>
-                  </a>
-                ))}
-              </nav>
-              <div className="research-index-controls">
-                <Popover.Root>
-                  <Popover.Trigger className="research-index-filter-trigger">
-                    <span>{isChinese ? '筛选' : 'Filter'}</span>
-                    <FilterOutlined aria-hidden="true" />
-                  </Popover.Trigger>
-                  <Popover.Portal>
-                    <Popover.Content className="ui-filter-content" sideOffset={12} align="end" collisionPadding={16}>
-                      {filters.map((item) => (
-                        <Popover.Close asChild key={`menu-${item.id}`}>
-                          <button
-                            className={classNames(activeFilter === item.id && 'research-index-filter-active')}
-                            onClick={() => setFilter(item.id)}
-                            type="button"
-                          >
-                            <Translated>{item.label}</Translated>
-                          </button>
-                        </Popover.Close>
-                      ))}
-                    </Popover.Content>
-                  </Popover.Portal>
-                </Popover.Root>
-                <button
-                  aria-label={
-                    isChinese
-                      ? `按${newestFirst ? '最新' : '最早'}发布排序`
-                      : `Sort ${newestFirst ? 'newest' : 'oldest'} first`
-                  }
-                  aria-pressed={newestFirst}
-                  className="research-index-sort"
-                  onClick={() => setNewestFirst((current) => !current)}
-                  type="button"
-                >
-                  <span>{newestFirst ? (isChinese ? '最新发布' : 'Newest') : isChinese ? '最早发布' : 'Oldest'}</span>
-                  <DownOutlined
-                    className={classNames(!newestFirst && 'research-index-sort-reversed')}
-                    aria-hidden="true"
-                  />
-                </button>
-                <div
-                  className="research-index-view-toggle"
-                  role="group"
-                  aria-label={isChinese ? '列表显示方式' : 'List display mode'}
-                >
-                  <button
-                    aria-label={isChinese ? '显示媒体' : 'Show media'}
-                    aria-pressed={showMedia}
-                    onClick={() => setShowMedia(true)}
-                    type="button"
-                  >
-                    <AppstoreOutlined aria-hidden="true" />
-                  </button>
-                  <button
-                    aria-label={isChinese ? '隐藏媒体' : 'Hide media'}
-                    aria-pressed={!showMedia}
-                    onClick={() => setShowMedia(false)}
-                    type="button"
-                  >
-                    <UnorderedListOutlined aria-hidden="true" />
-                  </button>
-                </div>
-              </div>
-            </div>
+          <header>
+            <IndexHeading
+              id="research-index-title"
+              title={isChinese ? '研究' : 'Research'}
+              category={t(categories.find((item) => item.id === activeFilter)?.label || '')}
+            />
+            <ResearchToolbar
+              isChinese={isChinese}
+              filters={filters}
+              activeFilter={activeFilter}
+              categoryHref={categoryHref}
+              onSelectFilter={setFilter}
+              newestFirst={newestFirst}
+              onToggleSort={() => setNewestFirst((current) => !current)}
+              showMedia={showMedia}
+              onToggleMedia={setShowMedia}
+            />
           </header>
 
           <div className="research-index-list">
             {orderedInsights.map((insight) => {
-              const category = categoryFor(insight);
-              const formattedDate = formatNewsDate(insight.publishedAt, locale);
-              const copy = (
-                <div className="research-index-copy">
-                  <h2>
-                    <Title text={insight.title} />
-                  </h2>
-                  <p>
-                    <T text={insight.excerpt} />
-                  </p>
-                  {showMedia && (
-                    <div className="research-index-card-meta">
-                      <strong>
-                        <Translated>{category.label}</Translated>
-                      </strong>
-                      <time dateTime={insight.publishedAt}>{formattedDate}</time>
-                    </div>
-                  )}
-                </div>
-              );
+              const categoryId = articleCategoryId('research', insight);
+              const categoryLabel =
+                categoryLabels.get(categoryId) ??
+                (insight.directionSlug ? getDirection(insight.directionSlug)?.title : undefined) ??
+                '技术文章';
               return (
-                <a
-                  className={classNames('research-index-row', showMedia && 'research-index-row-media')}
-                  href={href(`/research/${insight.slug}`)}
-                  key={`insight-${insight.slug}`}
-                >
-                  {showMedia ? (
-                    <>
-                      <SiteImage
-                        className="research-index-media"
-                        src={insight.cover || '/visuals/research-gradient.jpg'}
-                        alt={t(insight.title)}
-                      />
-                      {copy}
-                    </>
-                  ) : (
-                    <>
-                      <div className="research-index-meta">
-                        <strong>
-                          <Translated>{category.label}</Translated>
-                        </strong>
-                        <time dateTime={insight.publishedAt}>{formattedDate}</time>
-                      </div>
-                      <div className="research-index-entry">{copy}</div>
-                    </>
-                  )}
-                </a>
+                <ArticleCard
+                  key={insight.slug}
+                  variant="editorial"
+                  href={`/research/${insight.slug}`}
+                  title={insight.title}
+                  cover={insight.cover}
+                  category={categoryLabel}
+                  publishedAt={insight.publishedAt}
+                  excerpt={insight.excerpt}
+                  showCover={showMedia}
+                  splitTitle
+                />
               );
             })}
 
@@ -197,30 +214,9 @@ export const ResearchPage = ({
               </p>
             )}
           </div>
+
           {activeFilter === 'all' && researchNotes.length > 0 && (
-            <section aria-labelledby="research-notes-title">
-              <h2 id="research-notes-title">{isChinese ? '研究记录' : 'Research notes'}</h2>
-              <nav className="research-index-tabs" aria-label={isChinese ? '研究方向' : 'Research directions'}>
-                {researchDirections.map((direction) => (
-                  <a className="research-index-tab" href={href(`/research/${direction.slug}/`)} key={direction.slug}>
-                    {t(direction.title)}
-                  </a>
-                ))}
-              </nav>
-              <div className="research-index-list">
-                {researchNotes.map((note) => (
-                  <a className="research-index-row" href={href(`/insights/${note.slug}/`)} key={note.slug}>
-                    <div className="research-index-meta">
-                      <time dateTime={note.publishedAt}>{formatNewsDate(note.publishedAt, locale)}</time>
-                    </div>
-                    <div className="research-index-entry research-index-copy">
-                      <h2>{t(note.title)}</h2>
-                      <p>{t(note.excerpt)}</p>
-                    </div>
-                  </a>
-                ))}
-              </div>
-            </section>
+            <ResearchNotesSection isChinese={isChinese} notes={researchNotes} />
           )}
         </div>
       </section>

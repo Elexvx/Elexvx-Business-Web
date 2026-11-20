@@ -101,7 +101,7 @@
   height: 100%;
   flex-direction: column;
   padding: clamp(22px, 2.5vw, 32px);
-  background: color-mix(in srgb, var(--color-ink) 4%, var(--color-canvas));
+  background: var(--color-surface-neutral);
   border: 1px solid var(--color-hairline);
   border-radius: var(--radius-md);
 }
@@ -170,15 +170,15 @@
 }
 
 .design-sample-large {
-  font-size: clamp(40px, 5vw, 64px);
+  font-size: var(--page-title-size);
   font-weight: 500;
-  line-height: 1.05;
-  letter-spacing: -0.045em;
+  line-height: 1.08;
+  letter-spacing: -0.04em;
   text-wrap: balance;
 }
 
 .design-sample-medium {
-  font-size: clamp(28px, 2.7vw, 36px);
+  font-size: var(--section-title-size);
   font-weight: 500;
   line-height: 1.25;
   letter-spacing: -0.025em;
@@ -281,7 +281,7 @@
   justify-items: start;
   gap: 18px;
   padding: 20px;
-  background: color-mix(in srgb, var(--color-ink) 5%, var(--color-canvas));
+  background: var(--color-surface-neutral);
   border: 1px solid var(--color-hairline);
   border-radius: var(--radius-sm);
 }
@@ -363,7 +363,7 @@
   display: grid;
   gap: 12px;
   padding: clamp(20px, 3vw, 32px);
-  background: color-mix(in srgb, var(--color-ink) 4%, var(--color-canvas));
+  background: var(--color-surface-neutral);
   border: 1px solid var(--color-hairline);
   border-radius: var(--radius-md);
 }
@@ -437,7 +437,7 @@
   color: var(--color-ink-muted);
   font-size: 13px;
   line-height: 1.5;
-  background: color-mix(in srgb, var(--color-ink) 4%, var(--color-canvas));
+  background: var(--color-surface-neutral);
   border: 1px solid var(--color-hairline);
   border-radius: var(--radius-sm);
 }
@@ -455,7 +455,7 @@
   height: 100%;
   flex-direction: column;
   overflow: hidden;
-  background: color-mix(in srgb, var(--color-ink) 4%, var(--color-canvas));
+  background: var(--color-surface-neutral);
   border: 1px solid var(--color-hairline);
   border-radius: var(--radius-md);
 }
@@ -555,10 +555,20 @@
   padding-left: 1.35em;
 }
 
+.design-rule-card-body .markdown-table-wrap {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-inline: contain;
+  margin: 20px 0;
+}
+
 .design-rule-card-body table {
   width: 100%;
   min-width: 640px;
-  margin: 20px 0;
+  margin: 0;
   border-collapse: collapse;
   font-size: 14px;
   line-height: 1.5;
@@ -573,7 +583,7 @@
 }
 
 .design-rule-card-body th {
-  background: color-mix(in srgb, var(--color-ink) 6%, var(--color-canvas));
+  background: var(--color-surface-neutral);
 }
 
 .design-rule-card-body code {

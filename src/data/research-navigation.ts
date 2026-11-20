@@ -1,10 +1,12 @@
 import catalog from './navigation-catalog.json';
+import { startCollaborationAction } from './contact';
 import { newsCategorySlug } from './article-categories';
 import { homeContent } from './page-content';
 import { researchDirections } from './site';
+import { documentationUrl, serviceRoutePaths } from './service-routes';
 const { research: publishedResearch, activities: publishedActivities } = catalog;
 
-export type NavigationLink = { label: string; href: string };
+type NavigationLink = { label: string; href: string };
 
 export type NavigationGroup = {
   id: string;
@@ -17,7 +19,11 @@ export type NavigationGroup = {
   columns: Array<{ title: string; links: NavigationLink[] }>;
 };
 
-const navigationDefinitions: NavigationGroup[] = [
+type NavigationGroupDefinition = Omit<NavigationGroup, 'columns'> & {
+  links: NavigationLink[];
+};
+
+const navigationDefinitions: NavigationGroupDefinition[] = [
   {
     id: 'research',
     label: '研究',
@@ -26,33 +32,15 @@ const navigationDefinitions: NavigationGroup[] = [
     intro: '从数据、设备与模型出发，理解技术如何进入真实世界。',
     href: '/research',
     paths: ['/research', '/insights', '/archive'],
-    columns: [
-      {
-        title: '研究',
-        links: [{ label: '总览', href: '/research' }],
-      },
-      {
-        title: '研究分类',
-        links: Array.from(new Map(publishedResearch.map((item) => [item.categorySlug, item.category])).entries()).map(
-          ([slug, label]) => ({ label: label || '研究', href: `/research/category/${slug}/` })
-        ),
-      },
-      {
-        title: '研究方向与入口',
-        links: [
-          ...researchDirections.map((direction) => ({ label: direction.title, href: `/research/${direction.slug}` })),
-          { label: '研发能力', href: '/capabilities' },
-          { label: '产品与成果', href: '/projects' },
-          { label: '行业场景', href: '/scenarios' },
-        ],
-      },
-      {
-        title: '继续阅读',
-        links: [
-          { label: '技术文章', href: '/research' },
-          { label: '旧文归档', href: '/archive' },
-        ],
-      },
+    links: [
+      ...Array.from(new Map(publishedResearch.map((item) => [item.categorySlug, item.category])).entries()).map(
+        ([slug, label]) => ({ label: label || '研究', href: `/research/category/${slug}/` })
+      ),
+      ...researchDirections.map((direction) => ({ label: direction.title, href: `/research/${direction.slug}` })),
+      { label: '研发能力', href: '/capabilities' },
+      { label: '产品与成果', href: '/projects' },
+      { label: '行业场景', href: '/scenarios' },
+      { label: '旧文归档', href: '/archive' },
     ],
   },
   {
@@ -63,17 +51,9 @@ const navigationDefinitions: NavigationGroup[] = [
     intro: '活动记录与交流。',
     href: '/activities',
     paths: ['/activities'],
-    columns: [
-      {
-        title: '活动',
-        links: [
-          { label: '总览', href: '/activities' },
-          ...Array.from(new Map(publishedActivities.map((item) => [item.categorySlug, item.category])).entries()).map(
-            ([slug, label]) => ({ label: label || '活动', href: `/activities/category/${slug}/` })
-          ),
-        ],
-      },
-    ],
+    links: Array.from(new Map(publishedActivities.map((item) => [item.categorySlug, item.category])).entries()).map(
+      ([slug, label]) => ({ label: label || '活动', href: `/activities/category/${slug}/` })
+    ),
   },
   {
     id: 'news',
@@ -83,7 +63,7 @@ const navigationDefinitions: NavigationGroup[] = [
     intro: '公司公告与最新新闻。',
     href: '/news',
     paths: ['/news'],
-    columns: [{ title: '新闻', links: [{ label: '总览', href: '/news' }] }],
+    links: [],
   },
   {
     id: 'products',
@@ -93,31 +73,20 @@ const navigationDefinitions: NavigationGroup[] = [
     intro: '了解我们的产品。',
     href: '/products',
     paths: ['/products'],
-    columns: [
-      {
-        title: '产品',
-        links: homeContent.product.items.map((product) => ({ label: product.name, href: product.href })),
-      },
-    ],
+    links: homeContent.product.items.map((product) => ({ label: product.name, href: product.href })),
   },
   {
     id: 'services',
     label: '服务',
     englishTitle: 'SERVICES',
     title: '进入 Elexvx 服务中心',
-    intro: '帮助文档、企业服务导航与平台运行状态，由同一个主站项目统一管理。',
+    intro: '访问帮助文档、企业服务导航与平台运行状态。',
     href: '/services/',
-    paths: ['/services', '/services/docs', '/navigation', '/status', '/status/history'],
-    columns: [
-      {
-        title: '服务入口',
-        links: [
-          { label: '服务', href: '/services/' },
-          { label: '帮助文档', href: '/services/docs/' },
-          { label: '企业导航', href: '/navigation/' },
-          { label: '服务状态', href: '/status/' },
-        ],
-      },
+    paths: [...serviceRoutePaths],
+    links: [
+      { label: '帮助文档', href: documentationUrl },
+      { label: '企业导航', href: '/navigation/' },
+      { label: '服务状态', href: '/status/' },
     ],
   },
   {
@@ -128,24 +97,13 @@ const navigationDefinitions: NavigationGroup[] = [
     intro: '宏翔商道 / Elexvx 是公司主体，Elexvx Research 是可替换的研究工作名称。',
     href: '/company',
     paths: ['/company', '/business', '/careers', '/contact'],
-    columns: [
-      {
-        title: '公司',
-        links: [
-          { label: '关于公司', href: '/company' },
-          { label: '团队', href: '/company/team' },
-          { label: '企业资质', href: '/company/qualifications' },
-          { label: '品牌使用', href: '/company/brand' },
-          { label: '设计规范', href: '/company/design' },
-        ],
-      },
-      {
-        title: '联系 Elexvx',
-        links: [
-          { label: '联系我们', href: '/contact' },
-          { label: '加入 Elexvx', href: '/careers' },
-        ],
-      },
+    links: [
+      { label: '团队', href: '/company/team' },
+      { label: '企业资质', href: '/company/qualifications' },
+      { label: '品牌使用', href: '/company/brand' },
+      { label: '设计规范', href: '/company/design' },
+      { label: '联系我们', href: '/contact' },
+      { label: '加入 Elexvx', href: '/careers' },
     ],
   },
   {
@@ -156,26 +114,11 @@ const navigationDefinitions: NavigationGroup[] = [
     intro: '把研究问题转化为可以验证、交付和继续发展的技术系统。',
     href: '/capabilities',
     paths: ['/capabilities'],
-    columns: [
-      {
-        title: '研发方法',
-        links: [
-          { label: '总览', href: '/capabilities' },
-          { label: '从问题出发', href: '/capabilities' },
-          { label: '进入真实场景', href: '/scenarios' },
-        ],
-      },
-      {
-        title: '系统基础',
-        links: [{ label: '模型安全与评测', href: '/research/llm-ai-safety' }],
-      },
-      {
-        title: '面向合作',
-        links: [
-          { label: '开放合作', href: '/contact' },
-          { label: '了解公司主体', href: '/company' },
-        ],
-      },
+    links: [
+      { label: '进入真实场景', href: '/scenarios' },
+      { label: '模型安全与评测', href: '/research/llm-ai-safety' },
+      startCollaborationAction,
+      { label: '了解公司主体', href: '/company' },
     ],
   },
   {
@@ -186,30 +129,11 @@ const navigationDefinitions: NavigationGroup[] = [
     intro: '用项目、产品和系统原型，说明研究已经走到哪里。',
     href: '/projects',
     paths: ['/projects'],
-    columns: [
-      {
-        title: '项目与产品',
-        links: [
-          { label: '总览', href: '/projects' },
-          { label: '起重设备智能安全管理', href: '/projects/industrial-safety' },
-        ],
-      },
-      {
-        title: '项目状态',
-        links: [
-          { label: '探索中的问题', href: '/projects' },
-          { label: '系统原型', href: '/projects/industrial-safety' },
-          { label: '进入工业现场', href: '/scenarios/industrial-operations' },
-        ],
-      },
-      {
-        title: '项目依据',
-        links: [
-          { label: '研究方向', href: '/research' },
-          { label: '技术文章', href: '/research' },
-          { label: '开放合作', href: '/contact' },
-        ],
-      },
+    links: [
+      { label: '系统原型', href: '/projects/industrial-safety' },
+      { label: '进入工业现场', href: '/scenarios/industrial-operations' },
+      { label: '技术文章', href: '/research' },
+      startCollaborationAction,
     ],
   },
   {
@@ -220,46 +144,29 @@ const navigationDefinitions: NavigationGroup[] = [
     intro: '设备、组织和人的约束，是技术系统必须面对的上下文。',
     href: '/scenarios',
     paths: ['/scenarios'],
-    columns: [
-      {
-        title: '行业场景',
-        links: [
-          { label: '总览', href: '/scenarios' },
-          { label: '工业现场与设备运营', href: '/scenarios/industrial-operations' },
-          { label: '知识工作与复杂决策', href: '/scenarios/knowledge-work' },
-          { label: '负责任的 AI 应用', href: '/scenarios/responsible-ai' },
-        ],
-      },
-      {
-        title: '对应研究',
-        links: [{ label: 'LLM / AI 安全', href: '/research/llm-ai-safety' }],
-      },
-      {
-        title: '对应成果',
-        links: [
-          { label: '起重设备智能安全管理', href: '/projects/industrial-safety' },
-          { label: '浏览全部成果', href: '/projects' },
-        ],
-      },
+    links: [
+      { label: '工业现场与设备运营', href: '/scenarios/industrial-operations' },
+      { label: '知识工作与复杂决策', href: '/scenarios/knowledge-work' },
+      { label: '负责任的 AI 应用', href: '/scenarios/responsible-ai' },
+      { label: 'LLM / AI 安全', href: '/research/llm-ai-safety' },
+      { label: '起重设备智能安全管理', href: '/projects/industrial-safety' },
+      { label: '浏览全部成果', href: '/projects' },
     ],
   },
 ];
 
 // Every menu uses the same hierarchy: one overview, then its child destinations.
-export const navigationGroups: NavigationGroup[] = navigationDefinitions.map((group) => {
-  const children = group.columns.flatMap((column) => column.links).filter((link) => link.href !== group.href);
-  const uniqueChildren = [...new Map(children.map((link) => [link.href, link])).values()];
+export const navigationGroups: NavigationGroup[] = navigationDefinitions.map(({ links, ...group }) => {
+  const uniqueChildren = [
+    ...new Map(links.filter((link) => link.href !== group.href).map((link) => [link.href, link])).values(),
+  ];
+  const overviewLabel = group.id === 'services' ? '服务' : group.id === 'company' ? '关于我们' : '总览';
   return {
     ...group,
     columns: [
       {
-        title: group.id === 'services' ? '服务入口' : group.id === 'company' ? '关于我们' : '总览',
-        links: [
-          {
-            label: group.id === 'services' ? '服务' : group.id === 'company' ? '关于我们' : '总览',
-            href: group.href,
-          },
-        ],
+        title: group.id === 'services' ? '服务入口' : overviewLabel,
+        links: [{ label: overviewLabel, href: group.href }],
       },
       ...(uniqueChildren.length
         ? [

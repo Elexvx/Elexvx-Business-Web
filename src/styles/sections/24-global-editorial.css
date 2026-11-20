@@ -1,18 +1,15 @@
 /*
  * Global editorial system.
  *
- * Keep the reference layout's hierarchy in one final layer so shared page
- * primitives do not drift back into route-specific card and spacing rules.
+ * Align shared page primitives with the layout hierarchy so route-specific
+ * card and spacing rules stay consistent across pages.
  */
 :root {
-  --page-title-size: clamp(40px, 5vw, 64px);
-  --section-title-size: clamp(28px, 2.7vw, 36px);
-  --card-title-size: 20px;
-  --body-text-size: 17px;
-  --intro-text-size: 20px;
-  --eyebrow-size: 14px;
-  --page-entry-space: 80px;
-  --section-space: clamp(72px, 8vw, 120px);
+  --body-text-size: clamp(15px, calc(14.3px + 0.19vw), 17px);
+  --intro-text-size: clamp(17px, calc(15.59px + 0.38vw), 21px);
+  --eyebrow-size: clamp(12px, calc(11.3px + 0.19vw), 14px);
+  --small-text-size: clamp(13px, calc(12.65px + 0.09vw), 14px);
+  --section-space: clamp(56px, calc(33.47px + 6.01vw), 120px);
 }
 
 .site-shell-openai {
@@ -37,8 +34,7 @@
   gap: 14px;
 }
 
-.site-shell-openai .nav-link,
-.site-shell-openai .nav-utility-link {
+.site-shell-openai .nav-link {
   font-size: 14px;
 }
 
@@ -49,7 +45,7 @@
 
 /* One centered page entry: eyebrow, title, description, optional actions. */
 .site-shell-openai .page-hero {
-  padding: 88px var(--page-gutter) 112px;
+  padding: var(--page-entry-space) var(--page-gutter) 112px;
 }
 
 .site-shell-openai .page-hero .page-hero-inner {
@@ -86,10 +82,10 @@
 .site-shell-openai .company-intro h1 {
   max-width: 900px;
   margin: 0 auto;
-  font-size: clamp(40px, 5.5vw, 64px);
-  font-weight: 400;
-  line-height: 1.2;
-  letter-spacing: -0.035em;
+  font-size: var(--page-title-size);
+  font-weight: 500;
+  line-height: 1.12;
+  letter-spacing: -0.04em;
   text-wrap: balance;
 }
 
@@ -98,7 +94,7 @@
   max-width: 480px;
   margin: 24px auto 0;
   color: var(--color-ink);
-  font-size: clamp(18px, 1.6vw, 20px);
+  font-size: var(--intro-text-size);
   font-weight: 400;
   line-height: 1.6;
   text-wrap: balance;
@@ -118,7 +114,7 @@
 }
 
 .site-shell-openai :is(.team-page, .design-guide, .careers-page):has(> .company-intro) {
-  padding-top: 88px;
+  padding-top: var(--page-entry-space);
 }
 
 .site-shell-openai :is(.team-page, .design-guide, .careers-page) > .company-intro {
@@ -132,9 +128,8 @@
  */
 .site-shell-openai
   :is(
-    .team-page > .team-grid,
+    .team-page > .team-group,
     .qualifications-page > .qualification-section,
-    .contact-page > .contact-card-grid,
     .design-guide > .design-section,
     .careers-page > .careers-culture,
     .careers-page > .careers-roles,
@@ -178,17 +173,6 @@
   padding: var(--page-entry-space) var(--page-gutter) var(--section-space);
   color: var(--color-ink);
   background: var(--color-canvas);
-}
-
-.site-shell-openai .product-index > h1 {
-  margin: 0;
-}
-
-.site-shell-openai .product-index > .research-index-tabs {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 24px;
-  margin: 32px 0;
 }
 
 .site-shell-openai .product-index .home-products-grid {
@@ -328,21 +312,67 @@
   line-height: 1.65;
 }
 
-.site-shell-openai .article-layout {
+.site-shell-openai :is(.article-layout, .job-detail, .lumira-product, .team-profile) {
   padding-top: var(--page-entry-space);
+}
+
+.site-shell-openai .article-layout {
   padding-bottom: var(--section-space);
 }
 
+/* Article typography: one family, regular copy and medium emphasis. */
+.site-shell-openai .article-layout {
+  font-family: var(--font-system);
+  font-weight: 400;
+}
+
+.site-shell-openai .article-body :is(h1, h2, h3, h4, h5, h6) {
+  font-family: inherit;
+  font-weight: 500;
+  line-height: 1.4;
+  letter-spacing: -0.015em;
+  color: var(--color-ink);
+}
+
+.site-shell-openai .article-body h2 {
+  font-size: clamp(21px, calc(17.83px + 0.85vw), 30px);
+}
+
+.site-shell-openai .article-body h3 {
+  font-size: clamp(18px, calc(15.89px + 0.56vw), 24px);
+}
+
+.site-shell-openai .article-body :is(h4, h5, h6) {
+  font-size: var(--card-title-size);
+}
+
+.site-shell-openai .article-body :is(p, li, table, blockquote) {
+  font-weight: 400;
+  line-height: 1.8;
+}
+
+.site-shell-openai .article-layout :is(strong, b),
+.site-shell-openai .article-body th {
+  font-weight: 500;
+}
+
+.site-shell-openai .article-excerpt {
+  font-weight: 400;
+  line-height: 1.7;
+}
+
+.site-shell-openai .article-layout :is(.article-kicker, .article-kicker .eyebrow, .article-meta, .article-toc) {
+  font-family: inherit;
+  font-weight: 400;
+}
+
 .site-shell-openai .article-header h1,
-.site-shell-openai .research-index-header h1,
-.site-shell-openai .team-heading h1,
-.site-shell-openai .team-biography h1,
-.site-shell-openai .design-guide-header h1 {
+.site-shell-openai .team-biography h1 {
   font-size: var(--page-title-size);
   line-height: 1.05;
 }
 
-.site-shell-openai :is(.research-index-header h1, .team-heading h1, .team-biography h1, .design-guide-header h1) {
+.site-shell-openai .team-biography h1 {
   text-wrap: balance;
 }
 
@@ -392,7 +422,7 @@
 .site-shell-openai.company-overview .company-introduction .company-belief {
   padding-top: 24px;
   border-top: 1px solid var(--color-hairline);
-  font-size: 20px;
+  font-size: var(--intro-text-size);
   line-height: 1.55;
 }
 
@@ -407,7 +437,7 @@
   padding: 24px;
   border: 1px solid var(--color-hairline);
   border-radius: 16px;
-  background: color-mix(in srgb, var(--color-ink) 3%, var(--color-canvas));
+  background: var(--color-surface-neutral);
 }
 
 .site-shell-openai.company-overview .company-content-row h3 {
@@ -426,40 +456,17 @@
   padding: 24px;
   border: 1px solid var(--color-hairline);
   border-radius: 16px;
-  background: color-mix(in srgb, var(--color-ink) 3%, var(--color-canvas));
+  background: var(--color-surface-neutral);
 }
 
 .site-shell-openai.company-overview .company-stats dd {
-  font-size: clamp(36px, 4vw, 56px);
+  font-size: var(--page-title-size);
   line-height: 1;
 }
 
-.site-shell-openai .contact-info-card {
-  padding: 24px 0 0;
-  border: 0;
-  border-top: 1px solid var(--color-hairline);
-  border-radius: 0;
-  background: transparent;
-}
-
 @media (max-width: 720px) {
-  :root {
-    --page-title-size: 40px;
-    --section-title-size: 28px;
-    --card-title-size: 18px;
-    --intro-text-size: 18px;
-    --eyebrow-size: 13px;
-    --page-entry-space: 48px;
-    --section-space: 72px;
-  }
-
   .site-shell-openai .page-hero {
-    padding-top: 64px;
     padding-bottom: 72px;
-  }
-
-  .site-shell-openai :is(.team-page, .design-guide, .careers-page):has(> .company-intro) {
-    padding-top: 64px;
   }
 
   .site-shell-openai :is(.team-page, .design-guide, .careers-page) > .company-intro {
@@ -487,10 +494,6 @@
     margin-bottom: 28px;
   }
 
-  .site-shell-openai.company-overview .company-introduction .company-belief {
-    font-size: 18px;
-  }
-
   .site-shell-openai.company-overview .company-content-list {
     gap: 24px 16px;
   }
@@ -505,8 +508,13 @@
     padding: 18px;
     border-radius: 14px;
   }
+}
 
-  .site-shell-openai .contact-card-grid {
-    gap: 32px;
-  }
+.site-shell-openai .team-page > .company-intro {
+  margin-bottom: clamp(48px, 7vw, 88px);
+}
+
+/* The news index uses the page entry spacing above its editorial list. */
+.site-shell-openai.site-shell-news .news-index-section {
+  padding-top: var(--page-entry-space);
 }

@@ -1,19 +1,16 @@
 /**
- * Contact data restored from the original company contact page.
- * Source: commit f59b3f41a6e4ad95a350da2c8ab19c3abe75eb3c,
- * src/pages/company/contact.astro (primary email at L34; office cards at L38-L108;
- * department email cards at L111-L149).
- *
- * The HR entity name is visible on the business and service-license scans used by
- * src/pages/service/hr-services.astro (same commit, L96-L123). No legal names are
- * assigned to the other two office groups.
+ * The HR entity name comes from the business and service-license scans.
+ * No legal names are assigned to the other two office groups.
  */
 export const primaryContactEmail = 'elexvx@elexvx.com';
+export const hrContactEmail = 'hr@elexvx.com';
+
+export const startCollaborationAction = { label: '开始合作', href: '/contact' } as const;
 
 export const departmentContactEmails = [
   { id: 'shareholders', department: '股东会', email: primaryContactEmail },
   { id: 'investment', department: '投资发展部', email: 'vc@elexvx.com' },
-  { id: 'human-resources', department: '人事部', email: 'hr@elexvx.com' },
+  { id: 'human-resources', department: '人事部', email: hrContactEmail },
   { id: 'product-support', department: '产品支持', email: 'support@elexvx.com' },
   { id: 'software-technology', department: '软件技术部', email: 'it@elexvx.com' },
   { id: 'discipline-inspection', department: '支部纪检组', email: 'jw@elexvx.com' },

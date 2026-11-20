@@ -15,7 +15,7 @@
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react-jsx",
-    "types": ["vite/client", "node"],
+    "types": ["node"],
     "incremental": true,
     "plugins": [
       {
@@ -27,12 +27,9 @@
     "next-env.d.ts",
     "src/app",
     "src/content",
-    "src/main.tsx",
-    "src/ssg",
     "scripts",
     "release-assets/humite-content.ts",
     "tests",
-    "vite.config.ts",
     "vitest.config.ts",
     "next.config.mjs",
     "dist/types/**/*.ts",
@@ -45,5 +42,5 @@
     "dist-dev/types/**/*.ts",
     "dist-dev/dev/types/**/*.ts"
   ],
-  "exclude": ["dist", "node_modules", ".astro", "archive"]
+  "exclude": ["dist", "node_modules"]
 }

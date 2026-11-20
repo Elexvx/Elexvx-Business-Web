@@ -1,5 +1,6 @@
 import { readdir, readFile, stat, unlink } from 'node:fs/promises';
 import { relative, resolve, sep } from 'node:path';
+import { decodeXmlEntities } from '../src/content/html-entities.mjs';
 import { assertHumiteEmbargo, humiteAssetPaths, humiteScenePath, isHumitePublicBuild } from './humite-export.mjs';
 
 // Prune only the generated deployment output; source images under public/ stay untouched.
@@ -11,7 +12,7 @@ const maxOutputBytes = 160 * 1024 * 1024;
 const prelaunch = !isHumitePublicBuild();
 
 const toLocalPath = (value, basePath) => {
-  const trimmed = value.trim().replaceAll('&amp;', '&');
+  const trimmed = decodeXmlEntities(value.trim());
   if (!trimmed || /^(?:data:|blob:|javascript:|mailto:|tel:|#)/i.test(trimmed)) return null;
 
   let url;
@@ -153,6 +154,7 @@ const removeFinderMetadata = async (directory) => {
   }
 };
 await removeFinderMetadata(root);
+
 if (prelaunch) await assertHumiteEmbargo(root);
 
 const outputBytes = await countOutputBytes(root);

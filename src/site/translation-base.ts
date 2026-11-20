@@ -3,6 +3,39 @@ import { humiteContent } from '#humite-content';
 export const existingEnglish: Record<string, string> = {
   新: 'new',
   动态更新: 'UPDATE',
+  新闻动态: 'NEWSROOM',
+  产品一览: 'PRODUCTS',
+  合作实践: 'COOPERATION CASES',
+  阿里云: 'Alibaba Cloud',
+  腾讯: 'Tencent',
+  支付宝: 'Alipay',
+  微信支付: 'WeChat Pay',
+  林汐智觉: 'Linxi Cognitive Tech',
+  桐谷霁屿: 'Tongu Jiyu',
+  生态合作伙伴: 'Ecosystem partners',
+  以上均为生态合作伙伴: 'All brands shown above are ecosystem partners.',
+  集米荟: 'Jimihui',
+  集数财务: 'Jishu Financial',
+  'Elexvx 工作空间': 'Elexvx Workspace',
+  'ELEXVX · 携手协作': 'ELEXVX · WORK TOGETHER',
+  协作从这里开始: 'YOUR WORK, CONNECTED',
+  交互演示: 'Interactive demo',
+  演示导航: 'Demo navigation',
+  '演示数据，可点击菜单和项目体验。': 'Sample data. Select a menu or project to explore.',
+  '仅展示示例内容，不连接真实业务数据。': 'Sample content only. No live business data is connected.',
+  返回列表: 'Back to list',
+  '梳理关键使用流程，持续优化产品体验。': 'Review key workflows and improve the product experience.',
+  '汇总项目文档与团队经验，建立共享知识空间。': 'Bring project documents and team knowledge into a shared workspace.',
+  '协调议程、参与人员与活动资料。': 'Coordinate the agenda, participants, and event materials.',
+  产品体验工作坊: 'Product experience workshop',
+  'J · 产品设计': 'J \u00b7 Product design',
+  'L · 技术研发': 'L \u00b7 Engineering',
+  'Y · 运营协作': 'Y \u00b7 Operations',
+  '产品需求说明.pdf': 'Product requirements.pdf',
+  '团队协作指南.pdf': 'Team collaboration guide.pdf',
+  '活动议程.pdf': 'Event agenda.pdf',
+  模拟: 'Simulation',
+  ...humiteContent?.english,
   产品介绍: 'Product introduction',
   '先卖个关子，精彩正在路上。': 'Keeping a little secret until launch.',
   '还不到亮相的时候，但值得等这一会儿。': 'Not quite time yet, but definitely worth the wait.',
@@ -16,7 +49,33 @@ export const existingEnglish: Record<string, string> = {
   时: 'Hours',
   分: 'Min',
   秒: 'Sec',
-  ...humiteContent?.english,
+  工作概览: 'Overview',
+  项目空间: 'Projects',
+  活动管理: 'Events',
+  团队协作: 'Team',
+  文件中心: 'Files',
+  工作空间: 'Workspace',
+  概览: 'Overview',
+  '每一份进展，都在这里。': 'A clear view of every step.',
+  界面演示: 'UI demo',
+  进行中的项目: 'Active projects',
+  团队成员: 'Team members',
+  已完成任务: 'Tasks completed',
+  项目动态: 'Project updates',
+  本周: 'This week',
+  全部项目: 'All projects',
+  项目名称: 'Project',
+  状态: 'Status',
+  参与成员: 'Members',
+  进度: 'Progress',
+  产品体验升级: 'Product experience',
+  体验设计: 'Experience design',
+  团队知识库: 'Team knowledge base',
+  知识协作: 'Knowledge sharing',
+  秋季技术交流: 'Technology meetup',
+  活动运营: 'Event operations',
+  进行中: 'In progress',
+  '连接想法与行动，让协作井然有序。': 'Connect ideas and action. Keep every collaboration in sync.',
   'Elexvx Research 首页': 'Elexvx Research home',
   'Elexvx Research 内容基线': 'Elexvx Research content baseline',
   'Elexvx 白色标志': 'Elexvx white logo',
@@ -33,7 +92,6 @@ export const existingEnglish: Record<string, string> = {
   '中文优先，保留必要的 English technical terms；只公开已经说明来源和边界的内容。':
     'We publish source-aware research notes with clearly stated boundaries.',
   新闻: 'News',
-  最近新闻: 'Latest news',
   探索新闻: 'Explore news',
   活动: 'Activities',
   产品: 'Products',
@@ -45,14 +103,6 @@ export const existingEnglish: Record<string, string> = {
   项目路演: 'Project roadshows',
   设计规范: 'Design system',
   公告: 'Announcement',
-  'ElexvxAI 创新产业研发中心正式成立': 'ElexvxAI Innovation Industry R&D Center officially established',
-  'ElexvxAI 创新产业研发中心于 2026 年 3 月 6 日正式成立，我们将持续推进 AI 研究、工程实践与产业落地。':
-    'ElexvxAI Innovation Industry R&D Center was officially established on March 6, 2026, and will continue advancing AI research, engineering practice, and industrial applications.',
-  '中心成立后，将持续推进 AI 研究、工程实践与产业落地。':
-    'The center will continue advancing AI research, engineering practice, and industrial applications.',
-  创新产业研发中心: 'Innovation R&D Center',
-  'AI 研究': 'AI research',
-  产业落地: 'Industrial applications',
   服务: 'Services',
   '进入 Elexvx 服务站点': 'Access Elexvx service sites',
   帮助文档: 'Help documentation',
@@ -101,36 +151,6 @@ export const existingEnglish: Record<string, string> = {
   打开导航菜单: 'Open navigation',
   '加入 Elexvx': 'Join Elexvx',
   联系我们: 'Contact us',
-  联系邮箱: 'Contact email',
-  通过邮件联系我们: 'Contact us by email',
-  主要联系邮箱: 'Primary contact email',
-  部门邮箱: 'Department email addresses',
-  办公地点: 'Office locations',
-  人力资源: 'Human Resources',
-  商贸零售: 'Trade & Retail',
-  研发中心: 'R&D Center',
-  查看地图: 'View map',
-  企业信用: 'Business credit profile',
-  股东会: 'Shareholders’ Meeting',
-  投资发展部: 'Investment & Development',
-  人事部: 'Human Resources',
-  产品支持: 'Product Support',
-  软件技术部: 'Software Technology',
-  支部纪检组: 'Branch Discipline Inspection Team',
-  '中国 · 江苏 · 南京 · 建邺区': 'Jianye District, Nanjing, Jiangsu, China',
-  平良大街89号负一层韶华工坊773号: 'Room 773, Shaohua Workshop, B1, No. 89 Pingliang Avenue',
-  '中国 · 江苏 · 南京 · 六合区': 'Liuhe District, Nanjing, Jiangsu, China',
-  金牛湖街道八百桥社区青龙市场街109号1928室:
-    'Room 1928, No. 109 Qinglong Market Street, Babaiqiao Community, Jinniuhu Subdistrict',
-  '中国 · 江苏 · 镇江 · 句容市': 'Jurong, Zhenjiang, Jiangsu, China',
-  宝华镇开发区121号: 'No. 121, Baohua Town Development Zone',
-  江苏宏翔商道劳务服务有限公司: 'Jiangsu Hongxiang Shangdao Labor Service Co., Ltd.',
-  '邮件中请留下姓名、联系方式与合作事项。':
-    'Please include your name, contact details, and the matter you would like to discuss.',
-  发送邮件: 'Send an email',
-  复制邮箱地址: 'Copy email address',
-  '邮箱地址已复制。': 'Email address copied.',
-  '复制失败，请手动复制邮箱地址。': 'Copy failed. Please copy the email address manually.',
   研究方向与入口: 'Research directions and links',
   发送合作邮件: 'Email our team',
   '合作方名称、项目边界、交付内容和可公开成果确认后，再形成完整案例；未授权信息不使用模糊话术替代。':
@@ -153,8 +173,6 @@ export const existingEnglish: Record<string, string> = {
     'Every qualification and intellectual-property record is part of a capability that can be verified.',
   '从信息层级到页面边界，让复杂内容保持清楚、安静、可读。':
     'From information hierarchy to page boundaries, we keep complex content clear, quiet, and readable.',
-  '和认真做事的人一起，把真实问题变成可以使用的系统。':
-    'Work with people who care about the craft of turning real problems into useful systems.',
   '从一个真实问题开始，让一次对话走向可验证的合作。':
     'Start with a real problem and let a conversation grow into verifiable collaboration.',
   '每一次表达，都应保持清楚、一致、可辨认。': 'Every expression should remain clear, consistent, and recognizable.',
@@ -178,9 +196,7 @@ export const existingEnglish: Record<string, string> = {
   并行业务入口: 'Business line',
   并行业务总览: 'Business overview',
   '并行业务继续存在，但不替代研究主线。': 'Our business lines continue alongside—but do not replace—our research.',
-  开放合作: 'Collaborate',
-  开放场景合作: 'Propose a scenario',
-  开放技术合作: 'Start a technical collaboration',
+  开始合作: 'Start collaborating',
   '归档区正在整理。': 'The archive is being organized.',
   '当前项目以内部技术材料作为公开内容的基础；后续会在素材和审核完成后补充更完整的图像、文档与评测记录。':
     'Current public material is based on internal technical documentation. Images, documents, and evaluation records will be added after review.',
@@ -195,7 +211,6 @@ export const existingEnglish: Record<string, string> = {
   '我们正在建立以研究方向、工程实践和真实场景为中心的团队。':
     'We are building a team around research directions, engineering practice, and real-world contexts.',
   '我们研究什么，决定我们如何研发。': 'What we research shapes how we build.',
-  '想象力，真的没有边界': 'Imagination truly has no boundaries.',
   '宏翔商道-Elexvx 是一家跨行业研发公司，以 AI 与数据智能为核心，聚焦企业管理、知识工作与负责任的 AI 应用，持续构建可验证的产品与系统。':
     'Hongxiang Shangdao-Elexvx is a cross-industry R&D company focused on enterprise management, knowledge work, and responsible AI applications, building verifiable products and systems.',
   技术文章: 'Insights',
@@ -264,7 +279,6 @@ export const existingEnglish: Record<string, string> = {
   研究: 'Research',
   研究入口: 'Research pathways',
   研究方向: 'Research',
-  企业管理平台: 'Enterprise management platform',
   家庭电子书库: 'Family digital library',
   '查看 GitHub 项目': 'View on GitHub',
   '面向企业管理场景的 SaaS 平台，支持本地部署与容器化部署。':
@@ -285,8 +299,6 @@ export const existingEnglish: Record<string, string> = {
   '蓝色、青色、紫色与珊瑚色交融的抽象渐变色域': 'Abstract blue, cyan, violet, and coral gradient field',
   行业场景: 'Scenarios',
   行业场景总览: 'Scenario overview',
-  讨论一个技术问题: 'Discuss a technical problem',
-  讨论相关合作: 'Discuss collaboration',
   '让研发过程可以被看见、被复盘、被继续。': 'Make the R&D process visible, reviewable, and extensible.',
   '证据必须和结论放在一起。': 'Evidence belongs beside the conclusion.',
   '这些业务由公司主体承接，拥有独立入口和清晰边界，不再与研究方向混在首页第一层。':
@@ -315,13 +327,11 @@ export const existingEnglish: Record<string, string> = {
   对外投资: 'External investment',
   往期考试: 'Past examinations',
   工业智能: 'Industrial intelligence',
-  知识产权: 'Intellectual property',
   '一套面向起重设备全生命周期的智能安全管理系统原型。':
     'A prototype intelligent safety management system for the full lifecycle of lifting equipment.',
   '与组织和人才相关的服务能力，作为公司并行业务独立呈现。':
     'Organization and talent services presented as an independent company business line.',
   业务状态: 'Business status',
-  人力资源服务: 'Human resources',
   人机协作反馈: 'Human-AI feedback',
   '什么样的证据能够说明事情变好了？': 'What evidence would show that the situation improved?',
   '从数据、设备与模型出发，理解技术如何进入真实世界。':
@@ -331,7 +341,6 @@ export const existingEnglish: Record<string, string> = {
     'Use multi-sensor data, industrial IoT, and cloud systems to connect monitoring, alerts, management, and feedback.',
   '以真实问题决定技术方向。': 'Let real problems determine technical direction.',
   供应链服务: 'Supply chain',
-  '先定义问题，再选择模型': 'Define the problem before choosing the model',
   公开边界: 'Disclosure boundary',
   '关于模型能力、工程系统与人的控制之间，仍在整理中的研究问题。':
     'An emerging research question about model capability, engineered systems, and human control.',
@@ -366,8 +375,6 @@ export const existingEnglish: Record<string, string> = {
   '将数据、算法、硬件和软件组织为可以持续迭代的系统原型。':
     'Organize data, algorithms, hardware, and software into an iterative system prototype.',
   工业智能与安全: 'Industrial Intelligence & Safety',
-  '工业智能的第一步，不是增加一个仪表盘，而是让分散的现场信号重新进入同一个判断过程。':
-    'The first step in industrial intelligence is not another dashboard, but bringing fragmented field signals back into one decision process.',
   工业物联与设备: 'Industrial IoT and equipment',
   工业现场与设备运营: 'Industrial operations',
   '工作名称，可替换': 'Replaceable working name',
@@ -375,7 +382,6 @@ export const existingEnglish: Record<string, string> = {
   '当设备、环境和人员同时变化，系统需要持续感知并帮助人做出判断。':
     'When equipment, environments, and people change together, systems must sense continuously and support human judgment.',
   形成长期能力: 'Build lasting capability',
-  待补充: 'To be added',
   成果: 'Outcomes',
   把研究过程写下来: 'Document the research process',
   '把研究问题转化为可以验证、交付和继续发展的技术系统。':
@@ -402,12 +408,9 @@ export const existingEnglish: Record<string, string> = {
   '用项目、产品和系统原型，说明研究已经走到哪里。':
     'Show how far research has progressed through projects, products, and system prototypes.',
   看见研究如何落地: 'See how research becomes real',
-  知识产权服务: 'Intellectual property',
   知识工作与复杂决策: 'Knowledge work and complex decisions',
   研究方向关系图: 'Research direction map',
   '研究流程 / 输出关系图': 'Research process / output map',
-  '研究的起点不是模型名称，而是一个可以被描述、被验证、被继续追问的问题。':
-    'Research begins not with a model name, but with a question that can be described, tested, and pursued.',
   '研究系统 / 真实问题': 'Research system / real problem',
   系统原型: 'System prototype',
   系统基础: 'System foundations',
@@ -419,7 +422,6 @@ export const existingEnglish: Record<string, string> = {
   '联系 Elexvx': 'Contact Elexvx',
   能力: 'Capabilities',
   '让研究成果能够被理解、被使用、被继续发展。': 'Make research outcomes understandable, usable, and extensible.',
-  让设备数据回到现场: 'Bring equipment data back into operations',
   '设备、组织和人的约束，是技术系统必须面对的上下文。':
     'The constraints of equipment, organizations, and people are the context every technical system must face.',
   评测与可观测性: 'Evaluation and observability',
@@ -444,7 +446,7 @@ export const existingEnglish: Record<string, string> = {
   面向合作: 'Collaboration',
   '面向商贸与供应链流程的业务能力。': 'Business capability for trade and supply-chain processes.',
   '面向真实世界复杂问题的 AI 与数据智能研发门户。':
-    'An AI and data-intelligence R&D portal for complex real-world problems.',
+    'An AI and data-intelligence research portal for complex real-world problems.',
   '面向设备、作业和环境的变化，研究可感知、可预警、可追溯的工业系统。':
     'Researching industrial systems that sense, warn, and remain traceable as equipment, operations, and environments change.',
   项目与产品: 'Projects and products',
@@ -486,34 +488,6 @@ export const existingEnglish: Record<string, string> = {
   '面向多设备、多工况的工业现场，构建从感知、预警到管理反馈的安全判断闭环。':
     'Build a closed safety loop from sensing and alerts to management feedback across equipment and operating conditions.',
   了解公司与研究主体: 'Understand the company and research identity',
-  '研究不从模型名称开始。': 'Research does not begin with a model name.',
-  '在真实场景里，问题通常不是“要不要使用 AI”，而是：哪些信息正在被遗漏？哪些判断依赖经验？哪些步骤可以被验证？只有把问题说清楚，数据、模型和系统才有了共同的方向。':
-    'In real contexts, the question is rarely whether to use AI. It is which information is being missed, which decisions rely on experience, and which steps can be validated. Data, models, and systems gain a shared direction only after the problem is clear.',
-  从问题到系统: 'From question to system',
-  '一个可持续的研发过程，需要同时关注三个层面：':
-    'A sustainable R&D process must address three dimensions at the same time:',
-  '问题是否来自真实工作流；': 'Whether the problem comes from a real workflow;',
-  '数据是否足以支持判断；': 'Whether the data is sufficient to support judgment;',
-  '结果是否能够回到人的行动中。': 'Whether the result can return to human action.',
-  '模型只是系统中的一部分。研究的价值，在于让每一部分之间的关系可以被理解、被测试，也可以在下一轮迭代中继续使用。':
-    'A model is only one part of a system. Research creates value by making the relationships between parts understandable, testable, and reusable in the next iteration.',
-  我们如何记录研究: 'How we document research',
-  '每一项研究都应该留下问题、方法、限制和下一步。这样的记录不追求把不确定性藏起来，而是让后来的人能够知道结论从哪里来，以及它还没有回答什么。':
-    'Every research effort should leave behind its question, method, limitations, and next step. The record does not hide uncertainty; it shows where conclusions came from and what remains unanswered.',
-  '在设备运营现场，数据往往已经存在。真正困难的是，不同设备、不同协议和不同工况下的数据，很难形成连续的上下文。':
-    'Operational data often already exists. The real difficulty is forming continuous context across different equipment, protocols, and operating conditions.',
-  从采集走向理解: 'From collection to understanding',
-  '起重设备智能安全管理项目以设备状态、环境变化和作业过程为研究对象，尝试把传感器、工业物联网与云端系统组织到同一条信息链中。':
-    'The intelligent lifting-equipment safety project studies equipment state, environmental change, and operating processes, bringing sensors, industrial IoT, and cloud systems into one information chain.',
-  '这条链路至少包含三个动作：': 'This chain includes at least three actions:',
-  '让设备状态能够被持续采集；': 'Continuously collect equipment state;',
-  '让异常信号能够结合工况被理解；': 'Interpret abnormal signals in operating context;',
-  '让判断结果能够回到管理、维护与现场协作。': 'Return judgment to management, maintenance, and field collaboration.',
-  系统必须承认现场的复杂性: 'Systems must acknowledge operational complexity',
-  '固定阈值可以作为起点，但不能替代对环境和设备差异的理解。工业系统的可靠性，来自数据、模型、设备和人的工作方式共同被验证，而不是来自某一个孤立的算法名词。':
-    'Fixed thresholds can be a starting point, but they cannot replace an understanding of environmental and equipment differences. Industrial reliability comes from validating data, models, equipment, and human workflows together—not from an isolated algorithm name.',
-  '当前项目材料仍在持续整理。后续公开内容将区分已经确认的系统结构、仍需核验的指标，以及尚未完成的研究问题。':
-    'Project material is still being organized. Future publications will distinguish confirmed system structure, metrics awaiting verification, and unresolved research questions.',
 };
 
 export const translateWithDictionary = (value: string, english: Record<string, string>): string => {

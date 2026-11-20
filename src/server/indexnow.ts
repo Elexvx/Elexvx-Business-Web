@@ -1,22 +1,20 @@
-const host = 'www.elexvx.com';
-const origin = `https://${host}`;
-const keyFile = 'f84f594ae29eba5b114a6fe74823cadb422fecf00fdb530ed6c4c6ffaaa3aef4.txt';
-const key = keyFile.slice(0, -4);
-const keyLocation = `${origin}/${keyFile}`;
-const contentPath = /^\/(?:en\/)?(?:(?:activities|news|research)(?:\/(?:category\/)?[^/]+)?|insights\/[^/]+)\/?$/;
+import { decodeXmlEntities } from '../content/html-entities.mjs';
+import { CANONICAL_HOST, CANONICAL_ORIGIN, INDEXNOW_KEY, INDEXNOW_KEY_FILE } from '../data/site-origins';
 
-export type IndexNowSubmission = {
+export { INDEXNOW_KEY };
+
+const host = CANONICAL_HOST;
+const origin = CANONICAL_ORIGIN;
+const key = INDEXNOW_KEY;
+const keyLocation = `${origin}/${INDEXNOW_KEY_FILE}`;
+const contentPath = /^\/(?:en\/)?(?:(?:activities|news|research)(?:\/(?:category\/)?[^/]+)?|insights\/[^/]+)\/?$/;
+const DEFAULT_LOOKBACK_DAYS = 3;
+const MILLISECONDS_PER_DAY = 24 * 60 * 60 * 1000;
+
+type IndexNowSubmission = {
   status: number;
   urls: string[];
 };
-
-const decodeXml = (value: string) =>
-  value
-    .replaceAll('&amp;', '&')
-    .replaceAll('&lt;', '<')
-    .replaceAll('&gt;', '>')
-    .replaceAll('&quot;', '"')
-    .replaceAll('&apos;', "'");
 
 const validateUrls = (urls: string[]) => {
   const uniqueUrls = [...new Set(urls)];
@@ -60,35 +58,40 @@ const postIndexNow = async (
 export const submitIndexNowUrls = async (urls: string[], verificationUrl?: string | false) =>
   postIndexNow(urls, verificationUrl);
 
+const parseSitemapEntryUrl = (entry: string, cutoff: number, includeAll: boolean): string | null => {
+  const location = entry.match(/<loc>([\s\S]*?)<\/loc>/i)?.[1];
+  if (!location) return null;
+
+  let url: URL;
+  try {
+    url = new URL(decodeXmlEntities(location.trim()));
+  } catch {
+    return null;
+  }
+  if (url.protocol !== 'https:' || url.host !== host || url.search || url.hash || !contentPath.test(url.pathname)) {
+    return null;
+  }
+  const lastmod = entry.match(/<lastmod>([\s\S]*?)<\/lastmod>/i)?.[1];
+  const lastModifiedAt = lastmod ? Date.parse(decodeXmlEntities(lastmod.trim())) : Number.NaN;
+  if (!includeAll && (!Number.isFinite(lastModifiedAt) || lastModifiedAt < cutoff)) return null;
+  return url.href;
+};
+
 export const selectIndexNowUrls = (
   xml: string,
   options: { lookbackDays?: number; includeAll?: boolean; now?: number } = {}
 ) => {
-  const lookbackDays = options.lookbackDays ?? 3;
+  const lookbackDays = options.lookbackDays ?? DEFAULT_LOOKBACK_DAYS;
   if (!Number.isFinite(lookbackDays) || lookbackDays < 1) {
     throw new Error('IndexNow lookbackDays must be a positive number.');
   }
 
   if (!/<urlset\b/i.test(xml)) throw new Error('Production sitemap is not a URL sitemap.');
-  const cutoff = (options.now ?? Date.now()) - lookbackDays * 24 * 60 * 60 * 1000;
-  const entries = [...xml.matchAll(/<url\b[^>]*>([\s\S]*?)<\/url>/gi)];
-  const urls = entries.flatMap(([, entry]) => {
-    const location = entry.match(/<loc>([\s\S]*?)<\/loc>/i)?.[1];
-    const lastmod = entry.match(/<lastmod>([\s\S]*?)<\/lastmod>/i)?.[1];
-    if (!location) return [];
-
-    let url: URL;
-    try {
-      url = new URL(decodeXml(location.trim()));
-    } catch {
-      return [];
-    }
-    if (url.protocol !== 'https:' || url.host !== host || url.search || url.hash || !contentPath.test(url.pathname))
-      return [];
-    const lastModifiedAt = lastmod ? Date.parse(decodeXml(lastmod.trim())) : Number.NaN;
-    if (!options.includeAll && (!Number.isFinite(lastModifiedAt) || lastModifiedAt < cutoff)) return [];
-    return [url.href];
-  });
+  const cutoff = (options.now ?? Date.now()) - lookbackDays * MILLISECONDS_PER_DAY;
+  const includeAll = Boolean(options.includeAll);
+  const urls = [...xml.matchAll(/<url\b[^>]*>([\s\S]*?)<\/url>/gi)]
+    .map(([, entry]) => parseSitemapEntryUrl(entry, cutoff, includeAll))
+    .filter((value): value is string => value !== null);
 
   return [...new Set(urls)];
 };

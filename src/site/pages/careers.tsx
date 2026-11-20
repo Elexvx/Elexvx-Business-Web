@@ -1,12 +1,11 @@
 'use client';
-import { Translated } from '../providers/i18n';
+import { Translated, useI18n } from '../providers/i18n';
 import { CompanyIntro } from '../components/company-intro';
 import { SiteSelect } from '../components/primitives/select';
 import { useState } from 'react';
 import { jobs, jobsData, jobApplicationHref } from '../../data/jobs';
 import { careersContent } from '../../data/careers';
 import { SiteShell, ActionButton } from '../components/index';
-import { useI18n } from '../providers/i18n';
 import { NotFoundPage } from './shared';
 
 export const CareersPage = () => {
@@ -26,7 +25,7 @@ export const CareersPage = () => {
     <SiteShell activePath="/careers">
       <div className="careers-page">
         <CompanyIntro eyebrow="ELEXVX CAREERS" title="加入 Elexvx" description={careersContent.intro}>
-          <ActionButton href="#open-roles">查看热招职位</ActionButton>
+          {jobs.length > 0 && <ActionButton href="#open-roles">查看热招职位</ActionButton>}
         </CompanyIntro>
         <section className="careers-culture" aria-labelledby="culture-title">
           <h2 id="culture-title">
@@ -72,76 +71,77 @@ export const CareersPage = () => {
             </div>
           </div>
         </section>
-        <section className="careers-roles" id="open-roles" aria-labelledby="roles-title">
-          <h2 id="roles-title">
-            <Translated>{'热招职位'}</Translated>
-          </h2>
-          <p>
-            <Translated>{'我们正在寻找志同道合的伙伴，一起创造AI驱动的未来。'}</Translated>
-          </p>
-          <div className="careers-filters">
-            <label>
-              <Translated>{'搜索职位'}</Translated>
-              <input
-                type="search"
-                placeholder={t('职位名称或关键词')}
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-              />
-            </label>
-            <label>
-              <Translated>{'工作地点'}</Translated>
-              <SiteSelect
-                label="工作地点"
-                value={location}
-                onValueChange={setLocation}
-                allLabel="全部地点"
-                options={[
-                  ...new Set(jobs.map((job) => job.location).filter((value): value is string => Boolean(value))),
-                ]}
-              />
-            </label>
-            <label>
-              <Translated>{'职位类型'}</Translated>
-              <SiteSelect
-                label="职位类型"
-                value={type}
-                onValueChange={setType}
-                allLabel="全部类型"
-                options={[...new Set(jobs.map((job) => job.type).filter((value): value is string => Boolean(value)))]}
-              />
-            </label>
-          </div>
-          <p className="careers-count" role="status">
-            {locale === 'en'
-              ? `${visible.length} ${visible.length === 1 ? 'position' : 'positions'}`
-              : `${visible.length}个职位`}
-          </p>
-          <div className="careers-job-list">
-            {visible.map((job) => (
-              <a className="careers-job-row" key={job.id} href={href(`/careers/${job.id}`)}>
-                <h3>
-                  <Translated>{job.title}</Translated>
-                </h3>
-                <span>
-                  <Translated>{job.location}</Translated>
-                  <small>
-                    <Translated>{job.type}</Translated> · <Translated>{job.experience}</Translated>
-                  </small>
-                </span>
-                <span>
-                  <Translated>{job.salary}</Translated>
-                </span>
-                <span aria-hidden="true">↗</span>
-              </a>
-            ))}
-          </div>
-          {!visible.length && (
-            <p className="careers-empty">
-              <Translated>{'暂无匹配职位，请尝试其他关键词或筛选条件。'}</Translated>
+        {jobs.length > 0 && (
+          <section className="careers-roles" id="open-roles" aria-labelledby="roles-title">
+            <h2 id="roles-title">
+              <Translated>{'热招职位'}</Translated>
+            </h2>
+            <p>
+              <Translated>{'我们正在寻找志同道合的伙伴，一起创造AI驱动的未来。'}</Translated>
             </p>
-          )}
-        </section>
+            <div className="careers-filters">
+              <label>
+                <Translated>{'搜索职位'}</Translated>
+                <input
+                  type="search"
+                  placeholder={t('职位名称或关键词')}
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                />
+              </label>
+              <label>
+                <Translated>{'工作地点'}</Translated>
+                <SiteSelect
+                  label="工作地点"
+                  value={location}
+                  onValueChange={setLocation}
+                  allLabel="全部地点"
+                  options={[
+                    ...new Set(jobs.map((job) => job.location).filter((value): value is string => Boolean(value))),
+                  ]}
+                />
+              </label>
+              <label>
+                <Translated>{'职位类型'}</Translated>
+                <SiteSelect
+                  label="职位类型"
+                  value={type}
+                  onValueChange={setType}
+                  allLabel="全部类型"
+                  options={[...new Set(jobs.map((job) => job.type).filter((value): value is string => Boolean(value)))]}
+                />
+              </label>
+            </div>
+            <p className="careers-count" role="status">
+              {locale === 'en'
+                ? `${visible.length} ${visible.length === 1 ? 'position' : 'positions'}`
+                : `${visible.length}个职位`}
+            </p>
+            <div className="careers-job-list">
+              {visible.map((job) => (
+                <a className="careers-job-row" key={job.id} href={href(`/careers/${job.id}`)}>
+                  <h3>
+                    <Translated>{job.title}</Translated>
+                  </h3>
+                  <span>
+                    <Translated>{job.location}</Translated>
+                    <small>
+                      <Translated>{job.type}</Translated> · <Translated>{job.experience}</Translated>
+                    </small>
+                  </span>
+                  <span>
+                    <Translated>{job.salary}</Translated>
+                  </span>
+                </a>
+              ))}
+            </div>
+            {!visible.length && (
+              <p className="careers-empty">
+                <Translated>{'暂无匹配职位，请尝试其他关键词或筛选条件。'}</Translated>
+              </p>
+            )}
+          </section>
+        )}
         <section className="careers-closing">
           <h2>
             <Translated>{'加入 Elexvx，共创未来'}</Translated>
@@ -149,7 +149,7 @@ export const CareersPage = () => {
           <p>
             <Translated>{careersContent.values}</Translated>
           </p>
-          <ActionButton href="#open-roles">查看所有职位</ActionButton>
+          {jobs.length > 0 && <ActionButton href="#open-roles">查看所有职位</ActionButton>}
         </section>
       </div>
     </SiteShell>
@@ -164,7 +164,7 @@ export const JobPage = ({ id }: { id: string }) => {
     <SiteShell activePath="/careers">
       <article className="job-detail">
         <a className="team-back" href={href('/careers#open-roles')}>
-          <Translated>{'← 全部职位'}</Translated>
+          <Translated>{'全部职位'}</Translated>
         </a>
         <header>
           <p>

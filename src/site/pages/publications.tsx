@@ -1,5 +1,5 @@
 'use client';
-import { Translated } from '../providers/i18n';
+import { LocalizedText as T, LocalizedTitle as Title, Translated, useI18n } from '../providers/i18n';
 import { useArticleCategoryFilter } from '../providers/category-filter';
 import { articleCategories, newsCategorySlug } from '../../data/article-categories';
 
@@ -8,9 +8,10 @@ import { pageContent } from '../../data/page-content';
 import { useInsights, useNews, usePublishedNews } from '../providers/content-context';
 
 import { Eyebrow, ResearchTile, SiteShell } from '../components/index';
+import { IndexHeading } from '../components/index-heading';
 import { ArticleBody, ArticleMetadata, ContinueReading } from '../components/article-reading';
-import { LocalizedText as T, LocalizedTitle as Title, useI18n } from '../providers/i18n';
-import { formatNewsDate, NewsCard, PageHero, NotFoundPage } from './shared';
+import { PageHero, NotFoundPage } from './shared';
+import { formatArticleDate, NewsCard } from '../components/article-card';
 import type { Insight, NewsItem } from '../../content/types';
 
 export const NewsPage = ({ initialCategory = 'all' }: { initialCategory?: string }) => {
@@ -22,13 +23,12 @@ export const NewsPage = ({ initialCategory = 'all' }: { initialCategory?: string
   return (
     <SiteShell activePath="/news" className="site-shell-news">
       <section className="research-tile research-tile-light news-index-section" aria-labelledby="news-page-title">
-        <div className="section-heading news-list-heading">
-          <h1 id="news-page-title">
-            {category !== 'all' && <>{t(categories.find((item) => item.id === category)?.label || '')} · </>}
-            {t('最近新闻')}
-          </h1>
-        </div>
-        <nav className="research-index-tabs news-category-tabs" aria-label={t('新闻分类')}>
+        <IndexHeading
+          id="news-page-title"
+          title={t('最近新闻')}
+          category={t(categories.find((item) => item.id === category)?.label || '')}
+        />
+        <nav className="research-index-tabs index-category-tabs" aria-label={t('新闻分类')}>
           {[{ id: 'all', label: '全部' }, ...categories].map(({ id, label }) => (
             <a
               key={id}
@@ -99,7 +99,7 @@ export const NewsItemPage = ({ item }: { item: NewsItem }) => {
       <article className="article-layout article-layout-news">
         <header className="article-header">
           <div className="article-kicker">
-            <span>{formatNewsDate(item.publishedAt, locale)}</span>
+            <span>{formatArticleDate(item.publishedAt, locale)}</span>
             <Eyebrow>
               <Translated>{item.category}</Translated>
             </Eyebrow>

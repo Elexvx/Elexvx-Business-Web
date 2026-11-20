@@ -3,8 +3,9 @@
 import { GlobalOutlined, SearchOutlined } from '@ant-design/icons';
 import { useEffect, useMemo, useRef, useState, type KeyboardEvent as ReactKeyboardEvent } from 'react';
 
-import type { ServiceNavigationConfig } from '../../data/service-navigation';
+import { serviceNavigationLinks, type ServiceNavigationConfig } from '../../data/service-navigation';
 import { SiteSelect } from '../components/primitives/select';
+import { canonicalContentHref } from '../routing/content-href';
 
 const SCOPE_STORAGE_KEY = 'elexvx-navigation-scope';
 const ENGINE_STORAGE_KEY = 'elexvx-navigation-engine';
@@ -39,23 +40,20 @@ function openExternalUrl(url: string) {
   window.open(url, '_blank', 'noopener,noreferrer');
 }
 
-function readDirectorySearchLinks(): SearchLink[] {
-  return Array.from(document.querySelectorAll<HTMLAnchorElement>('.service-directory-row')).map((anchor, index) => ({
-    id: anchor.dataset.linkId || String(index),
-    name: anchor.querySelector('.service-link-title')?.textContent?.trim() ?? '',
-    url: anchor.href,
-    description: anchor.querySelector('.service-link-description')?.textContent?.trim() ?? '',
-    tags: (anchor.dataset.searchTags ?? '').split(/\s+/).filter(Boolean),
-  }));
-}
+const DIRECTORY_SEARCH_LINKS: SearchLink[] = serviceNavigationLinks.map((link) => ({
+  id: link.id,
+  name: link.name,
+  url: canonicalContentHref(link.url),
+  description: link.description,
+  tags: link.tags,
+}));
 
-export function NavigationSearch({ searchConfig }: { searchConfig: SearchConfig }) {
+export function DirectorySearch({ searchConfig }: { searchConfig: SearchConfig }) {
   const [scope, setScope] = useState<SearchScope>('internal');
   const [engineId, setEngineId] = useState(searchConfig.defaultEngine);
   const [query, setQuery] = useState('');
   const [activeSuggestion, setActiveSuggestion] = useState(-1);
   const inputRef = useRef<HTMLInputElement>(null);
-  const [searchLinks, setSearchLinks] = useState<SearchLink[] | null>(null);
   const enabledSearchEngines = useMemo(
     () => searchConfig.engines.filter((engine) => searchConfig.enabledEngines.includes(engine.name)),
     [searchConfig]
@@ -64,12 +62,10 @@ export function NavigationSearch({ searchConfig }: { searchConfig: SearchConfig 
   const suggestions = useMemo(() => {
     const normalized = query.trim().toLocaleLowerCase('zh-CN');
     if (!normalized || scope !== 'internal') return [];
-    return (searchLinks ?? [])
-      .filter((link) =>
-        [link.name, link.description, ...link.tags].join(' ').toLocaleLowerCase('zh-CN').includes(normalized)
-      )
-      .slice(0, searchConfig.maxSuggestions);
-  }, [query, scope, searchConfig.maxSuggestions, searchLinks]);
+    return DIRECTORY_SEARCH_LINKS.filter((link) =>
+      [link.name, link.description, ...link.tags].join(' ').toLocaleLowerCase('zh-CN').includes(normalized)
+    ).slice(0, searchConfig.maxSuggestions);
+  }, [query, scope, searchConfig.maxSuggestions]);
 
   const selectedEngine = enabledSearchEngines.find((engine) => engine.name === engineId) ?? enabledSearchEngines[0];
 
@@ -97,7 +93,7 @@ export function NavigationSearch({ searchConfig }: { searchConfig: SearchConfig 
   const findInternalResult = () => {
     const normalized = query.trim().toLocaleLowerCase('zh-CN');
     if (!normalized) return undefined;
-    return searchLinks?.find((link) => link.name.toLocaleLowerCase('zh-CN') === normalized) ?? suggestions[0];
+    return DIRECTORY_SEARCH_LINKS.find((link) => link.name.toLocaleLowerCase('zh-CN') === normalized) ?? suggestions[0];
   };
 
   const submit = () => {
@@ -143,7 +139,6 @@ export function NavigationSearch({ searchConfig }: { searchConfig: SearchConfig 
             onValueChange={(value) => {
               if (!value) {
                 setScope('internal');
-                if (!searchLinks) setSearchLinks(readDirectorySearchLinks());
               } else {
                 const nextEngine = enabledSearchEngines.find((engine) => engine.displayName === value);
                 setScope('web');
@@ -166,7 +161,6 @@ export function NavigationSearch({ searchConfig }: { searchConfig: SearchConfig 
             aria-label={scope === 'internal' ? '站内搜索' : '全网搜索'}
             autoComplete="off"
             onChange={(event) => {
-              if (scope === 'internal' && !searchLinks) setSearchLinks(readDirectorySearchLinks());
               setQuery(event.target.value);
               setActiveSuggestion(-1);
             }}
