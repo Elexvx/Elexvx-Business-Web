@@ -1,0 +1,578 @@
+.site-shell-home .home-product-intro {
+  width: 100%;
+  box-sizing: border-box;
+  color: var(--color-ink);
+  background: var(--color-canvas);
+}
+
+.site-shell-home .home-product-intro {
+  position: relative;
+  overflow: hidden;
+  padding: clamp(48px, calc(36.73px + 3vw), 80px)
+    max(var(--page-gutter), calc((100% - var(--page-max-width)) / 2 + var(--page-gutter))) 0;
+  text-align: center;
+}
+
+.home-product-intro-copy {
+  max-width: 900px;
+  margin-inline: auto;
+}
+
+.site-shell-home .home-release-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  max-width: 100%;
+  padding: 6px 14px 6px 6px;
+  border: 1px solid var(--color-hairline);
+  border-radius: 999px;
+  background: var(--color-pearl);
+  box-shadow: none;
+  color: var(--color-ink);
+  font-size: 13px;
+  line-height: 1.5;
+  text-decoration: none;
+  transition:
+    background-color 180ms ease,
+    transform 180ms ease;
+}
+
+.home-release-badge {
+  flex-shrink: 0;
+  padding: 5px 10px;
+  border-radius: 999px;
+  background: var(--color-ink);
+  color: var(--color-canvas);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.25;
+  letter-spacing: 0.06em;
+}
+
+.site-shell-home.site-shell-openai.site-shell-openai main .home-product-intro h1 {
+  max-width: 900px;
+  margin: 30px auto 0;
+  color: var(--color-ink);
+  font-size: var(--page-title-size);
+  font-weight: 500;
+  letter-spacing: -0.04em;
+  line-height: 1.08;
+  text-wrap: balance;
+}
+
+.site-shell-home .home-product-description {
+  max-width: 660px;
+  margin: 24px auto 0;
+  color: var(--color-ink-muted);
+  font-size: var(--intro-text-size);
+  line-height: 1.5;
+  text-wrap: pretty;
+}
+
+.site-shell-home .home-product-action {
+  gap: 12px;
+  margin-top: 32px;
+  text-decoration: none;
+}
+
+.site-shell-home :is(.home-release-link, .home-product-action):focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 5px;
+}
+
+.site-shell-home :is(.home-release-link, .home-product-action):active {
+  transform: scale(0.97);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .site-shell-home .home-release-link:hover {
+    background: var(--color-pearl);
+  }
+}
+
+.home-mac-preview {
+  --color-canvas: #ffffff;
+  --color-pearl: #f4f5f7;
+  color-scheme: light;
+  width: 100%;
+  margin: 64px auto 0;
+  overflow: hidden;
+  border: 1px solid #d4d7df;
+  border-radius: 12px;
+  background: var(--color-canvas);
+  animation: home-mac-appear 850ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.home-mac-toolbar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 40px;
+  border-bottom: 1px solid #e2e5e9;
+  background: #f6f7f9;
+  color: #6b7280;
+  font-size: 11px;
+  letter-spacing: 0.02em;
+}
+
+.home-mac-controls {
+  position: absolute;
+  left: 15px;
+  display: flex;
+  gap: 7px;
+}
+
+.home-mac-controls i {
+  width: 9px;
+  height: 9px;
+  border: 1px solid #0000000c;
+  border-radius: 50%;
+  background: #ff6059;
+}
+
+.home-mac-controls i:nth-child(2) {
+  background: #ffbe2f;
+}
+.home-mac-controls i:nth-child(3) {
+  background: #28ca42;
+}
+
+.home-mac-screen {
+  display: block;
+  width: 100%;
+  height: clamp(480px, 48vw, 680px);
+  background: var(--color-pearl);
+}
+
+.home-mac-screen iframe {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+/* Scheduled release waiting state and choreographed launch reveal. */
+.site-shell-home .home-product-intro.home-hero--waiting,
+.site-shell-home .home-product-intro.home-hero--revealing {
+  min-height: calc(100svh - 64px);
+}
+
+.site-shell-home .home-product-intro.home-hero--waiting {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding-top: clamp(40px, 6vh, 72px);
+  padding-bottom: clamp(64px, 10vh, 108px);
+}
+
+.home-hero-wait-backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.home-hero-wait-backdrop.is-exiting {
+  animation: home-hero-backdrop-exit 520ms var(--motion-ease-out) forwards;
+}
+
+.home-hero-particles {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.home-hero-wait {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  padding-bottom: 12px;
+}
+
+.home-hero-wait-copy {
+  position: relative;
+  z-index: 1;
+}
+
+.home-hero-wait .home-product-description {
+  max-width: 720px;
+}
+
+.site-shell-home.site-shell-openai.site-shell-openai main .home-hero-wait h1 {
+  margin-top: 0;
+}
+
+.home-hero-wait-title-exit {
+  max-width: 900px;
+  margin: 0 auto;
+  color: var(--color-ink);
+  font-size: var(--page-title-size);
+  font-weight: 500;
+  letter-spacing: -0.04em;
+  line-height: 1.08;
+  text-wrap: balance;
+}
+
+.home-countdown {
+  display: inline-flex;
+  align-items: flex-start;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px 8px;
+  margin: 36px auto 0;
+}
+
+.home-countdown-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.home-countdown-sep {
+  color: var(--color-ink-muted);
+  font-size: clamp(22px, 3vw, 32px);
+  font-weight: 400;
+  line-height: 1;
+  transform: translateY(-10px);
+  opacity: 0.42;
+}
+
+.home-countdown-unit {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  min-width: clamp(68px, 11vw, 96px);
+  padding: 13px 12px;
+  border: 1px solid var(--color-hairline);
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--color-pearl) 68%, var(--color-canvas));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+.home-countdown-value {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding-block: 4px;
+  overflow: hidden;
+  color: var(--color-ink);
+  font-size: clamp(28px, 3.8vw, 42px);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.04em;
+  line-height: 1.08;
+  mask-image: linear-gradient(to bottom, transparent 0%, #000 16%, #000 84%, transparent 100%);
+}
+
+.home-digit-slot {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0.62em;
+  height: 1.08em;
+}
+
+.home-digit-glyph {
+  display: inline-block;
+}
+
+.home-digit-glyph.is-entering {
+  animation: home-digit-enter 460ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.home-digit-glyph.is-leaving {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+  animation: home-digit-leave 460ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.home-countdown-label {
+  color: var(--color-ink-muted);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.home-hero-wait-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  margin-top: 28px;
+}
+
+.home-hero-wait-track {
+  position: relative;
+  width: min(100%, 280px);
+  height: 3px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--color-ink) 12%, transparent);
+}
+
+.home-hero-wait-fill {
+  position: relative;
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, color-mix(in srgb, var(--color-ink) 65%, transparent), var(--color-ink));
+  transition: width 600ms var(--motion-ease-out);
+}
+
+.home-hero-wait-fill::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.65), transparent);
+  animation: home-progress-sheen 2.4s ease-in-out infinite;
+}
+
+.home-hero-wait-schedule {
+  margin: 0;
+  color: var(--color-ink);
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.01em;
+  text-align: center;
+}
+
+.home-products-locked {
+  display: grid;
+  min-height: clamp(190px, 22vw, 260px);
+  padding: 32px 20px;
+  place-content: center;
+  justify-items: center;
+  gap: 12px;
+  border: 1px solid var(--color-hairline);
+  border-radius: 16px;
+  background: var(--color-surface-neutral);
+  text-align: center;
+}
+
+.home-products-lock-icon {
+  color: var(--color-ink-muted);
+  font-size: 24px;
+}
+
+.site-shell-home .home-products-locked .home-products-lock-message {
+  margin: 0;
+  color: var(--color-ink);
+  font-weight: 600;
+}
+
+/* Light theme waiting adjustments */
+html[data-theme='light'] .home-countdown-unit {
+  background: var(--color-surface-neutral);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+
+/* Launch reveal choreography */
+.home-hero-wait.is-exiting {
+  position: absolute;
+  top: 0;
+  inset-inline: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: calc(100svh - 64px);
+  padding: clamp(40px, 6vh, 72px) max(var(--page-gutter), calc((100% - var(--page-max-width)) / 2 + var(--page-gutter)))
+    clamp(64px, 10vh, 108px);
+  pointer-events: none;
+  animation: home-hero-wait-exit 520ms var(--motion-ease-out) forwards;
+}
+
+.home-hero-released {
+  position: relative;
+}
+
+.home-hero-reveal-flash {
+  position: absolute;
+  inset: -40px -24px 0;
+  z-index: 3;
+  pointer-events: none;
+  background: radial-gradient(ellipse 65% 42% at 50% 18%, rgba(255, 255, 255, 0.24), transparent 72%);
+  animation: home-hero-reveal-flash 920ms var(--motion-ease-out) forwards;
+}
+
+html[data-theme='light'] .home-hero-reveal-flash {
+  background: radial-gradient(ellipse 65% 42% at 50% 18%, rgba(0, 102, 204, 0.18), transparent 72%);
+}
+
+.home-hero-released.is-revealing .home-release-link {
+  animation: home-hero-item-in 620ms var(--motion-ease-out) 80ms both;
+}
+
+.home-hero-released.is-revealing h1 {
+  animation: home-hero-title-in 700ms var(--motion-ease-out) 150ms both;
+}
+
+.home-hero-released.is-revealing .home-product-description {
+  animation: home-hero-item-in 660ms var(--motion-ease-out) 230ms both;
+}
+
+.home-hero-released.is-revealing .home-product-action {
+  animation: home-hero-item-in 640ms var(--motion-ease-out) 300ms both;
+}
+
+.home-hero-released.is-revealing .home-mac-preview {
+  animation: home-hero-preview-in 780ms var(--motion-ease-out) 260ms both;
+}
+
+.home-hero-released.is-settled
+  :is(.home-release-link, h1, .home-product-description, .home-product-action, .home-mac-preview) {
+  animation: none;
+}
+
+@keyframes home-hero-backdrop-exit {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes home-digit-enter {
+  from {
+    opacity: 0;
+    transform: translate3d(0, -48%, 0) scale(0.94);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+@keyframes home-digit-leave {
+  from {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translate3d(0, 48%, 0) scale(0.94);
+  }
+}
+
+@keyframes home-progress-sheen {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes home-hero-wait-exit {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.985);
+    filter: blur(8px);
+  }
+}
+
+@keyframes home-hero-reveal-flash {
+  0% {
+    opacity: 0;
+    transform: scale(0.82);
+  }
+  30% {
+    opacity: 1;
+    transform: scale(1.04);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.18);
+  }
+}
+
+@keyframes home-hero-title-in {
+  from {
+    opacity: 0;
+    transform: translateY(22px);
+    filter: blur(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
+@keyframes home-hero-item-in {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes home-hero-preview-in {
+  from {
+    opacity: 0;
+    transform: translateY(48px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (max-width: 720px) {
+  .home-countdown {
+    gap: 8px 6px;
+    margin-top: 28px;
+  }
+  .home-countdown-group {
+    gap: 6px;
+  }
+  .home-countdown-unit {
+    min-width: 62px;
+    padding: 11px 8px 10px;
+    border-radius: 10px;
+  }
+  .home-countdown-sep {
+    transform: translateY(-8px);
+  }
+  .home-hero-wait.is-exiting {
+    height: calc(100svh - 64px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-hero-wait-backdrop.is-exiting,
+  .home-digit-glyph.is-entering,
+  .home-digit-glyph.is-leaving,
+  .home-hero-wait-fill::after,
+  .home-hero-wait.is-exiting,
+  .home-hero-reveal-flash,
+  .home-hero-released.is-revealing
+    :is(.home-release-link, h1, .home-product-description, .home-product-action, .home-mac-preview) {
+    animation: none;
+  }
+  .home-hero-wait-fill {
+    transition: none;
+  }
+}

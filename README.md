@@ -20,6 +20,8 @@ ESA 项目 `elexvx-site-router` 统一托管页面、静态资源和接口，连
 
 `npm run build:esa` 先刷新生成源文件，再依次运行主项目测试、内容检查、Lint、类型检查、一次 Next 静态构建（含英文内容检查）、ESA 打包和静态产物 SEO 自检。自检确认 sitemap 页面文件、canonical、双语 hreflang 目标及互惠关系和页面主体；无英文版本的独立服务工具页不要求英文配对。ESA 打包保留 `dist/404.html` 供本地预览，同时从公开 ESA 静态目录移除 `404.html` 与 Next 内部 `/_not-found/`。构建将 `dist` 复制到同一项目的静态目录，页面、JS、CSS 和图片由 ESA 原生静态分发，函数只处理接口、旧网址跳转及缺失页面；不读取另一项目或回源 Vercel。旧网址的静态回退文件从 ESA 产物移除，以确保函数返回永久重定向；域名入口、分站 robots/sitemap 和分类查询使用站点的原生重定向规则，优先于静态资源分发；函数路由仅作为缺失资源的回退。ESA 会优先响应存在的静态文件，不能依靠函数路由覆盖它们。网站内容保持静态发布，未新增用户账号系统。`npm run build` 仍生成可独立预览的 `dist`。
 
+Humite 发布前，构建产物不含中英文产品页、3D 演示或封面。正文、翻译和素材保存在 Git 忽略的 `release-assets/` 目录，正式发布时需将该目录提供给发布构建。北京时间 2026 年 11 月 23 日 09:00 后，运行 `npm run build:esa` 生成并部署开放版。已经部署的发布前静态版本会继续锁定，完整的 3D 场景可用发布构建的静态预览检查。
+
 函数生产变量 `UPTIMEROBOT_API_KEY` 应使用加密存储。`INDEXNOW_KV_NAMESPACE=elexvx_indexnow` 指定 ESA KV 回执空间；构建生成的 `indexnow-manifest.json` 在内容变化后更新版本，静态页面访问 `/api/publish/`，由函数异步提交构建时固定的文章和集合 URL，成功回执避免重复提交。可选的 `CRON_SECRET` 仅用于保护手动通知接口，不需要 Vercel Cron。提交成功不等于搜索引擎实际收录。
 
 2026-10-03 已切换正式域名：`www`、`ai`、`nav`、`status` 和泛域名由 `elexvx-site-router` 承担，旧的公开页面分段路由和 Vercel 回源规则已停用。根域名保留邮箱 MX/TXT，用 ESA 代理 DNS 配合原生重定向规则返回 308 到 `www`；不访问旧 Vercel 源站。监控密钥已加密保存并发布，状态与历史数据从 ESA 接口读取。正式站 153 个页面、370 个资源通过检查，中国、美国、德国、新加坡、澳大利亚探针返回 HTTP 200。Vercel 项目已暂停，定时执行已关闭，Git 自动部署连接已断开；邮箱、`bp`、`docs`、`acc` 属于其他业务入口并保留。

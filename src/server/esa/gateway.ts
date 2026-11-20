@@ -1,4 +1,5 @@
 import redirects from './redirects.json';
+import { isHumiteProductPath } from '../../data/humite-launch.mjs';
 import { fetchStatusData } from '../status/uptime-robot';
 import { submitIndexNowUrls } from '../indexnow';
 
@@ -42,6 +43,7 @@ export function resolveRedirect(url: URL): string | undefined {
   }
   for (const redirect of redirects) {
     if (redirect.source !== url.pathname) continue;
+    if (process.env.NEXT_PUBLIC_HUMITE_PUBLISHED !== 'true' && isHumiteProductPath(redirect.destination)) continue;
     if (
       redirect.has?.some((condition) =>
         condition.type === 'host'

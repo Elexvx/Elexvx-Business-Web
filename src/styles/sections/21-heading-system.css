@@ -175,7 +175,7 @@
   max-width: 1040px;
   text-align: center;
 }
-.site-shell-openai .home-hero-content h1 {
+.site-shell-openai .home-hero-content :is(h1, h2) {
   margin: 0 auto;
   max-width: none;
 }

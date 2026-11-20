@@ -30,6 +30,7 @@
     "src/main.tsx",
     "src/ssg",
     "scripts",
+    "release-assets/humite-content.ts",
     "tests",
     "vite.config.ts",
     "vitest.config.ts",

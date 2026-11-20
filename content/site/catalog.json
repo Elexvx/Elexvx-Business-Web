@@ -8,7 +8,10 @@
     "description": "面向真实世界复杂问题的 AI 与数据智能研发门户。",
     "canonicalOrigin": "https://www.elexvx.com",
     "registrations": {
-      "icp": { "number": "苏ICP备2025160017号", "url": "https://beian.miit.gov.cn/" },
+      "icp": {
+        "number": "苏ICP备2025160017号",
+        "url": "https://beian.miit.gov.cn/"
+      },
       "publicSecurity": {
         "number": "苏公网安备32010502011583号",
         "url": "https://beian.mps.gov.cn/#/query/webSearch?code=32010502011583"
@@ -22,7 +25,11 @@
       "englishTitle": "AI & DATA INTELLIGENCE",
       "question": "如何让数据从被记录，走向可理解、可判断、可行动？",
       "summary": "围绕数据理解、模型构建与系统反馈，探索能够进入真实工作流的智能能力。",
-      "methods": ["数据采集与治理", "模型设计与评估", "人机协作反馈"],
+      "methods": [
+        "数据采集与治理",
+        "模型设计与评估",
+        "人机协作反馈"
+      ],
       "outputSlugs": [],
       "accent": "light",
       "image": "/visuals/ai-data-gradient.jpg",
@@ -34,8 +41,14 @@
       "englishTitle": "INDUSTRIAL INTELLIGENCE & SAFETY",
       "question": "如何让设备、环境与人的现场状态被连续理解？",
       "summary": "面向设备、作业和环境的变化，研究可感知、可预警、可追溯的工业系统。",
-      "methods": ["多传感器融合", "边云协同与工业协议", "风险识别与预测维护"],
-      "outputSlugs": ["industrial-safety"],
+      "methods": [
+        "多传感器融合",
+        "边云协同与工业协议",
+        "风险识别与预测维护"
+      ],
+      "outputSlugs": [
+        "industrial-safety"
+      ],
       "accent": "dark",
       "image": "/visuals/industrial-intelligence-gradient.jpg",
       "imageAlt": "矿物绿、琥珀色与灰蓝色交叠的抽象渐变色域"
@@ -46,7 +59,11 @@
       "englishTitle": "LLM / AI SAFETY",
       "question": "如何让模型能力在复杂系统中保持可控、可解释、可追踪？",
       "summary": "关注大模型应用中的安全边界、工程基础设施与面向人的责任设计。",
-      "methods": ["安全边界设计", "评测与可观测性", "模型应用基础设施"],
+      "methods": [
+        "安全边界设计",
+        "评测与可观测性",
+        "模型应用基础设施"
+      ],
       "outputSlugs": [],
       "accent": "parchment",
       "image": "/visuals/ai-safety-gradient.jpg",
@@ -107,7 +124,9 @@
       "title": "工业现场与设备运营",
       "englishTitle": "INDUSTRIAL OPERATIONS",
       "summary": "当设备、环境和人员同时变化，系统需要持续感知并帮助人做出判断。",
-      "projectSlugs": ["industrial-safety"]
+      "projectSlugs": [
+        "industrial-safety"
+      ]
     },
     {
       "slug": "knowledge-work",
@@ -153,19 +172,6 @@
     "让研究成果能够被理解、被使用、被继续发展。"
   ],
   "footerColumns": [
-    {
-      "title": "Products",
-      "links": [
-        {
-          "label": "Lumira",
-          "href": "/products/lumira"
-        },
-        {
-          "label": "BookKin",
-          "href": "/products/bookkin"
-        }
-      ]
-    },
     {
       "title": "Research",
       "links": [

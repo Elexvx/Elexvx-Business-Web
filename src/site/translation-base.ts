@@ -1,4 +1,22 @@
+import { humiteContent } from '#humite-content';
+
 export const existingEnglish: Record<string, string> = {
+  新: 'new',
+  动态更新: 'UPDATE',
+  产品介绍: 'Product introduction',
+  '先卖个关子，精彩正在路上。': 'Keeping a little secret until launch.',
+  '还不到亮相的时候，但值得等这一会儿。': 'Not quite time yet, but definitely worth the wait.',
+  主要产品: 'Featured Products',
+  暂无匹配内容: 'No matching products.',
+  '当前没有公开展示的产品。新品发布后会在这里更新，欢迎届时回来看看。':
+    'There are no public products at the moment. Check back here when the new release goes live.',
+  '嘘，新品还在后台，到点就登场！': 'Shh… the new release is backstage. See you at showtime!',
+  发布倒计时: 'Release countdown',
+  天: 'Days',
+  时: 'Hours',
+  分: 'Min',
+  秒: 'Sec',
+  ...humiteContent?.english,
   'Elexvx Research 首页': 'Elexvx Research home',
   'Elexvx Research 内容基线': 'Elexvx Research content baseline',
   'Elexvx 白色标志': 'Elexvx white logo',

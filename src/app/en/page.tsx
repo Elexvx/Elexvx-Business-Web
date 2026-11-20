@@ -1,7 +1,11 @@
 import { LanguageProvider } from '../../site/providers/i18n';
 import { SiteShell } from '../../site/components/shell';
+import { HomeStaticMain } from '../../site/components/home-static-main';
+import { isReleaseReached } from '../../site/components/hero-schedule';
 import { metadataForRoute } from '../../site/routing/metadata-base';
 import { siteIdentity } from '../../data/site';
+import { homeIntro } from '../../data/home-intro';
+import { humiteLaunch } from '../../data/humite-launch.mjs';
 import homeHtml from '../../data/home-static.json';
 
 export const metadata = metadataForRoute(
@@ -11,9 +15,12 @@ export const metadata = metadataForRoute(
 );
 
 export default function Page() {
+  const initialReleased = !!homeIntro && isReleaseReached(humiteLaunch);
   return (
     <LanguageProvider locale="en" path="/">
-      <SiteShell activePath="/" navTone="dark" className="site-shell-home" mainHtml={homeHtml.en} />
+      <SiteShell activePath="/" navTone="dark" className="site-shell-home">
+        <HomeStaticMain markup={homeHtml.en} initialReleased={initialReleased} />
+      </SiteShell>
     </LanguageProvider>
   );
 }

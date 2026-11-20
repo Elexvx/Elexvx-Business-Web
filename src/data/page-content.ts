@@ -1,3 +1,4 @@
+import { humiteContent } from '#humite-content';
 import { primaryContactEmail } from './contact';
 
 export type ContentAction = {
@@ -125,23 +126,7 @@ export const homeContent = {
     title: '主要产品',
     action: { label: '全部产品', href: '/products' },
     items: [
-      {
-        name: 'Lumira',
-        slug: 'lumira',
-        image: '/products/lumira-cover-textured.png',
-        href: '/products/lumira',
-        category: '企业管理平台',
-        description: '面向企业管理场景的 SaaS 平台，支持本地部署与容器化部署。',
-      },
-      {
-        name: 'BookKin',
-        slug: 'bookkin',
-        image: '/products/bookkin-cover-textured.png',
-        href: '/products/bookkin',
-        category: '家庭电子书库',
-        description:
-          '开源、自托管的家庭电子书库与个人藏书管理平台，支持 EPUB / PDF 阅读、藏书整理，以及独立的阅读进度与私人笔记。',
-      },
+      ...(humiteContent ? [humiteContent.card] : []),
     ],
   },
   closing: {

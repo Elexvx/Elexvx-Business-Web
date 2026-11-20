@@ -1,7 +1,10 @@
 import { cp, mkdir, readFile, readdir, rm, writeFile } from 'node:fs/promises';
 import { build } from 'esbuild';
+import { assertHumiteEmbargo, isHumitePublicBuild } from './humite-export.mjs';
 
 const output = 'esa/site';
+const humitePublished = isHumitePublicBuild();
+if (!humitePublished) await assertHumiteEmbargo('dist');
 await rm(output, { recursive: true, force: true });
 await mkdir(output, { recursive: true });
 const notFoundHtml = await readFile('dist/404.html', 'utf8');
@@ -10,6 +13,7 @@ await cp('dist', `${output}/assets`, { recursive: true });
 // the static directory would let ESA answer direct requests with HTTP 200.
 await rm(`${output}/assets/404.html`, { force: true });
 await rm(`${output}/assets/_not-found`, { recursive: true, force: true });
+await rm(`${output}/assets/products/__empty__`, { recursive: true, force: true });
 const redirects = JSON.parse(await readFile('src/server/esa/redirects.json', 'utf8'));
 // Legacy fallback HTML must not shadow the function's permanent redirects.
 for (const redirect of redirects) {
@@ -43,6 +47,7 @@ await build({
   define: {
     __ESA_NOT_FOUND_HTML__: JSON.stringify(notFoundHtml),
     __ESA_PUBLISH_MANIFEST__: publishedManifest,
+    'process.env.NEXT_PUBLIC_HUMITE_PUBLISHED': JSON.stringify(String(humitePublished)),
   },
 });
 console.log('Built one ESA project: native static files, redirect/API function and fixed publish manifest.');

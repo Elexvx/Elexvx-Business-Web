@@ -1,4 +1,5 @@
 import redirects from '../src/server/esa/redirects.json';
+import { isHumiteProductPath } from '../src/data/humite-launch.mjs';
 import { redirectRoutes } from '../src/site/routing/routes';
 import { describe, expect, it } from 'vitest';
 import { getStaticRoutes } from '../src/site/routing/routes';
@@ -17,6 +18,11 @@ describe('redirect configuration', () => {
     const configuredRedirects = Object.fromEntries(
       (redirects as HostingRedirect[])
         .filter(({ has }) => !has?.length)
+        .filter(
+          ({ source, destination }) =>
+            !isHumiteProductPath(destination) ||
+            (process.env.NEXT_PUBLIC_HUMITE_PUBLISHED === 'true' && !source.endsWith('/'))
+        )
         .map(({ source, destination }) => [source, destination])
     );
 

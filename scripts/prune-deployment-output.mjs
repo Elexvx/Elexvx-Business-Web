@@ -1,5 +1,6 @@
 import { readdir, readFile, stat, unlink } from 'node:fs/promises';
 import { relative, resolve, sep } from 'node:path';
+import { assertHumiteEmbargo, humiteAssetPaths, humiteScenePath, isHumitePublicBuild } from './humite-export.mjs';
 
 // Prune only the generated deployment output; source images under public/ stay untouched.
 const root = resolve('dist');
@@ -7,6 +8,7 @@ const manifest = JSON.parse(await readFile('src/data/image-manifest.json', 'utf8
 const referencedAssets = new Set();
 const documentExtensions = new Set(['.html', '.css', '.svg']);
 const maxOutputBytes = 160 * 1024 * 1024;
+const prelaunch = !isHumitePublicBuild();
 
 const toLocalPath = (value, basePath) => {
   const trimmed = value.trim().replaceAll('&amp;', '&');
@@ -106,6 +108,7 @@ let removedImageBytes = 0;
 let retainedReferencedImages = 0;
 
 for (const [sourceUrl, image] of Object.entries(manifest)) {
+  if (prelaunch && humiteAssetPaths.includes(sourceUrl)) continue;
   const sourceFile = safeOutputPath(sourceUrl);
   const sourceStat = await stat(sourceFile).catch((error) => {
     if (error.code === 'ENOENT') throw new Error(`Expected exported source image is missing: ${sourceUrl}`);
@@ -124,6 +127,9 @@ for (const [sourceUrl, image] of Object.entries(manifest)) {
       throw error;
     });
   }
+
+  // The 3D runtime loads its original textures by filename from JavaScript.
+  if (sourceUrl.startsWith(`${humiteScenePath}/`)) continue;
 
   if (referencedAssets.has(sourceUrl)) {
     retainedReferencedImages++;
@@ -147,6 +153,7 @@ const removeFinderMetadata = async (directory) => {
   }
 };
 await removeFinderMetadata(root);
+if (prelaunch) await assertHumiteEmbargo(root);
 
 const outputBytes = await countOutputBytes(root);
 const formatMiB = (bytes) => `${(bytes / (1024 * 1024)).toFixed(1)} MiB`;

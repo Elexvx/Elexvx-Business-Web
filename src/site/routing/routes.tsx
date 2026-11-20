@@ -2,6 +2,7 @@ import { publishedResearch } from '../../data/research-articles';
 import { articleCategories, articleCategoryPath, type ArticleSection } from '../../data/article-categories';
 import { translateEnglish } from '../translation';
 import { homeContent } from '../../data/page-content';
+import { isHumiteProductPath } from '../../data/humite-launch.mjs';
 import { jobs } from '../../data/jobs';
 import { publishedActivities, toActivitySummary } from '../../data/activities';
 import { publishedCaseStudies, toCaseStudySummary } from '../../data/case-studies';
@@ -233,10 +234,17 @@ const originalRedirectRoutes: Record<string, string> = {
   '/latest-news/2024-12-31-01': '/news/2024-12-31-01',
   '/activities/elexvxai-lab-established-2026': '/news/elexvxai-lab-established-2026',
   '/en/activities/elexvxai-lab-established-2026': '/en/news/elexvxai-lab-established-2026',
+  '/products/bookkin': '/products/humite',
+  '/en/products/bookkin': '/en/products/humite',
 };
 
 export const redirectRoutes = Object.fromEntries(
-  Object.entries(originalRedirectRoutes).filter(([from, to]) => !isDisabledPath(from) && !isDisabledPath(to))
+  Object.entries(originalRedirectRoutes).filter(
+    ([from, to]) =>
+      !isDisabledPath(from) &&
+      !isDisabledPath(to) &&
+      (process.env.NEXT_PUBLIC_HUMITE_PUBLISHED === 'true' || !isHumiteProductPath(to))
+  )
 );
 
 const configuredRoutes = (insights: Insight[], news: NewsItem[] = []): SiteRoute[] => [
