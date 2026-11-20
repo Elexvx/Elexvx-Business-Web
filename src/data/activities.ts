@@ -17,6 +17,7 @@ export type Activity = {
   cover?: string;
   externalUrl?: string;
   pinned?: boolean;
+  showOnHome?: boolean;
   body: string;
 };
 

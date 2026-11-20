@@ -24,7 +24,7 @@ describe('static share metadata', () => {
     for (const path of [
       '/research/category/chip-architecture',
       '/activities/category/roadshows',
-      '/news/category/announcements',
+      '/news/category/updates',
     ]) {
       const route = getStaticRoutes(loadInsights(), loadNews()).find((route) => route.path === path);
       expect(route?.meta.updatedAt).toBeTruthy();

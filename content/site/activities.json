@@ -28,6 +28,7 @@
   },
   {
     "slug": "website-permissions-redesign-2026",
+    "showOnHome": false,
     "title": "网站全新上线",
     "excerpt": "Elexvx 官网全新上线，研究、活动、新闻、产品与公司栏目统一开放，欢迎访问全新的企业数字入口。",
     "publishedAt": "2026-09-07",

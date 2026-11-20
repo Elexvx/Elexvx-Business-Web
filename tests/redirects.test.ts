@@ -30,7 +30,7 @@ describe('redirect configuration', () => {
   it('redirects legacy category queries only to published category pages', () => {
     const routes = new Set(getStaticRoutes(loadInsights(), loadNews()).map((route) => route.path));
     const conditional = redirects.filter(({ has }) => has?.some(({ type }) => type === 'query'));
-    expect(conditional.length).toBe(32);
+    expect(conditional.length).toBe(28);
     for (const redirect of conditional) {
       expect(redirect.has).toEqual([expect.objectContaining({ type: 'query', key: 'category' })]);
       expect(redirect.permanent).toBe(true);

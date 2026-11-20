@@ -53,54 +53,6 @@
     "permanent": true
   },
   {
-    "source": "/news",
-    "has": [
-      {
-        "type": "query",
-        "key": "category",
-        "value": "公告"
-      }
-    ],
-    "destination": "/news/category/announcements/",
-    "permanent": true
-  },
-  {
-    "source": "/news/",
-    "has": [
-      {
-        "type": "query",
-        "key": "category",
-        "value": "公告"
-      }
-    ],
-    "destination": "/news/category/announcements/",
-    "permanent": true
-  },
-  {
-    "source": "/en/news",
-    "has": [
-      {
-        "type": "query",
-        "key": "category",
-        "value": "公告"
-      }
-    ],
-    "destination": "/en/news/category/announcements/",
-    "permanent": true
-  },
-  {
-    "source": "/en/news/",
-    "has": [
-      {
-        "type": "query",
-        "key": "category",
-        "value": "公告"
-      }
-    ],
-    "destination": "/en/news/category/announcements/",
-    "permanent": true
-  },
-  {
     "source": "/research",
     "has": [
       {
@@ -595,16 +547,6 @@
   {
     "source": "/latest-news/2024-12-31-01",
     "destination": "/news/2024-12-31-01",
-    "permanent": true
-  },
-  {
-    "source": "/activities/elexvxai-lab-established-2026",
-    "destination": "/news/elexvxai-lab-established-2026",
-    "permanent": true
-  },
-  {
-    "source": "/en/activities/elexvxai-lab-established-2026",
-    "destination": "/en/news/elexvxai-lab-established-2026",
     "permanent": true
   },
   {

@@ -41,7 +41,7 @@ describe('content publication gates', () => {
 
   it('publishes the active news collection', () => {
     const news = loadNews();
-    expect(news).toHaveLength(8);
+    expect(news).toHaveLength(7);
     expect(news.every((item) => item.status === 'published')).toBe(true);
     expect(news.some((item) => item.slug === 'exam-2025-07-08-01')).toBe(false);
     expect(news.some((item) => item.slug === 'stories-2025-07-01-01')).toBe(false);
@@ -70,27 +70,15 @@ describe('content publication gates', () => {
     expect(publishedCaseStudies[0].bodyEn).toContain('Kaicheng International Publishing House');
   });
 
-  it('publishes the ElexvxAI announcement as news and redirects its former activity URL', () => {
+  it('excludes the withdrawn ElexvxAI announcement and its former activity redirects', () => {
     const news = loadNews();
-    const item = news.find((article) => article.slug === 'elexvxai-lab-established-2026');
-    expect(item).toMatchObject({
-      title: 'ElexvxAI 创新产业研发中心正式成立',
-      publishedAt: '2026-03-06',
-      updatedAt: '2026-09-24',
-      cover: '/activities/elexvxai-2026/hello.webp',
-    });
-    expect(item?.body).toContain('![ElexvxAI 创新产业研发中心正式成立](/activities/elexvxai-2026/hello.webp)');
-    const staticRoutes = getStaticRoutes(loadInsights(), news);
-    const routes = staticRoutes.map((route) => route.path);
-    expect(routes).toContain('/news/elexvxai-lab-established-2026');
-    expect(routes).not.toContain('/activities/elexvxai-lab-established-2026');
-    expect(staticRoutes.find((route) => route.path === '/news/elexvxai-lab-established-2026')?.meta.updatedAt).toBe(
-      '2026-09-24'
-    );
-    expect(redirectRoutes).toMatchObject({
-      '/activities/elexvxai-lab-established-2026': '/news/elexvxai-lab-established-2026',
-      '/en/activities/elexvxai-lab-established-2026': '/en/news/elexvxai-lab-established-2026',
-    });
+    const slug = 'elexvxai-lab-established-2026';
+    const paths = getStaticRoutes(loadInsights(), news).map((route) => route.path);
+    expect(news.some((article) => article.slug === slug)).toBe(false);
+    expect(paths).not.toContain(`/news/${slug}`);
+    expect(paths).not.toContain(`/activities/${slug}`);
+    expect(redirectRoutes[`/activities/${slug}`]).toBeUndefined();
+    expect(redirectRoutes[`/en/activities/${slug}`]).toBeUndefined();
   });
 
   it('validates parameterized catalog references and gives every static subpage a hero visual', () => {

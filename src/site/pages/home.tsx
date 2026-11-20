@@ -65,7 +65,7 @@ export const HomeWelcomeRest = ({ items }: { items: ActivitySummary[] }) => {
           </small>
         </div>
       </section>
-      <ActivitySection items={items} />
+      <ActivitySection items={items.filter((item) => item.showOnHome !== false)} />
     </>
   );
 };
