@@ -482,9 +482,6 @@ html[data-theme='light'] .home-brand-mark[data-format='overlap-symbol'] img {
   z-index: 0;
   overflow: hidden;
   pointer-events: none;
-  background:
-    radial-gradient(ellipse at 10% 16%, color-mix(in srgb, var(--home-wait-blue) 7%, transparent), transparent 56%),
-    radial-gradient(ellipse at 94% 88%, color-mix(in srgb, var(--home-wait-mint) 5%, transparent), transparent 53%);
 }
 
 .home-hero-wait-backdrop.is-exiting {

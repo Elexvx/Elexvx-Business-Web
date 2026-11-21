@@ -3,6 +3,7 @@
 import { useEffect, useRef } from 'react';
 
 import {
+  advanceSpring,
   buildParticles,
   drawParticles,
   getRestingCenter,
@@ -40,10 +41,18 @@ export const HeroParticles = () => {
     let lastTime = 0;
     let simulationTime = 0;
 
-    const center = getRestingCenter(simulationTime);
+    const initialCenter = getRestingCenter(simulationTime);
+    const centerX = { position: initialCenter.x, velocity: 0 };
+    const centerY = { position: initialCenter.y, velocity: 0 };
     const pointer = { active: false, x: 0, y: 0 };
 
-    const drawFrame = () => drawParticles(context, particles, palette, { width, height, time: simulationTime, center });
+    const drawFrame = () =>
+      drawParticles(context, particles, palette, {
+        width,
+        height,
+        time: simulationTime,
+        center: { x: centerX.position, y: centerY.position },
+      });
 
     const drawStillFrame = () => {
       if (inView && !document.hidden && !rafId) drawFrame();
@@ -62,14 +71,14 @@ export const HeroParticles = () => {
       // Allow small timestamp rounding differences on 60 Hz displays.
       if (elapsed >= frameInterval - 1) {
         lastTime = now;
-        const delta = Math.min(MAX_FRAME_DELTA_MS, elapsed);
-        simulationTime += delta / 1000;
+        const seconds = Math.min(MAX_FRAME_DELTA_MS, elapsed) / 1000;
+        simulationTime += seconds;
         const restingCenter = getRestingCenter(simulationTime);
-        const targetX = pointer.active ? restingCenter.x * 0.18 + pointer.x * 0.82 : restingCenter.x;
-        const targetY = pointer.active ? restingCenter.y * 0.18 + pointer.y * 0.82 : restingCenter.y;
-        const follow = 1 - Math.exp(-delta / (pointer.active ? 185 : 470));
-        center.x += (targetX - center.x) * follow;
-        center.y += (targetY - center.y) * follow;
+        const targetX = pointer.active ? restingCenter.x * 0.24 + pointer.x * 0.76 : restingCenter.x;
+        const targetY = pointer.active ? restingCenter.y * 0.24 + pointer.y * 0.76 : restingCenter.y;
+        const response = pointer.active ? 10 : 4.5;
+        advanceSpring(centerX, targetX, response, seconds);
+        advanceSpring(centerY, targetY, response, seconds);
         drawFrame();
       }
       rafId = window.requestAnimationFrame(tick);
