@@ -89,11 +89,11 @@ export const drawParticles = (
   context.clearRect(0, 0, width, height);
   context.lineCap = 'round';
 
-  const fieldSize = Math.min(width, height * 1.12);
+  const fieldSize = Math.min(width, height * 1.2);
   const verticalStretch = clamp(height / width, 0.92, 1.48);
   const centerX = center.x * width;
   const centerY = center.y * height;
-  const radius = fieldSize * (0.255 + 0.044 * Math.sin(time * 1.2) + 0.012 * Math.sin(time * 2.3));
+  const radius = fieldSize * (0.27 + 0.044 * Math.sin(time * 1.2) + 0.012 * Math.sin(time * 2.3));
   const size = clamp(fieldSize / 760, 0.77, 1.1);
 
   for (const particle of particles) {
@@ -102,12 +102,12 @@ export const drawParticles = (
     const distance = Math.hypot(dx, dy);
     const rippleX = Math.sin(particle.x * 0.011 + particle.y * 0.007 + time * 0.89);
     const rippleY = Math.cos(particle.y * 0.013 - particle.x * 0.008 - time * 0.76);
-    const ringDistance = distance - radius + fieldSize * (rippleX + 0.55 * rippleY) * 0.029;
+    const ringDistance = distance - radius + fieldSize * (rippleX + 0.55 * rippleY) * 0.048;
 
     // A broad, quiet shoulder keeps the crest from looking like a drawn circle.
-    const crest = 1 - smoothstep(0, fieldSize * 0.124, Math.abs(ringDistance));
+    const crest = 1 - smoothstep(0, fieldSize * 0.146, Math.abs(ringDistance));
     const inner = 1 - smoothstep(0, radius, distance);
-    const energy = crest * crest * 0.89 + inner * 0.13;
+    const energy = crest * (0.24 + crest * 0.62) + inner * 0.13;
     const radialX = dx / Math.max(1, distance);
     const radialY = dy / Math.max(1, distance);
     const offset = energy * fieldSize * 0.062;
@@ -126,7 +126,7 @@ export const drawParticles = (
 
     context.strokeStyle = palette[Math.round(hue * (palette.length - 1))];
     context.lineWidth = (0.72 + energy * 1.95) * particle.size * size;
-    context.globalAlpha = (0.13 + energy * 0.82) * copyAttenuation;
+    context.globalAlpha = (0.17 + energy * 0.82) * copyAttenuation;
     context.beginPath();
     context.moveTo(x - tipX, y - tipY);
     context.lineTo(x + tipX, y + tipY);
