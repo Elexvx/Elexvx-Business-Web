@@ -155,7 +155,7 @@ export function ArticleCard(props: ArticleCardProps) {
       return (
         <a className={cardClass(news ? 'home-media-card home-news-card news-card' : 'home-media-card')} href={href}>
           <div className="home-media-card-media">
-            {image(news ? { sizes: '(max-width: 640px) 120px, 180px' } : undefined)}
+            {image(news ? { sizes: '(max-width: 640px) 112px, 178px' } : undefined)}
           </div>
           <div className="home-media-card-body">
             {heading}

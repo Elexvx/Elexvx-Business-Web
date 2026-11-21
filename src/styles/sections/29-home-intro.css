@@ -561,11 +561,7 @@ html[data-theme='light'] .home-brand-mark[data-format='overlap-symbol'] img {
   padding: 13px 12px;
   border: 1px solid var(--color-hairline);
   border-radius: 14px;
-  background: linear-gradient(
-    155deg,
-    color-mix(in srgb, var(--home-wait-blue) 9%, var(--color-pearl)),
-    color-mix(in srgb, var(--color-pearl) 58%, var(--color-canvas))
-  );
+  background: var(--color-pearl);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
 }
 
@@ -695,11 +691,7 @@ html[data-theme='light'] .home-product-intro:is(.home-hero--waiting, .home-hero-
 }
 
 html[data-theme='light'] .home-countdown-unit {
-  background: linear-gradient(
-    155deg,
-    color-mix(in srgb, var(--home-wait-blue) 8%, var(--color-surface-neutral)),
-    var(--color-surface-neutral)
-  );
+  background: var(--color-surface-neutral);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
 }
 

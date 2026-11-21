@@ -56,12 +56,16 @@
   "/activities/jinxi-2026/arrival-1.jpg": {
     "width": 480,
     "height": 479,
-    "variants": [{ "src": "/optimized/842f3eea4204e49c-480.webp", "width": 480 }]
+    "variants": [
+      { "src": "/optimized/842f3eea4204e49c-480.webp", "width": 480 }
+    ]
   },
   "/activities/jinxi-2026/arrival-2.jpg": {
     "width": 480,
     "height": 479,
-    "variants": [{ "src": "/optimized/db59d11ef16187ee-480.webp", "width": 480 }]
+    "variants": [
+      { "src": "/optimized/db59d11ef16187ee-480.webp", "width": 480 }
+    ]
   },
   "/activities/jinxi-2026/award-commercial-ppt-original.png": {
     "width": 1448,
@@ -205,7 +209,9 @@
   "/activities/jinxi-2026/review-notes.jpg": {
     "width": 480,
     "height": 480,
-    "variants": [{ "src": "/optimized/e1a00c4243692b50-480.webp", "width": 480 }]
+    "variants": [
+      { "src": "/optimized/e1a00c4243692b50-480.webp", "width": 480 }
+    ]
   },
   "/activities/jinxi-2026/roundtable-discussion.jpg": {
     "width": 1440,
@@ -425,15 +431,6 @@
     "variants": [
       { "src": "/optimized/84ddb9da524d29bd-480.webp", "width": 480 },
       { "src": "/optimized/84ddb9da524d29bd-720.webp", "width": 720 }
-    ]
-  },
-  "/products/humite-cover-textured.png": {
-    "width": 1254,
-    "height": 1254,
-    "variants": [
-      { "src": "/optimized/d84aeceb893996a1-480.webp", "width": 480 },
-      { "src": "/optimized/d84aeceb893996a1-960.webp", "width": 960 },
-      { "src": "/optimized/d84aeceb893996a1-1254.webp", "width": 1254 }
     ]
   },
   "/research/papers/agent-kv-cache-lifecycle/image1.png": {
@@ -1237,33 +1234,6 @@
       { "src": "/optimized/f6865a9207403137-1586.webp", "width": 1586 }
     ]
   },
-  "/visuals/humite-library/assets/runtime-v14/chongwen-carved.jpg": {
-    "width": 1376,
-    "height": 768,
-    "variants": [
-      { "src": "/optimized/09c5e20f6ae352ce-480.webp", "width": 480 },
-      { "src": "/optimized/09c5e20f6ae352ce-960.webp", "width": 960 },
-      { "src": "/optimized/09c5e20f6ae352ce-1376.webp", "width": 1376 }
-    ]
-  },
-  "/visuals/humite-library/assets/runtime-v14/guanwen-shiqian-carved.jpg": {
-    "width": 1376,
-    "height": 768,
-    "variants": [
-      { "src": "/optimized/397eeaee147f3ba0-480.webp", "width": 480 },
-      { "src": "/optimized/397eeaee147f3ba0-960.webp", "width": 960 },
-      { "src": "/optimized/397eeaee147f3ba0-1376.webp", "width": 1376 }
-    ]
-  },
-  "/visuals/humite-library/assets/runtime-v14/jigu-carved.jpg": {
-    "width": 1376,
-    "height": 768,
-    "variants": [
-      { "src": "/optimized/73b1fcd0a84ef199-480.webp", "width": 480 },
-      { "src": "/optimized/73b1fcd0a84ef199-960.webp", "width": 960 },
-      { "src": "/optimized/73b1fcd0a84ef199-1376.webp", "width": 1376 }
-    ]
-  },
   "/visuals/industrial-intelligence-gradient.jpg": {
     "width": 1586,
     "height": 992,
@@ -1298,6 +1268,54 @@
       { "src": "/optimized/239807f5b804ba6c-480.webp", "width": 480 },
       { "src": "/optimized/239807f5b804ba6c-960.webp", "width": 960 },
       { "src": "/optimized/239807f5b804ba6c-1254.webp", "width": 1254 }
+    ]
+  },
+  "/visuals/news/color-covers/appointment-2025.webp": {
+    "width": 720,
+    "height": 720,
+    "variants": [
+      { "src": "/optimized/1cb6c014d2a79aee-360.webp", "width": 360 },
+      { "src": "/optimized/1cb6c014d2a79aee-720.webp", "width": 720 }
+    ]
+  },
+  "/visuals/news/color-covers/authorization-withdrawal-2025.webp": {
+    "width": 720,
+    "height": 720,
+    "variants": [
+      { "src": "/optimized/5224c2ddaf8fcc2f-360.webp", "width": 360 },
+      { "src": "/optimized/5224c2ddaf8fcc2f-720.webp", "width": 720 }
+    ]
+  },
+  "/visuals/news/color-covers/feature-sunset-2025.webp": {
+    "width": 720,
+    "height": 720,
+    "variants": [
+      { "src": "/optimized/8040caa732d47e73-360.webp", "width": 360 },
+      { "src": "/optimized/8040caa732d47e73-720.webp", "width": 720 }
+    ]
+  },
+  "/visuals/news/color-covers/investment-exit-2026.webp": {
+    "width": 720,
+    "height": 720,
+    "variants": [
+      { "src": "/optimized/f48f1e1a1e6756f6-360.webp", "width": 360 },
+      { "src": "/optimized/f48f1e1a1e6756f6-720.webp", "width": 720 }
+    ]
+  },
+  "/visuals/news/color-covers/investment-forward-2026.webp": {
+    "width": 720,
+    "height": 720,
+    "variants": [
+      { "src": "/optimized/90837b0b0e2c94a2-360.webp", "width": 360 },
+      { "src": "/optimized/90837b0b0e2c94a2-720.webp", "width": 720 }
+    ]
+  },
+  "/visuals/news/color-covers/new-year-progress-2026.webp": {
+    "width": 720,
+    "height": 720,
+    "variants": [
+      { "src": "/optimized/6b3bc7b9f64932de-360.webp", "width": 360 },
+      { "src": "/optimized/6b3bc7b9f64932de-720.webp", "width": 720 }
     ]
   },
   "/visuals/news/feature-sunset-2025-square.jpg": {
@@ -1426,7 +1444,9 @@
   "/visuals/services/documentation.jpg": {
     "width": 450,
     "height": 450,
-    "variants": [{ "src": "/optimized/c8a5db252ec4b654-450.webp", "width": 450 }]
+    "variants": [
+      { "src": "/optimized/c8a5db252ec4b654-450.webp", "width": 450 }
+    ]
   },
   "/visuals/services/status.png": {
     "width": 1200,
@@ -1444,6 +1464,42 @@
       { "src": "/optimized/d6938132a79b3a6d-480.webp", "width": 480 },
       { "src": "/optimized/d6938132a79b3a6d-960.webp", "width": 960 },
       { "src": "/optimized/d6938132a79b3a6d-1586.webp", "width": 1586 }
+    ]
+  },
+  "/products/humite-cover-textured.png": {
+    "width": 1254,
+    "height": 1254,
+    "variants": [
+      { "src": "/optimized/d84aeceb893996a1-480.webp", "width": 480 },
+      { "src": "/optimized/d84aeceb893996a1-960.webp", "width": 960 },
+      { "src": "/optimized/d84aeceb893996a1-1254.webp", "width": 1254 }
+    ]
+  },
+  "/visuals/humite-library/assets/runtime-v14/chongwen-carved.jpg": {
+    "width": 1376,
+    "height": 768,
+    "variants": [
+      { "src": "/optimized/09c5e20f6ae352ce-480.webp", "width": 480 },
+      { "src": "/optimized/09c5e20f6ae352ce-960.webp", "width": 960 },
+      { "src": "/optimized/09c5e20f6ae352ce-1376.webp", "width": 1376 }
+    ]
+  },
+  "/visuals/humite-library/assets/runtime-v14/guanwen-shiqian-carved.jpg": {
+    "width": 1376,
+    "height": 768,
+    "variants": [
+      { "src": "/optimized/397eeaee147f3ba0-480.webp", "width": 480 },
+      { "src": "/optimized/397eeaee147f3ba0-960.webp", "width": 960 },
+      { "src": "/optimized/397eeaee147f3ba0-1376.webp", "width": 1376 }
+    ]
+  },
+  "/visuals/humite-library/assets/runtime-v14/jigu-carved.jpg": {
+    "width": 1376,
+    "height": 768,
+    "variants": [
+      { "src": "/optimized/73b1fcd0a84ef199-480.webp", "width": 480 },
+      { "src": "/optimized/73b1fcd0a84ef199-960.webp", "width": 960 },
+      { "src": "/optimized/73b1fcd0a84ef199-1376.webp", "width": 1376 }
     ]
   }
 }
