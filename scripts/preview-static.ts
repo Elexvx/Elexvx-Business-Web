@@ -4,6 +4,8 @@ import { extname, join, normalize, relative, resolve } from 'node:path';
 
 const distRoot = resolve(process.cwd(), 'dist');
 const port = Number(process.env.PORT ?? 4174);
+const chineseNotFoundFile = join(distRoot, '404.html');
+const englishNotFoundFile = join(distRoot, 'en', '404', 'index.html');
 
 const contentTypes: Record<string, string> = {
   '.css': 'text/css; charset=utf-8',
@@ -32,27 +34,26 @@ const findFile = (pathname: string) => {
   const target = safePath(pathname);
   if (!target) return null;
 
-  const candidates = [
-    target,
-    join(target, 'index.html'),
-    pathname.endsWith('/') ? null : `${target}.html`,
-    join(distRoot, '404.html'),
-  ].filter((candidate): candidate is string => Boolean(candidate));
+  const candidates = [target, join(target, 'index.html'), pathname.endsWith('/') ? null : `${target}.html`].filter(
+    (candidate): candidate is string => Boolean(candidate)
+  );
 
   return candidates.find((candidate) => existsSync(candidate) && statSync(candidate).isFile()) ?? null;
 };
 
 const server = createServer((request, response) => {
   const pathname = new URL(request.url ?? '/', 'http://127.0.0.1').pathname;
-  const file = findFile(pathname);
+  const matchedFile = findFile(pathname);
+  const isNotFound = !matchedFile || matchedFile === chineseNotFoundFile || matchedFile === englishNotFoundFile;
+  const file = matchedFile ?? (/^\/en(?:\/|$)/.test(pathname) ? englishNotFoundFile : chineseNotFoundFile);
 
-  if (!file) {
+  if (!existsSync(file) || !statSync(file).isFile()) {
     response.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' });
     response.end('Not found');
     return;
   }
 
-  response.writeHead(file === join(distRoot, '404.html') ? 404 : 200, {
+  response.writeHead(isNotFound ? 404 : 200, {
     'Cache-Control': 'no-cache',
     'Content-Type': contentTypes[extname(file)] ?? 'application/octet-stream',
   });
@@ -66,5 +67,8 @@ const server = createServer((request, response) => {
 });
 
 server.listen(port, '127.0.0.1', () => {
-  console.log(`Static export preview: http://127.0.0.1:${port}`);
+  const address = server.address();
+  console.log(
+    `Static export preview: http://127.0.0.1:${address && typeof address === 'object' ? address.port : port}`
+  );
 });

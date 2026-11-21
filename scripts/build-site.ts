@@ -2,8 +2,13 @@ import { spawnSync } from 'node:child_process';
 import { access, cp } from 'node:fs/promises';
 import { isHumiteReleaseDue } from '../src/data/humite-launch.mjs';
 
+const dev = process.argv.includes('--dev');
 const humitePublished = isHumiteReleaseDue();
-const env: NodeJS.ProcessEnv = { ...process.env, NEXT_PUBLIC_HUMITE_PUBLISHED: String(humitePublished) };
+const env: NodeJS.ProcessEnv = {
+  ...process.env,
+  NODE_ENV: dev ? 'development' : 'production',
+  NEXT_PUBLIC_HUMITE_PUBLISHED: String(humitePublished),
+};
 if (humitePublished) {
   await Promise.all([access('release-assets/humite-content.ts'), access('release-assets/humite')]).catch(() => {
     throw new Error(
@@ -20,7 +25,7 @@ const run = (command: string, ...args: string[]) => {
 const npm = (...args: string[]) => run('npm', 'run', ...args);
 
 npm('generate:site-data');
-if (process.argv.includes('--dev')) {
+if (dev) {
   run('next', 'dev', '--hostname', '127.0.0.1', '--port', '5173');
 } else {
   const esa = process.argv.includes('--esa');

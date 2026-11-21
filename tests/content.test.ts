@@ -35,17 +35,20 @@ describe('content publication gates', () => {
     expect(routes).not.toContain('/projects');
     expect(routes).not.toContain('/scenarios');
     expect(routes).not.toContain('/archive');
+    expect(routes).not.toContain('/404');
+    expect(routes).not.toContain('/en/404');
     expect(routes).toContain('/news/2026-06-09-01');
     expect(resolveRoute('/missing', insights).meta.robots).toBe('noindex,nofollow');
   });
 
   it('publishes the active news collection', () => {
     const news = loadNews();
-    expect(news).toHaveLength(7);
+    expect(news).toHaveLength(12);
     expect(news.every((item) => item.status === 'published')).toBe(true);
     expect(news.some((item) => item.slug === 'exam-2025-07-08-01')).toBe(false);
-    expect(news.some((item) => item.slug === 'stories-2025-07-01-01')).toBe(false);
-    expect(news.some((item) => item.slug === 'technology-2025-07-01-01')).toBe(false);
+    expect(news.map(({ slug }) => slug)).toEqual(
+      expect.arrayContaining(['stories-2025-07-01-01', 'technology-2025-07-01-01', 'spring-festival-2025'])
+    );
     expect(news.every((item) => item.cover?.startsWith('/visuals/') || item.cover?.startsWith('/activities/'))).toBe(
       true
     );
@@ -56,6 +59,21 @@ describe('content publication gates', () => {
     expect(homeContent.latestActivity.title).toBeTruthy();
     expect(homeContent.latestActivity.action.href).toBe('/news');
     expect(homeContent.latestActivity.media.src.startsWith('/visuals/')).toBe(true);
+  });
+
+  it('publishes subsequent news pages only when their collection has enough articles', () => {
+    const news = loadNews();
+    const insights = loadInsights();
+    const paths = getStaticRoutes(insights, news).map(({ path }) => path);
+    expect(paths).toContain('/news/page/2');
+    expect(paths).toContain('/news/category/updates/page/2');
+    expect(paths).not.toContain('/news/page/1');
+    expect(paths).not.toContain('/news/page/3');
+    expect(paths).not.toContain('/news/category/guides/page/2');
+
+    const firstPageOnly = getStaticRoutes(insights, news.slice(0, 6)).map(({ path }) => path);
+    expect(firstPageOnly).toContain('/news');
+    expect(firstPageOnly).not.toContain('/news/page/2');
   });
 
   it('publishes the cooperation case as its own route with an English body', () => {

@@ -33,14 +33,24 @@
       "categorySlug": "technical-exchange"
     },
     {
-      "slug": "website-permissions-redesign-2026",
-      "category": "网站更新",
-      "categorySlug": "site-updates"
-    },
-    {
       "slug": "jinxi-entrepreneurship-roadshow-2026",
       "category": "项目路演",
       "categorySlug": "roadshows"
+    },
+    {
+      "slug": "jimihui-enterprise-brand-ip-2026",
+      "category": "企业家交流",
+      "categorySlug": "entrepreneur-exchanges"
+    },
+    {
+      "slug": "jimihui-entrepreneur-salon-4-2025",
+      "category": "企业家交流",
+      "categorySlug": "entrepreneur-exchanges"
+    },
+    {
+      "slug": "jimihui-qingao-entrepreneur-meetup-2025",
+      "category": "企业家交流",
+      "categorySlug": "entrepreneur-exchanges"
     }
   ]
 }

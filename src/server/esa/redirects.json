@@ -1,7 +1,7 @@
 [
   {
     "source": "/services/docs",
-    "destination": "https://project-atlas.elexvx-johntao.chatgpt.site/",
+    "destination": "https://docs.elexvx.com/",
     "permanent": true
   },
   {
@@ -242,54 +242,6 @@
       }
     ],
     "destination": "/en/activities/category/technical-exchange/",
-    "permanent": true
-  },
-  {
-    "source": "/activities",
-    "has": [
-      {
-        "type": "query",
-        "key": "category",
-        "value": "site-updates"
-      }
-    ],
-    "destination": "/activities/category/site-updates/",
-    "permanent": true
-  },
-  {
-    "source": "/activities/",
-    "has": [
-      {
-        "type": "query",
-        "key": "category",
-        "value": "site-updates"
-      }
-    ],
-    "destination": "/activities/category/site-updates/",
-    "permanent": true
-  },
-  {
-    "source": "/en/activities",
-    "has": [
-      {
-        "type": "query",
-        "key": "category",
-        "value": "site-updates"
-      }
-    ],
-    "destination": "/en/activities/category/site-updates/",
-    "permanent": true
-  },
-  {
-    "source": "/en/activities/",
-    "has": [
-      {
-        "type": "query",
-        "key": "category",
-        "value": "site-updates"
-      }
-    ],
-    "destination": "/en/activities/category/site-updates/",
     "permanent": true
   },
   {
@@ -547,6 +499,16 @@
   {
     "source": "/latest-news/2024-12-31-01",
     "destination": "/news/2024-12-31-01",
+    "permanent": true
+  },
+  {
+    "source": "/stories/2025-07-01-01",
+    "destination": "/news/stories-2025-07-01-01/",
+    "permanent": true
+  },
+  {
+    "source": "/technology/2025-07-01-01",
+    "destination": "/news/technology-2025-07-01-01/",
     "permanent": true
   },
   {

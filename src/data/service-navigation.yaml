@@ -13,7 +13,7 @@ site:
 seo:
   defaultTitle: 企业服务导航 — 企业系统与政务服务入口
   titleTemplate: '%s | 宏翔商道-Elexvx'
-  defaultImage: /og-image.png
+  defaultImage: /share/elexvx.png
   keywords:
     - 宏翔商道
     - 企业导航

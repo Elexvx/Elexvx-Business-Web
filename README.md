@@ -14,6 +14,8 @@ npm run build:esa  # 发布门禁、Next 导出、ESA 打包和静态 SEO 自检
 
 Vitest 仅发现主项目 `tests/` 下的 `*.test.ts` 与 `*.test.tsx`，不会扫描隐藏工作树或 ESA 构建产物。
 
+开发服务器同时接受带末尾斜杠和不带斜杠的页面地址，不发送末尾斜杠重定向。访问开发首页时会通过 `Clear-Site-Data: "cache"` 清理本站 HTTP 缓存，恢复曾被其他本地服务缓存的相反方向永久重定向；不会清除 Cookie、语言、主题等存储偏好。若旧预览停留在重定向错误页，先打开 `http://127.0.0.1:5173/`，再进入所需页面。该恢复响应头仅在开发环境启用，正式静态导出继续使用带末尾斜杠的规范地址。
+
 ## 公开页面部署
 
 ESA 项目 `elexvx-site-router` 统一托管页面、静态资源和接口，连接本仓库的 `main` 分支，构建根目录为 `/`，使用 Node.js 24、`npm ci` 和 `npm run build:esa` 自动构建并发布。`esa.jsonc` 同时指定函数入口 `./esa/site/index.js` 与静态目录 `./esa/site/assets`，没有配置 SPA 回退。

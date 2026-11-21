@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 import type { NavigationGroup } from '../../data/research-navigation';
-import { trapFocusOnTab } from './focus-trap';
 
 const MENU_CONTENT_SWAP_DELAY_MS = 180;
 const MENU_OPEN_HOVER_DELAY_MS = 280;
@@ -24,10 +23,12 @@ export function useNavigationMenus(visibleNavigationGroups: NavigationGroup[]) {
   const [mobileOpenGroup, setMobileOpenGroup] = useState<string | null>(null);
   const [panelGroup, setPanelGroup] = useState<NavigationGroup | null>(null);
   const [panelContentVisible, setPanelContentVisible] = useState(true);
+  const [pendingFocusGroup, setPendingFocusGroup] = useState<string | null>(null);
 
   const navRef = useRef<HTMLElement>(null);
+  const desktopTriggerRef = useRef<HTMLAnchorElement | null>(null);
+  const restoringDesktopFocusRef = useRef(false);
   const mobileMenuButtonRef = useRef<HTMLButtonElement>(null);
-  const mobileNavigationRef = useRef<HTMLDivElement>(null);
   const openTimerRef = useRef<number | null>(null);
   const closeTimerRef = useRef<number | null>(null);
   const contentSwapTimerRef = useRef<number | null>(null);
@@ -56,11 +57,21 @@ export function useNavigationMenus(visibleNavigationGroups: NavigationGroup[]) {
     });
   };
 
-  const activateGroup = (groupId: string) => {
+  const activateGroup = (groupId: string, trigger: HTMLAnchorElement, focusFirstLink = false) => {
+    if (restoringDesktopFocusRef.current) return;
     const nextGroup = visibleNavigationGroups.find((group) => group.id === groupId);
     if (!nextGroup) return;
 
     clearInteractionTimers();
+    desktopTriggerRef.current = trigger;
+    setPendingFocusGroup(focusFirstLink ? groupId : null);
+    if (focusFirstLink) {
+      clearContentTransition();
+      setPanelGroup(nextGroup);
+      setPanelContentVisible(true);
+      setOpenGroup(groupId);
+      return;
+    }
     if (openGroup && panelGroup && panelGroup.id !== groupId) {
       clearContentTransition();
       setPanelContentVisible(false);
@@ -86,12 +97,12 @@ export function useNavigationMenus(visibleNavigationGroups: NavigationGroup[]) {
     setOpenGroup(groupId);
   };
 
-  const scheduleOpen = (groupId: string) => {
+  const scheduleOpen = (groupId: string, trigger: HTMLAnchorElement) => {
     clearInteractionTimers();
     if (openGroup === groupId) return;
     openTimerRef.current = window.setTimeout(() => {
       openTimerRef.current = null;
-      activateGroup(groupId);
+      activateGroup(groupId, trigger);
     }, MENU_OPEN_HOVER_DELAY_MS);
   };
 
@@ -103,14 +114,15 @@ export function useNavigationMenus(visibleNavigationGroups: NavigationGroup[]) {
   const closeDesktopMenu = useCallback(() => {
     clearInteractionTimers();
     clearContentTransition();
+    desktopTriggerRef.current = null;
+    setPendingFocusGroup(null);
     setPanelContentVisible(true);
     setOpenGroup(null);
   }, [clearContentTransition, clearInteractionTimers]);
 
   const scheduleClose = () => {
     clearInteractionTimers();
-    clearContentTransition();
-    closeTimerRef.current = window.setTimeout(() => setOpenGroup(null), MENU_CLOSE_HOVER_DELAY_MS);
+    closeTimerRef.current = window.setTimeout(closeDesktopMenu, MENU_CLOSE_HOVER_DELAY_MS);
   };
 
   const cancelScheduledClose = () => {
@@ -118,35 +130,29 @@ export function useNavigationMenus(visibleNavigationGroups: NavigationGroup[]) {
     closeTimerRef.current = null;
   };
 
-  const toggleMobileMenu = () => {
-    setMobileOpenGroup(null);
-    setMenuOpen((value) => !value);
-  };
+  useEffect(() => {
+    if (!pendingFocusGroup || openGroup !== pendingFocusGroup || panelGroup?.id !== pendingFocusGroup) return;
+    const panel = navRef.current?.querySelector<HTMLElement>('#desktop-menu-panel') ?? null;
+    getFocusableItems(panel)[0]?.focus({ preventScroll: true });
+    setPendingFocusGroup(null);
+  }, [openGroup, panelGroup, pendingFocusGroup]);
 
   useEffect(() => {
-    const mobileNavigation = mobileNavigationRef.current;
-    const shell = navRef.current?.parentElement;
-    const inertTargets = shell
-      ? Array.from(shell.children).filter(
-          (element): element is HTMLElement =>
-            element instanceof HTMLElement && element !== navRef.current && element !== mobileNavigation
-        )
-      : [];
-    const previousInert = inertTargets.map((element) => [element, element.inert] as const);
-    let focusFrame: number | null = null;
-
     const onKeyDown = (event: KeyboardEvent) => {
+      // Modal Escape and focus behavior belong to the topmost Radix dialog.
+      if (event.defaultPrevented || (event.target instanceof Element && event.target.closest('[role="dialog"]')))
+        return;
       if (event.key === 'Escape') {
-        setMenuOpen(false);
+        const desktopTrigger = desktopTriggerRef.current;
         closeDesktopMenu();
+        if (!menuOpen && desktopTrigger) {
+          event.preventDefault();
+          restoringDesktopFocusRef.current = true;
+          desktopTrigger.focus({ preventScroll: true });
+          restoringDesktopFocusRef.current = false;
+        }
         return;
       }
-
-      if (!menuOpen || event.key !== 'Tab') return;
-      trapFocusOnTab(event, getFocusableItems(mobileNavigation), {
-        container: mobileNavigation,
-        preventWhenEmpty: true,
-      });
     };
 
     const onPointerDown = (event: PointerEvent) => {
@@ -156,31 +162,23 @@ export function useNavigationMenus(visibleNavigationGroups: NavigationGroup[]) {
     document.addEventListener('keydown', onKeyDown);
     document.addEventListener('pointerdown', onPointerDown);
 
-    if (menuOpen) {
-      document.body.classList.add('menu-is-open');
-      inertTargets.forEach((element) => {
-        element.inert = true;
-      });
-      focusFrame = window.requestAnimationFrame(() => {
-        const first = getFocusableItems(mobileNavigation)[0];
-        first?.focus({ preventScroll: true });
-        focusFrame = null;
-      });
-    }
-
     return () => {
       document.removeEventListener('keydown', onKeyDown);
       document.removeEventListener('pointerdown', onPointerDown);
-      document.body.classList.remove('menu-is-open');
-      if (focusFrame !== null) window.cancelAnimationFrame(focusFrame);
-      previousInert.forEach(([element, wasInert]) => {
-        element.inert = wasInert;
-      });
-      if (menuOpen) mobileMenuButtonRef.current?.focus({ preventScroll: true });
       clearInteractionTimers();
       clearContentTransition();
     };
   }, [menuOpen, clearContentTransition, clearInteractionTimers, closeDesktopMenu]);
+
+  useEffect(() => {
+    const desktop = window.matchMedia('(min-width: 901px)');
+    const closeMobileOnDesktop = () => {
+      if (desktop.matches) setMenuOpen(false);
+    };
+    closeMobileOnDesktop();
+    desktop.addEventListener('change', closeMobileOnDesktop);
+    return () => desktop.removeEventListener('change', closeMobileOnDesktop);
+  }, []);
 
   return {
     menuOpen,
@@ -192,13 +190,11 @@ export function useNavigationMenus(visibleNavigationGroups: NavigationGroup[]) {
     panelContentVisible,
     navRef,
     mobileMenuButtonRef,
-    mobileNavigationRef,
     activateGroup,
     scheduleOpen,
     cancelScheduledOpen,
     closeDesktopMenu,
     scheduleClose,
     cancelScheduledClose,
-    toggleMobileMenu,
   };
 }

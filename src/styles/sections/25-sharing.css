@@ -39,24 +39,27 @@
 }
 .article-share button:focus-visible,
 .article-share-dialog button:focus-visible,
+.article-share-dialog input:focus-visible,
 .article-share-dialog a:focus-visible {
   outline: 2px solid #4385ff;
   outline-offset: 4px;
 }
 .article-share-dialog {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   box-sizing: border-box;
   width: min(380px, calc(100vw - 32px));
   max-height: calc(100dvh - 40px);
-  margin: auto;
+  margin: 0;
   padding: 18px;
   border: 1px solid #8885;
   border-radius: 16px;
   color: var(--share-ink, #161616);
   background: var(--share-surface, #fff);
   overflow: auto;
-}
-.article-share-dialog::backdrop {
-  background: #0009;
+  overscroll-behavior: contain;
 }
 .article-share-dialog header {
   display: flex;
@@ -98,7 +101,8 @@
   margin-inline: auto;
   border-radius: 8px;
 }
-.article-share-card a {
+.article-share-card a,
+.article-share-retry {
   display: inline-flex;
   margin-top: 16px;
   padding: 12px 18px;

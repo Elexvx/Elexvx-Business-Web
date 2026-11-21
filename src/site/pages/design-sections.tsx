@@ -171,7 +171,7 @@ export const DesignLayoutSection = () => (
       <div>
         <Translated>{'H1 页面主标题'}</Translated>
         <span>
-          <Translated>{'顶部 80px / 手机 48px'}</Translated>
+          <Translated>{'顶部 32–48px 响应式'}</Translated>
         </span>
       </div>
       <div>

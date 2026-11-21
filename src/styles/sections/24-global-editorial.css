@@ -164,11 +164,10 @@
   padding-top: 0;
 }
 
-/* Product catalog follows the shared list-page rhythm instead of homepage-only rules. */
+/* Public products sit below the shared hero. */
 .site-shell-openai .product-index {
   width: 100%;
   max-width: var(--page-max-width);
-  min-height: calc(100vh - 64px);
   margin-inline: auto;
   padding: var(--page-entry-space) var(--page-gutter) var(--section-space);
   color: var(--color-ink);
@@ -205,7 +204,7 @@
 
 .site-shell-openai .product-index .home-media-card-body {
   min-height: 0;
-  padding: 16px 0 0;
+  padding: 20px 0 24px;
 }
 
 .site-shell-openai .product-index .home-media-card-body h3 {

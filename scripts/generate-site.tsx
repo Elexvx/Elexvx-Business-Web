@@ -3,7 +3,6 @@ import { join, resolve } from 'node:path';
 import { escapeHtml, escapeXml } from '../src/content/html-entities.mjs';
 import { loadInsights } from '../src/content/loader';
 import { loadNews } from '../src/content/news-loader';
-import { serviceRoutePaths } from '../src/data/service-routes';
 import { siteIdentity } from '../src/data/site';
 import { ENGLISH_BRAND_NAME } from '../src/data/site-origins';
 import { ROOT_METADATA_DEFAULTS } from '../src/site/routing/metadata-base';
@@ -14,7 +13,6 @@ const distRoot = resolve(process.cwd(), 'dist');
 const insights = loadInsights();
 const news = loadNews();
 const routes = getStaticRoutes(insights, news);
-const servicePagePaths = serviceRoutePaths.map((path) => `${path}/`);
 
 const chineseRoot = ROOT_METADATA_DEFAULTS['zh-CN'];
 const englishRoot = ROOT_METADATA_DEFAULTS.en;
@@ -58,27 +56,6 @@ const writeRouteFile = async (path: string, html: string) => {
 for (const [from, target] of Object.entries(redirectRoutes)) {
   if (from !== target) await writeRouteFile(from, redirectDocument(target));
 }
-
-const indexableRoutes = routes.filter((route) => route.meta.robots !== 'noindex,nofollow');
-const localizedIndexablePaths = [
-  ...indexableRoutes.flatMap((route) => {
-    const path = route.path === '/' ? '/' : `${route.path}/`;
-    const englishPath = route.path === '/' ? '/en/' : `/en${route.path}/`;
-    const lastmod = route.meta.updatedAt ?? route.meta.publishedAt;
-    return [
-      { path, lastmod },
-      { path: englishPath, lastmod },
-    ];
-  }),
-  ...servicePagePaths.map((path) => ({ path, lastmod: undefined })),
-];
-const sitemap = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${localizedIndexablePaths
-  .map(
-    ({ path, lastmod }) =>
-      `<url><loc>${siteIdentity.canonicalOrigin}${path}</loc>${lastmod ? `<lastmod>${escapeXml(lastmod)}</lastmod>` : ''}</url>`
-  )
-  .join('')}</urlset>\n`;
-await writeFile(join(distRoot, 'sitemap.xml'), sitemap, 'utf8');
 
 const activePaths = new Set(routes.map((route) => route.path));
 const published = insights.filter(

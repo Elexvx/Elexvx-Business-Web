@@ -1,7 +1,9 @@
 'use client';
+import { Fragment } from 'react';
 import { LocalizedText as T, LocalizedTitle as Title, Translated, useI18n } from '../providers/i18n';
 import { useArticleCategoryFilter } from '../providers/category-filter';
-import { articleCategories, newsCategorySlug } from '../../data/article-categories';
+import { articleCategories } from '../../data/article-categories';
+import { newsInCategory, newsPageCount, newsPageHref, newsPageSize } from '../../data/news-pagination';
 
 import { getDirection } from '../../data/site';
 import { pageContent } from '../../data/page-content';
@@ -14,12 +16,62 @@ import { PageHero, NotFoundPage } from './shared';
 import { formatArticleDate, NewsCard } from '../components/article-card';
 import type { Insight, NewsItem } from '../../content/types';
 
-export const NewsPage = ({ initialCategory = 'all' }: { initialCategory?: string }) => {
+const NewsPagination = ({ category, page, totalPages }: { category: string; page: number; totalPages: number }) => {
+  const { href, locale, t } = useI18n();
+  if (totalPages < 2) return null;
+
+  const linkTo = (number: number) => href(newsPageHref(category, number));
+  const pageNumbers =
+    totalPages <= 7
+      ? Array.from({ length: totalPages }, (_, index) => index + 1)
+      : [...new Set([1, page - 1, page, page + 1, totalPages])]
+          .filter((number) => number >= 1 && number <= totalPages)
+          .sort((a, b) => a - b);
+
+  return (
+    <nav className="news-pagination" aria-label={t('新闻分页')}>
+      {page > 1 ? (
+        <a href={linkTo(page - 1)} rel="prev">
+          {t('上一页')}
+        </a>
+      ) : (
+        <span aria-disabled="true">{t('上一页')}</span>
+      )}
+      {pageNumbers.map((number, index) => {
+        const label = locale === 'en' ? `Page ${number}` : `第 ${number} 页`;
+        return (
+          <Fragment key={number}>
+            {index > 0 && number - pageNumbers[index - 1] > 1 && <span aria-hidden="true">…</span>}
+            {number === page ? (
+              <span aria-current="page" aria-label={label}>
+                {number}
+              </span>
+            ) : (
+              <a href={linkTo(number)} aria-label={label}>
+                {number}
+              </a>
+            )}
+          </Fragment>
+        );
+      })}
+      {page < totalPages ? (
+        <a href={linkTo(page + 1)} rel="next">
+          {t('下一页')}
+        </a>
+      ) : (
+        <span aria-disabled="true">{t('下一页')}</span>
+      )}
+    </nav>
+  );
+};
+
+export const NewsPage = ({ initialCategory = 'all', page = 1 }: { initialCategory?: string; page?: number }) => {
   const news = usePublishedNews();
   const { t } = useI18n();
   const categories = articleCategories('news', news);
   const [category, , categoryHref] = useArticleCategoryFilter('news', categories, initialCategory);
-  const visible = news.filter((item) => category === 'all' || newsCategorySlug(item.category) === category);
+  const matching = newsInCategory(news, category);
+  const visible = matching.slice((page - 1) * newsPageSize, page * newsPageSize);
   return (
     <SiteShell activePath="/news" className="site-shell-news">
       <section className="research-tile research-tile-light news-index-section" aria-labelledby="news-page-title">
@@ -46,6 +98,7 @@ export const NewsPage = ({ initialCategory = 'all' }: { initialCategory?: string
             <NewsCard item={item} key={item.slug} />
           ))}
         </div>
+        <NewsPagination category={category} page={page} totalPages={newsPageCount(matching.length)} />
       </section>
     </SiteShell>
   );
@@ -104,9 +157,7 @@ export const NewsItemPage = ({ item }: { item: NewsItem }) => {
               <Translated>{item.category}</Translated>
             </Eyebrow>
           </div>
-          <h1>
-            <Title text={item.title} />
-          </h1>
+          <h1>{t(item.title)}</h1>
           <p className="article-excerpt">{t(item.excerpt)}</p>
           <div className="article-meta">
             <span>{t(item.author)}</span>

@@ -1,6 +1,7 @@
 import { siteIdentity } from '../../data/site';
 
-const contentPath = /^\/(?:en\/)?(?:(?:research|news|activities)(?:\/(?:category\/)?[^/.]+)?|insights\/[^/.]+)\/?$/;
+const contentPath =
+  /^\/(?:en\/)?(?:(?:research|news|activities)(?:\/(?:category\/)?[^/.]+)?|insights\/[^/.]+|news\/(?:category\/[^/.]+\/)?page\/\d+|sitemap)\/?$/;
 
 /** Match content links to the trailing-slash URLs published in canonical metadata and the sitemap. */
 export const canonicalContentHref = (value: string) => {

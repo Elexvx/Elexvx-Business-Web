@@ -117,13 +117,8 @@
   border-radius: var(--content-card-radius);
 }
 
-.site-shell-openai .product-index .home-media-card-body {
-  padding: 20px 22px 24px;
-}
-
 .site-shell-openai :is(.home-news-card, .news-list-grid .news-card) {
   min-width: 0;
-  padding: 14px;
   border: var(--content-card-border);
   border-radius: var(--content-card-radius);
 }
@@ -204,10 +199,6 @@
 
 .service-site-shell .service-overview-card {
   border: var(--content-card-border);
-  border-radius: var(--content-card-radius);
-}
-
-.service-site-shell .service-directory-row {
   border-radius: var(--content-card-radius);
 }
 
@@ -313,10 +304,6 @@
   .site-shell-openai .research-index-row,
   .site-shell-openai .research-index-row:first-child {
     padding-block: 16px;
-  }
-
-  .site-shell-openai :is(.home-news-card, .news-list-grid .news-card) {
-    padding: 12px;
   }
 
   .site-shell-openai .careers-value {

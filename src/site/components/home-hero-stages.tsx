@@ -14,7 +14,7 @@ import {
 import { classNames } from './ui';
 import { prefersReducedMotion } from './use-hero-launch-phase';
 
-const DIGIT_TRANSITION_MS = 460;
+const DIGIT_TRANSITION_MS = 280;
 
 const HeroParticles = dynamic(() => import('./hero-particles').then((module) => module.HeroParticles), {
   ssr: false,
@@ -70,16 +70,18 @@ const RollingDigit = ({ digit }: { digit: string }) => {
 };
 
 export const HeroReleasedContent = ({
+  showAnnouncement,
   animateEntrance,
   settling,
 }: {
+  showAnnouncement: boolean;
   animateEntrance: boolean;
   settling?: boolean;
 }) => {
   const { hero } = homeContent;
   const { t, href } = useI18n();
   if (!homeIntro) return null;
-  const important = hero.important.enabled && hero.important.title.trim() ? hero.important : null;
+  const important = showAnnouncement && hero.important.enabled && hero.important.title.trim() ? hero.important : null;
   const rawActionHref = important?.action.href || homeIntro.actionHref;
   const isExternalAction = /^https?:\/\//.test(rawActionHref);
   const resolvedActionHref = isExternalAction ? rawActionHref : href(rawActionHref);
@@ -160,7 +162,7 @@ export const HeroWaitingStage = ({
     { key: 'seconds', value: mounted ? padUnit(snapshot.seconds) : '--', label: t('秒') },
   ];
 
-  const progressWidth = `${Math.round((mounted ? snapshot.progress : 0.12) * 100)}%`;
+  const progress = mounted ? snapshot.progress : 0.12;
 
   return (
     <>
@@ -204,7 +206,7 @@ export const HeroWaitingStage = ({
 
           <div className="home-hero-wait-meta">
             <div className="home-hero-wait-track" aria-hidden="true">
-              <span className="home-hero-wait-fill" style={{ width: progressWidth }} />
+              <span className="home-hero-wait-fill" style={{ transform: `scaleX(${progress})` }} />
             </div>
             <HomeReleaseSchedule launch={launch} mounted={mounted} localTimeZone={localTimeZone} />
           </div>

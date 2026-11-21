@@ -15,6 +15,7 @@ import { publishedActivities, toActivitySummary } from '../src/data/activities';
 import { publishedCaseStudies, toCaseStudySummary } from '../src/data/case-studies';
 import { publishedResearch } from '../src/data/research-articles';
 import { serviceRoutePaths } from '../src/data/service-routes';
+import { productsBeforeLaunch } from '../src/data/page-content';
 
 // Static sections below the interactive HomeHero contain native links and images,
 // avoiding shipping the large translation dictionary in the homepage client bundle.
@@ -63,12 +64,19 @@ for (const locale of ['zh-CN', 'en'] as const) {
     locale
   );
   const products = extractMain(renderFragment(locale, <HomeProductsSection />), 'products', locale);
+  const publicProducts = productsBeforeLaunch.length
+    ? extractMain(
+        renderFragment(locale, <HomeProductsSection items={productsBeforeLaunch} />),
+        'public products',
+        locale
+      )
+    : undefined;
   const casesAndCompany = extractMain(
     renderFragment(locale, <HomeCasesAndCompany caseStudies={caseStudyItems} />),
     'casesAndCompany',
     locale
   );
-  output[locale] = { welcomeRest, newsAndResearch, products, casesAndCompany };
+  output[locale] = { welcomeRest, newsAndResearch, products, productsBeforeLaunch: publicProducts, casesAndCompany };
 }
 await writeFile('src/data/home-static.json', `${JSON.stringify(output, null, 2)}\n`);
 console.log('Generated static homepage bodies for both languages.');

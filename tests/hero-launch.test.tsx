@@ -215,3 +215,26 @@ it.each([false, true])('uses the same release state (%s) for the hero and featur
   expect(html.indexOf('id="research"')).toBeLessThan(html.indexOf('id="products"'));
   expect(html.indexOf('id="products"')).toBeLessThan(html.indexOf('id="cooperation-cases"'));
 });
+
+it('keeps already published featured products visible during another product’s countdown', () => {
+  const publicProduct = '<a href="/products/public-product/">Public product</a>';
+  const html = renderToStaticMarkup(
+    <LanguageProvider locale="en" path="/">
+      <HomeStaticMain
+        initialReleased={false}
+        markup={{
+          welcomeRest: '',
+          newsAndResearch: '',
+          products: publicProduct + '<a href="/products/scheduled-product/">Scheduled product</a>',
+          productsBeforeLaunch: publicProduct,
+          casesAndCompany: '',
+        }}
+      />
+    </LanguageProvider>
+  );
+
+  expect(html).toContain('role="timer"');
+  expect(html).toContain(publicProduct);
+  expect(html).not.toContain('/products/scheduled-product/');
+  expect(html).not.toContain('class="home-products-locked"');
+});

@@ -60,6 +60,18 @@ const visuals = {
   },
 } satisfies Record<string, HeroMedia>;
 
+const previewProduct = {
+  name: '创世 · 测试产品',
+  slug: 'genesis-preview',
+  href: '/products/genesis-preview',
+  category: '已发布',
+  description: '用于验证待发布产品倒计时时，已发布产品的详情仍可访问。',
+  image: visuals.aiData.src,
+};
+
+const showPreviewProduct =
+  process.env.NODE_ENV === 'development' && process.env.NEXT_PUBLIC_ELEXVX_PRODUCT_PREVIEW === '1';
+
 export const homeContent = {
   hero: {
     // Set enabled to true and fill in the priority message to replace the default hero.
@@ -91,15 +103,15 @@ export const homeContent = {
     eyebrow: '产品一览',
     title: '主要产品',
     action: { label: '全部产品', href: '/products' },
-    items: [
-      ...(humiteContent ? [humiteContent.card] : []),
-    ],
+    items: [...(humiteContent ? [humiteContent.card] : []), ...(showPreviewProduct ? [previewProduct] : [])],
   },
   closing: {
     title: '开始与 Elexvx 合作',
     action: startCollaborationAction,
   },
 } as const;
+
+export const productsBeforeLaunch = homeContent.product.items.filter((item) => item.slug !== humiteContent?.card.slug);
 
 export const pageContent = {
   research: {

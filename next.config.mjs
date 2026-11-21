@@ -13,6 +13,20 @@ const nextConfig = {
     },
   },
   trailingSlash: true,
+  // Serve both URL forms in dev so cached permanent redirects cannot create a loop.
+  skipTrailingSlashRedirect: development,
+  ...(development
+    ? {
+        headers: () => [
+          {
+            source: '/',
+            // Recover opposite 308s cached by an earlier server on this dev origin.
+            // Clear only the HTTP cache; retain language, theme and consent preferences.
+            headers: [{ key: 'Clear-Site-Data', value: '"cache"' }],
+          },
+        ],
+      }
+    : {}),
   // Keep Turbopack's development cache separate from the static export.
   distDir: development ? 'dist-dev' : 'dist',
   poweredByHeader: false,

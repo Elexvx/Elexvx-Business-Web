@@ -1,4 +1,4 @@
-import { useEffect, useRef, type RefObject } from 'react';
+import { useEffect, useId, useRef, type RefObject } from 'react';
 import type { Locale } from '../providers/i18n';
 import { SiteImage } from './site-image';
 
@@ -46,7 +46,9 @@ export const LightboxDialog = ({
 }) => {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const thumbsRef = useRef<HTMLDivElement>(null);
-  const touchRef = useRef<number | null>(null);
+  const touchRef = useRef<{ identifier: number; x: number; y: number } | null>(null);
+  const ignoreClickUntilRef = useRef(0);
+  const captionId = useId();
   const isEnglish = locale === 'en';
   const photo = photos[index];
   const outgoingPhoto = slide ? photos[slide.from] : undefined;
@@ -57,11 +59,11 @@ export const LightboxDialog = ({
     const trigger = triggerRef.current;
     const overflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
-    dialog.showModal();
+    if (!dialog.open) dialog.showModal();
     return () => {
-      dialog.close();
+      if (dialog.open) dialog.close();
       document.body.style.overflow = overflow;
-      trigger?.focus({ preventScroll: true });
+      if (trigger?.isConnected) trigger.focus({ preventScroll: true });
     };
   }, [triggerRef]);
 
@@ -81,6 +83,8 @@ export const LightboxDialog = ({
       ref={dialogRef}
       className={`article-lightbox${watermark ? ' article-lightbox-watermarked' : ''}`}
       aria-label={isEnglish ? 'Image preview' : '图片预览'}
+      aria-describedby={photo?.alt ? captionId : undefined}
+      onClose={onClose}
       onCancel={(event) => {
         event.preventDefault();
         onClose();
@@ -89,10 +93,26 @@ export const LightboxDialog = ({
         if (event.target === event.currentTarget) onClose();
       }}
       onKeyDown={(event) => {
-        if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
-          event.preventDefault();
-          onMove(event.key === 'ArrowLeft' ? -1 : 1);
+        if (event.defaultPrevented || event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return;
+        const previous = event.key === 'ArrowLeft';
+        const next = event.key === 'ArrowRight';
+        if ((!previous && !next && event.key !== 'Home' && event.key !== 'End') || photos.length < 2) return;
+        event.preventDefault();
+        const thumbs = thumbsRef.current;
+        const buttons = Array.from(thumbs?.querySelectorAll<HTMLButtonElement>('button') ?? []);
+        const focusedIndex = buttons.findIndex((button) => button.contains(event.target as Node));
+        if (focusedIndex < 0 && (previous || next)) {
+          onMove(previous ? -1 : 1);
+          return;
         }
+        const targetIndex =
+          event.key === 'Home'
+            ? 0
+            : event.key === 'End'
+              ? photos.length - 1
+              : (focusedIndex + (previous ? -1 : 1) + photos.length) % photos.length;
+        onSelect(targetIndex, previous || event.key === 'Home' ? -1 : 1);
+        if (focusedIndex >= 0) buttons[targetIndex]?.focus({ preventScroll: true });
       }}
     >
       {photo && (
@@ -108,17 +128,40 @@ export const LightboxDialog = ({
           <div
             className="lightbox-stage"
             onClick={(event) => {
+              if (Date.now() < ignoreClickUntilRef.current) {
+                ignoreClickUntilRef.current = 0;
+                event.preventDefault();
+                event.stopPropagation();
+                return;
+              }
               if (event.target === event.currentTarget) onClose();
             }}
             onTouchStart={(event) => {
-              touchRef.current = event.touches.length === 1 ? event.touches[0].clientX : null;
+              ignoreClickUntilRef.current = 0;
+              const touch = event.touches.length === 1 ? event.touches[0] : undefined;
+              const onControl =
+                event.target instanceof Element && event.target.closest('button, a, input, select, textarea');
+              touchRef.current =
+                touch && !onControl ? { identifier: touch.identifier, x: touch.clientX, y: touch.clientY } : null;
+            }}
+            onTouchMove={(event) => {
+              if (event.touches.length !== 1) touchRef.current = null;
+            }}
+            onTouchCancel={() => {
+              touchRef.current = null;
             }}
             onTouchEnd={(event) => {
-              if (touchRef.current !== null) {
-                const distance = event.changedTouches[0].clientX - touchRef.current;
-                if (Math.abs(distance) > SWIPE_THRESHOLD_PX) onMove(distance > 0 ? -1 : 1);
-              }
+              const start = touchRef.current;
               touchRef.current = null;
+              if (!start || event.touches.length > 0 || photos.length < 2) return;
+              const touch = Array.from(event.changedTouches).find((item) => item.identifier === start.identifier);
+              if (!touch) return;
+              const distance = touch.clientX - start.x;
+              const verticalDistance = touch.clientY - start.y;
+              if (Math.abs(distance) > SWIPE_THRESHOLD_PX && Math.abs(distance) > Math.abs(verticalDistance)) {
+                ignoreClickUntilRef.current = Date.now() + 500;
+                onMove(distance > 0 ? -1 : 1);
+              }
             }}
           >
             <button
@@ -144,7 +187,9 @@ export const LightboxDialog = ({
                 key={photo.src}
                 className={`lightbox-slide ${slide ? 'lightbox-slide-in' : ''}`}
                 data-watermark={photo.watermark}
-                onAnimationEnd={onSlideEnd}
+                onAnimationEnd={(event) => {
+                  if (event.target === event.currentTarget) onSlideEnd();
+                }}
               >
                 <SiteImage className="lightbox-photo" src={photo.src} alt={photo.alt} loading="eager" />
               </div>
@@ -159,10 +204,13 @@ export const LightboxDialog = ({
               <LightboxIcon path="m10 6 6 6-6 6" />
             </button>
           </div>
-          <p className="lightbox-caption">{photo.alt}</p>
+          <p id={captionId} className="lightbox-caption">
+            {photo.alt}
+          </p>
           <div
             ref={thumbsRef}
             className="lightbox-thumbnails"
+            role="group"
             aria-label={isEnglish ? 'Image thumbnails' : '图片缩略图'}
           >
             {photos.map((item, i) => (
@@ -171,6 +219,7 @@ export const LightboxDialog = ({
                 type="button"
                 aria-label={`${isEnglish ? 'View image' : '查看图片'} ${i + 1}`}
                 aria-current={i === index ? 'true' : undefined}
+                tabIndex={i === index ? 0 : -1}
                 onClick={() => onSelect(i, i < index ? -1 : 1)}
               >
                 <SiteImage src={item.src} alt="" />

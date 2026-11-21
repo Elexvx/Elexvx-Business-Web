@@ -188,7 +188,6 @@ export function NewsCard({ item, showExcerpt = true }: { item: NewsSummary; show
       category={item.category}
       publishedAt={item.publishedAt}
       excerpt={showExcerpt ? item.excerpt : undefined}
-      splitTitle
     />
   );
 }

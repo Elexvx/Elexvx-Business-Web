@@ -10,7 +10,9 @@ export type CategoryPrefix = '/activities/category/' | '/news/category/' | '/res
 export const categoryStaticParams = (prefix: CategoryPrefix) =>
   getStaticRoutes(loadInsights(), loadNews())
     .filter((route) => route.path.startsWith(prefix))
-    .map((route) => ({ slug: route.path.slice(prefix.length) }));
+    .map((route) => route.path.slice(prefix.length))
+    .filter((slug) => !slug.includes('/'))
+    .map((slug) => ({ slug }));
 
 export const categoryMetadata = (prefix: CategoryPrefix, slug: string) => nextMetadata(`${prefix}${slug}`);
 

@@ -1,10 +1,4 @@
-import AppstoreOutlined from '@ant-design/icons-svg/es/asn/AppstoreOutlined';
-import AuditOutlined from '@ant-design/icons-svg/es/asn/AuditOutlined';
-import BankOutlined from '@ant-design/icons-svg/es/asn/BankOutlined';
 import PartitionOutlined from '@ant-design/icons-svg/es/asn/PartitionOutlined';
-import RobotOutlined from '@ant-design/icons-svg/es/asn/RobotOutlined';
-import SafetyCertificateOutlined from '@ant-design/icons-svg/es/asn/SafetyCertificateOutlined';
-import TeamOutlined from '@ant-design/icons-svg/es/asn/TeamOutlined';
 import type { AbstractNode, IconDefinition } from '@ant-design/icons-svg/es/types';
 import { createElement, type ReactElement } from 'react';
 
@@ -14,35 +8,35 @@ import {
   type ServiceCategory,
   type ServiceLink,
 } from '../../data/service-navigation';
+import { IndexHeading } from '../components/index-heading';
 import { DirectorySearch } from './navigation-search';
 import { canonicalContentHref } from '../routing/content-href';
 
-const CATEGORY_ICONS = {
-  企业系统: AppstoreOutlined,
-  政务链接: BankOutlined,
-  知识产权: SafetyCertificateOutlined,
-  企业信用: AuditOutlined,
-  人工智能: RobotOutlined,
-  公众平台: TeamOutlined,
-};
+function normalizeSvgAttributes(attrs: AbstractNode['attrs']) {
+  return Object.fromEntries(
+    Object.entries(attrs).map(([name, value]) => [
+      name === 'class' ? 'className' : name.replace(/-([a-z])/g, (_, letter: string) => letter.toUpperCase()),
+      value,
+    ])
+  );
+}
 
 function renderIconNode(node: AbstractNode, key: string): ReactElement {
   return createElement(
     node.tag,
-    { ...node.attrs, key },
+    { ...normalizeSvgAttributes(node.attrs), key },
     node.children?.map((child, index) => renderIconNode(child, `${key}-${index}`))
   );
 }
 
-function ServiceIcon({ definition, className }: { definition: IconDefinition; className?: string }) {
+function ServiceIcon({ definition }: { definition: IconDefinition }) {
   const root =
     typeof definition.icon === 'function' ? definition.icon('currentColor', 'currentColor') : definition.icon;
 
   return createElement(
     root.tag,
     {
-      ...root.attrs,
-      className,
+      ...normalizeSvgAttributes(root.attrs),
       width: '1em',
       height: '1em',
       fill: 'currentColor',
@@ -55,26 +49,19 @@ function ServiceIcon({ definition, className }: { definition: IconDefinition; cl
 function LinkIcon({ link }: { link: ServiceLink }) {
   if (!link.icon) {
     return (
-      <span className="service-link-icon-fallback" role="img" aria-label={`${link.name}图标`}>
+      <span className="service-link-icon-fallback" aria-hidden="true">
         <ServiceIcon definition={PartitionOutlined} />
       </span>
     );
   }
 
   return (
-    <img
-      className="service-link-icon"
-      src={link.icon}
-      alt={`${link.name}图标`}
-      width={56}
-      height={56}
-      loading="lazy"
-      decoding="async"
-    />
+    <img className="service-link-icon" src={link.icon} alt="" width={44} height={44} loading="lazy" decoding="async" />
   );
 }
 
 function DirectoryRow({ link }: { link: ServiceLink }) {
+  const description = link.description.trim();
   return (
     <a
       className="service-directory-row"
@@ -89,7 +76,7 @@ function DirectoryRow({ link }: { link: ServiceLink }) {
       </span>
       <span className="service-link-body">
         <span className="service-link-title">{link.name}</span>
-        <span className="service-link-description">{link.description || '打开链接'}</span>
+        {description && description !== link.name && <span className="service-link-description">{description}</span>}
       </span>
     </a>
   );
@@ -98,12 +85,10 @@ function DirectoryRow({ link }: { link: ServiceLink }) {
 function DirectoryGrid({ links }: { links: ServiceLink[] }) {
   if (links.length === 0) return null;
   return (
-    <div className="service-directory-panel">
-      <div className="service-directory-grid">
-        {links.map((link) => (
-          <DirectoryRow key={link.id} link={link} />
-        ))}
-      </div>
+    <div className="service-directory-grid">
+      {links.map((link) => (
+        <DirectoryRow key={link.id} link={link} />
+      ))}
     </div>
   );
 }
@@ -111,16 +96,9 @@ function DirectoryGrid({ links }: { links: ServiceLink[] }) {
 function NavigationSection({ category }: { category: ServiceCategory }) {
   return (
     <section className="service-category" id={`category-${category.id}`} aria-labelledby={`heading-${category.id}`}>
-      <div className="service-category-heading">
-        <div className="service-category-title">
-          <span className="service-category-icon" aria-hidden="true">
-            <ServiceIcon
-              definition={CATEGORY_ICONS[category.category as keyof typeof CATEGORY_ICONS] ?? AppstoreOutlined}
-            />
-          </span>
-          <h2 id={`heading-${category.id}`}>{category.category}</h2>
-        </div>
-      </div>
+      <h2 className="service-category-heading" id={`heading-${category.id}`}>
+        {category.category}
+      </h2>
       <DirectoryGrid links={category.links} />
       {category.subcategories.map((subcategory) => (
         <div className="service-subcategory" id={`subcategory-${subcategory.id}`} key={subcategory.id}>
@@ -135,22 +113,20 @@ function NavigationSection({ category }: { category: ServiceCategory }) {
 export const NavigationPage = () => {
   return (
     <>
-      <section className="service-page-hero service-navigation-hero">
+      <section className="service-page-hero service-navigation-hero" aria-labelledby="service-navigation-title">
         <div className="service-page-hero-inner">
-          <p className="eyebrow">ELEXVX / BUSINESS DIRECTORY</p>
-          <h1>企业服务导航</h1>
-          <p className="service-page-hero-description">{serviceNavigationConfig.site.description}</p>
+          <div className="service-page-hero-copy">
+            <IndexHeading id="service-navigation-title" title="企业服务导航" />
+          </div>
           <DirectorySearch searchConfig={serviceNavigationConfig.search} />
         </div>
       </section>
 
       <section className="service-directory" aria-label="企业服务导航分类">
         <div className="service-directory-inner">
-          <div className="service-category-list">
-            {serviceNavigation.map((category) => (
-              <NavigationSection category={category} key={category.id} />
-            ))}
-          </div>
+          {serviceNavigation.map((category) => (
+            <NavigationSection category={category} key={category.id} />
+          ))}
         </div>
       </section>
     </>

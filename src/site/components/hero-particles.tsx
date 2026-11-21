@@ -4,25 +4,18 @@ import { useEffect, useRef } from 'react';
 
 import {
   buildParticles,
-  clamp,
+  drawParticles,
+  getRestingCenter,
   resolvePalette,
-  stepAndDrawParticles,
   type Particle,
-  type PointerState,
 } from './hero-particles-engine';
 
 const MAX_DEVICE_PIXEL_RATIO = 1.5;
 const MAX_CANVAS_PIXELS = 2_500_000;
-const FRAME_INTERVAL_MS = 1000 / 30;
-const SIMULATION_FRAME_MS = 1000 / 60;
+const DESKTOP_FRAME_MS = 1000 / 60;
+const MOBILE_FRAME_MS = 1000 / 30;
 const MAX_FRAME_DELTA_MS = 50;
-const MAX_POINTER_VELOCITY_PX = 28;
-const POINTER_IDLE_MS = 650;
 
-/**
- * Renders a restrained, pointer-reactive zero-gravity particle field on canvas
- * for the waiting hero stage, adapting automatically to light/dark themes and reduced motion.
- */
 export const HeroParticles = () => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
@@ -45,53 +38,50 @@ export const HeroParticles = () => {
     let particles: Particle[] = [];
     let rafId = 0;
     let lastTime = 0;
-    let animateUntil = 0;
+    let simulationTime = 0;
 
-    const pointer: PointerState = {
-      active: false,
-      strength: 0,
-      x: 0,
-      y: 0,
-      vx: 0,
-      vy: 0,
-    };
+    const center = getRestingCenter(simulationTime);
+    const pointer = { active: false, x: 0, y: 0 };
 
-    const drawFrame = (timeSec: number, dtFactor: number, still = false) =>
-      stepAndDrawParticles(context, particles, pointer, palette, width, height, timeSec, dtFactor, still);
+    const drawFrame = () => drawParticles(context, particles, palette, { width, height, time: simulationTime, center });
 
     const drawStillFrame = () => {
-      if (inView && !document.hidden && !rafId) drawFrame(0, 1, true);
+      if (inView && !document.hidden && !rafId) drawFrame();
     };
 
     const stopAnimation = () => {
       if (rafId) window.cancelAnimationFrame(rafId);
       rafId = 0;
       lastTime = 0;
-      animateUntil = 0;
       pointer.active = false;
-      pointer.strength = 0;
-      pointer.vx = 0;
-      pointer.vy = 0;
     };
 
     const tick = (now: number) => {
-      if (now >= animateUntil) {
-        stopAnimation();
-        drawStillFrame();
-        return;
-      }
-      const elapsed = lastTime ? now - lastTime : FRAME_INTERVAL_MS;
+      const frameInterval = width <= 720 ? MOBILE_FRAME_MS : DESKTOP_FRAME_MS;
+      const elapsed = lastTime ? now - lastTime : frameInterval;
       // Allow small timestamp rounding differences on 60 Hz displays.
-      if (elapsed >= FRAME_INTERVAL_MS - 1) {
+      if (elapsed >= frameInterval - 1) {
         lastTime = now;
-        drawFrame(now * 0.001, Math.min(MAX_FRAME_DELTA_MS, elapsed) / SIMULATION_FRAME_MS);
+        const delta = Math.min(MAX_FRAME_DELTA_MS, elapsed);
+        simulationTime += delta / 1000;
+        const restingCenter = getRestingCenter(simulationTime);
+        const targetX = pointer.active ? restingCenter.x * 0.18 + pointer.x * 0.82 : restingCenter.x;
+        const targetY = pointer.active ? restingCenter.y * 0.18 + pointer.y * 0.82 : restingCenter.y;
+        const follow = 1 - Math.exp(-delta / (pointer.active ? 185 : 470));
+        center.x += (targetX - center.x) * follow;
+        center.y += (targetY - center.y) * follow;
+        drawFrame();
       }
       rafId = window.requestAnimationFrame(tick);
     };
 
     const updateVisibility = () => {
-      if (!inView || document.hidden || reducedMotion) stopAnimation();
-      drawStillFrame();
+      if (!inView || document.hidden || reducedMotion) {
+        stopAnimation();
+        drawStillFrame();
+      } else if (!rafId) {
+        rafId = window.requestAnimationFrame(tick);
+      }
     };
 
     const syncSize = () => {
@@ -112,17 +102,7 @@ export const HeroParticles = () => {
       canvas.height = Math.round(height * dpr);
       context.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-      if (particles.length === 0) {
-        particles = buildParticles(width, height);
-      } else {
-        for (const p of particles) {
-          p.x = p.homeX * width;
-          p.y = p.homeY * height;
-          p.vx = 0;
-          p.vy = 0;
-        }
-      }
-
+      particles = buildParticles(width, height);
       drawStillFrame();
     };
 
@@ -139,17 +119,10 @@ export const HeroParticles = () => {
         return;
       }
 
-      const nextX = event.clientX - rect.left;
-      const nextY = event.clientY - rect.top;
-      if (pointer.active) {
-        pointer.vx = clamp(nextX - pointer.x, -MAX_POINTER_VELOCITY_PX, MAX_POINTER_VELOCITY_PX);
-        pointer.vy = clamp(nextY - pointer.y, -MAX_POINTER_VELOCITY_PX, MAX_POINTER_VELOCITY_PX);
-      }
-      pointer.x = nextX;
-      pointer.y = nextY;
+      if (!rect.width || !rect.height) return;
+      pointer.x = (event.clientX - rect.left) / rect.width;
+      pointer.y = (event.clientY - rect.top) / rect.height;
       pointer.active = true;
-      animateUntil = performance.now() + POINTER_IDLE_MS;
-      if (!rafId) rafId = window.requestAnimationFrame(tick);
     };
 
     const handlePointerLeave = () => {
@@ -189,6 +162,7 @@ export const HeroParticles = () => {
     motionQuery?.addEventListener('change', handleMotionChange);
 
     syncSize();
+    updateVisibility();
 
     return () => {
       stopAnimation();

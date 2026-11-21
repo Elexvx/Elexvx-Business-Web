@@ -1,7 +1,7 @@
 'use client';
 
 import type { SearchDocument } from '../search-index';
-import { useEffect, useState } from 'react';
+import { useEffect, useId, useRef, useState } from 'react';
 import { SearchOutlined } from '@ant-design/icons';
 import { useAvailableLink } from '../providers/content-context';
 import { useI18n } from '../providers/i18n';
@@ -12,6 +12,9 @@ export const NavigationSearch = ({ onNavigate }: { onNavigate: () => void }) => 
   const [query, setQuery] = useState('');
   const [searchIndex, setSearchIndex] = useState<SearchDocument[] | null>(null);
   const [searchIndexError, setSearchIndexError] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const resultsRef = useRef<HTMLDivElement>(null);
+  const resultsId = useId();
   const en = locale === 'en';
   const terms = query.trim().toLocaleLowerCase().split(/\s+/).filter(Boolean);
 
@@ -62,19 +65,61 @@ export const NavigationSearch = ({ onNavigate }: { onNavigate: () => void }) => 
         <SearchOutlined aria-hidden="true" />
         <input
           type="search"
+          ref={inputRef}
           value={query}
           onChange={(event) => setQuery(event.target.value)}
           placeholder={en ? 'Search articles, pages and more' : '搜索文章、页面及全站内容'}
           aria-label={en ? 'Search site' : '全站搜索'}
-          aria-controls="navigation-search-results"
+          aria-controls={terms.length ? resultsId : undefined}
+          onKeyDown={(event) => {
+            if (event.nativeEvent.isComposing) return;
+            if (event.key === 'Escape' && query) {
+              event.preventDefault();
+              event.stopPropagation();
+              setQuery('');
+            }
+            if (event.key === 'ArrowDown' && results.length) {
+              event.preventDefault();
+              resultsRef.current?.querySelector<HTMLAnchorElement>('a')?.focus();
+            }
+          }}
         />
       </label>
       {terms.length > 0 && (
-        <div id="navigation-search-results" className="navigation-search-results">
+        <div
+          ref={resultsRef}
+          id={resultsId}
+          className="navigation-search-results"
+          aria-busy={loading}
+          onKeyDown={(event) => {
+            if (event.nativeEvent.isComposing) return;
+            if (event.key === 'Escape') {
+              event.preventDefault();
+              event.stopPropagation();
+              setQuery('');
+              inputRef.current?.focus();
+              return;
+            }
+            const links = Array.from(resultsRef.current?.querySelectorAll<HTMLAnchorElement>('a') ?? []);
+            const index = links.indexOf(event.target as HTMLAnchorElement);
+            if (index < 0) return;
+            if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+              event.preventDefault();
+              const next = index + (event.key === 'ArrowDown' ? 1 : -1);
+              if (next < 0) inputRef.current?.focus();
+              else links[Math.min(next, links.length - 1)]?.focus();
+            }
+          }}
+        >
           {loading ? (
             <p role="status">{en ? 'Searching…' : '正在搜索…'}</p>
           ) : searchIndexError ? (
-            <p role="status">{en ? 'Search is temporarily unavailable.' : '搜索暂时不可用，请稍后重试。'}</p>
+            <>
+              <p role="status">{en ? 'Search is temporarily unavailable.' : '搜索暂时不可用，请稍后重试。'}</p>
+              <button type="button" className="navigation-search-retry" onClick={() => setSearchIndexError(false)}>
+                {en ? 'Retry' : '重试'}
+              </button>
+            </>
           ) : (
             <>
               <p role="status">{en ? `${results.length} results` : `找到 ${results.length} 条结果`}</p>

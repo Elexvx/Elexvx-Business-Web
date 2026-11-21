@@ -4,7 +4,7 @@ import { CalendarOutlined } from '@ant-design/icons';
 
 import { serviceNavigationConfig } from '../../data/service-navigation';
 import { Eyebrow } from '../components/ui';
-import { StatusErrorState, StatusLogin, StatusPanel } from './status-components';
+import { StatusErrorState, StatusLogin, StatusPanel, StatusSkeleton } from './status-components';
 import { StatusHistory } from './status-history';
 import { useStatusData } from './use-status-data';
 
@@ -39,12 +39,7 @@ export const StatusPage = ({ history = false }: { history?: boolean }) => {
           aria-busy={loading}
         >
           {loading ? (
-            <div className="service-status-loading" role="status" aria-label="正在加载服务状态">
-              <span />
-              <span />
-              <span />
-              <span />
-            </div>
+            <StatusSkeleton history={history} />
           ) : passwordRequired ? (
             <StatusLogin onLogin={login} />
           ) : error || !data ? (

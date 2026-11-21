@@ -1,7 +1,7 @@
 'use client';
 
 import { CheckCircleFilled, LinkOutlined, LockOutlined, ReloadOutlined, WarningFilled } from '@ant-design/icons';
-import { useEffect, useMemo, useState, type FormEvent as ReactFormEvent } from 'react';
+import { useEffect, useId, useMemo, useRef, useState, type FormEvent as ReactFormEvent } from 'react';
 
 import { serviceNavigationConfig } from '../../data/service-navigation';
 import {
@@ -25,6 +25,39 @@ import {
 
 export function StatusDot({ tone }: { tone: StatusTone }) {
   return <span className={`service-status-dot service-status-dot-${tone}`} aria-hidden="true" />;
+}
+
+export function StatusSkeleton({ history = false }: { history?: boolean }) {
+  const label = history ? '正在加载历史可用性' : '正在加载服务状态';
+
+  return (
+    <div className="service-status-loading" role="status" aria-live="polite" aria-label={label}>
+      <span className="sr-only">{label}</span>
+      <div
+        className={`service-status-panel service-status-skeleton${history ? ' service-status-skeleton-history' : ''}`}
+        aria-hidden="true"
+      >
+        <div className="service-status-skeleton-heading">
+          {!history ? <span className="service-status-skeleton-block service-status-skeleton-icon" /> : null}
+          <div className="service-status-skeleton-copy">
+            <span className="service-status-skeleton-block service-status-skeleton-title" />
+            <span className="service-status-skeleton-block service-status-skeleton-caption" />
+          </div>
+          {!history ? <span className="service-status-skeleton-block service-status-skeleton-control" /> : null}
+        </div>
+        {Array.from({ length: 4 }, (_, index) => (
+          <div className="service-status-skeleton-row" key={index}>
+            <div className="service-status-skeleton-copy">
+              <span className="service-status-skeleton-block service-status-skeleton-name" />
+              <span className="service-status-skeleton-block service-status-skeleton-caption" />
+            </div>
+            <span className="service-status-skeleton-block service-status-skeleton-strip" />
+            <span className="service-status-skeleton-block service-status-skeleton-metric" />
+          </div>
+        ))}
+      </div>
+    </div>
+  );
 }
 
 export function AvailabilityStrip({
@@ -118,7 +151,13 @@ function StatusSummary({
   const tone: StatusTone = hasErrors ? 'error' : hasUnknown ? 'warning' : 'healthy';
   const title = hasErrors ? '部分系统出现异常' : hasUnknown ? '部分系统状态未知' : '所有系统运行正常';
   return (
-    <div className={`service-status-summary service-status-summary-${tone}`} role="alert">
+    <div
+      className={`service-status-summary service-status-summary-${tone}`}
+      role="status"
+      aria-live="polite"
+      aria-atomic="true"
+      aria-busy={refreshing}
+    >
       <span className="service-status-summary-icon" aria-hidden="true">
         {hasErrors ? <WarningFilled /> : <CheckCircleFilled />}
       </span>
@@ -134,7 +173,7 @@ function StatusSummary({
       <button
         className={`service-refresh-button${refreshing ? ' is-refreshing' : ''}`}
         type="button"
-        aria-label="刷新状态"
+        aria-label={refreshing ? '正在刷新状态' : '刷新状态'}
         title="刷新状态"
         onClick={() => void onRefresh()}
         disabled={refreshing}
@@ -199,16 +238,28 @@ export function StatusPanel({
 }
 
 export function StatusLogin({ onLogin }: { onLogin: (password: string) => Promise<void> }) {
+  const id = useId();
+  const titleId = `${id}-title`;
+  const descriptionId = `${id}-description`;
+  const errorId = `${id}-error`;
   const [password, setPassword] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string>();
+  const submittingRef = useRef(false);
+  const passwordRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (error) passwordRef.current?.focus();
+  }, [error]);
 
   const submit = async (event: ReactFormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    if (submittingRef.current) return;
     if (!password) {
       setError('请输入访问密码');
       return;
     }
+    submittingRef.current = true;
     setSubmitting(true);
     setError(undefined);
     try {
@@ -216,29 +267,39 @@ export function StatusLogin({ onLogin }: { onLogin: (password: string) => Promis
     } catch (loginError) {
       setError(loginError instanceof Error ? loginError.message : '登录失败');
     } finally {
+      submittingRef.current = false;
       setSubmitting(false);
     }
   };
 
   return (
-    <section className="service-login-panel" aria-labelledby="service-login-title">
+    <section className="service-login-panel" aria-labelledby={titleId}>
       <LockOutlined className="service-login-icon" aria-hidden="true" />
-      <h2 id="service-login-title">服务状态受保护</h2>
-      <p>请输入访问密码后查看监控数据。</p>
+      <h2 id={titleId}>服务状态受保护</h2>
+      <p id={descriptionId}>请输入访问密码后查看监控数据。</p>
       {error ? (
-        <p className="service-form-error" role="alert">
+        <p className="service-form-error" id={errorId} role="alert">
           {error}
         </p>
       ) : null}
-      <form onSubmit={submit}>
+      <form onSubmit={submit} aria-busy={submitting} noValidate>
         <label>
           <span className="sr-only">访问密码</span>
           <input
+            ref={passwordRef}
             autoComplete="current-password"
+            name="password"
             type="password"
             placeholder="访问密码"
+            required
+            readOnly={submitting}
+            aria-invalid={Boolean(error)}
+            aria-describedby={error ? `${descriptionId} ${errorId}` : descriptionId}
             value={password}
-            onChange={(event) => setPassword(event.target.value)}
+            onChange={(event) => {
+              setPassword(event.target.value);
+              if (error) setError(undefined);
+            }}
           />
         </label>
         <button type="submit" disabled={submitting}>
@@ -250,11 +311,18 @@ export function StatusLogin({ onLogin }: { onLogin: (password: string) => Promis
 }
 
 export function StatusErrorState({ error, onRetry }: { error?: string; onRetry: () => void }) {
+  const id = useId();
+
   return (
-    <section className="service-status-error" role="alert">
+    <section
+      className="service-status-error"
+      role="alert"
+      aria-labelledby={`${id}-title`}
+      aria-describedby={`${id}-description`}
+    >
       <WarningFilled aria-hidden="true" />
-      <h2>暂时无法获取服务状态</h2>
-      <p>{error || '请稍后重试'}</p>
+      <h2 id={`${id}-title`}>暂时无法获取服务状态</h2>
+      <p id={`${id}-description`}>{error || '请稍后重试'}</p>
       <button type="button" onClick={onRetry}>
         重新加载
       </button>

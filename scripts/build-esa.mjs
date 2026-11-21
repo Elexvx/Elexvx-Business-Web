@@ -9,14 +9,22 @@ if (!humitePublished) await assertHumiteEmbargo('dist');
 await rm(output, { recursive: true, force: true });
 await mkdir(output, { recursive: true });
 const notFoundHtml = await readFile('dist/404.html', 'utf8');
+const englishNotFoundHtml = await readFile('dist/en/404/index.html', 'utf8');
 await cp('dist', `${output}/assets`, { recursive: true });
 // The function embeds this fallback for actual misses. Leaving either file in
 // the static directory would let ESA answer direct requests with HTTP 200.
 await rm(`${output}/assets/404.html`, { force: true });
+await rm(`${output}/assets/en/404`, { recursive: true, force: true });
 await rm(`${output}/assets/_not-found`, { recursive: true, force: true });
 for (const prefix of ['', '/en']) {
-  for (const section of ['insights', 'activities', 'products']) {
-    await rm(`${output}/assets${prefix}/${section}/__empty__`, { recursive: true, force: true });
+  for (const placeholder of [
+    'insights/__empty__',
+    'activities/__empty__',
+    'products/__empty__',
+    'news/page/__empty__',
+    'news/category/__empty__',
+  ]) {
+    await rm(`${output}/assets${prefix}/${placeholder}`, { recursive: true, force: true });
   }
 }
 const redirects = JSON.parse(await readFile('src/server/esa/redirects.json', 'utf8'));
@@ -50,6 +58,7 @@ await build({
   minify: true,
   define: {
     __ESA_NOT_FOUND_HTML__: JSON.stringify(notFoundHtml),
+    __ESA_EN_NOT_FOUND_HTML__: JSON.stringify(englishNotFoundHtml),
     __ESA_PUBLISH_MANIFEST__: publishedManifest,
     'process.env.NEXT_PUBLIC_HUMITE_PUBLISHED': JSON.stringify(String(humitePublished)),
   },

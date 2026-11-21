@@ -5,6 +5,7 @@ import {
   articleCategoryPath,
   type ArticleSection,
 } from '../../data/article-categories';
+import { newsInCategory, newsPageCount, newsPageHref } from '../../data/news-pagination';
 import { translateEnglish } from '../translation';
 import { homeContent } from '../../data/page-content';
 import { isHumiteProductPath } from '../../data/humite-launch.mjs';
@@ -37,6 +38,7 @@ const BusinessPage = dynamic(() => import('../pages/company').then((module) => m
 const CompanyPage = dynamic(() => import('../pages/company').then((module) => module.CompanyPage));
 const ContactPage = dynamic(() => import('../pages/company').then((module) => module.ContactPage));
 const HomePage = dynamic(() => import('../pages/home').then((module) => module.HomePage));
+const SitemapPage = dynamic(() => import('../pages/sitemap').then((module) => module.SitemapPage));
 const CapabilitiesPage = dynamic(() => import('../pages/projects').then((module) => module.CapabilitiesPage));
 const ProjectPage = dynamic(() => import('../pages/projects').then((module) => module.ProjectPage));
 const ProjectsPage = dynamic(() => import('../pages/projects').then((module) => module.ProjectsPage));
@@ -81,7 +83,7 @@ const researchItems = publishedResearch.map(toActivitySummary);
 const activityItems = publishedActivities.map(toActivitySummary);
 const caseStudyItems = publishedCaseStudies.map(toCaseStudySummary);
 
-const latestContentDate = (items: Array<{ publishedAt: string; updatedAt?: string }>) =>
+const latestContentDate = (items: ReadonlyArray<{ publishedAt: string; updatedAt?: string }>) =>
   items
     .map((item) => item.updatedAt || item.publishedAt)
     .sort()
@@ -104,14 +106,9 @@ const articleMeta = (item: {
   author: item.author,
 });
 
-const categoryRoutes = (section: ArticleSection, news: NewsItem[]): SiteRoute[] => {
-  const items =
-    section === 'research'
-      ? researchItems
-      : section === 'activities'
-        ? activityItems
-        : news.filter((item) => item.status === 'published');
-  const sectionLabel = { research: '研究', activities: '活动', news: '新闻' }[section];
+const categoryRoutes = (section: Exclude<ArticleSection, 'news'>): SiteRoute[] => {
+  const items = section === 'research' ? researchItems : activityItems;
+  const sectionLabel = section === 'research' ? '研究' : '活动';
   return articleCategories(section, items).map(({ id, label }) => ({
     path: articleCategoryPath(section, id).replace(/\/$/, ''),
     meta: {
@@ -124,12 +121,42 @@ const categoryRoutes = (section: ArticleSection, news: NewsItem[]): SiteRoute[] 
     render: () =>
       section === 'research' ? (
         <ResearchPage items={researchItems} initialCategory={id} />
-      ) : section === 'activities' ? (
-        <ActivitiesPage items={activityItems} initialCategory={id} />
       ) : (
-        <NewsPage initialCategory={id} />
+        <ActivitiesPage items={activityItems} initialCategory={id} />
       ),
   }));
+};
+
+const newsListRoutes = (news: NewsItem[]): SiteRoute[] => {
+  const published = news.filter((item) => item.status === 'published');
+  return [{ id: 'all', label: '最新动态' }, ...articleCategories('news', published)].flatMap(({ id, label }) => {
+    const items = newsInCategory(published, id);
+    const all = id === 'all';
+    const title = all ? label : `${label} · 新闻`;
+    const titleEn = all ? translateEnglish(label) : `${translateEnglish(label)} · News`;
+    const description = all
+      ? '宏翔商道-Elexvx 的公司公告、业务动态与历史新闻。'
+      : `浏览 Elexvx 已发布的${label}新闻内容、文章摘要与发布时间。`;
+    const descriptionEn = all
+      ? translateEnglish(description)
+      : `Browse published ${translateEnglish(label)} news from Elexvx, including article summaries and publication dates.`;
+    const updatedAt = latestContentDate(items);
+
+    return Array.from({ length: newsPageCount(items.length) }, (_, index) => {
+      const page = index + 1;
+      return {
+        path: newsPageHref(id, page).slice(0, -1),
+        meta: {
+          title: page === 1 ? title : `${title} · 第 ${page} 页`,
+          titleEn: page === 1 ? titleEn : `${titleEn} · Page ${page}`,
+          description,
+          descriptionEn,
+          updatedAt,
+        },
+        render: () => <NewsPage initialCategory={id} page={page} />,
+      };
+    });
+  });
 };
 
 const staticRoutes: SiteRoute[] = [
@@ -170,11 +197,6 @@ const staticRoutes: SiteRoute[] = [
     path: '/scenarios',
     meta: { title: '行业场景', description: '以行业场景组织真实问题，而不是用服务标签替代现场理解。' },
     render: () => <ScenariosPage />,
-  },
-  {
-    path: '/news',
-    meta: { title: '最新动态', description: '宏翔商道-Elexvx 的公司公告、业务动态与历史新闻。' },
-    render: () => <NewsPage />,
   },
   {
     path: '/company',
@@ -243,17 +265,10 @@ export const redirectRoutes: Record<string, string> = Object.fromEntries(
 );
 
 const staticSectionRoutes = (news: NewsItem[]): SiteRoute[] => [
-  ...staticRoutes.map((route) =>
-    route.path === '/news'
-      ? {
-          ...route,
-          meta: { ...route.meta, updatedAt: latestContentDate(news.filter((item) => item.status === 'published')) },
-        }
-      : route
-  ),
-  ...categoryRoutes('research', news),
-  ...categoryRoutes('activities', news),
-  ...categoryRoutes('news', news),
+  ...staticRoutes,
+  ...categoryRoutes('research'),
+  ...categoryRoutes('activities'),
+  ...newsListRoutes(news),
 ];
 
 const productRoutes = (): SiteRoute[] => [
@@ -303,6 +318,23 @@ const publicationRoutes = (insights: Insight[], news: NewsItem[]): SiteRoute[] =
     })),
 ];
 
+const sitemapRoute = (publications: SiteRoute[]): SiteRoute => {
+  const articles = [...publications]
+    .sort((a, b) => (b.meta.publishedAt ?? '').localeCompare(a.meta.publishedAt ?? ''))
+    .map(({ path, meta }) => ({ href: `${path}/`, label: meta.title }));
+
+  return {
+    path: '/sitemap',
+    meta: {
+      title: '站点地图',
+      description: '按栏目浏览 Elexvx 官网的页面和已发布文章，包括研究、活动、新闻与合作案例。',
+      descriptionEn:
+        'Browse Elexvx website sections and published articles, including research, event reports, company news and case studies.',
+    },
+    render: () => <SitemapPage articles={articles} />,
+  };
+};
+
 const organizationRoutes = (): SiteRoute[] => [
   ...jobs.map((job) => ({
     path: `/careers/${job.id}`,
@@ -339,13 +371,17 @@ const disabledCatalogRoutes = (): SiteRoute[] => [
   })),
 ];
 
-const configuredRoutes = (insights: Insight[], news: NewsItem[] = []): SiteRoute[] => [
-  ...staticSectionRoutes(news),
-  ...productRoutes(),
-  ...publicationRoutes(insights, news),
-  ...organizationRoutes(),
-  ...disabledCatalogRoutes(),
-];
+const configuredRoutes = (insights: Insight[], news: NewsItem[] = []): SiteRoute[] => {
+  const publications = publicationRoutes(insights, news);
+  return [
+    ...staticSectionRoutes(news),
+    sitemapRoute(publications),
+    ...productRoutes(),
+    ...publications,
+    ...organizationRoutes(),
+    ...disabledCatalogRoutes(),
+  ];
+};
 
 type RouteIndex = {
   routes: SiteRoute[];

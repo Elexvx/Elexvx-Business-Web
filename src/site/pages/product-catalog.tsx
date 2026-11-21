@@ -3,58 +3,39 @@
 import { humiteContent } from '#humite-content';
 import { homeContent } from '../../data/page-content';
 import { ArticleCard } from '../components/article-card';
+import { HomeHero, HomeLaunchProvider } from '../components/home-hero';
 import { SiteShell } from '../components/index';
-import { IndexHeading } from '../components/index-heading';
 import { SiteImage } from '../components/site-image';
-import { useCategoryFilter } from '../providers/category-filter';
 import { Translated, useI18n } from '../providers/i18n';
 import { ProductShowcase } from './product-showcase';
 import { NotFoundPage } from './shared';
 
 export const ProductCatalogPage = () => {
-  const [category, selectCategory] = useCategoryFilter();
-  const { locale, t } = useI18n();
+  const { t } = useI18n();
   const products = homeContent.product.items;
-  const categories = [...new Set(products.map((product) => product.category))];
-  const activeCategory = categories.find((value) => value === category);
-  const visible = products.filter((product) => category === 'all' || product.category === category);
   return (
     <SiteShell activePath="/products">
-      <section className="product-index" aria-labelledby="product-index-title">
-        <IndexHeading id="product-index-title" title={t('产品')} category={activeCategory && t(activeCategory)} />
-        <nav
-          className="research-index-tabs index-category-tabs"
-          aria-label={locale === 'en' ? 'Product categories' : '产品分类'}
-        >
-          {['all', ...categories].map((value) => (
-            <button
-              key={value}
-              type="button"
-              className={`research-index-tab ${category === value ? 'research-index-tab-active' : ''}`}
-              aria-pressed={category === value}
-              onClick={() => selectCategory(value)}
-            >
-              {value === 'all' ? t('全部') : t(value)}
-            </button>
-          ))}
-        </nav>
-        <div className="home-media-grid home-products-grid">
-          {visible.map((product) => (
-            <ArticleCard
-              key={product.slug}
-              cover={product.image}
-              title={product.name}
-              category={product.category}
-              href={product.href}
-            />
-          ))}
-        </div>
-        {!visible.length && (
-          <p>
-            {t(products.length ? '暂无匹配内容' : '当前没有公开展示的产品。新品发布后会在这里更新，欢迎届时回来看看。')}
-          </p>
-        )}
-      </section>
+      <HomeLaunchProvider initialReleased={!!humiteContent}>
+        <HomeHero showAnnouncement={false} />
+      </HomeLaunchProvider>
+      {products.length > 0 && (
+        <section className="product-index" aria-labelledby="product-index-title">
+          <h2 className="index-heading" id="product-index-title">
+            {t('产品')}
+          </h2>
+          <div className="home-media-grid home-products-grid">
+            {products.map((product) => (
+              <ArticleCard
+                key={product.slug}
+                cover={product.image}
+                title={product.name}
+                category="已发布"
+                href={product.href}
+              />
+            ))}
+          </div>
+        </section>
+      )}
     </SiteShell>
   );
 };

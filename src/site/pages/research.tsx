@@ -145,7 +145,7 @@ export const ResearchPage = ({
   const { locale, t } = useI18n();
   const researchNotes = usePublishedInsights();
   const [newestFirst, setNewestFirst] = useState(true);
-  const [showMedia, setShowMedia] = useState(false);
+  const [showMedia, setShowMedia] = useState(true);
   const isChinese = locale === 'zh-CN';
   const categories = articleCategories('research', items);
   const categoryLabels = new Map(categories.map((item) => [item.id, item.label]));

@@ -1,5 +1,6 @@
 'use client';
 import { MenuOutlined } from '@ant-design/icons';
+import { Dialog } from 'radix-ui';
 
 import { useI18n } from '../providers/i18n';
 import { useVisibleNavigationGroups } from '../providers/content-context';
@@ -31,23 +32,33 @@ export const GlobalNav = ({
     panelContentVisible,
     navRef,
     mobileMenuButtonRef,
-    mobileNavigationRef,
     activateGroup,
     scheduleOpen,
     cancelScheduledOpen,
     closeDesktopMenu,
     scheduleClose,
     cancelScheduledClose,
-    toggleMobileMenu,
   } = useNavigationMenus(visibleNavigationGroups);
 
   return (
-    <>
+    <Dialog.Root
+      open={menuOpen}
+      onOpenChange={(open) => {
+        setMenuOpen(open);
+        if (open) {
+          setMobileOpenGroup(null);
+          closeDesktopMenu();
+        }
+      }}
+    >
       <header
         className={classNames('global-nav', tone === 'dark' && 'global-nav-dark')}
         ref={navRef}
         onMouseEnter={cancelScheduledClose}
         onMouseLeave={scheduleClose}
+        onBlur={(event) => {
+          if (!event.currentTarget.contains(event.relatedTarget as Node | null)) closeDesktopMenu();
+        }}
       >
         <div className="global-nav-inner">
           <a className="brand-lockup" href={resolveHref('/')} aria-label={t('Elexvx Research 首页')}>
@@ -68,9 +79,14 @@ export const GlobalNav = ({
                 href={resolveHref(group.href)}
                 aria-expanded={openGroup === group.id}
                 aria-controls={openGroup === group.id ? 'desktop-menu-panel' : undefined}
-                onMouseEnter={() => scheduleOpen(group.id)}
+                onMouseEnter={(event) => scheduleOpen(group.id, event.currentTarget)}
                 onMouseLeave={cancelScheduledOpen}
-                onFocus={() => activateGroup(group.id)}
+                onFocus={(event) => activateGroup(group.id, event.currentTarget)}
+                onKeyDown={(event) => {
+                  if (event.key !== 'ArrowDown') return;
+                  event.preventDefault();
+                  activateGroup(group.id, event.currentTarget, true);
+                }}
                 onClick={closeDesktopMenu}
               >
                 {t(group.label)}
@@ -79,17 +95,18 @@ export const GlobalNav = ({
           </nav>
 
           <div className="nav-actions">
-            <button
-              className="mobile-menu-button"
-              ref={mobileMenuButtonRef}
-              type="button"
-              aria-label={t(menuOpen ? '关闭导航菜单' : '打开导航菜单')}
-              aria-expanded={menuOpen}
-              aria-controls="mobile-navigation"
-              onClick={toggleMobileMenu}
-            >
-              <MenuOutlined aria-hidden="true" />
-            </button>
+            <Dialog.Trigger asChild>
+              <button
+                className="mobile-menu-button"
+                ref={mobileMenuButtonRef}
+                type="button"
+                aria-label={t(menuOpen ? '关闭导航菜单' : '打开导航菜单')}
+                aria-expanded={menuOpen}
+                aria-controls="mobile-navigation"
+              >
+                <MenuOutlined aria-hidden="true" />
+              </button>
+            </Dialog.Trigger>
           </div>
         </div>
 
@@ -107,7 +124,7 @@ export const GlobalNav = ({
       </header>
 
       <MobileNavigationDrawer
-        drawerRef={mobileNavigationRef}
+        triggerRef={mobileMenuButtonRef}
         tone={tone}
         menuOpen={menuOpen}
         locale={locale}
@@ -118,6 +135,6 @@ export const GlobalNav = ({
         resolveHref={resolveHref}
         onClose={() => setMenuOpen(false)}
       />
-    </>
+    </Dialog.Root>
   );
 };

@@ -1,9 +1,9 @@
 'use client';
-import { Switch } from 'radix-ui';
+import { Dialog, Switch } from 'radix-ui';
 
 import { useEffect, useRef, useState } from 'react';
 import { useI18n } from '../providers/i18n';
-import { trapFocusOnTab } from './focus-trap';
+import { ModalContent } from './primitives/modal';
 
 const COOKIE_PREFERENCE_KEY = 'elexvx-cookie-preferences-v1';
 export const COOKIE_SETTINGS_EVENT = 'elexvx:open-cookie-settings';
@@ -25,7 +25,7 @@ export const CookieConsent = () => {
   const [visible, setVisible] = useState(false);
   const [managing, setManaging] = useState(false);
   const [preferences, setPreferences] = useState<CookiePreferences>(defaultPreferences);
-  const consentRef = useRef<HTMLElement>(null);
+  const consentRef = useRef<HTMLDivElement>(null);
   const english = locale === 'en';
 
   useEffect(() => {
@@ -67,116 +67,108 @@ export const CookieConsent = () => {
 
   useEffect(() => {
     if (!visible) return;
-    const dialog = consentRef.current;
-    if (!dialog) return;
-    const selector = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
-    const focusable = () =>
-      Array.from(dialog.querySelectorAll<HTMLElement>(selector)).filter(
-        (element) => !element.hasAttribute('disabled') && element.getAttribute('aria-hidden') !== 'true'
-      );
-    focusable()[0]?.focus();
-    const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
-        if (managing) setManaging(false);
-        else setVisible(false);
-        return;
-      }
-      if (event.key !== 'Tab') return;
-      trapFocusOnTab(event, focusable());
-    };
-    document.addEventListener('keydown', onKeyDown);
-    return () => document.removeEventListener('keydown', onKeyDown);
+    const frame = window.requestAnimationFrame(() => {
+      consentRef.current?.querySelector<HTMLElement>('button:not([disabled])')?.focus({ preventScroll: true });
+    });
+    return () => window.cancelAnimationFrame(frame);
   }, [visible, managing]);
 
-  if (!visible) return null;
-
   return (
-    <section
-      ref={consentRef}
-      className="cookie-consent"
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="cookie-consent-title"
-      aria-label={english ? 'Cookie preferences' : 'Cookie 偏好设置'}
-    >
-      <div className="cookie-consent-inner">
-        <div className="cookie-consent-copy">
-          <h2 id="cookie-consent-title">{english ? 'We use cookies' : '我们使用 Cookie'}</h2>
-          <p>
-            {english
-              ? 'We use necessary cookies to keep the site working. Optional analytics and marketing preferences can be changed at any time from the footer.'
-              : '我们使用必要 Cookie 确保网站正常运行。分析与营销属于可选项，你可以随时通过页脚中的 Cookie 设置调整偏好。'}
-          </p>
-        </div>
+    <Dialog.Root open={visible} onOpenChange={setVisible} modal={false}>
+      <ModalContent
+        ref={consentRef}
+        className="cookie-consent"
+        aria-label={english ? 'Cookie preferences' : 'Cookie 偏好设置'}
+        onInteractOutside={(event) => event.preventDefault()}
+        onEscapeKeyDown={(event) => {
+          if (!managing) return;
+          event.preventDefault();
+          setManaging(false);
+        }}
+      >
+        <div className="cookie-consent-inner">
+          <div className="cookie-consent-copy">
+            <Dialog.Title asChild>
+              <h2>{english ? 'We use cookies' : '我们使用 Cookie'}</h2>
+            </Dialog.Title>
+            <Dialog.Description asChild>
+              <p>
+                {english
+                  ? 'We use necessary cookies to keep the site working. Optional analytics and marketing preferences can be changed at any time from the footer.'
+                  : '我们使用必要 Cookie 确保网站正常运行。分析与营销属于可选项，你可以随时通过页脚中的 Cookie 设置调整偏好。'}
+              </p>
+            </Dialog.Description>
+          </div>
 
-        {managing ? (
-          <div className="cookie-preferences">
-            <div className="cookie-preference-row">
-              <div>
-                <strong>{english ? 'Necessary' : '必要 Cookie'}</strong>
-                <span>{english ? 'Required for core site functions.' : '用于网站核心功能。'}</span>
+          {managing ? (
+            <div className="cookie-preferences">
+              <div className="cookie-preference-row">
+                <div>
+                  <strong>{english ? 'Necessary' : '必要 Cookie'}</strong>
+                  <span>{english ? 'Required for core site functions.' : '用于网站核心功能。'}</span>
+                </div>
+                <span className="cookie-required-label">{english ? 'Always on' : '始终启用'}</span>
               </div>
-              <span className="cookie-required-label">{english ? 'Always on' : '始终启用'}</span>
+              <label className="cookie-preference-row">
+                <div>
+                  <strong>{english ? 'Analytics' : '分析 Cookie'}</strong>
+                  <span>{english ? 'Helps us understand site usage.' : '用于了解网站使用情况。'}</span>
+                </div>
+                <Switch.Root
+                  className="ui-switch"
+                  aria-label={english ? 'Analytics cookies' : '分析 Cookie'}
+                  checked={preferences.analytics}
+                  onCheckedChange={(checked) => setPreferences((current) => ({ ...current, analytics: checked }))}
+                >
+                  <Switch.Thumb className="ui-switch-thumb" />
+                </Switch.Root>
+              </label>
+              <label className="cookie-preference-row">
+                <div>
+                  <strong>{english ? 'Marketing' : '营销 Cookie'}</strong>
+                  <span>{english ? 'Supports relevant campaign measurement.' : '用于相关推广效果衡量。'}</span>
+                </div>
+                <Switch.Root
+                  className="ui-switch"
+                  aria-label={english ? 'Marketing cookies' : '营销 Cookie'}
+                  checked={preferences.marketing}
+                  onCheckedChange={(checked) => setPreferences((current) => ({ ...current, marketing: checked }))}
+                >
+                  <Switch.Thumb className="ui-switch-thumb" />
+                </Switch.Root>
+              </label>
+              <div className="cookie-consent-actions">
+                <button className="cookie-button" type="button" onClick={() => setManaging(false)}>
+                  {english ? 'Back' : '返回'}
+                </button>
+                <button
+                  className="cookie-button cookie-button-primary"
+                  type="button"
+                  onClick={() => savePreferences(preferences)}
+                >
+                  {english ? 'Save preferences' : '保存设置'}
+                </button>
+              </div>
             </div>
-            <label className="cookie-preference-row">
-              <div>
-                <strong>{english ? 'Analytics' : '分析 Cookie'}</strong>
-                <span>{english ? 'Helps us understand site usage.' : '用于了解网站使用情况。'}</span>
-              </div>
-              <Switch.Root
-                className="ui-switch"
-                aria-label={english ? 'Analytics cookies' : '分析 Cookie'}
-                checked={preferences.analytics}
-                onCheckedChange={(checked) => setPreferences((current) => ({ ...current, analytics: checked }))}
-              >
-                <Switch.Thumb className="ui-switch-thumb" />
-              </Switch.Root>
-            </label>
-            <label className="cookie-preference-row">
-              <div>
-                <strong>{english ? 'Marketing' : '营销 Cookie'}</strong>
-                <span>{english ? 'Supports relevant campaign measurement.' : '用于相关推广效果衡量。'}</span>
-              </div>
-              <Switch.Root
-                className="ui-switch"
-                aria-label={english ? 'Marketing cookies' : '营销 Cookie'}
-                checked={preferences.marketing}
-                onCheckedChange={(checked) => setPreferences((current) => ({ ...current, marketing: checked }))}
-              >
-                <Switch.Thumb className="ui-switch-thumb" />
-              </Switch.Root>
-            </label>
+          ) : (
             <div className="cookie-consent-actions">
-              <button className="cookie-button" type="button" onClick={() => setManaging(false)}>
-                {english ? 'Back' : '返回'}
+              <button className="cookie-button" type="button" onClick={() => setManaging(true)}>
+                {english ? 'Manage cookies' : '管理 Cookie'}
+              </button>
+              <button className="cookie-button" type="button" onClick={() => savePreferences(defaultPreferences)}>
+                {english ? 'Reject optional' : '拒绝非必要'}
               </button>
               <button
                 className="cookie-button cookie-button-primary"
                 type="button"
-                onClick={() => savePreferences(preferences)}
+                onClick={() => savePreferences({ necessary: true, analytics: true, marketing: true })}
               >
-                {english ? 'Save preferences' : '保存设置'}
+                {english ? 'Accept all' : '全部接受'}
               </button>
             </div>
-          </div>
-        ) : (
-          <div className="cookie-consent-actions">
-            <button className="cookie-button" type="button" onClick={() => setManaging(true)}>
-              {english ? 'Manage cookies' : '管理 Cookie'}
-            </button>
-            <button className="cookie-button" type="button" onClick={() => savePreferences(defaultPreferences)}>
-              {english ? 'Reject optional' : '拒绝非必要'}
-            </button>
-            <button
-              className="cookie-button cookie-button-primary"
-              type="button"
-              onClick={() => savePreferences({ necessary: true, analytics: true, marketing: true })}
-            >
-              {english ? 'Accept all' : '全部接受'}
-            </button>
-          </div>
-        )}
-      </div>
-    </section>
+          )}
+        </div>
+      </ModalContent>
+    </Dialog.Root>
   );
 };

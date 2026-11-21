@@ -62,9 +62,38 @@ describe('single ESA project', () => {
     const response = await handleRequest(request('/missing/'), context, {}, manifest, '<h1>404</h1>');
     expect(response.status).toBe(404);
     expect(await response.text()).toBe('<h1>404</h1>');
+    const legacyEnglish = await handleRequest(request('/en/missing/'), context, {}, manifest, '<h1>404</h1>');
+    expect(legacyEnglish.status).toBe(404);
+    expect(await legacyEnglish.text()).toBe('<h1>404</h1>');
     expect(response.headers.get('x-robots-tag')).toBe('noindex');
     expect(await (await handleRequest(request('/missing/', { method: 'HEAD' }), context, {})).text()).toBe('');
     expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    ['/en', 'en'],
+    ['/en/missing/', 'en'],
+    ['/en/research/missing/?ref=old', 'en'],
+    ['/missing/', 'zh-CN'],
+    ['/english/missing/', 'zh-CN'],
+  ])('chooses the requested language for real missing paths (%s)', async (path, locale) => {
+    const chinese = '<html lang="zh-CN"><h1>找不到页面</h1></html>';
+    const english = '<html lang="en"><h1>This page could not be found</h1></html>';
+    const response = await handleRequest(request(path), createContext(), {}, manifest, chinese, english);
+    expect(response.status).toBe(404);
+    expect(response.headers.get('x-robots-tag')).toBe('noindex');
+    expect(await response.text()).toBe(locale === 'en' ? english : chinese);
+
+    const head = await handleRequest(
+      request(path, { method: 'HEAD' }),
+      createContext(),
+      {},
+      manifest,
+      chinese,
+      english
+    );
+    expect(head.status).toBe(404);
+    expect(await head.text()).toBe('');
   });
 
   it('canonicalizes unknown categories instead of returning a missing page', async () => {

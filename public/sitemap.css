@@ -1,0 +1,42 @@
+@namespace xhtml url('http://www.w3.org/1999/xhtml');
+
+urlset {
+  display: block;
+  max-width: 72rem;
+  margin: auto;
+  padding: clamp(1rem, 4vw, 3rem);
+  color-scheme: light dark;
+  background: Canvas;
+  color: CanvasText;
+  font:
+    1rem/1.5 system-ui,
+    sans-serif;
+}
+
+urlset::before {
+  content: 'Elexvx · 站点地图';
+  display: block;
+  margin-bottom: 1.5rem;
+  font-size: 2rem;
+  font-weight: 600;
+}
+
+url {
+  display: grid;
+  gap: 0.2rem;
+  padding-block: 0.85rem;
+  border-top: 1px solid GrayText;
+  overflow-wrap: anywhere;
+}
+
+xhtml|a {
+  grid-row: 1;
+  justify-self: start;
+  color: LinkText;
+  text-underline-offset: 0.2em;
+}
+
+loc,
+lastmod {
+  font-size: 0.85rem;
+}

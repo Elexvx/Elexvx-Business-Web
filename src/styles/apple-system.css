@@ -38,6 +38,7 @@
 @import './sections/28-footer-landscape.css';
 @import './sections/29-home-intro.css';
 @import './sections/30-festival.css';
+@import './sections/31-sitemap.css';
 
 /* Intrinsic dimensions reserve space without forcing the source pixel height.
    Component rules can still specify fixed heights or aspect ratios. */

@@ -16,7 +16,7 @@ import { COOKIE_SETTINGS_EVENT } from './cookie-consent';
 import { useVisibleNavigationGroups } from '../providers/content-context';
 
 export const Footer = ({ linkOrigin }: { linkOrigin?: string }) => {
-  const { locale, t, href, switchHref } = useI18n();
+  const { locale, t, href, switchHref, hasProvider } = useI18n();
   const resolveHref = (value: string) => resolveOriginHref(href(value), linkOrigin);
   const resolvedSwitchHref = resolveOriginHref(switchHref, linkOrigin);
   const { theme, mode, toggleTheme } = useTheme();
@@ -148,6 +148,9 @@ export const Footer = ({ linkOrigin }: { linkOrigin?: string }) => {
             )}
           </div>
           <div className="footer-legal-meta">
+            <a className="footer-sitemap-link" href={resolveHref('/sitemap.xml')}>
+              {t('站点地图')}
+            </a>
             <Switch.Root
               className="footer-cookie-settings"
               type="button"
@@ -185,64 +188,66 @@ export const Footer = ({ linkOrigin }: { linkOrigin?: string }) => {
             >
               {locale === 'en' ? 'Cookie settings' : 'Cookie 设置'}
             </button>
-            <div
-              className={`footer-language-switcher${languageMenuOpen ? ' is-open' : ''}`}
-              onMouseEnter={() => setLanguageMenuOpen(true)}
-              onMouseLeave={() => setLanguageMenuOpen(false)}
-              onFocus={() => setLanguageMenuOpen(true)}
-              onBlur={(event) => {
-                if (!event.currentTarget.contains(event.relatedTarget as Node | null)) setLanguageMenuOpen(false);
-              }}
-            >
-              <button
-                className="footer-language-trigger"
-                type="button"
-                aria-haspopup="menu"
-                aria-expanded={languageMenuOpen}
-                aria-controls="footer-language-menu"
-                onClick={() => setLanguageMenuOpen(true)}
-              >
-                {locale === 'en' ? 'English' : '简体中文'}
-              </button>
+            {hasProvider && (
               <div
-                className="footer-language-menu"
-                id="footer-language-menu"
-                role="menu"
-                aria-label={locale === 'en' ? 'Language' : '语言'}
+                className={`footer-language-switcher${languageMenuOpen ? ' is-open' : ''}`}
+                onMouseEnter={() => setLanguageMenuOpen(true)}
+                onMouseLeave={() => setLanguageMenuOpen(false)}
+                onFocus={() => setLanguageMenuOpen(true)}
+                onBlur={(event) => {
+                  if (!event.currentTarget.contains(event.relatedTarget as Node | null)) setLanguageMenuOpen(false);
+                }}
               >
-                {languageOptions.map((option) =>
-                  option.current ? (
-                    <span
-                      className="footer-language-option footer-language-option-current"
-                      key={option.code}
-                      role="menuitem"
-                      aria-current="page"
-                    >
-                      {option.label}
-                    </span>
-                  ) : (
-                    <a
-                      className="footer-language-option"
-                      key={option.code}
-                      href={option.href}
-                      hrefLang={option.code}
-                      role="menuitem"
-                      onClick={(event) => {
-                        event.currentTarget.href = `${resolvedSwitchHref}${window.location.search}${window.location.hash}`;
-                        try {
-                          window.localStorage.setItem(LANGUAGE_STORAGE_KEY, option.code);
-                        } catch {
-                          // Language switching should continue when storage is unavailable.
-                        }
-                        setLanguageMenuOpen(false);
-                      }}
-                    >
-                      {option.label}
-                    </a>
-                  )
-                )}
+                <button
+                  className="footer-language-trigger"
+                  type="button"
+                  aria-haspopup="menu"
+                  aria-expanded={languageMenuOpen}
+                  aria-controls="footer-language-menu"
+                  onClick={() => setLanguageMenuOpen(true)}
+                >
+                  {locale === 'en' ? 'English' : '简体中文'}
+                </button>
+                <div
+                  className="footer-language-menu"
+                  id="footer-language-menu"
+                  role="menu"
+                  aria-label={locale === 'en' ? 'Language' : '语言'}
+                >
+                  {languageOptions.map((option) =>
+                    option.current ? (
+                      <span
+                        className="footer-language-option footer-language-option-current"
+                        key={option.code}
+                        role="menuitem"
+                        aria-current="page"
+                      >
+                        {option.label}
+                      </span>
+                    ) : (
+                      <a
+                        className="footer-language-option"
+                        key={option.code}
+                        href={option.href}
+                        hrefLang={option.code}
+                        role="menuitem"
+                        onClick={(event) => {
+                          event.currentTarget.href = `${resolvedSwitchHref}${window.location.search}${window.location.hash}`;
+                          try {
+                            window.localStorage.setItem(LANGUAGE_STORAGE_KEY, option.code);
+                          } catch {
+                            // Language switching should continue when storage is unavailable.
+                          }
+                          setLanguageMenuOpen(false);
+                        }}
+                      >
+                        {option.label}
+                      </a>
+                    )
+                  )}
+                </div>
               </div>
-            </div>
+            )}
           </div>
         </div>
       </div>

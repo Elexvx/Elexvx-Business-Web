@@ -7,7 +7,7 @@ import { homeBrands } from '../../data/home-intro';
 
 import { ActivitySection } from './activities';
 import { CaseStudyCard } from './case-studies';
-import { homeContent } from '../../data/page-content';
+import { homeContent, productsBeforeLaunch } from '../../data/page-content';
 import { usePublishedNews } from '../providers/content-context';
 import type { NewsSummary } from '../../content/types';
 import type { ActivitySummary } from '../../data/activities';
@@ -60,8 +60,7 @@ export const HomeWelcomeRest = ({ items }: { items: ActivitySummary[] }) => {
             })}
           </ul>
           <small className="home-partner-caption" role="note">
-            <span aria-hidden="true">* </span>
-            <T text="以上均为生态合作伙伴" />
+            <T text="注：排名不分先后，以上均为生态合作伙伴" />
           </small>
         </div>
       </section>
@@ -81,6 +80,11 @@ const HomeWelcome = ({ items }: { items: ActivitySummary[] }) => (
 
 const HomeNewsSection = ({ news }: { news: NewsSummary[] }) => {
   const content = homeContent.news;
+  const rows: NewsSummary[][] = [];
+  for (let index = 0; index < news.length; index += 2) {
+    rows.push(news.slice(index, index + 2));
+  }
+
   return (
     <section
       className="home-content-section home-content-section-alt home-news-section"
@@ -100,8 +104,12 @@ const HomeNewsSection = ({ news }: { news: NewsSummary[] }) => {
           <TextLink href={content.action.href}>查看更多</TextLink>
         </div>
         <div className="home-news-grid">
-          {news.map((item) => (
-            <NewsCard item={item} key={item.slug} showExcerpt={false} />
+          {rows.map((row) => (
+            <div className="home-news-row" key={row[0].slug}>
+              {row.map((item) => (
+                <NewsCard item={item} key={item.slug} showExcerpt={false} />
+              ))}
+            </div>
           ))}
           {!news.length && <HomeEmptyContent />}
         </div>
@@ -171,7 +179,11 @@ const HomeResearchSection = ({ items }: { items: ActivitySummary[] }) => {
   );
 };
 
-export const HomeProductsSection = () => {
+export const HomeProductsSection = ({
+  items = homeContent.product.items,
+}: {
+  items?: typeof homeContent.product.items;
+}) => {
   const { t } = useI18n();
   const content = homeContent.product;
   return (
@@ -189,19 +201,18 @@ export const HomeProductsSection = () => {
           <TextLink href={content.action.href}>查看更多</TextLink>
         </div>
         <div className="home-media-grid home-products-grid">
-          {content.items
-            .map((product) => (
-              <ArticleCard
-                key={product.slug}
-                variant="feature"
-                href={product.href}
-                title={product.name}
-                cover={product.image}
-                category={product.category}
-                excerpt={product.description}
-                imageLinkLabel={`${product.name} · ${t(product.category)} · ${t(product.description)}`}
-              />
-            ))}
+          {items.map((product) => (
+            <ArticleCard
+              key={product.slug}
+              variant="feature"
+              href={product.href}
+              title={product.name}
+              cover={product.image}
+              category={product.category}
+              excerpt={product.description}
+              imageLinkLabel={`${product.name} · ${t(product.category)} · ${t(product.description)}`}
+            />
+          ))}
         </div>
       </div>
     </section>
@@ -252,7 +263,9 @@ const HomeContent = ({ activities, research, caseStudies }: HomeContentProps) =>
   <HomeLaunchProvider>
     <HomeWelcome items={activities} />
     <HomeNewsAndResearch research={research} />
-    <HomeProductsLaunch>
+    <HomeProductsLaunch
+      beforeLaunch={productsBeforeLaunch.length > 0 ? <HomeProductsSection items={productsBeforeLaunch} /> : null}
+    >
       <HomeProductsSection />
     </HomeProductsLaunch>
     <HomeCasesAndCompany caseStudies={caseStudies} />

@@ -4,6 +4,10 @@ import { LanguageProvider, LocalizedTitle, useI18n } from '../src/site/providers
 import { translateEnglish } from '../src/site/translation';
 import { parseMarkdown } from '../src/content/markdown';
 import { documentationUrl } from '../src/data/service-routes';
+import EnglishNotFound from '../src/app/en/not-found';
+import { metadata as englishNotFoundMetadata } from '../src/app/en/404/page';
+import { Footer } from '../src/site/components/footer';
+import { ThemeProvider } from '../src/site/providers/theme-provider';
 import research from '../content/site/research.json';
 import activities from '../content/site/activities.json';
 
@@ -38,6 +42,44 @@ function Links() {
   );
 }
 describe('English publishing', () => {
+  it('hides the language menu without a provider, as on the four Chinese-only service pages', () => {
+    const html = renderToStaticMarkup(
+      <ThemeProvider>
+        <Footer />
+      </ThemeProvider>
+    );
+    expect(html).not.toContain('footer-language-switcher');
+    expect(html).toContain('Cookie 设置');
+    expect(html).toContain('@elexvx_demo');
+  });
+  it.each(['zh-CN', 'en'] as const)('preserves the language menu on normal %s pages', (locale) => {
+    const html = renderToStaticMarkup(
+      <ThemeProvider>
+        <LanguageProvider locale={locale} path="/research">
+          <Footer />
+        </LanguageProvider>
+      </ThemeProvider>
+    );
+    expect(html).toContain('footer-language-switcher');
+    expect(html).toContain(`href="${locale === 'en' ? '/research/' : '/en/research/'}"`);
+  });
+  it('renders English not-found text and recovery links before any browser script runs', () => {
+    const html = renderToStaticMarkup(
+      <ThemeProvider>
+        <EnglishNotFound />
+      </ThemeProvider>
+    );
+    expect(html).toContain('<h1>This page could not be found</h1>');
+    expect(html).toContain('href="/en/">Return home</a>');
+    expect(html).toContain('href="/en/research">Explore research</a>');
+    expect(html).toContain('<meta name="robots" content="noindex,nofollow"/>');
+    expect(englishNotFoundMetadata.robots).toMatchObject({
+      index: false,
+      follow: false,
+      googleBot: { index: false, follow: false },
+    });
+    expect(html).not.toContain('这一页，暂时找不到了');
+  });
   it('keeps English routes, category queries and asset links intact', () => {
     const html = renderToStaticMarkup(
       <LanguageProvider locale="en" path="/research" autoRedirect={false}>

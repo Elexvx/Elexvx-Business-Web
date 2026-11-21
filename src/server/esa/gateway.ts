@@ -216,7 +216,8 @@ export async function handleRequest(
   context: ExecutionContext,
   env: EsaEnvironment,
   manifest?: PublishManifest,
-  notFoundHtml = 'Not found'
+  notFoundHtml = 'Not found',
+  englishNotFoundHtml = notFoundHtml
 ): Promise<Response> {
   const url = new URL(request.url);
   const destination = resolveRedirect(url);
@@ -231,7 +232,8 @@ export async function handleRequest(
   const canonicalCategoryResponse = canonicalizeCategoryQuery(url);
   if (canonicalCategoryResponse) return canonicalCategoryResponse;
   // ESA serves every existing file itself. Only unmatched paths reach this code.
-  return createNotFoundResponse(request.method === 'HEAD' ? null : notFoundHtml);
+  const fallback = /^\/en(?:\/|$)/.test(url.pathname) ? englishNotFoundHtml : notFoundHtml;
+  return createNotFoundResponse(request.method === 'HEAD' ? null : fallback);
 }
 
 export default { fetch: handleRequest };

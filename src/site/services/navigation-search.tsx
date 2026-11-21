@@ -9,6 +9,7 @@ import { canonicalContentHref } from '../routing/content-href';
 
 const SCOPE_STORAGE_KEY = 'elexvx-navigation-scope';
 const ENGINE_STORAGE_KEY = 'elexvx-navigation-engine';
+const SEARCH_PLACEHOLDER = '搜索入口或关键词';
 type SearchScope = 'internal' | 'web';
 type SearchLink = { id: string; name: string; url: string; description: string; tags: string[] };
 type SearchConfig = ServiceNavigationConfig['search'];
@@ -53,6 +54,7 @@ export function DirectorySearch({ searchConfig }: { searchConfig: SearchConfig }
   const [engineId, setEngineId] = useState(searchConfig.defaultEngine);
   const [query, setQuery] = useState('');
   const [activeSuggestion, setActiveSuggestion] = useState(-1);
+  const [suggestionsOpen, setSuggestionsOpen] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const enabledSearchEngines = useMemo(
     () => searchConfig.engines.filter((engine) => searchConfig.enabledEngines.includes(engine.name)),
@@ -68,6 +70,7 @@ export function DirectorySearch({ searchConfig }: { searchConfig: SearchConfig }
   }, [query, scope, searchConfig.maxSuggestions]);
 
   const selectedEngine = enabledSearchEngines.find((engine) => engine.name === engineId) ?? enabledSearchEngines[0];
+  const suggestionsVisible = suggestionsOpen && scope === 'internal' && suggestions.length > 0;
 
   useEffect(() => {
     const storedScope = readStoredValue(SCOPE_STORAGE_KEY);
@@ -87,6 +90,7 @@ export function DirectorySearch({ searchConfig }: { searchConfig: SearchConfig }
   const openInternalResult = (link: SearchLink) => {
     setQuery(link.name);
     setActiveSuggestion(-1);
+    setSuggestionsOpen(false);
     openExternalUrl(link.url);
   };
 
@@ -107,14 +111,19 @@ export function DirectorySearch({ searchConfig }: { searchConfig: SearchConfig }
   };
 
   const handleKeyDown = (event: ReactKeyboardEvent<HTMLInputElement>) => {
+    if (event.nativeEvent.isComposing || event.nativeEvent.keyCode === 229) return;
     if (event.key === 'ArrowDown' && suggestions.length > 0) {
       event.preventDefault();
-      setActiveSuggestion((current) => (current + 1) % suggestions.length);
+      setSuggestionsOpen(true);
+      setActiveSuggestion((current) => (suggestionsVisible ? (current + 1) % suggestions.length : 0));
     } else if (event.key === 'ArrowUp' && suggestions.length > 0) {
       event.preventDefault();
-      setActiveSuggestion((current) => (current <= 0 ? suggestions.length - 1 : current - 1));
+      setSuggestionsOpen(true);
+      setActiveSuggestion((current) => (!suggestionsVisible || current <= 0 ? suggestions.length - 1 : current - 1));
     } else if (event.key === 'Escape') {
+      event.preventDefault();
       setActiveSuggestion(-1);
+      setSuggestionsOpen(false);
     } else if (event.key === 'Enter') {
       event.preventDefault();
       submit();
@@ -125,6 +134,12 @@ export function DirectorySearch({ searchConfig }: { searchConfig: SearchConfig }
     <form
       className="service-search"
       aria-label="搜索工具"
+      onBlur={(event) => {
+        if (!event.currentTarget.contains(event.relatedTarget as Node | null)) {
+          setSuggestionsOpen(false);
+          setActiveSuggestion(-1);
+        }
+      }}
       onSubmit={(event) => {
         event.preventDefault();
         submit();
@@ -145,6 +160,7 @@ export function DirectorySearch({ searchConfig }: { searchConfig: SearchConfig }
                 if (nextEngine) setEngineId(nextEngine.name);
               }
               setActiveSuggestion(-1);
+              setSuggestionsOpen(false);
             }}
             allLabel="站内导航"
             options={searchConfig.showEngineSelector ? enabledSearchEngines.map((engine) => engine.displayName) : []}
@@ -154,26 +170,28 @@ export function DirectorySearch({ searchConfig }: { searchConfig: SearchConfig }
           <SearchOutlined className="service-search-icon" aria-hidden="true" />
           <input
             ref={inputRef}
-            aria-activedescendant={activeSuggestion >= 0 ? `navigation-suggestion-${activeSuggestion}` : undefined}
+            aria-activedescendant={
+              suggestionsVisible && activeSuggestion >= 0 ? `navigation-suggestion-${activeSuggestion}` : undefined
+            }
             aria-autocomplete="list"
-            aria-controls={listboxId}
-            aria-expanded={scope === 'internal' && suggestions.length > 0}
+            aria-controls={suggestionsVisible ? listboxId : undefined}
+            aria-expanded={suggestionsVisible}
             aria-label={scope === 'internal' ? '站内搜索' : '全网搜索'}
             autoComplete="off"
             onChange={(event) => {
               setQuery(event.target.value);
               setActiveSuggestion(-1);
+              setSuggestionsOpen(true);
             }}
+            onFocus={() => setSuggestionsOpen(true)}
             onKeyDown={handleKeyDown}
             placeholder={
-              scope === 'internal'
-                ? '搜索入口名称、系统或关键词'
-                : (selectedEngine?.placeholder ?? '搜索入口名称、系统或关键词')
+              scope === 'internal' ? SEARCH_PLACEHOLDER : (selectedEngine?.placeholder ?? SEARCH_PLACEHOLDER)
             }
             role="combobox"
             value={query}
           />
-          {scope === 'internal' && suggestions.length > 0 ? (
+          {suggestionsVisible ? (
             <div className="service-search-suggestions" id={listboxId} role="listbox">
               {suggestions.map((link, index) => (
                 <button

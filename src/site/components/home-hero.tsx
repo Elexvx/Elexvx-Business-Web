@@ -50,7 +50,7 @@ const useHomeLaunch = () => {
   return context;
 };
 
-export const HomeHero = () => {
+export const HomeHero = ({ showAnnouncement = true }: { showAnnouncement?: boolean }) => {
   const { t } = useI18n();
   const { phase, didRevealOnClient, launch, mounted, localTimeZone, snapshot } = useHomeLaunch();
 
@@ -70,16 +70,21 @@ export const HomeHero = () => {
         />
       )}
       {phase !== 'waiting' && (
-        <HeroReleasedContent animateEntrance={didRevealOnClient} settling={phase === 'released' && didRevealOnClient} />
+        <HeroReleasedContent
+          showAnnouncement={showAnnouncement}
+          animateEntrance={didRevealOnClient}
+          settling={phase === 'released' && didRevealOnClient}
+        />
       )}
     </section>
   );
 };
 
-export const HomeProductsLaunch = ({ children }: { children: ReactNode }) => {
+export const HomeProductsLaunch = ({ children, beforeLaunch }: { children: ReactNode; beforeLaunch?: ReactNode }) => {
   const { t } = useI18n();
   const { phase, launch, mounted, localTimeZone } = useHomeLaunch();
   if (phase !== 'waiting') return <>{children}</>;
+  if (beforeLaunch) return <>{beforeLaunch}</>;
 
   return (
     <section className="home-content-section home-products-section" id="products" aria-labelledby="products-title">

@@ -2,7 +2,7 @@ export type ArticleSection = 'research' | 'activities' | 'news';
 export type ArticleCategory = { id: string; label: string };
 
 export const newsCategorySlug = (category: string) => {
-  const known: Record<string, string> = { 最新动态: 'updates', 公告: 'announcements' };
+  const known: Record<string, string> = { 最新动态: 'updates', 公告: 'announcements', 办事指南: 'guides' };
   return (
     known[category] ||
     `topic-${Array.from(category)
