@@ -219,25 +219,7 @@
 
 @media (width > 760px) {
   .research-index-row-media {
-    --research-cover-max-size: clamp(10rem, 14vw, 12rem);
-
-    position: relative;
-    grid-template-columns: var(--research-cover-max-size) minmax(0, 1fr);
-  }
-
-  /* The text sets the row height, and the cover fits within the first grid cell. */
-  .research-index-row-media .research-index-media {
-    position: absolute;
-    grid-area: 1 / 1 / 2 / 2;
-    inset-block: 0;
-    inset-inline-start: 0;
-    width: auto;
-    height: min(100%, var(--research-cover-max-size));
-    margin-block: auto;
-  }
-
-  .research-index-row-media .research-index-copy {
-    grid-column: 2;
+    grid-template-columns: clamp(10rem, 14vw, 12rem) minmax(0, 1fr);
   }
 }
 
