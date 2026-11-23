@@ -31,24 +31,22 @@ export const prefersReducedMotion = () =>
 
 export function useHeroLaunchPhase({
   initialReleased,
-  canReveal,
+  hasReleasedContent,
   launch,
   initialNowMs,
   timeZoneOffsetMinutes,
 }: {
   initialReleased?: boolean;
-  canReveal: boolean;
+  hasReleasedContent: boolean;
   launch: HeroLaunchConfig;
   initialNowMs?: number;
   timeZoneOffsetMinutes?: number;
 }) {
   const initialIsReleased =
-    canReveal &&
-    (typeof initialReleased === 'boolean'
-      ? initialReleased
-      : initialNowMs !== undefined
-        ? isReleaseReached(launch, initialNowMs)
-        : !launch.enabled || parseReleaseTimestamp(launch.releaseAt) === null);
+    initialReleased ??
+    (initialNowMs !== undefined
+      ? isReleaseReached(launch, initialNowMs)
+      : !launch.enabled || parseReleaseTimestamp(launch.releaseAt) === null);
 
   const [phase, setPhase] = useState<HeroPhase>(initialIsReleased ? 'released' : 'waiting');
   const [didRevealOnClient, setDidRevealOnClient] = useState(false);
@@ -62,8 +60,8 @@ export function useHeroLaunchPhase({
 
   useEffect(() => {
     const releaseTimestamp = parseReleaseTimestamp(launch.releaseAt);
-    if (!launch.enabled || releaseTimestamp === null) {
-      if (canReveal) setPhase('released');
+    if (initialIsReleased || !launch.enabled || releaseTimestamp === null) {
+      setPhase('released');
       return;
     }
 
@@ -89,9 +87,7 @@ export function useHeroLaunchPhase({
       clearSchedules();
       setSnapshot(getCountdownSnapshot(launch.releaseAt, Date.now()));
       setMounted(true);
-      if (!canReveal) return;
-
-      if (prefersReducedMotion()) {
+      if (!hasReleasedContent || prefersReducedMotion()) {
         setPhase('released');
         return;
       }
@@ -116,10 +112,6 @@ export function useHeroLaunchPhase({
       return false;
     };
 
-    if (initialIsReleased && isReleaseReached(launch, Date.now())) {
-      return;
-    }
-
     if (!isReleaseReached(launch, Date.now())) {
       setDidRevealOnClient(false);
       setPhase('waiting');
@@ -141,7 +133,7 @@ export function useHeroLaunchPhase({
       clearSchedules();
       if (timers.reveal !== undefined) window.clearTimeout(timers.reveal);
     };
-  }, [canReveal, initialIsReleased, launch, timeZoneOffsetMinutes]);
+  }, [hasReleasedContent, initialIsReleased, launch, timeZoneOffsetMinutes]);
 
   return { phase, didRevealOnClient, mounted, localTimeZone, snapshot };
 }

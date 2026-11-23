@@ -34,7 +34,6 @@ pnpm-lock.yaml
 .claude/worktrees/
 .env.*
 public/search-index.json
-release-assets/
 
 # ESA router bundle and local dependencies
 esa/router/dist/

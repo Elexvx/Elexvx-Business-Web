@@ -16,7 +16,7 @@ export const ProductCatalogPage = () => {
   return (
     <SiteShell activePath="/products">
       <HomeLaunchProvider initialReleased={!!humiteContent}>
-        <HomeHero showAnnouncement={false} />
+        <HomeHero showAnnouncement={false} fallbackTitle="产品" />
       </HomeLaunchProvider>
       {products.length > 0 && (
         <section className="product-index" aria-labelledby="product-index-title">

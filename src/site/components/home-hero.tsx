@@ -36,7 +36,7 @@ export const HomeLaunchProvider = ({
 }: HomeLaunchProviderProps) => {
   const state = useHeroLaunchPhase({
     initialReleased,
-    canReveal: !!homeIntro,
+    hasReleasedContent: !!homeIntro,
     launch,
     initialNowMs,
     timeZoneOffsetMinutes,
@@ -50,7 +50,13 @@ const useHomeLaunch = () => {
   return context;
 };
 
-export const HomeHero = ({ showAnnouncement = true }: { showAnnouncement?: boolean }) => {
+export const HomeHero = ({
+  showAnnouncement = true,
+  fallbackTitle = 'Elexvx',
+}: {
+  showAnnouncement?: boolean;
+  fallbackTitle?: string;
+}) => {
   const { t } = useI18n();
   const { phase, didRevealOnClient, launch, mounted, localTimeZone, snapshot } = useHomeLaunch();
 
@@ -69,13 +75,18 @@ export const HomeHero = ({ showAnnouncement = true }: { showAnnouncement?: boole
           localTimeZone={localTimeZone}
         />
       )}
-      {phase !== 'waiting' && (
-        <HeroReleasedContent
-          showAnnouncement={showAnnouncement}
-          animateEntrance={didRevealOnClient}
-          settling={phase === 'released' && didRevealOnClient}
-        />
-      )}
+      {phase !== 'waiting' &&
+        (homeIntro ? (
+          <HeroReleasedContent
+            showAnnouncement={showAnnouncement}
+            animateEntrance={didRevealOnClient}
+            settling={phase === 'released' && didRevealOnClient}
+          />
+        ) : (
+          <div className="home-product-intro-copy">
+            <h1>{t(fallbackTitle)}</h1>
+          </div>
+        ))}
     </section>
   );
 };
@@ -83,7 +94,7 @@ export const HomeHero = ({ showAnnouncement = true }: { showAnnouncement?: boole
 export const HomeProductsLaunch = ({ children, beforeLaunch }: { children: ReactNode; beforeLaunch?: ReactNode }) => {
   const { t } = useI18n();
   const { phase, launch, mounted, localTimeZone } = useHomeLaunch();
-  if (phase !== 'waiting') return <>{children}</>;
+  if (phase !== 'waiting') return <>{homeIntro ? children : beforeLaunch}</>;
   if (beforeLaunch) return <>{beforeLaunch}</>;
 
   return (

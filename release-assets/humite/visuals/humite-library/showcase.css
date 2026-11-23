@@ -1,0 +1,21 @@
+@font-face {
+  font-family: 'Humite Serif';
+  src: url('./assets/MingLibrarySerif.woff2') format('woff2');
+  font-weight: 100 900;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Silvae Serif';
+  src: url('./assets/MingLibrarySerif.woff2') format('woff2');
+  font-weight: 100 900;
+  font-display: swap;
+}
+
+:root {
+  --serif: 'Humite Serif', 'Silvae Serif', BookCJK, serif;
+}
+
+.showcase-badge {
+  pointer-events: none;
+}
