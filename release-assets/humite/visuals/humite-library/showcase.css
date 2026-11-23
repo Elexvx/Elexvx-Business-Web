@@ -19,3 +19,15 @@
 .showcase-badge {
   pointer-events: none;
 }
+
+@media (max-width: 480px) {
+  .top-actions > button.top-button {
+    flex: 0 0 40px;
+    width: 40px;
+    padding: 0;
+  }
+
+  .top-actions > button.top-button > span {
+    display: none;
+  }
+}

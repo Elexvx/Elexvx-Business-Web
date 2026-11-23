@@ -46,6 +46,7 @@
     .careers-value h4,
     .careers-job-row h3,
     .lumira-grid h3,
+    .lumira-stack h3,
     .team-card h3
   ) {
   font-size: var(--card-title-size);

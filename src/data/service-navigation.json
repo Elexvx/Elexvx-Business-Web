@@ -102,25 +102,7 @@
           "status": "available"
         },
         {
-          "id": "企业系统-项目管理系统-2",
-          "name": "项目管理系统",
-          "url": "https://it.elexvx.com",
-          "description": "项目管理系统",
-          "icon": "/images/logos/elexvx.png",
-          "tags": ["官网"],
-          "status": "available"
-        },
-        {
-          "id": "企业系统-elexvxai-lab-3",
-          "name": "ElexvxAI Lab",
-          "url": "https://ai.elexvx.com/",
-          "description": "研发中心",
-          "icon": "/images/logos/elexvx.png",
-          "tags": ["科研", "研发"],
-          "status": "available"
-        },
-        {
-          "id": "企业系统-题库服务-4",
+          "id": "企业系统-题库服务-2",
           "name": "题库服务",
           "url": "https://www.kaoshixing.com/login/account/login",
           "description": "南京保安员考试题库",
@@ -258,6 +240,15 @@
           "icon": "/images/logos/jscopyright.webp",
           "tags": ["著作权", "作品登记"],
           "status": "available"
+        },
+        {
+          "id": "知识产权-四川版权综合服务平台-6",
+          "name": "四川版权综合服务平台",
+          "url": "https://www.sc-copyright.cn/#/registration",
+          "description": "作品著作权登记系统",
+          "icon": "/images/logos/jscopyright.webp",
+          "tags": ["著作权", "作品登记", "四川版权"],
+          "status": "available"
         }
       ],
       "subcategories": []
@@ -276,75 +267,39 @@
           "status": "available"
         },
         {
-          "id": "企业信用-爱企查-宏翔商道-科技-2",
-          "name": "爱企查-宏翔商道-科技",
-          "url": "https://aiqicha.baidu.com/company_detail_56215758055636",
-          "description": "爱企查",
-          "icon": "/images/logos/aiqicha.webp",
-          "tags": ["企业查询", "科技公司"],
-          "status": "available"
-        },
-        {
-          "id": "企业信用-爱企查-林汐智觉-3",
-          "name": "爱企查-林汐智觉",
-          "url": "https://aiqicha.baidu.com/company_detail_63903449782455",
-          "description": "爱企查",
-          "icon": "/images/logos/aiqicha.webp",
-          "tags": ["企业查询", "林汐智觉"],
-          "status": "available"
-        },
-        {
-          "id": "企业信用-爱企查-方升允济-4",
-          "name": "爱企查-方升允济",
-          "url": "https://aiqicha.baidu.com/company_detail_63793913715120",
-          "description": "爱企查",
-          "icon": "/images/logos/aiqicha.webp",
-          "tags": ["企业查询", "方升允济"],
-          "status": "available"
-        },
-        {
-          "id": "企业信用-爱企查-桐谷霁屿-5",
-          "name": "爱企查-桐谷霁屿",
-          "url": "https://aiqicha.baidu.com/company_detail_62570278677073",
-          "description": "爱企查",
-          "icon": "/images/logos/aiqicha.webp",
-          "tags": ["企业查询", "科技公司"],
-          "status": "available"
-        },
-        {
-          "id": "企业信用-爱企查-宏翔商道-劳务-6",
-          "name": "爱企查-宏翔商道-劳务",
-          "url": "https://aiqicha.baidu.com/company_detail_56910435771118",
-          "description": "爱企查",
-          "icon": "/images/logos/aiqicha.webp",
-          "tags": ["企业查询", "劳务公司"],
-          "status": "available"
-        },
-        {
-          "id": "企业信用-企查查-科技-7",
-          "name": "企查查-科技",
+          "id": "企业信用-宏翔商道-南京-科技发展有限公司-2",
+          "name": "宏翔商道（南京）科技发展有限公司",
           "url": "https://www.qcc.com/firm/2edfb36b4a31a1194203251df76a2371.html",
           "description": "企查查",
           "icon": "/images/logos/qcc.webp",
-          "tags": ["企业查询", "科技公司"],
+          "tags": ["企业查询", "科技公司", "宏翔商道"],
           "status": "available"
         },
         {
-          "id": "企业信用-企查查-劳务-8",
-          "name": "企查查-劳务",
+          "id": "企业信用-江苏宏翔商道劳务服务有限公司-3",
+          "name": "江苏宏翔商道劳务服务有限公司",
           "url": "https://www.qcc.com/firm/b3acea446c38e162b6679a7c6df4c316.html",
           "description": "企查查",
           "icon": "/images/logos/qcc.webp",
-          "tags": ["企业查询", "劳务公司"],
+          "tags": ["企业查询", "劳务公司", "宏翔商道"],
           "status": "available"
         },
         {
-          "id": "企业信用-企查查-林汐智觉-9",
-          "name": "企查查-林汐智觉",
+          "id": "企业信用-南京林汐智觉科技有限公司-4",
+          "name": "南京林汐智觉科技有限公司",
           "url": "https://www.qcc.com/firm/cf32a80cda71ce49879501a1c04cf4cf.html",
           "description": "企查查",
           "icon": "/images/logos/qcc.webp",
           "tags": ["企业查询", "林汐智觉"],
+          "status": "available"
+        },
+        {
+          "id": "企业信用-江苏函九科技有限公司-5",
+          "name": "江苏函九科技有限公司",
+          "url": "https://www.qcc.com/firm/b07076ac0fa22651571aee60d2b1f02d.html",
+          "description": "企查查",
+          "icon": "/images/logos/qcc.webp",
+          "tags": ["企业查询", "函九科技"],
           "status": "available"
         }
       ],
@@ -382,12 +337,12 @@
           "status": "available"
         },
         {
-          "id": "人工智能-google-ai-studio-4",
-          "name": "Google AI Studio",
-          "url": "https://aistudio.google.com/prompts/new_chat",
-          "description": "Google AI Studio",
-          "icon": "/images/logos/gemini.webp",
-          "tags": ["AI", "Google"],
+          "id": "人工智能-google-antigravity-4",
+          "name": "Google Antigravity",
+          "url": "https://antigravity.google.com/",
+          "description": "Google 智能体开发平台",
+          "icon": "/images/logos/antigravity.webp",
+          "tags": ["AI", "Google", "Agent"],
           "status": "available"
         },
         {

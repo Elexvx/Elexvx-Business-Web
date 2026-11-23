@@ -1,7 +1,8 @@
-import { isHumitePublicBuild } from './scripts/humite-export.mjs';
+import { humiteAssetPaths, humiteScenePath, isHumitePublicBuild } from './scripts/humite-export.mjs';
 
 const development = process.env.NODE_ENV === 'development';
 const humitePublished = isHumitePublicBuild();
+const humiteDevAssetOrigin = development && humitePublished ? process.env.HUMITE_DEV_ASSET_ORIGIN : undefined;
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -25,6 +26,22 @@ const nextConfig = {
             headers: [{ key: 'Clear-Site-Data', value: '"cache"' }],
           },
         ],
+        ...(humiteDevAssetOrigin
+          ? {
+              rewrites: () => [
+                {
+                  source: `${humiteScenePath}/:path*`,
+                  destination: `${humiteDevAssetOrigin}${humiteScenePath}/:path*`,
+                },
+                ...humiteAssetPaths
+                  .filter((path) => !path.startsWith(`${humiteScenePath}/`))
+                  .map((path) => ({
+                    source: path,
+                    destination: `${humiteDevAssetOrigin}${path}`,
+                  })),
+              ],
+            }
+          : {}),
       }
     : {}),
   // Keep Turbopack's development cache separate from the static export.

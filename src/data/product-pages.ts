@@ -19,7 +19,7 @@ export type ProductShowcaseContent = {
     eyebrow: string;
     title: string;
     threeColumns?: boolean;
-    items: ReadonlyArray<{ number: string; title: string; description: string; tag: string }>;
+    items: ReadonlyArray<{ title: string; description: string }>;
   };
   showcase?: {
     id: string;

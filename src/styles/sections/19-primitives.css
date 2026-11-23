@@ -118,7 +118,8 @@
   height: 26px;
   padding: 3px;
   border: 1px solid var(--color-hairline);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-pill);
+  corner-shape: round;
   background: var(--color-pearl);
   cursor: pointer;
 }
@@ -129,7 +130,8 @@
   display: block;
   width: 18px;
   height: 18px;
-  border-radius: var(--radius-xs);
+  border-radius: var(--radius-round);
+  corner-shape: round;
   background: var(--color-ink-muted);
   transition: transform 160ms ease;
 }

@@ -482,7 +482,8 @@ dialog.article-lightbox {
   width: var(--lightbox-control-size);
   height: var(--lightbox-control-size);
   padding: 0;
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-round);
+  corner-shape: round;
 }
 .lightbox-toolbar button svg,
 .lightbox-arrow svg {

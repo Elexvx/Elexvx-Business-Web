@@ -127,7 +127,8 @@
   place-items: center;
   color: var(--color-ink-muted);
   border: 1px solid transparent;
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-pill);
+  corner-shape: round;
 }
 
 .news-pagination > :is(a:hover, a:focus-visible, [aria-current='page']) {

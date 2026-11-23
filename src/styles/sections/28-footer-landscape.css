@@ -369,7 +369,8 @@ html[data-theme='light'] .site-shell-openai .site-footer.footer-landscape {
   height: 44px;
   padding: 0;
   border: 1px solid var(--footer-rule);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-round);
+  corner-shape: round;
   color: var(--footer-muted);
   background: transparent;
   font-size: 22px;
@@ -380,7 +381,8 @@ html[data-theme='light'] .site-shell-openai .site-footer.footer-landscape {
   background: var(--color-canvas);
 }
 .footer-landscape .footer-social-trigger:focus-visible {
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-round);
+  corner-shape: round;
 }
 .footer-social-rednote {
   font-size: 11px;

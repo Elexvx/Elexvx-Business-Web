@@ -207,9 +207,12 @@
 
 .site-shell-home .home-company-inner {
   display: flex;
+  min-height: clamp(280px, 26vw, 360px);
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: clamp(24px, 2.5vw, 30px);
+  padding-block: clamp(48px, 6vw, 72px);
   overflow: hidden;
   border: 0;
   border-radius: var(--radius-sm);
@@ -232,9 +235,10 @@
   min-height: 44px;
   align-items: center;
   gap: 10px;
-  padding: 0 18px;
+  padding: 0 24px;
   color: #fff;
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-pill);
+  corner-shape: round;
   background: #383838;
   font-size: 15px;
   font-weight: 500;
@@ -286,6 +290,9 @@
   }
 
   .site-shell-home .home-company-inner {
+    min-height: 260px;
+    gap: 24px;
+    padding-block: 44px;
     border-radius: var(--radius-xs);
   }
 }

@@ -53,7 +53,8 @@
   color: #b9b9b9;
   background: #242424;
   border: 0;
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-pill);
+  corner-shape: round;
   font-size: 14px;
   font-weight: 500;
   white-space: nowrap;

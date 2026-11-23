@@ -1,6 +1,22 @@
-import { spawnSync } from 'node:child_process';
+import { spawn, spawnSync } from 'node:child_process';
 import { access, cp } from 'node:fs/promises';
 import { isHumiteReleaseDue } from '../src/data/humite-launch.mjs';
+import { startHumiteDevAssetServer } from './humite-dev-assets';
+
+const resolveDevPort = (argv: string[], envPort?: string) => {
+  for (let index = 0; index < argv.length; index++) {
+    const arg = argv[index];
+    if (arg.startsWith('--port=')) {
+      const value = arg.slice('--port='.length).trim();
+      if (value) return value;
+    } else if (arg === '--port') {
+      const value = argv[index + 1]?.trim();
+      if (value) return value;
+    }
+  }
+  const fallback = envPort?.trim();
+  return fallback || '5173';
+};
 
 const dev = process.argv.includes('--dev');
 const humitePublished = isHumiteReleaseDue();
@@ -26,7 +42,41 @@ const npm = (...args: string[]) => run('npm', 'run', ...args);
 
 npm('generate:site-data');
 if (dev) {
-  run('next', 'dev', '--hostname', '127.0.0.1', '--port', '5173');
+  const devPort = resolveDevPort(process.argv.slice(2), process.env.PORT);
+  const assetServer = humitePublished ? await startHumiteDevAssetServer() : null;
+  if (assetServer) {
+    env.HUMITE_DEV_ASSET_ORIGIN = assetServer.origin;
+  }
+
+  let exitCode = 1;
+  try {
+    exitCode = await new Promise<number>((resolveExit, rejectExit) => {
+      const child = spawn('next', ['dev', '--hostname', '127.0.0.1', '--port', devPort], {
+        env,
+        stdio: 'inherit',
+      });
+      const forwardSignal = (signal: NodeJS.Signals) => {
+        child.kill(signal);
+      };
+      const cleanupListeners = () => {
+        process.off('SIGINT', forwardSignal);
+        process.off('SIGTERM', forwardSignal);
+      };
+      process.on('SIGINT', forwardSignal);
+      process.on('SIGTERM', forwardSignal);
+      child.once('error', (error) => {
+        cleanupListeners();
+        rejectExit(error);
+      });
+      child.once('exit', (code, signal) => {
+        cleanupListeners();
+        resolveExit(signal ? 1 : (code ?? 1));
+      });
+    });
+  } finally {
+    await assetServer?.close();
+  }
+  process.exit(exitCode);
 } else {
   const esa = process.argv.includes('--esa');
   if (esa) {

@@ -23,7 +23,8 @@
   min-height: 44px;
   padding: 10px 16px;
   border: 1px solid #8884;
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-pill);
+  corner-shape: round;
   color: inherit;
   background: transparent;
   font: inherit;
@@ -130,6 +131,7 @@ html[data-theme='dark'] {
   .article-share-options button {
     flex-direction: column;
     border-radius: var(--radius-sm);
+    corner-shape: superellipse(var(--golden-ratio));
     padding: 12px;
     min-width: 76px;
     font-size: 12px;

@@ -87,7 +87,8 @@
   height: 44px;
   flex: 0 0 44px;
   place-items: center;
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-round);
+  corner-shape: round;
   font-size: 1rem;
   opacity: 0.22;
 }

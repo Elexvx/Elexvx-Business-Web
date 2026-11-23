@@ -51,17 +51,13 @@ export const ProductShowcase = ({ content, image }: { content: ProductShowcaseCo
           </h2>
           <div className={pillars.threeColumns ? 'lumira-grid lumira-grid-three' : 'lumira-grid'}>
             {pillars.items.map((item) => (
-              <article key={item.number}>
-                <span className="lumira-number">{item.number}</span>
+              <article key={item.title}>
                 <h3>
                   <Translated>{item.title}</Translated>
                 </h3>
                 <p>
                   <Translated>{item.description}</Translated>
                 </p>
-                <span className="lumira-tag">
-                  <Translated>{item.tag}</Translated>
-                </span>
               </article>
             ))}
           </div>

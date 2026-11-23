@@ -9,12 +9,43 @@ import { describe, expect, it } from 'vitest';
 describe('integrated service pages', () => {
   it('keeps the navigation snapshot complete', () => {
     expect(serviceNavigation).toHaveLength(6);
-    expect(serviceNavigationLinks).toHaveLength(34);
+    expect(serviceNavigationLinks).toHaveLength(29);
     expect(serviceNavigationLinks.find((link) => link.name === 'AI雷达')).toMatchObject({
       url: 'https://codex-reset-radar.pages.dev/',
       description: 'Codex 模型与额度信息',
       icon: '/images/logos/ai-radar.png',
     });
+    expect(serviceNavigationLinks.find((link) => link.name === 'Google Antigravity')).toMatchObject({
+      url: 'https://antigravity.google.com/',
+      description: 'Google 智能体开发平台',
+      icon: '/images/logos/antigravity.webp',
+    });
+    expect(serviceNavigationLinks.find((link) => link.name === 'Google AI Studio')).toBeUndefined();
+    expect(serviceNavigationLinks.find((link) => link.name === '四川版权综合服务平台')).toMatchObject({
+      url: 'https://www.sc-copyright.cn/#/registration',
+      description: '作品著作权登记系统',
+      icon: '/images/logos/jscopyright.webp',
+    });
+    expect(serviceNavigationLinks.find((link) => link.name === '宏翔商道（南京）科技发展有限公司')).toMatchObject({
+      description: '企查查',
+    });
+    expect(serviceNavigationLinks.find((link) => link.name === '江苏宏翔商道劳务服务有限公司')).toMatchObject({
+      description: '企查查',
+    });
+    expect(serviceNavigationLinks.find((link) => link.name === '南京林汐智觉科技有限公司')).toMatchObject({
+      description: '企查查',
+    });
+    expect(serviceNavigationLinks.find((link) => link.name === '江苏函九科技有限公司')).toMatchObject({
+      url: 'https://www.qcc.com/firm/b07076ac0fa22651571aee60d2b1f02d.html',
+      description: '企查查',
+      icon: '/images/logos/qcc.webp',
+    });
+    expect(serviceNavigationLinks.find((link) => link.name === '项目管理系统')).toBeUndefined();
+    expect(serviceNavigationLinks.find((link) => link.name === 'ElexvxAI Lab')).toBeUndefined();
+    expect(serviceNavigationLinks.find((link) => link.name === '企查查-科技')).toBeUndefined();
+    expect(serviceNavigationLinks.find((link) => link.name === '企查查-劳务')).toBeUndefined();
+    expect(serviceNavigationLinks.find((link) => link.name === '企查查-林汐智觉')).toBeUndefined();
+    expect(serviceNavigationLinks.find((link) => link.name.startsWith('爱企查'))).toBeUndefined();
   });
 
   it('groups status monitors by the shared service configuration', () => {

@@ -34,8 +34,6 @@ export const humiteContent: HumiteReleaseContent = {
             'Humite（书林）是面向家庭与个人的自托管数字藏书阁，将散落在 NAS 中的 EPUB 与 PDF 1:1 映射进两层明式三维藏书楼「观文藏阁」。全家人共享同一套书目典藏，每个人的阅读进度、划线批注与私人笔记严格按账号隔离。',
           actions: [
             { label: '访问 GitHub', href: 'https://github.com/johntao2004/Silvae' },
-            { label: '漫游观文藏阁', href: '#humite-library', secondary: true },
-            { label: '了解技术架构', href: '#humite-technology', secondary: true },
           ],
           imageAlt: 'Humite',
           imageSize: 1254,
@@ -47,25 +45,19 @@ export const humiteContent: HumiteReleaseContent = {
           threeColumns: true,
           items: [
             {
-              number: '01',
               title: '典藏入林',
               description:
                 '受控 NAS 馆藏与书目编排，原生支持 EPUB 与 PDF、Thema 1.6 学科分类、SHA-256 去重校验与 2:3 封面裁切；写操作强制预览指纹并保留回滚保护，绝不静默改写原件。',
-              tag: 'EPUB · PDF · Thema 1.6',
             },
             {
-              number: '02',
               title: '观文藏阁',
               description:
                 '内置 Three.js 打造的二层明式虚拟书楼，将真实馆藏 1:1 映射上架；结合出版级 Web 阅读器、网页文章剪藏「文钞馆」与全馆知识图谱网络，让藏书真正可观可读。',
-              tag: '三维书楼 · 纸感阅读 · 知识图谱',
             },
             {
-              number: '03',
               title: '各得其所',
               description:
                 '主人、管理员与成员三级权限体系让全家共享同一套书库；个人阅读进度、多色高亮划线与独立笔记严格按账号隔离，另设配备 TOTP 二次验证的加密秘阁空间。',
-              tag: '账号隔离 · 私人笔记 · 加密秘阁',
             },
           ],
         },
@@ -242,21 +234,17 @@ export const humiteContent: HumiteReleaseContent = {
           'An open-source, self-hosted family digital library and 3D pavilion for NAS book curation, EPUB/PDF reading, and per-account reading progress and private notes.',
         'Humite（书林）是面向家庭与个人的自托管数字藏书阁，将散落在 NAS 中的 EPUB 与 PDF 1:1 映射进两层明式三维藏书楼「观文藏阁」。全家人共享同一套书目典藏，每个人的阅读进度、划线批注与私人笔记严格按账号隔离。':
           'Humite is a self-hosted digital library for families and individuals. It maps EPUB and PDF collections from your NAS 1:1 into the two-story Ming-style 3D pavilion Guanwen Library, letting household members share one curated archive while keeping reading progress, highlights, and private notes strictly isolated per account.',
-        漫游观文藏阁: 'Explore 3D Library',
         核心能力: 'Core capabilities',
         '典藏入林、观文藏阁与各得其所': 'Curated archive, 3D pavilion, and private reading sovereignty',
         典藏入林: 'Curated archive',
         '受控 NAS 馆藏与书目编排，原生支持 EPUB 与 PDF、Thema 1.6 学科分类、SHA-256 去重校验与 2:3 封面裁切；写操作强制预览指纹并保留回滚保护，绝不静默改写原件。':
           'Controlled NAS ingestion and cataloging with native EPUB/PDF support, Thema 1.6 classification, SHA-256 deduplication, and 2:3 cover cropping; write operations preview fingerprints with rollback protection and never silently alter originals.',
-        'EPUB · PDF · Thema 1.6': 'EPUB · PDF · Thema 1.6',
         观文藏阁: 'Guanwen Library',
         '内置 Three.js 打造的二层明式虚拟书楼，将真实馆藏 1:1 映射上架；结合出版级 Web 阅读器、网页文章剪藏「文钞馆」与全馆知识图谱网络，让藏书真正可观可读。':
           'A built-in two-story Ming-style 3D virtual pavilion powered by Three.js that places real library holdings 1:1 onto shelves, paired with an editorial web reader, web article clipping, and a library-wide knowledge graph.',
-        '三维书楼 · 纸感阅读 · 知识图谱': '3D Pavilion · Editorial Reader · Knowledge Graph',
         各得其所: 'Private sanctuary',
         '主人、管理员与成员三级权限体系让全家共享同一套书库；个人阅读进度、多色高亮划线与独立笔记严格按账号隔离，另设配备 TOTP 二次验证的加密秘阁空间。':
           'Three-tier Owner, Admin, and Member roles allow families to share one catalog while isolating progress, multi-color highlights, and private notes per account—plus an encrypted Vault protected by TOTP two-factor authentication.',
-        '账号隔离 · 私人笔记 · 加密秘阁': 'Account Isolation · Private Notes · Encrypted Vault',
         '观文藏阁 · 二层明式三维书楼': 'Guanwen Library · Two-story Ming 3D Pavilion',
         '直接同步自 Humite 内嵌的观文藏阁三维场景，支持第一人称步行漫游、学科分类书架定位、四时晨昏天色切换、御碑拓片导览与今日读书签抽取。':
           'Synced directly from Humite’s embedded Guanwen Library 3D scene, supporting first-person walking tours, subject shelf navigation, seasonal lighting presets, stele rubbing guides, and daily reading fortune cards.',

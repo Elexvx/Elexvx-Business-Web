@@ -121,6 +121,8 @@
   --radius-sm: calc(var(--radius-xs) * var(--golden-ratio));
   --radius-md: calc(var(--radius-sm) * var(--golden-ratio));
   --radius-lg: calc(var(--radius-md) * var(--golden-ratio));
+  --radius-pill: 999px;
+  --radius-round: 50%;
   --content-card-radius: var(--radius-md);
   --media-card-radius: var(--radius-sm);
   --motion-ease-out: cubic-bezier(0.23, 1, 0.32, 1);
@@ -138,7 +140,8 @@
   box-sizing: border-box;
 }
 
-/* The curve only affects boxes that have a nonzero border radius. */
+/* Rectangular rounded boxes default to the golden-ratio superellipse curve;
+   true pills (--radius-pill) and circles (--radius-round) use corner-shape: round. */
 *,
 *::before,
 *::after {
@@ -527,7 +530,8 @@ img {
   min-height: 44px;
   padding: 8px 20px;
   border: 1px solid transparent;
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-pill);
+  corner-shape: round;
   box-shadow: none;
   cursor: pointer;
   font-family: var(--font-system);

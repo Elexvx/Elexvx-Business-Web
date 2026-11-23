@@ -46,6 +46,18 @@ async function buildShowcase(outputDir) {
 .showcase-badge {
   pointer-events: none;
 }
+
+@media (max-width: 480px) {
+  .top-actions > button.top-button {
+    flex: 0 0 40px;
+    width: 40px;
+    padding: 0;
+  }
+
+  .top-actions > button.top-button > span {
+    display: none;
+  }
+}
 `
   );
 
@@ -104,7 +116,7 @@ async function buildShowcase(outputDir) {
     html,
     `<button class="top-button" id="back-button" type="button" aria-label="返回">`,
     `<span class="top-button showcase-badge" title="书目、作者与封面均为模拟数据">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M8 8h.01M16 8h.01M12 12h.01M8 16h.01M16 16h.01" stroke-width="2.5"/></svg><span>模拟</span>
+            <span>模拟</span>
           </span>
           <button class="top-button" id="back-button" type="button" hidden aria-label="返回">`
   );
