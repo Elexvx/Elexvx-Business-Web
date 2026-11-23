@@ -23,7 +23,7 @@ export const ProductCatalogPage = () => {
           <h2 className="index-heading" id="product-index-title">
             {t('产品')}
           </h2>
-          <div className="home-media-grid home-products-grid">
+          <div className="home-media-grid home-products-grid media-card-list">
             {products.map((product) => (
               <ArticleCard
                 key={product.slug}

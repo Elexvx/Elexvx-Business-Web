@@ -40,7 +40,7 @@
   width: 82%;
   aspect-ratio: 1;
   border: 1px solid color-mix(in srgb, var(--status-ink) 18%, transparent);
-  border-radius: 50%;
+  border-radius: calc(100% / var(--golden-ratio) / var(--golden-ratio));
   z-index: -1;
 }
 .status-visual i {
@@ -82,7 +82,7 @@
   justify-content: center;
   gap: 24px;
   padding: 12px 22px;
-  border-radius: 999px;
+  border-radius: var(--radius-md);
   font: inherit;
   font-size: 14px;
   cursor: pointer;

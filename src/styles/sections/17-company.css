@@ -71,7 +71,7 @@
   justify-content: center;
   aspect-ratio: 1;
   padding: 32px;
-  border-radius: 8px;
+  border-radius: var(--radius-xs);
   background: #ffffff;
   border: 1px solid var(--color-hairline);
 }
@@ -122,7 +122,7 @@
 }
 .company-overview .company-introduction {
   padding: clamp(24px, 4vw, 48px);
-  border-radius: 20px;
+  border-radius: var(--radius-md);
   background: var(--color-surface-neutral);
 }
 .company-overview .company-introduction p {
@@ -145,7 +145,7 @@
   gap: 16px;
   padding: 28px;
   border: 1px solid var(--color-hairline);
-  border-radius: 16px;
+  border-radius: var(--radius-md);
   background: var(--color-surface-neutral);
 }
 .company-overview .company-content-row h3 {
@@ -165,7 +165,7 @@
 .company-overview .company-stats > div {
   min-width: 0;
   border: 1px solid var(--color-hairline);
-  border-radius: 16px;
+  border-radius: var(--radius-md);
   padding: 24px;
 }
 .company-overview .company-stats dd {
@@ -206,7 +206,7 @@
 }
 .brand-overview .brand-original-gallery figure {
   border: 1px solid var(--color-hairline);
-  border-radius: 16px;
+  border-radius: var(--radius-md);
   overflow: hidden;
 }
 .brand-overview .brand-specimen {
@@ -259,7 +259,7 @@
 .lumira-hero img {
   width: 100%;
   height: auto;
-  border-radius: 20px;
+  border-radius: var(--radius-md);
 }
 .lumira-actions {
   display: flex;
@@ -286,7 +286,7 @@
 }
 .lumira-grid article {
   border: 1px solid var(--color-hairline);
-  border-radius: 16px;
+  border-radius: var(--radius-md);
   padding: 32px;
   background: var(--color-surface-neutral);
 }
@@ -304,7 +304,7 @@
   font-size: 13px;
   border: 1px solid var(--color-hairline);
   padding: 6px 12px;
-  border-radius: 24px;
+  border-radius: var(--radius-lg);
 }
 .lumira-closing {
   margin-top: 64px;
@@ -312,7 +312,7 @@
   justify-content: space-between;
   align-items: center;
   gap: 24px;
-  border-radius: 20px;
+  border-radius: var(--radius-md);
   padding: 32px;
   background: var(--color-surface-neutral);
 }
@@ -354,7 +354,7 @@
 .lumira-stack article {
   padding: 28px;
   border: 1px solid var(--color-hairline);
-  border-radius: 16px;
+  border-radius: var(--radius-md);
 }
 .lumira-stack h3 {
   font-size: 21px;
@@ -367,14 +367,14 @@
 .lumira-architecture {
   margin: 28px 0 0;
   padding: 32px;
-  border-radius: 20px;
+  border-radius: var(--radius-md);
   background: var(--color-surface-neutral);
   text-align: center;
 }
 .lumira-diagram-node {
   padding: 24px;
   border: 1px solid var(--color-hairline);
-  border-radius: 12px;
+  border-radius: var(--radius-sm);
   display: grid;
   gap: 8px;
   background: var(--color-canvas);
@@ -394,7 +394,7 @@
 .lumira-server-box {
   padding: 28px;
   border: 1px solid currentColor;
-  border-radius: 12px;
+  border-radius: var(--radius-sm);
 }
 .lumira-server-box h3 {
   font-size: 24px;
@@ -408,7 +408,7 @@
 }
 .lumira-module-chips span {
   padding: 10px 16px;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   background: var(--color-canvas);
 }
 .lumira-diagram-workers {
@@ -433,7 +433,7 @@
   padding: 24px;
   border-top: 2px solid currentColor;
   background: var(--color-surface-neutral);
-  border-radius: 0 0 12px 12px;
+  border-radius: 0 0 var(--radius-sm) var(--radius-sm);
 }
 .lumira-flow-index {
   font-size: 32px;
@@ -472,7 +472,7 @@
   place-items: center;
   overflow: hidden;
   border: 1px solid var(--color-hairline);
-  border-radius: 8px;
+  border-radius: var(--radius-xs);
   background: var(--color-surface-neutral);
 }
 .qualification-image img {
@@ -549,7 +549,7 @@
   gap: 16px;
   padding: 24px;
   border: 1px solid var(--color-hairline);
-  border-radius: 16px;
+  border-radius: var(--radius-md);
   background: var(--color-surface-neutral);
 }
 .contact-email-card-primary {
@@ -597,7 +597,7 @@
   justify-content: center;
   padding: 0 16px;
   border: 1px solid var(--color-hairline);
-  border-radius: 999px;
+  border-radius: var(--radius-md);
   font: inherit;
 }
 .contact-email-button {
@@ -616,7 +616,7 @@
 }
 .contact-email-button:focus-visible,
 .contact-copy-button:focus-visible,
-.contact-office-links a:focus-visible {
+.contact-office-credit:focus-visible {
   outline: 2px solid currentColor;
   outline-offset: 3px;
 }
@@ -627,12 +627,25 @@
   overflow-wrap: anywhere;
 }
 .contact-office-card {
-  gap: 14px;
+  gap: 10px;
+  padding-block: 16px;
 }
 .contact-office-heading {
   min-width: 0;
 }
-.contact-office-organization {
+.contact-office-heading h3 {
+  overflow-wrap: anywhere;
+  text-wrap: balance;
+}
+.contact-office-card[data-office='research-center']:lang(zh) {
+  container-type: inline-size;
+}
+.contact-office-card[data-office='research-center']:lang(zh) h3 {
+  /* Fit the 16 full-width characters of the registered name. */
+  font-size: min(20px, calc(100cqi / 16));
+  white-space: nowrap;
+}
+.contact-office-purpose {
   margin: 6px 0 0;
   color: var(--color-ink-muted);
   font-size: 14px;
@@ -648,17 +661,11 @@
   color: var(--color-ink-muted);
   font-size: 14px;
 }
-.contact-office-links {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px 18px;
-  margin-top: auto;
-  padding-top: 8px;
-}
-.contact-office-links a {
-  min-height: 44px;
+.contact-office-credit {
   display: inline-flex;
+  min-height: 44px;
   align-items: center;
+  margin-top: auto;
   text-underline-offset: 4px;
 }
 @media (max-width: 900px) {
@@ -676,9 +683,11 @@
     grid-template-columns: minmax(0, 1fr);
     gap: 12px;
   }
-  .contact-email-card,
-  .contact-office-card {
+  .contact-email-card {
     padding: 20px;
+  }
+  .contact-office-card {
+    padding-inline: 20px;
   }
   .contact-email-card-primary {
     grid-template-columns: minmax(0, 1fr);

@@ -12,7 +12,6 @@ import { ThemeProvider } from '../src/site/providers/theme-provider';
 import { english } from '../src/site/translation';
 import { getStaticRoutes } from '../src/site/routing/routes';
 import { publishedActivities, toActivitySummary } from '../src/data/activities';
-import { publishedCaseStudies, toCaseStudySummary } from '../src/data/case-studies';
 import { publishedResearch } from '../src/data/research-articles';
 import { serviceRoutePaths } from '../src/data/service-routes';
 import { productsBeforeLaunch } from '../src/data/page-content';
@@ -24,7 +23,6 @@ const news = loadNews();
 const routePaths = [...getStaticRoutes(insights, news).map((route) => route.path), ...serviceRoutePaths];
 const activityItems = publishedActivities.map(toActivitySummary);
 const researchItems = publishedResearch.map(toActivitySummary);
-const caseStudyItems = publishedCaseStudies.map(toCaseStudySummary);
 await writeFile('src/data/route-paths.json', `${JSON.stringify(routePaths, null, 2)}\n`);
 
 const extractMain = (html: string, label: string, locale: Locale) => {
@@ -71,11 +69,7 @@ for (const locale of ['zh-CN', 'en'] as const) {
         locale
       )
     : undefined;
-  const casesAndCompany = extractMain(
-    renderFragment(locale, <HomeCasesAndCompany caseStudies={caseStudyItems} />),
-    'casesAndCompany',
-    locale
-  );
+  const casesAndCompany = extractMain(renderFragment(locale, <HomeCasesAndCompany />), 'casesAndCompany', locale);
   output[locale] = { welcomeRest, newsAndResearch, products, productsBeforeLaunch: publicProducts, casesAndCompany };
 }
 await writeFile('src/data/home-static.json', `${JSON.stringify(output, null, 2)}\n`);

@@ -98,7 +98,7 @@
   min-height: 0;
   overflow: visible;
   background: transparent;
-  border-radius: var(--home-card-radius);
+  border-radius: var(--content-card-radius);
   transform: none;
 }
 
@@ -110,7 +110,7 @@
 
 .site-shell-home .home-media-card-media {
   aspect-ratio: 1 / 1;
-  border-radius: 8px;
+  border-radius: var(--media-card-radius);
 }
 
 .site-shell-home .home-media-card-body {
@@ -158,7 +158,7 @@
 .site-shell-home .home-product-media {
   min-height: 0;
   aspect-ratio: 1.92 / 1;
-  border-radius: 8px;
+  border-radius: var(--media-card-radius);
 }
 
 .site-shell-home .home-product-copy {
@@ -207,15 +207,12 @@
 
 .site-shell-home .home-company-inner {
   display: flex;
-  min-height: 360px;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 30px;
-  padding: 48px;
   overflow: hidden;
   border: 0;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   background: var(--color-surface-neutral);
   text-align: center;
 }
@@ -237,7 +234,7 @@
   gap: 10px;
   padding: 0 18px;
   color: #fff;
-  border-radius: var(--radius-pill);
+  border-radius: var(--radius-md);
   background: #383838;
   font-size: 15px;
   font-weight: 500;
@@ -276,11 +273,6 @@
     align-items: flex-start;
   }
 
-  .site-shell-home .home-media-card-media,
-  .site-shell-home .home-product-media {
-    border-radius: 6px;
-  }
-
   .site-shell-home .home-product-media {
     aspect-ratio: 1.15 / 1;
   }
@@ -294,8 +286,6 @@
   }
 
   .site-shell-home .home-company-inner {
-    min-height: 320px;
-    padding: 28px;
-    border-radius: 6px;
+    border-radius: var(--radius-xs);
   }
 }

@@ -1,4 +1,4 @@
-/* Shared translucent surface for the navigation bar and its dropdown. */
+/* The bar stays translucent. The open panel sits on a solid theme surface. */
 html[data-theme] .site-shell-openai .global-nav {
   --navigation-glass: rgba(0, 0, 0, 0.96);
   background: var(--navigation-glass);
@@ -7,5 +7,6 @@ html[data-theme='light'] .site-shell-openai .global-nav {
   --navigation-glass: rgba(255, 255, 255, 0.96);
 }
 html[data-theme] .site-shell-openai .global-nav .desktop-menu-panel {
-  background: var(--navigation-glass);
+  background: var(--color-canvas);
+  box-shadow: 0 1px 0 var(--color-hairline);
 }

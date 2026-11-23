@@ -81,7 +81,7 @@
   aspect-ratio: 16 / 8.8;
   overflow: hidden;
   margin: 72px auto 96px;
-  border-radius: 8px;
+  border-radius: var(--media-card-radius);
   background: var(--color-surface-neutral);
   animation: page-content-fade 560ms 80ms ease-out both;
 }
@@ -124,7 +124,6 @@
   .site-shell-openai .article-cover {
     aspect-ratio: 1.2 / 1;
     margin: 48px auto 64px;
-    border-radius: 6px;
   }
 }
 

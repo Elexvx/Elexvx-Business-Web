@@ -6,12 +6,10 @@ import { HomeHero, HomeLaunchProvider, HomeProductsLaunch } from '../components/
 import { homeBrands } from '../../data/home-intro';
 
 import { ActivitySection } from './activities';
-import { CaseStudyCard } from './case-studies';
 import { homeContent, productsBeforeLaunch } from '../../data/page-content';
 import { usePublishedNews } from '../providers/content-context';
 import type { NewsSummary } from '../../content/types';
 import type { ActivitySummary } from '../../data/activities';
-import type { CaseStudySummary } from '../../data/case-studies';
 import { Eyebrow, SiteShell, TextLink } from '../components/index';
 
 import { HomeEmptyContent } from './shared';
@@ -118,39 +116,6 @@ const HomeNewsSection = ({ news }: { news: NewsSummary[] }) => {
   );
 };
 
-const HomeCasesSection = ({ items }: { items: CaseStudySummary[] }) => {
-  const content = homeContent.cases;
-  const caseStudy = items[0];
-  return (
-    <section className="home-content-section" id="cooperation-cases" aria-labelledby="cooperation-cases-title">
-      <div className="home-content-inner">
-        <div className="home-section-topline">
-          <div>
-            <Eyebrow>
-              <Translated>{content.eyebrow}</Translated>
-            </Eyebrow>
-            <h2 id="cooperation-cases-title">
-              <Title text={content.title} />
-            </h2>
-          </div>
-          {caseStudy && (
-            <TextLink href={content.action.href}>
-              <Translated>{content.action.label}</Translated>
-            </TextLink>
-          )}
-        </div>
-        {caseStudy ? (
-          <div className="home-media-grid home-case-grid">
-            <CaseStudyCard item={caseStudy} />
-          </div>
-        ) : (
-          <HomeEmptyContent />
-        )}
-      </div>
-    </section>
-  );
-};
-
 const HomeResearchSection = ({ items }: { items: ActivitySummary[] }) => {
   const papers = [...items].sort((a, b) => b.publishedAt.localeCompare(a.publishedAt)).slice(0, 3);
   return (
@@ -239,7 +204,6 @@ const HomeCompanyEntry = () => {
 type HomeContentProps = {
   activities: ActivitySummary[];
   research: ActivitySummary[];
-  caseStudies: CaseStudySummary[];
 };
 
 export const HomeNewsAndResearch = ({ research }: Pick<HomeContentProps, 'research'>) => {
@@ -252,14 +216,9 @@ export const HomeNewsAndResearch = ({ research }: Pick<HomeContentProps, 'resear
   );
 };
 
-export const HomeCasesAndCompany = ({ caseStudies }: Pick<HomeContentProps, 'caseStudies'>) => (
-  <>
-    <HomeCasesSection items={caseStudies} />
-    <HomeCompanyEntry />
-  </>
-);
+export const HomeCasesAndCompany = () => <HomeCompanyEntry />;
 
-const HomeContent = ({ activities, research, caseStudies }: HomeContentProps) => (
+const HomeContent = ({ activities, research }: HomeContentProps) => (
   <HomeLaunchProvider>
     <HomeWelcome items={activities} />
     <HomeNewsAndResearch research={research} />
@@ -268,7 +227,7 @@ const HomeContent = ({ activities, research, caseStudies }: HomeContentProps) =>
     >
       <HomeProductsSection />
     </HomeProductsLaunch>
-    <HomeCasesAndCompany caseStudies={caseStudies} />
+    <HomeCasesAndCompany />
   </HomeLaunchProvider>
 );
 

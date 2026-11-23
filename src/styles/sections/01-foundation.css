@@ -113,12 +113,16 @@
   --space-xl: 68px;
   --space-xxl: 110px;
   --space-section: 110px;
+  --golden-ratio: 1.61803398875;
   --radius-xs: 6px;
-  --radius-sm: 10px;
-  --radius-md: 16px;
-  --radius-lg: 26px;
-  --radius-pill: 26px;
-  --radius-round: 50%;
+  --radius-2xs: calc(var(--radius-xs) / var(--golden-ratio));
+  --radius-3xs: calc(var(--radius-2xs) / var(--golden-ratio));
+  --radius-4xs: calc(var(--radius-3xs) / var(--golden-ratio));
+  --radius-sm: calc(var(--radius-xs) * var(--golden-ratio));
+  --radius-md: calc(var(--radius-sm) * var(--golden-ratio));
+  --radius-lg: calc(var(--radius-md) * var(--golden-ratio));
+  --content-card-radius: var(--radius-md);
+  --media-card-radius: var(--radius-sm);
   --motion-ease-out: cubic-bezier(0.23, 1, 0.32, 1);
   --motion-ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
   --motion-duration-nav: 250ms;
@@ -132,6 +136,19 @@
 
 * {
   box-sizing: border-box;
+}
+
+/* The curve only affects boxes that have a nonzero border radius. */
+*,
+*::before,
+*::after {
+  corner-shape: superellipse(var(--golden-ratio));
+}
+
+@media (max-width: 720px) {
+  :root {
+    --media-card-radius: var(--radius-xs);
+  }
 }
 
 html {
@@ -510,7 +527,7 @@ img {
   min-height: 44px;
   padding: 8px 20px;
   border: 1px solid transparent;
-  border-radius: var(--radius-pill);
+  border-radius: var(--radius-md);
   box-shadow: none;
   cursor: pointer;
   font-family: var(--font-system);

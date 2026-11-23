@@ -23,7 +23,7 @@
   min-height: 44px;
   padding: 10px 16px;
   border: 1px solid #8884;
-  border-radius: 999px;
+  border-radius: var(--radius-md);
   color: inherit;
   background: transparent;
   font: inherit;
@@ -55,7 +55,7 @@
   margin: 0;
   padding: 18px;
   border: 1px solid #8885;
-  border-radius: 16px;
+  border-radius: var(--radius-md);
   color: var(--share-ink, #161616);
   background: var(--share-surface, #fff);
   overflow: auto;
@@ -89,7 +89,7 @@
   background: transparent;
   border: 1px solid #8885;
   padding: 12px;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   font: inherit;
   font-size: 13px;
   color: inherit;
@@ -99,7 +99,7 @@
   width: min(100%, 280px);
   height: auto;
   margin-inline: auto;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
 }
 .article-share-card a,
 .article-share-retry {
@@ -107,7 +107,7 @@
   margin-top: 16px;
   padding: 12px 18px;
   border: 1px solid #8885;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   color: inherit;
   background: transparent;
   font: inherit;
@@ -129,7 +129,7 @@ html[data-theme='dark'] {
   }
   .article-share-options button {
     flex-direction: column;
-    border-radius: 12px;
+    border-radius: var(--radius-sm);
     padding: 12px;
     min-width: 76px;
     font-size: 12px;

@@ -9,6 +9,15 @@
 
 .site-shell-openai .design-guide > .company-intro {
   max-width: var(--page-max-width);
+  text-align: center;
+}
+
+.site-shell-openai .design-guide > .company-intro :is(h1, .company-intro-description) {
+  margin-inline: auto;
+}
+
+.site-shell-openai .design-guide > .company-intro .company-intro-actions {
+  justify-content: center;
 }
 
 .design-download {
@@ -20,7 +29,7 @@
   color: var(--color-button-text);
   background: var(--color-button-surface);
   border: 1px solid var(--color-hairline);
-  border-radius: var(--radius-pill);
+  border-radius: var(--radius-md);
   transition:
     color 180ms ease,
     background-color 180ms ease,
@@ -260,7 +269,7 @@
   height: 8px;
   max-width: 100%;
   background: var(--color-ink);
-  border-radius: var(--radius-pill);
+  border-radius: var(--radius-2xs);
 }
 
 .design-spacing-row strong {
@@ -298,7 +307,7 @@
   line-height: 1;
   background: var(--color-button-surface);
   border: 1px solid var(--color-button-surface);
-  border-radius: var(--radius-pill);
+  border-radius: var(--radius-md);
   cursor: default;
 }
 
@@ -349,7 +358,7 @@
   width: 6px;
   height: 6px;
   background: var(--color-action);
-  border-radius: var(--radius-round);
+  border-radius: var(--radius-3xs);
   content: '';
 }
 
@@ -546,7 +555,7 @@
   width: 6px;
   height: 6px;
   background: var(--color-action);
-  border-radius: var(--radius-round);
+  border-radius: var(--radius-3xs);
   content: '';
 }
 

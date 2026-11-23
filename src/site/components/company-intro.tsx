@@ -1,7 +1,7 @@
 import { Translated } from '../providers/i18n';
 import type { ReactNode } from 'react';
 
-/** Shared centered page introduction used by company surfaces and page heroes. */
+/** Shared page introduction used by company pages and other page heroes. */
 export const CompanyIntro = ({
   eyebrow,
   title,

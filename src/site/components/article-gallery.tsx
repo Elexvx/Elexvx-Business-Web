@@ -16,16 +16,27 @@ export function ArticleImage({
   src,
   alt,
   className = '',
+  mediaClassName,
+  children,
   watermark = 'none',
 }: {
   src: string;
   alt: string;
   className?: string;
+  mediaClassName?: string;
+  children?: ReactNode;
   watermark?: WatermarkMode;
 }) {
   const open = useContext(GalleryContext);
   const { locale, t } = useI18n();
-  if (!open) return <SiteImage src={src} alt={alt} />;
+  const image = <SiteImage src={src} alt={alt} />;
+  const content = (
+    <>
+      {mediaClassName ? <span className={mediaClassName}>{image}</span> : image}
+      {children}
+    </>
+  );
+  if (!open) return content;
   return (
     <button
       type="button"
@@ -35,7 +46,7 @@ export function ArticleImage({
       aria-label={`${locale === 'en' ? 'Enlarge image: ' : '放大图片：'}${t(alt)}`}
       onClick={(event) => open(event.currentTarget)}
     >
-      <SiteImage src={src} alt={alt} />
+      {content}
     </button>
   );
 }

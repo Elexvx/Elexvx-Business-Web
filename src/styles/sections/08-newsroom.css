@@ -33,7 +33,7 @@
   overflow: visible;
   color: var(--news-card-ink, var(--color-ink));
   background: transparent;
-  border-radius: var(--home-card-radius);
+  border-radius: var(--content-card-radius);
   transform: none;
   --news-card-cover-size: 178px;
 }
@@ -54,7 +54,7 @@
 .article-card.news-card .home-media-card-media {
   width: var(--news-card-cover-size);
   aspect-ratio: 1;
-  border-radius: 6px;
+  border-radius: var(--media-card-radius);
 }
 
 .article-card.news-card .home-media-card-media img {
@@ -127,7 +127,7 @@
   place-items: center;
   color: var(--color-ink-muted);
   border: 1px solid transparent;
-  border-radius: var(--radius-pill);
+  border-radius: var(--radius-md);
 }
 
 .news-pagination > :is(a:hover, a:focus-visible, [aria-current='page']) {

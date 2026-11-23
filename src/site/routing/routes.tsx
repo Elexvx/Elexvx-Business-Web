@@ -172,7 +172,7 @@ const staticRoutes: SiteRoute[] = [
   {
     path: '/',
     meta: { title: siteIdentity.researchName, description: siteIdentity.seoDescription },
-    render: () => <HomePage activities={activityItems} research={researchItems} caseStudies={caseStudyItems} />,
+    render: () => <HomePage activities={activityItems} research={researchItems} />,
   },
   {
     path: '/research',

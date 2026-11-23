@@ -32,7 +32,7 @@
 .team-provider-card {
   padding: 18px 20px;
   border: 1px solid var(--color-hairline);
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   background: var(--color-surface-neutral);
 }
 .team-provider-card h3 {
@@ -69,7 +69,7 @@
   position: relative;
   isolation: isolate;
   overflow: hidden;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   background: linear-gradient(
     to bottom,
     color-mix(in srgb, var(--color-ink) 10%, var(--color-canvas)) 0%,
@@ -132,7 +132,7 @@
 .team-back:focus-visible {
   outline: 2px solid var(--color-focus);
   outline-offset: 6px;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
 }
 .team-back {
   display: inline-block;

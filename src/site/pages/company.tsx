@@ -194,36 +194,42 @@ const ContactOfficesSection = () => {
         </h2>
       </div>
       <div className="contact-office-grid">
-        {contactOffices.map((office) => (
-          <article className="contact-office-card" key={office.id}>
-            <div className="contact-office-heading">
-              <h3>
-                <Translated>{office.title}</Translated>
-              </h3>
-              {'organizationName' in office && office.organizationName && (
-                <p className="contact-office-organization">
-                  <Translated>{office.organizationName}</Translated>
+        {contactOffices.map((office) => {
+          const organizationName = 'organizationName' in office ? office.organizationName : undefined;
+          const heading = organizationName || office.title;
+
+          return (
+            <article className="contact-office-card" data-office={office.id} key={office.id}>
+              <div className="contact-office-heading">
+                <h3>
+                  <Translated>{heading}</Translated>
+                </h3>
+                {organizationName && (
+                  <p className="contact-office-purpose">
+                    <Translated>{office.title}</Translated>
+                  </p>
+                )}
+              </div>
+              {office.region && (
+                <p className="contact-office-region">
+                  <Translated>{office.region}</Translated>
                 </p>
               )}
-            </div>
-            <p className="contact-office-region">
-              <Translated>{office.region}</Translated>
-            </p>
-            <p className="contact-office-address">
-              <Translated>{office.address}</Translated>
-            </p>
-            <div className="contact-office-links">
-              <a href={office.mapHref} target="_blank" rel="noopener noreferrer">
-                <Translated>{'查看地图'}</Translated>
-                <span className="sr-only"> — {t(office.title)}</span>
-              </a>
-              <a href={office.businessCreditHref} target="_blank" rel="noopener noreferrer">
+              <p className="contact-office-address">
+                <Translated>{office.address}</Translated>
+              </p>
+              <a
+                className="contact-office-credit"
+                href={office.businessCreditHref}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 <Translated>{'企业信用'}</Translated>
-                <span className="sr-only"> — {t(office.title)}</span>
+                <span className="sr-only"> — {t(heading)}</span>
               </a>
-            </div>
-          </article>
-        ))}
+            </article>
+          );
+        })}
       </div>
     </section>
   );

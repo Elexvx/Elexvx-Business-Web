@@ -1,6 +1,5 @@
 /* Keep editorial content open; company detail cards share the metrics outline. */
 :root {
-  --content-card-radius: 16px;
   --content-card-border: none;
   --content-card-surface: var(--color-surface-neutral);
 }
@@ -31,6 +30,11 @@
 .site-shell-openai .lumira-closing {
   border: var(--content-card-border);
   border-radius: var(--content-card-radius);
+}
+
+.site-shell-openai :is(.home-company-inner, .lumira-closing) {
+  gap: 24px;
+  padding-block: clamp(24px, 3vw, 32px);
 }
 
 .site-shell-openai.company-overview .company-stats > div {
@@ -77,7 +81,7 @@
 }
 
 .site-shell-openai .team-card .team-portrait-stage {
-  border-radius: 10px;
+  border-radius: var(--radius-sm);
 }
 
 .site-shell-openai .team-card h3 {

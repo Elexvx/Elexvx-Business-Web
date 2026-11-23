@@ -283,7 +283,7 @@
   min-height: 44px;
   gap: 7px;
   padding: 0 11px;
-  border-radius: var(--radius-pill);
+  border-radius: var(--radius-md);
   transition:
     color 160ms ease,
     background-color 160ms ease;

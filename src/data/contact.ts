@@ -1,7 +1,3 @@
-/**
- * The HR entity name comes from the business and service-license scans.
- * No legal names are assigned to the other two office groups.
- */
 export const primaryContactEmail = 'elexvx@elexvx.com';
 export const hrContactEmail = 'hr@elexvx.com';
 
@@ -20,18 +16,17 @@ export const contactOffices = [
   {
     id: 'research-center',
     title: '研发中心',
-    region: '中国 · 江苏 · 南京 · 建邺区',
-    address: '平良大街89号负一层韶华工坊773号',
-    mapHref: 'https://ditu.amap.com/search?query=%E9%9F%B6%E5%8D%8E%E5%B7%A5%E5%9D%8A',
-    businessCreditHref: 'https://aiqicha.baidu.com/company_detail_56215758055636',
+    region: null,
+    address: '南京市建邺区邺城路19号B座14楼青奥模数空间1417-43室',
+    organizationName: '宏翔商道（南京）科技发展有限公司',
+    businessCreditHref: 'https://www.qcc.com/firm/2edfb36b4a31a1194203251df76a2371.html',
   },
   {
     id: 'human-resources-office',
     title: '人力资源',
-    region: '中国 · 江苏 · 南京 · 六合区',
+    region: null,
     address: '金牛湖街道八百桥社区青龙市场街109号1928室',
     organizationName: '江苏宏翔商道劳务服务有限公司',
-    mapHref: 'https://ditu.amap.com/place/B0GKJ5ZNLU',
     businessCreditHref: 'https://aiqicha.baidu.com/company_detail_56910435771118',
   },
   {
@@ -39,7 +34,6 @@ export const contactOffices = [
     title: '商贸零售',
     region: '中国 · 江苏 · 镇江 · 句容市',
     address: '宝华镇开发区121号',
-    mapHref: 'https://ditu.amap.com/place/BZAQQH007U',
     businessCreditHref: 'https://aiqicha.baidu.com/company_detail_51228677772700',
   },
 ] as const;

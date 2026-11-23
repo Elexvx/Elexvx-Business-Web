@@ -268,7 +268,7 @@
   column-gap: 14px;
   row-gap: 6px;
   padding: 18px;
-  border-radius: 10px;
+  border-radius: var(--radius-sm);
   color: var(--color-ink);
   background-color: var(--content-card-surface);
   transition: background-color 160ms ease;
@@ -366,7 +366,6 @@
 }
 
 .service-overview-card {
-  --content-card-radius: 8px;
   display: flex;
   position: relative;
   isolation: isolate;
@@ -376,7 +375,7 @@
   overflow: hidden;
   padding: 32px;
   border: 0;
-  border-radius: 8px;
+  border-radius: var(--content-card-radius);
   color: var(--color-ink);
   background: var(--color-surface-neutral);
   transition: color 500ms ease;
@@ -594,7 +593,7 @@
   justify-content: center;
   flex: 0 0 44px;
   border: 1px solid var(--status-line);
-  border-radius: var(--radius-round);
+  border-radius: var(--radius-md);
   color: var(--color-ink);
   background: var(--status-surface);
   cursor: pointer;
@@ -769,7 +768,7 @@
   width: 12px;
   height: 12px;
   flex: 0 0 12px;
-  border-radius: 50%;
+  border-radius: var(--radius-xs);
   background: var(--service-unknown);
 }
 
@@ -801,7 +800,7 @@
 .service-availability-bar {
   min-width: 2px;
   flex: 1 1 2px;
-  border-radius: 1px;
+  border-radius: var(--radius-4xs);
   background: var(--service-unknown);
 }
 
@@ -1037,7 +1036,7 @@
   width: 32px;
   height: 32px;
   flex: 0 0 32px;
-  border-radius: var(--radius-round);
+  border-radius: var(--radius-md);
 }
 
 .service-status-skeleton-title {
@@ -1054,7 +1053,7 @@
   width: 44px;
   height: 44px;
   flex: 0 0 44px;
-  border-radius: var(--radius-round);
+  border-radius: var(--radius-md);
 }
 
 .service-status-skeleton-row {

@@ -1,6 +1,5 @@
 /* Homepage media system: images lead, spacing separates, and card geometry stays predictable. */
 :root {
-  --home-card-radius: 26px;
   --home-card-gap: 24px;
   --home-card-ratio: 1.618;
 }
@@ -61,7 +60,7 @@
   color: var(--color-ink);
   background: var(--color-parchment);
   border: 0;
-  border-radius: var(--home-card-radius);
+  border-radius: var(--content-card-radius);
   transition: background-color 220ms ease;
 }
 
@@ -118,7 +117,7 @@
   min-height: 460px;
   margin-top: 24px;
   overflow: hidden;
-  border-radius: var(--home-card-radius);
+  border-radius: var(--content-card-radius);
   background: var(--color-parchment);
 }
 
@@ -194,7 +193,7 @@
 .site-shell-openai .project-card,
 .site-shell-openai .business-card,
 .site-shell-openai .scenario-card {
-  border-radius: var(--home-card-radius);
+  border-radius: var(--content-card-radius);
 }
 
 @media (max-width: 1068px) {

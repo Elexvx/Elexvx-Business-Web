@@ -75,7 +75,7 @@
 }
 
 /* News index correction: keep the list inside the same readable page frame. */
-.site-shell-openai .news-list-grid {
+.site-shell-openai .news-index-section .news-list-grid {
   width: min(100%, 1240px);
   margin: 0 auto;
   padding: 0 32px 96px;
@@ -87,7 +87,7 @@
 }
 
 @media (max-width: 720px) {
-  .site-shell-openai .news-list-grid {
+  .site-shell-openai .news-index-section .news-list-grid {
     padding: 0 20px 64px;
   }
 }
@@ -184,7 +184,7 @@
   width: 100%;
   aspect-ratio: 1;
   object-fit: cover;
-  border-radius: 8px;
+  border-radius: var(--media-card-radius);
 }
 .activity-highlight h3 {
   margin: 0;
