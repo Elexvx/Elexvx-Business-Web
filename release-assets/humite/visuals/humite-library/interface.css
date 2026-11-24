@@ -1,8 +1,7 @@
-    @font-face{font-family:BookCJK;src:url('./assets/BookCJK.woff2') format('woff2');font-weight:100 900;font-display:swap}
     :root{
       --paper:var(--ming-library-paper);--paper-solid:var(--ming-library-paper-solid);--ink:var(--ming-library-ink);--muted:var(--ming-library-muted);--red:var(--ming-library-red);--gold:var(--ming-library-gold);
       --line:var(--ming-library-line);--light-line:var(--ming-library-light-line);--shadow:var(--ming-library-shadow);
-      --serif:"Humite Serif","Noto Serif SC",serif;--sans:-apple-system,BlinkMacSystemFont,'Segoe UI',BookCJK,'Microsoft YaHei',sans-serif;
+      --serif:"Humite Serif","Noto Serif SC",serif;--sans:-apple-system,BlinkMacSystemFont,'PingFang SC','Hiragino Sans GB','Segoe UI','Microsoft YaHei',sans-serif;
       --edge:var(--ming-library-edge);--dock-bottom:var(--ming-library-dock-bottom);--panel-bottom:var(--ming-library-panel-bottom);--panel-top:var(--ming-library-panel-top);
     }
     *{box-sizing:border-box}
@@ -20,7 +19,7 @@
     input[readonly]{background:var(--ming-library-background-3);color:var(--muted)}
     input[type=file]{font-size:var(--ming-library-font-size-2);padding:var(--ming-library-padding-2)}
     input[type=file]::file-selector-button{font:inherit;border:0;border-right:var(--ming-library-border-right);color:var(--ink);background:transparent;margin-right:var(--ming-library-margin-right);padding:var(--ming-library-padding-3);cursor:pointer}
-    textarea{resize:vertical;min-height:var(--ming-library-min-height);font-family:ui-monospace,SFMono-Regular,Consolas,BookCJK,monospace;font-size:var(--ming-library-font-size-2)}
+    textarea{resize:vertical;min-height:var(--ming-library-min-height);font-family:ui-monospace,SFMono-Regular,Consolas,'PingFang SC','Microsoft YaHei',monospace;font-size:var(--ming-library-font-size-2)}
     a{color:inherit}
     ::selection{color:var(--ming-library-color-2);background:var(--ming-library-background-4)}
     ::-webkit-scrollbar{width:var(--ming-library-width-2);height:var(--ming-library-height-2)}

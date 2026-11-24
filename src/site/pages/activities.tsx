@@ -15,7 +15,15 @@ const highlightImageSizes = {
   highlight: '(max-width: 720px) 112px, (max-width: 1068px) calc((100vw - 112px) / 3), min(326px, calc(25vw - 34px))',
 } as const;
 
-function ActivityCard({ item, placement }: { item: ActivitySummary; placement: 'lead' | 'highlight' | 'grid' }) {
+function ActivityCard({
+  item,
+  placement,
+  priority = false,
+}: {
+  item: ActivitySummary;
+  placement: 'lead' | 'highlight' | 'grid';
+  priority?: boolean;
+}) {
   const { t } = useI18n();
   const category = item.category || '活动';
   return (
@@ -26,6 +34,7 @@ function ActivityCard({ item, placement }: { item: ActivitySummary; placement: '
       title={item.title}
       cover={item.cover}
       imageSizes={placement === 'grid' ? undefined : highlightImageSizes[placement]}
+      imagePriority={priority || placement === 'lead' ? 'high' : undefined}
       category={placement === 'grid' && item.pinned ? `${t('置顶')} · ${t(category)}` : category}
       publishedAt={item.publishedAt}
     />
@@ -99,8 +108,8 @@ export const ActivitySection = ({
           <ActivityHighlights items={shown} />
         ) : (
           <div className="home-media-grid home-products-grid">
-            {shown.map((item) => (
-              <ActivityCard key={item.slug} item={item} placement="grid" />
+            {shown.map((item, index) => (
+              <ActivityCard key={item.slug} item={item} placement="grid" priority={page && index === 0} />
             ))}
           </div>
         )

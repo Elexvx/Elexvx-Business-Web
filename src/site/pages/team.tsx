@@ -19,7 +19,7 @@ export const TeamPage = () => {
     <SiteShell activePath="/company">
       <section className="team-page">
         <CompanyIntro eyebrow="ELEXVX TEAM" title="团队" description="研究、工程与现场经验，在同一个问题上相遇。" />
-        {teamGroups.map(({ id, zh, en }) => {
+        {teamGroups.map(({ id, zh, en }, groupIndex) => {
           const members = teamMembers.filter((member) => member.group === id);
           const headingId = `team-${id}`;
 
@@ -27,7 +27,7 @@ export const TeamPage = () => {
             <section className="team-group" aria-labelledby={headingId} key={id}>
               <h2 id={headingId}>{locale === 'en' ? en : zh}</h2>
               <div className="team-grid">
-                {members.map((member) => (
+                {members.map((member, index) => (
                   <a
                     className="team-card"
                     data-member={member.id}
@@ -35,7 +35,15 @@ export const TeamPage = () => {
                     key={member.id}
                   >
                     <div className="team-portrait-stage">
-                      <SiteImage src={member.image} alt={member.name} loading="lazy" width="600" height="600" />
+                      <SiteImage
+                        src={member.image}
+                        alt={member.name}
+                        sizes="(max-width: 640px) calc(100vw - 40px), (max-width: 1024px) 45vw, 440px"
+                        loading={groupIndex === 0 && index < 3 ? 'eager' : 'lazy'}
+                        fetchPriority={groupIndex === 0 && index === 0 ? 'high' : undefined}
+                        width="600"
+                        height="600"
+                      />
                     </div>
                     <h3>
                       <Translated>{member.name}</Translated>
@@ -99,7 +107,15 @@ export const TeamMemberPage = ({ id }: { id: string }) => {
             </a>
             <header className="team-member-header">
               <div className="team-portrait-stage team-portrait">
-                <SiteImage src={member.image} alt={member.name} width="600" height="600" loading="eager" />
+                <SiteImage
+                  src={member.image}
+                  alt={member.name}
+                  width="600"
+                  height="600"
+                  sizes="(max-width: 720px) 160px, 240px"
+                  loading="eager"
+                  fetchPriority="high"
+                />
               </div>
               <div className="team-member-identity">
                 <h1>

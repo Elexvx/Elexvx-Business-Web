@@ -19,6 +19,7 @@ type ArticleCardProps = {
   cover?: string;
   coverAlt?: string;
   imageSizes?: string;
+  imagePriority?: 'high' | 'auto';
   category?: string;
   publishedAt?: string;
   excerpt?: string;
@@ -37,6 +38,7 @@ export function ArticleCard(props: ArticleCardProps) {
     cover,
     coverAlt = title,
     imageSizes,
+    imagePriority,
     category,
     publishedAt,
     excerpt,
@@ -64,7 +66,13 @@ export function ArticleCard(props: ArticleCardProps) {
   );
   const cardClass = (layout: string) => ['article-card', layout, className].filter(Boolean).join(' ');
   const image = (options?: { className?: string; sizes?: string; width?: number; height?: number }) => (
-    <SiteImage src={cover || fallbackCover} alt={coverAlt} sizes={imageSizes} {...options} />
+    <SiteImage
+      src={cover || fallbackCover}
+      alt={coverAlt}
+      sizes={imageSizes}
+      fetchPriority={imagePriority === 'high' ? 'high' : undefined}
+      {...options}
+    />
   );
 
   switch (props.variant) {
@@ -89,7 +97,10 @@ export function ArticleCard(props: ArticleCardProps) {
         >
           {props.showCover ? (
             <>
-              {image({ className: 'research-index-media' })}
+              {image({
+                className: 'research-index-media',
+                sizes: imageSizes ?? '(max-width: 720px) calc(100vw - 40px), 320px',
+              })}
               {copy}
             </>
           ) : (
@@ -135,7 +146,7 @@ export function ArticleCard(props: ArticleCardProps) {
     case 'related':
       return (
         <a className={cardClass('article-card-related')} href={href}>
-          {image()}
+          {image({ sizes: imageSizes ?? '(max-width: 720px) calc(100vw - 40px), 440px' })}
           {heading}
           <p className="article-card-meta">{inlineMeta}</p>
         </a>
@@ -155,7 +166,13 @@ export function ArticleCard(props: ArticleCardProps) {
       return (
         <a className={cardClass(news ? 'home-media-card home-news-card news-card' : 'home-media-card')} href={href}>
           <div className="home-media-card-media">
-            {image(news ? { sizes: '(max-width: 640px) 112px, 178px' } : undefined)}
+            {image({
+              sizes:
+                imageSizes ??
+                (news
+                  ? '(max-width: 640px) 112px, 178px'
+                  : '(max-width: 720px) calc(100vw - 40px), (max-width: 1068px) 46vw, 440px'),
+            })}
           </div>
           <div className="home-media-card-body">
             {heading}
@@ -176,7 +193,15 @@ export function ArticleCard(props: ArticleCardProps) {
   }
 }
 
-export function NewsCard({ item, showExcerpt = true }: { item: NewsSummary; showExcerpt?: boolean }) {
+export function NewsCard({
+  item,
+  showExcerpt = true,
+  priority = false,
+}: {
+  item: NewsSummary;
+  showExcerpt?: boolean;
+  priority?: boolean;
+}) {
   const { t } = useI18n();
   return (
     <ArticleCard
@@ -185,6 +210,7 @@ export function NewsCard({ item, showExcerpt = true }: { item: NewsSummary; show
       title={item.title}
       cover={item.cover}
       coverAlt={`${t(item.title)} ${t('新闻配图')}`}
+      imagePriority={priority ? 'high' : undefined}
       category={item.category}
       publishedAt={item.publishedAt}
       excerpt={showExcerpt ? item.excerpt : undefined}

@@ -17,6 +17,9 @@ export function ArticleImage({
   alt,
   className = '',
   mediaClassName,
+  sizes,
+  loading,
+  fetchPriority,
   children,
   watermark = 'none',
 }: {
@@ -24,12 +27,15 @@ export function ArticleImage({
   alt: string;
   className?: string;
   mediaClassName?: string;
+  sizes?: string;
+  loading?: 'eager' | 'lazy';
+  fetchPriority?: 'high' | 'low' | 'auto';
   children?: ReactNode;
   watermark?: WatermarkMode;
 }) {
   const open = useContext(GalleryContext);
   const { locale, t } = useI18n();
-  const image = <SiteImage src={src} alt={alt} />;
+  const image = <SiteImage src={src} alt={alt} sizes={sizes} loading={loading} fetchPriority={fetchPriority} />;
   const content = (
     <>
       {mediaClassName ? <span className={mediaClassName}>{image}</span> : image}

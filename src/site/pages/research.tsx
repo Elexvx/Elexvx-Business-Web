@@ -186,7 +186,7 @@ export const ResearchPage = ({
           </header>
 
           <div className="research-index-list">
-            {orderedInsights.map((insight) => {
+            {orderedInsights.map((insight, index) => {
               const categoryId = articleCategoryId('research', insight);
               const categoryLabel =
                 categoryLabels.get(categoryId) ??
@@ -199,6 +199,7 @@ export const ResearchPage = ({
                   href={`/research/${insight.slug}`}
                   title={insight.title}
                   cover={insight.cover}
+                  imagePriority={index === 0 ? 'high' : undefined}
                   category={categoryLabel}
                   publishedAt={insight.publishedAt}
                   excerpt={insight.excerpt}

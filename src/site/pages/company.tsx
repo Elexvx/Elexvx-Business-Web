@@ -255,13 +255,20 @@ export const BrandPage = () => (
     <ResearchTile tone="light" title="核心视觉资产" description="官方提供的标准化商标文件，可根据场景选择合适版本。">
       <div className="brand-original-gallery">
         {[
-          ['elexvx-logo-305ccd7238.svg', 'Elexvx 品牌蓝主标志'],
-          ['elexvx-logo-reverse-79454e6823.svg', 'Elexvx 反白标志'],
-          ['elexvx-logo-black-2460d9206a.svg', 'Elexvx 单色黑标志'],
-        ].map(([file, label]) => (
+          ['elexvx-logo-305ccd7238.webp', 'Elexvx 品牌蓝主标志'],
+          ['elexvx-logo-reverse-79454e6823.webp', 'Elexvx 反白标志'],
+          ['elexvx-logo-black-2460d9206a.webp', 'Elexvx 单色黑标志'],
+        ].map(([file, label], index) => (
           <figure key={file}>
             <div className={file.includes('reverse') ? 'brand-specimen brand-specimen-reverse' : 'brand-specimen'}>
-              <SiteImage src={`/brand/original/${file}`} alt={label} />
+              <SiteImage
+                src={`/brand/original/${file}`}
+                alt={label}
+                width={900}
+                height={196}
+                loading="eager"
+                fetchPriority={index === 0 ? 'high' : undefined}
+              />
             </div>
             <figcaption>
               <Translated>{label}</Translated>

@@ -116,8 +116,11 @@ for (const [sourceUrl, image] of Object.entries(manifest)) {
     throw error;
   });
 
-  if (!Array.isArray(image.variants) || image.variants.length === 0) {
-    throw new Error(`Responsive image has no generated variants: ${sourceUrl}`);
+  if (!Array.isArray(image.variants)) {
+    throw new Error(`Responsive image has invalid variants: ${sourceUrl}`);
+  }
+  if (image.variants.length === 0) {
+    continue;
   }
 
   for (const variant of image.variants) {

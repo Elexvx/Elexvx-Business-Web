@@ -94,8 +94,8 @@ export const NewsPage = ({ initialCategory = 'all', page = 1 }: { initialCategor
         </nav>
         {!visible.length && <p role="status">{t('暂无匹配内容')}</p>}
         <div className="news-list-grid">
-          {visible.map((item) => (
-            <NewsCard item={item} key={item.slug} />
+          {visible.map((item, index) => (
+            <NewsCard item={item} key={item.slug} priority={index === 0} />
           ))}
         </div>
         <NewsPagination category={category} page={page} totalPages={newsPageCount(matching.length)} />

@@ -9,12 +9,14 @@ import { useI18n } from '../providers/i18n';
 export const QualificationsPage = () => {
   const { locale } = useI18n();
   const english = locale === 'en';
-  const renderQualificationCard = (item: (typeof qualifications)[number]) => (
+  const renderQualificationCard = (item: (typeof qualifications)[number], priority = false) => (
     <figure className="qualification-card" key={item.id}>
       <ArticleImage
         className={`qualification-image${['campus-portal', 'crane-plan'].includes(item.id) ? ' qualification-image-trimmed' : ''}`}
         src={item.image}
         alt={english ? item.englishTitle : item.title}
+        sizes="(max-width: 640px) calc(100vw - 40px), (max-width: 1024px) 45vw, 440px"
+        fetchPriority={priority ? 'high' : undefined}
         watermark="embedded"
       />
       <figcaption>
@@ -32,7 +34,7 @@ export const QualificationsPage = () => {
             title="企业资质"
             description="每一项资质与知识产权，都是可以被核验的能力记录。"
           />
-          {qualificationCategories.map((category) => {
+          {qualificationCategories.map((category, categoryIndex) => {
             const categoryItems = qualifications.filter((item) => item.category === category.id);
             return (
               <section
@@ -43,7 +45,7 @@ export const QualificationsPage = () => {
                 <h2 id={`qualification-${category.id}`}>{english ? category.englishTitle : category.title}</h2>
                 {category.id === 'ip' ? (
                   <div className="qualification-subsections">
-                    {intellectualPropertyCategories.map((subtype) => {
+                    {intellectualPropertyCategories.map((subtype, subtypeIndex) => {
                       const subtypeItems = categoryItems.filter((item) => item.subtype === subtype.id);
                       if (subtypeItems.length === 0) return null;
                       const layout =
@@ -56,7 +58,9 @@ export const QualificationsPage = () => {
                         >
                           <h3 id={`qualification-${subtype.id}`}>{english ? subtype.englishTitle : subtype.title}</h3>
                           <div className={`team-grid qualifications-grid ${layout}`}>
-                            {subtypeItems.map(renderQualificationCard)}
+                            {subtypeItems.map((item, itemIndex) =>
+                              renderQualificationCard(item, categoryIndex === 0 && subtypeIndex === 0 && itemIndex < 2)
+                            )}
                           </div>
                         </section>
                       );
@@ -64,7 +68,9 @@ export const QualificationsPage = () => {
                   </div>
                 ) : (
                   <div className="team-grid qualifications-grid qualification-grid-short">
-                    {categoryItems.map(renderQualificationCard)}
+                    {categoryItems.map((item, itemIndex) =>
+                      renderQualificationCard(item, categoryIndex === 0 && itemIndex < 2)
+                    )}
                   </div>
                 )}
               </section>

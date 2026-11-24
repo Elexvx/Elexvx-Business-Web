@@ -24,10 +24,11 @@ export const ProductCatalogPage = () => {
             {t('产品')}
           </h2>
           <div className="home-media-grid home-products-grid media-card-list">
-            {products.map((product) => (
+            {products.map((product, index) => (
               <ArticleCard
                 key={product.slug}
                 cover={product.image}
+                imagePriority={index === 0 ? 'high' : undefined}
                 title={product.name}
                 category="已发布"
                 href={product.href}

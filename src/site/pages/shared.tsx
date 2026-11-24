@@ -22,6 +22,7 @@ export const ProjectCard = ({ project }: { project: Project }) => {
           <SiteImage
             src={project.image}
             alt={`${t(project.title)} abstract gradient visual`}
+            sizes="(max-width: 720px) calc(100vw - 40px), 640px"
             loading="lazy"
             decoding="async"
           />

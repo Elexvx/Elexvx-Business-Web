@@ -19,38 +19,38 @@ type HomeBrand = {
 export const homeBrands: HomeBrand[] = [
   {
     name: '阿里云',
-    logo: { src: '/brand/ecosystem/alibaba-cloud-wordmark.svg', width: 644.19, height: 72, format: 'wide-wordmark' },
+    logo: { src: '/brand/ecosystem/alibaba-cloud-wordmark.svg', width: 644, height: 72, format: 'wide-wordmark' },
   },
   {
     name: '腾讯',
     colorful: true,
-    logo: { src: '/brand/ecosystem/tencent.svg', width: 1014.92, height: 130.25, format: 'wide-wordmark' },
+    logo: { src: '/brand/ecosystem/tencent.svg', width: 1015, height: 130, format: 'wide-wordmark' },
   },
   {
     name: 'Apple',
-    logo: { src: '/brand/ecosystem/apple.svg', width: 2424.43, height: 829.96 },
+    logo: { src: '/brand/ecosystem/apple.svg', width: 2424, height: 830 },
   },
   {
     name: 'Google',
     colorful: true,
-    logo: { src: '/brand/ecosystem/google-wordmark.svg', width: 749.99, height: 257.61 },
+    logo: { src: '/brand/ecosystem/google-wordmark.svg', width: 750, height: 258 },
   },
   {
     name: 'GitHub',
-    logo: { src: '/brand/ecosystem/github.svg', width: 105.85, height: 25 },
+    logo: { src: '/brand/ecosystem/github.svg', width: 106, height: 25 },
   },
   {
     name: 'OpenAI',
-    logo: { src: '/brand/ecosystem/openai-wordmark.svg', width: 935.63, height: 231 },
+    logo: { src: '/brand/ecosystem/openai-wordmark.svg', width: 936, height: 231 },
   },
   {
     name: 'DeepSeek',
     colorful: true,
-    logo: { src: '/brand/ecosystem/deepseek.svg', width: 1809.99, height: 384.28 },
+    logo: { src: '/brand/ecosystem/deepseek.svg', width: 1810, height: 384 },
   },
   {
     name: 'Grok',
-    logo: { src: '/brand/ecosystem/grok.svg', width: 88.27, height: 33 },
+    logo: { src: '/brand/ecosystem/grok.svg', width: 88, height: 33 },
   },
   {
     name: '桐谷霁屿',
@@ -70,7 +70,7 @@ export const homeBrands: HomeBrand[] = [
   {
     name: 'TikTok',
     colorful: true,
-    logo: { src: '/brand/ecosystem/tiktok.svg', width: 119.27, height: 29.74 },
+    logo: { src: '/brand/ecosystem/tiktok.svg', width: 119, height: 30 },
   },
   {
     name: '支付宝',
@@ -80,18 +80,18 @@ export const homeBrands: HomeBrand[] = [
   {
     name: '微信支付',
     colorful: true,
-    logo: { src: '/brand/ecosystem/wechat-pay.svg', width: 1229.8, height: 1025 },
+    logo: { src: '/brand/ecosystem/wechat-pay.svg', width: 1230, height: 1025 },
     showName: true,
   },
   {
     name: 'Visa',
     colorful: true,
-    logo: { src: '/brand/ecosystem/visa.svg', width: 1000, height: 324.68 },
+    logo: { src: '/brand/ecosystem/visa.svg', width: 1000, height: 325 },
   },
   {
     name: 'Mastercard',
     colorful: true,
-    logo: { src: '/brand/ecosystem/mastercard.svg', width: 465.5, height: 288.8, format: 'overlap-symbol' },
+    logo: { src: '/brand/ecosystem/mastercard.svg', width: 466, height: 289, format: 'overlap-symbol' },
     showName: true,
   },
   {

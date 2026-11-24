@@ -15,44 +15,24 @@ import { publishedActivities, toActivitySummary } from '../../data/activities';
 import { publishedCaseStudies, toCaseStudySummary } from '../../data/case-studies';
 import { isDisabledPath } from '../../data/disabled-sections';
 import redirects from '../../server/esa/redirects.json';
-import dynamic from 'next/dynamic';
 import type { ReactNode } from 'react';
 import { teamMembers } from '../../data/team';
 import { businessLines, projects, researchDirections, scenarios, siteIdentity } from '../../data/site';
 import type { Insight, NewsItem } from '../../content/types';
-
-const ActivitiesPage = dynamic(() => import('../pages/activities').then((module) => module.ActivitiesPage));
-const ActivityPage = dynamic(() => import('../pages/activities').then((module) => module.ActivityPage));
-const CaseStudyPage = dynamic(() => import('../pages/case-studies').then((module) => module.CaseStudyPage));
-const ProductCatalogPage = dynamic(() =>
-  import('../pages/product-catalog').then((module) => module.ProductCatalogPage)
-);
-const ProductDetailPage = dynamic(() => import('../pages/product-catalog').then((module) => module.ProductDetailPage));
-const ArchivePage = dynamic(() => import('../pages/publications').then((module) => module.ArchivePage));
-const InsightPage = dynamic(() => import('../pages/publications').then((module) => module.InsightPage));
-const NewsPage = dynamic(() => import('../pages/publications').then((module) => module.NewsPage));
-const NewsItemPage = dynamic(() => import('../pages/publications').then((module) => module.NewsItemPage));
-const BrandPage = dynamic(() => import('../pages/company').then((module) => module.BrandPage));
-const BusinessLinePage = dynamic(() => import('../pages/company').then((module) => module.BusinessLinePage));
-const BusinessPage = dynamic(() => import('../pages/company').then((module) => module.BusinessPage));
-const CompanyPage = dynamic(() => import('../pages/company').then((module) => module.CompanyPage));
-const ContactPage = dynamic(() => import('../pages/company').then((module) => module.ContactPage));
-const HomePage = dynamic(() => import('../pages/home').then((module) => module.HomePage));
-const SitemapPage = dynamic(() => import('../pages/sitemap').then((module) => module.SitemapPage));
-const CapabilitiesPage = dynamic(() => import('../pages/projects').then((module) => module.CapabilitiesPage));
-const ProjectPage = dynamic(() => import('../pages/projects').then((module) => module.ProjectPage));
-const ProjectsPage = dynamic(() => import('../pages/projects').then((module) => module.ProjectsPage));
-const ScenarioPage = dynamic(() => import('../pages/projects').then((module) => module.ScenarioPage));
-const ScenariosPage = dynamic(() => import('../pages/projects').then((module) => module.ScenariosPage));
-const ResearchDirectionPage = dynamic(() => import('../pages/research').then((module) => module.ResearchDirectionPage));
-const ResearchPage = dynamic(() => import('../pages/research').then((module) => module.ResearchPage));
-const CareersPage = dynamic(() => import('../pages/careers').then((module) => module.CareersPage));
-const JobPage = dynamic(() => import('../pages/careers').then((module) => module.JobPage));
-const DesignPage = dynamic(() => import('../pages/design').then((module) => module.DesignPage));
-const QualificationsPage = dynamic(() => import('../pages/qualifications').then((module) => module.QualificationsPage));
-const TeamPage = dynamic(() => import('../pages/team').then((module) => module.TeamPage));
-const TeamMemberPage = dynamic(() => import('../pages/team').then((module) => module.TeamMemberPage));
-const NotFoundPage = dynamic(() => import('../pages/shared').then((module) => module.NotFoundPage));
+import { ActivitiesPage, ActivityPage } from '../pages/activities';
+import { CareersPage, JobPage } from '../pages/careers';
+import { CaseStudyPage } from '../pages/case-studies';
+import { BrandPage, BusinessLinePage, BusinessPage, CompanyPage, ContactPage } from '../pages/company';
+import { DesignPage } from '../pages/design';
+import { HomePage } from '../pages/home';
+import { ProductCatalogPage, ProductDetailPage } from '../pages/product-catalog';
+import { CapabilitiesPage, ProjectPage, ProjectsPage, ScenarioPage, ScenariosPage } from '../pages/projects';
+import { ArchivePage, InsightPage, NewsItemPage, NewsPage } from '../pages/publications';
+import { QualificationsPage } from '../pages/qualifications';
+import { ResearchDirectionPage, ResearchPage } from '../pages/research';
+import { NotFoundPage } from '../pages/shared';
+import { SitemapPage } from '../pages/sitemap';
+import { TeamMemberPage, TeamPage } from '../pages/team';
 
 export type RouteMeta = {
   title: string;

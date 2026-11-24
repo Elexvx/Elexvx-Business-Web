@@ -40,7 +40,7 @@ async function buildShowcase(outputDir) {
 }
 
 :root {
-  --serif: 'Humite Serif', 'Silvae Serif', BookCJK, serif;
+  --serif: 'Humite Serif', 'Silvae Serif', 'Noto Serif SC', serif;
 }
 
 .showcase-badge {

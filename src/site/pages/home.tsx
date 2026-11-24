@@ -47,9 +47,17 @@ export const HomeWelcomeRest = ({ items }: { items: ActivitySummary[] }) => {
                       alt=""
                       width={width}
                       height={height}
+                      sizes="48px"
                     />
                     {darkSrc && (
-                      <SiteImage className="home-brand-dark" src={darkSrc} alt="" width={width} height={height} />
+                      <SiteImage
+                        className="home-brand-dark"
+                        src={darkSrc}
+                        alt=""
+                        width={width}
+                        height={height}
+                        sizes="48px"
+                      />
                     )}
                     {brand.showName && <span>{t(brand.name)}</span>}
                   </span>

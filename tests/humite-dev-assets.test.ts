@@ -63,9 +63,9 @@ describe('startHumiteDevAssetServer', () => {
   );
 
   it.each([
-    ['/visuals/humite-library/assets/BookCJK.woff2', 'font/woff2'],
+    ['/visuals/humite-library/assets/MingLibrarySerif.woff2', 'font/woff2'],
     ['/products/humite-cover-textured.png', 'image/png'],
-    ['/optimized/d84aeceb893996a1-1254.webp', 'image/webp'],
+    ['/optimized/001af0c6e0c9d9d8-1254.webp', 'image/webp'],
   ])('serves %s with content-type %s on HEAD', async (path, expectedType) => {
     const response = await fetch(`${assetServer.origin}${path}`, { method: 'HEAD' });
 
