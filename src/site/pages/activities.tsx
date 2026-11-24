@@ -60,24 +60,14 @@ const ActivityHighlights = ({ heading, items }: { heading?: ReactNode; items: Ac
   );
 };
 
-export const ActivitySection = ({
-  items,
-  page = false,
-  initialCategory = 'all',
-}: {
-  items: ActivitySummary[];
-  page?: boolean;
-  initialCategory?: string;
-}) => {
-  const { locale, t } = useI18n();
-  const categories = articleCategories('activities', items);
-  const [category, , categoryHref] = useArticleCategoryFilter('activities', categories, initialCategory);
-  const entries = [...items].sort(
+const sortActivitiesByPinnedAndDate = (items: ActivitySummary[]) =>
+  [...items].sort(
     (a, b) => Number(Boolean(b.pinned)) - Number(Boolean(a.pinned)) || b.publishedAt.localeCompare(a.publishedAt)
   );
-  const shown = page
-    ? entries.filter((item) => category === 'all' || item.categorySlug === category)
-    : entries.slice(0, 4);
+
+export const HomeActivityHighlights = ({ items }: { items: ActivitySummary[] }) => {
+  const { locale } = useI18n();
+  const shown = sortActivitiesByPinnedAndDate(items).slice(0, 4);
   const homeHeading = (
     <div className="home-section-topline">
       <h2 className="activity-section-heading" id="activity-section-title">
@@ -85,44 +75,62 @@ export const ActivitySection = ({
       </h2>
     </div>
   );
+
   return (
     <section className="home-latest-activity" aria-labelledby="activity-section-title">
-      {page && (
-        <>
-          <IndexHeading
-            id="activity-section-title"
-            title={locale === 'en' ? 'Activities' : '活动'}
-            category={t(categories.find((item) => item.id === category)?.label || '')}
-          />
-          <nav className="research-index-tabs index-category-tabs" aria-label={t('活动分类')}>
-            {[{ id: 'all', label: '全部' }, ...categories].map(({ id, label }) => (
-              <a
-                key={id}
-                href={categoryHref(id)}
-                className={`research-index-tab ${category === id ? 'research-index-tab-active' : ''}`}
-                aria-current={category === id ? 'page' : undefined}
-              >
-                {t(label || '')}
-              </a>
-            ))}
-          </nav>
-        </>
-      )}
       {shown.length ? (
-        !page ? (
-          <ActivityHighlights heading={homeHeading} items={shown} />
-        ) : (
-          <div className="home-media-grid home-products-grid">
-            {shown.map((item, index) => (
-              <ActivityCard key={item.slug} item={item} placement="grid" priority={page && index === 0} />
-            ))}
-          </div>
-        )
+        <ActivityHighlights heading={homeHeading} items={shown} />
       ) : (
         <>
-          {!page && homeHeading}
+          {homeHeading}
           <HomeEmptyContent />
         </>
+      )}
+    </section>
+  );
+};
+
+export const ActivityDirectorySection = ({
+  items,
+  initialCategory = 'all',
+}: {
+  items: ActivitySummary[];
+  initialCategory?: string;
+}) => {
+  const { locale, t } = useI18n();
+  const categories = articleCategories('activities', items);
+  const [category, , categoryHref] = useArticleCategoryFilter('activities', categories, initialCategory);
+  const shown = sortActivitiesByPinnedAndDate(items).filter(
+    (item) => category === 'all' || item.categorySlug === category
+  );
+
+  return (
+    <section className="home-latest-activity" aria-labelledby="activity-section-title">
+      <IndexHeading
+        id="activity-section-title"
+        title={locale === 'en' ? 'Activities' : '活动'}
+        category={t(categories.find((item) => item.id === category)?.label || '')}
+      />
+      <nav className="research-index-tabs index-category-tabs" aria-label={t('活动分类')}>
+        {[{ id: 'all', label: '全部' }, ...categories].map(({ id, label }) => (
+          <a
+            key={id}
+            href={categoryHref(id)}
+            className={`research-index-tab ${category === id ? 'research-index-tab-active' : ''}`}
+            aria-current={category === id ? 'page' : undefined}
+          >
+            {t(label || '')}
+          </a>
+        ))}
+      </nav>
+      {shown.length ? (
+        <div className="home-media-grid home-products-grid">
+          {shown.map((item, index) => (
+            <ActivityCard key={item.slug} item={item} placement="grid" priority={index === 0} />
+          ))}
+        </div>
+      ) : (
+        <HomeEmptyContent />
       )}
     </section>
   );
@@ -137,7 +145,7 @@ export const ActivitiesPage = ({
 }) => (
   <SiteShell activePath="/activities" className="site-shell-home">
     <div className="activities-page-inner">
-      <ActivitySection items={items} page initialCategory={initialCategory} />
+      <ActivityDirectorySection items={items} initialCategory={initialCategory} />
     </div>
   </SiteShell>
 );
@@ -145,14 +153,15 @@ export const ActivitiesPage = ({
 export const ActivityPage = ({
   item,
   related,
-  research = false,
+  section = 'activities',
 }: {
   item: Activity;
   related: ActivitySummary[];
-  research?: boolean;
+  section?: 'activities' | 'research';
 }) => {
   const { t } = useI18n();
-  const base = research ? '/research' : '/activities';
+  const isResearch = section === 'research';
+  const base = isResearch ? '/research' : '/activities';
   return (
     <SiteShell activePath={base}>
       <article className="article-layout">
@@ -161,7 +170,7 @@ export const ActivityPage = ({
             <time dateTime={item.publishedAt}>
               <Translated>{item.publishedAt}</Translated>
             </time>
-            <Eyebrow>{research ? 'ELEXVX RESEARCH' : 'ELEXVX ACTIVITIES'}</Eyebrow>
+            <Eyebrow>{isResearch ? 'ELEXVX RESEARCH' : 'ELEXVX ACTIVITIES'}</Eyebrow>
           </div>
           <h1>{t(item.title)}</h1>
           <p className="article-excerpt">{t(item.excerpt)}</p>

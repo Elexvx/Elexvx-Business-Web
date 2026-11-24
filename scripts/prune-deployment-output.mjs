@@ -13,13 +13,13 @@ const prelaunch = !isHumitePublicBuild();
 
 const toLocalPath = (value, basePath) => {
   const trimmed = decodeXmlEntities(value.trim());
-  if (!trimmed || /^(?:data:|blob:|javascript:|mailto:|tel:|#)/i.test(trimmed)) return null;
+  if (!trimmed || /^(?:data:|blob:|javascript:|mailto:|tel:|#)/i.test(trimmed)) return undefined;
 
   let url;
   try {
     url = new URL(trimmed, new URL(basePath, 'https://local.invalid'));
   } catch {
-    return null;
+    return undefined;
   }
 
   if (
@@ -27,7 +27,7 @@ const toLocalPath = (value, basePath) => {
     !url.hostname.endsWith('.elexvx.com') &&
     url.hostname !== 'elexvx.com'
   ) {
-    return null;
+    return undefined;
   }
 
   try {

@@ -85,6 +85,29 @@ const markdownDocument = ({
   kindEn,
 });
 
+type MarkdownCollectionItem = {
+  slug: string;
+  title: string;
+  excerpt: string;
+  body: string;
+};
+
+const toLocalizedMarkdownDocument = (
+  item: MarkdownCollectionItem,
+  { path, kind, kindEn }: { path: string; kind: string; kindEn: string }
+): SearchDocument =>
+  markdownDocument({
+    path,
+    title: item.title,
+    titleEn: translateEnglish(item.title),
+    excerpt: item.excerpt,
+    excerptEn: translateEnglish(item.excerpt),
+    body: item.body,
+    bodyEn: item.body,
+    kind,
+    kindEn,
+  });
+
 const buildContentDocuments = ({
   insights,
   news,
@@ -94,43 +117,20 @@ const buildContentDocuments = ({
   news: NewsItem[];
   isAvailable: (href: string) => boolean;
 }): SearchDocument[] => {
-  const documents: SearchDocument[] = [];
   const canIndexPath = (path: string) => !isDisabledPath(path) && isAvailable(path);
 
-  for (const item of publishedResearch) {
-    documents.push(
-      markdownDocument({
-        path: `/research/${item.slug}`,
-        title: item.title,
-        titleEn: translateEnglish(item.title),
-        excerpt: item.excerpt,
-        excerptEn: translateEnglish(item.excerpt),
-        body: item.body,
-        bodyEn: item.body,
-        kind: '研究',
-        kindEn: 'Research',
-      })
-    );
-  }
-
-  for (const item of publishedActivities) {
-    documents.push(
-      markdownDocument({
+  const markdownDocuments: SearchDocument[] = [
+    ...publishedResearch.map((item) =>
+      toLocalizedMarkdownDocument(item, { path: `/research/${item.slug}`, kind: '研究', kindEn: 'Research' })
+    ),
+    ...publishedActivities.map((item) =>
+      toLocalizedMarkdownDocument(item, {
         path: item.externalUrl || `/activities/${item.slug}`,
-        title: item.title,
-        titleEn: translateEnglish(item.title),
-        excerpt: item.excerpt,
-        excerptEn: translateEnglish(item.excerpt),
-        body: item.body,
-        bodyEn: item.body,
         kind: '活动',
         kindEn: 'Activity',
       })
-    );
-  }
-
-  for (const item of publishedCaseStudies) {
-    documents.push(
+    ),
+    ...publishedCaseStudies.map((item) =>
       markdownDocument({
         path: `/cases/${item.slug}`,
         title: item.title,
@@ -142,87 +142,48 @@ const buildContentDocuments = ({
         kind: '合作案例',
         kindEn: 'Case study',
       })
-    );
-  }
+    ),
+    ...insights
+      .filter((entry) => entry.status === 'published')
+      .map((item) =>
+        toLocalizedMarkdownDocument(item, { path: `/insights/${item.slug}`, kind: '文章', kindEn: 'Article' })
+      ),
+    ...news
+      .filter((entry) => entry.status === 'published')
+      .map((item) => toLocalizedMarkdownDocument(item, { path: `/news/${item.slug}`, kind: '动态', kindEn: 'News' })),
+  ];
 
-  for (const item of insights.filter((entry) => entry.status === 'published')) {
-    documents.push(
-      markdownDocument({
-        path: `/insights/${item.slug}`,
-        title: item.title,
-        titleEn: translateEnglish(item.title),
-        excerpt: item.excerpt,
-        excerptEn: translateEnglish(item.excerpt),
-        body: item.body,
-        bodyEn: item.body,
-        kind: '文章',
-        kindEn: 'Article',
-      })
-    );
-  }
+  const staticCatalogEntries: StaticDocumentInput[] = [
+    ...researchDirections.map((direction) => ({
+      path: `/research/${direction.slug}`,
+      title: direction.title,
+      titleEn: direction.englishTitle,
+      values: direction,
+      kind: '研究方向',
+      kindEn: 'Research',
+    })),
+    ...projects.map((project) => ({
+      path: `/projects/${project.slug}`,
+      title: project.title,
+      titleEn: translateEnglish(project.title),
+      values: project,
+      kind: '成果',
+      kindEn: 'Project',
+    })),
+    ...scenarios.map((scenario) => ({
+      path: `/scenarios/${scenario.slug}`,
+      title: scenario.title,
+      titleEn: scenario.englishTitle,
+      values: scenario,
+      kind: '场景',
+      kindEn: 'Scenario',
+    })),
+  ];
 
-  for (const item of news.filter((entry) => entry.status === 'published')) {
-    documents.push(
-      markdownDocument({
-        path: `/news/${item.slug}`,
-        title: item.title,
-        titleEn: translateEnglish(item.title),
-        excerpt: item.excerpt,
-        excerptEn: translateEnglish(item.excerpt),
-        body: item.body,
-        bodyEn: item.body,
-        kind: '动态',
-        kindEn: 'News',
-      })
-    );
-  }
-
-  for (const direction of researchDirections) {
-    const path = `/research/${direction.slug}`;
-    if (!canIndexPath(path)) continue;
-    documents.push(
-      staticDocument({
-        path,
-        title: direction.title,
-        titleEn: direction.englishTitle,
-        values: direction,
-        kind: '研究方向',
-        kindEn: 'Research',
-      })
-    );
-  }
-
-  for (const project of projects) {
-    const path = `/projects/${project.slug}`;
-    if (!canIndexPath(path)) continue;
-    documents.push(
-      staticDocument({
-        path,
-        title: project.title,
-        titleEn: translateEnglish(project.title),
-        values: project,
-        kind: '成果',
-        kindEn: 'Project',
-      })
-    );
-  }
-
-  for (const scenario of scenarios) {
-    const path = `/scenarios/${scenario.slug}`;
-    if (!canIndexPath(path)) continue;
-    documents.push(
-      staticDocument({
-        path,
-        title: scenario.title,
-        titleEn: scenario.englishTitle,
-        values: scenario,
-        kind: '场景',
-        kindEn: 'Scenario',
-      })
-    );
-  }
-
-  return documents;
+  return [
+    ...markdownDocuments,
+    ...staticCatalogEntries.filter((entry) => canIndexPath(entry.path)).map(staticDocument),
+  ];
 };
 
 const buildStaticPageDocuments = ({

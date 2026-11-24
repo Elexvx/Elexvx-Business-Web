@@ -33,18 +33,18 @@ type InlineMatch = {
   emit: (nodes: InlineNode[]) => void;
 };
 
-const tryParseInlineMath = (rest: string, index: number): InlineMatch | null => {
+const tryParseInlineMath = (rest: string, index: number): InlineMatch | undefined => {
   const match = rest.match(/^\$([^$\n]+)\$/);
-  if (!match) return null;
+  if (!match) return undefined;
   return {
     nextIndex: index + match[0].length,
     emit: (nodes) => nodes.push({ type: 'math', value: match[1] }),
   };
 };
 
-const tryParseInlineImage = (rest: string, index: number): InlineMatch | null => {
+const tryParseInlineImage = (rest: string, index: number): InlineMatch | undefined => {
   const match = rest.match(/^!\[([^\]]*)\]\(([^\s)]+)(?:\s+["']([^"']*)["'])?\)/);
-  if (!match) return null;
+  if (!match) return undefined;
   const href = safeHref(match[2]);
   return {
     nextIndex: index + match[0].length,
@@ -55,9 +55,9 @@ const tryParseInlineImage = (rest: string, index: number): InlineMatch | null =>
   };
 };
 
-const tryParseInlineLink = (rest: string, index: number): InlineMatch | null => {
+const tryParseInlineLink = (rest: string, index: number): InlineMatch | undefined => {
   const match = rest.match(/^\[([^\]]+)\]\(([^\s)]+)(?:\s+["']([^"']*)["'])?\)/);
-  if (!match) return null;
+  if (!match) return undefined;
   const href = safeHref(match[2]);
   return {
     nextIndex: index + match[0].length,
@@ -69,9 +69,9 @@ const tryParseInlineLink = (rest: string, index: number): InlineMatch | null => 
   };
 };
 
-const tryParseInlineCode = (rest: string, index: number): InlineMatch | null => {
+const tryParseInlineCode = (rest: string, index: number): InlineMatch | undefined => {
   const match = rest.match(/^`([^`\n]+)`/);
-  if (!match) return null;
+  if (!match) return undefined;
   return {
     nextIndex: index + match[0].length,
     emit: (nodes) => nodes.push({ type: 'code', value: match[1], children: [] }),
@@ -83,17 +83,17 @@ const tryParseDelimited = (
   index: number,
   marker: string,
   type: 'strong' | 'emphasis'
-): InlineMatch | null => {
+): InlineMatch | undefined => {
   const start = index + marker.length;
   const closing = findClosing(source, marker, start);
-  if (closing <= start) return null;
+  if (closing <= start) return undefined;
   return {
     nextIndex: closing + marker.length,
     emit: (nodes) => nodes.push({ type, children: parseInline(source.slice(start, closing)) }),
   };
 };
 
-const tryParseInlineEmphasis = (source: string, rest: string, index: number): InlineMatch | null => {
+const tryParseInlineEmphasis = (source: string, rest: string, index: number): InlineMatch | undefined => {
   const strongMarker = rest.startsWith('**') ? '**' : rest.startsWith('__') ? '__' : '';
   if (strongMarker) return tryParseDelimited(source, index, strongMarker, 'strong');
 
@@ -102,10 +102,10 @@ const tryParseInlineEmphasis = (source: string, rest: string, index: number): In
     return tryParseDelimited(source, index, emphasisMarker, 'emphasis');
   }
 
-  return null;
+  return undefined;
 };
 
-const tryParseInlineToken = (source: string, rest: string, index: number): InlineMatch | null =>
+const tryParseInlineToken = (source: string, rest: string, index: number): InlineMatch | undefined =>
   tryParseInlineMath(rest, index) ??
   tryParseInlineImage(rest, index) ??
   tryParseInlineLink(rest, index) ??
@@ -162,8 +162,8 @@ type BlockMatch = {
   nextIndex: number;
 };
 
-const parseFenceBlock = (lines: string[], index: number): BlockMatch | null => {
-  if (!isFence(lines[index])) return null;
+const parseFenceBlock = (lines: string[], index: number): BlockMatch | undefined => {
+  if (!isFence(lines[index])) return undefined;
   const language = lines[index].trim().slice(3).trim() || undefined;
   const code: string[] = [];
   let cursor = index + 1;
@@ -175,22 +175,22 @@ const parseFenceBlock = (lines: string[], index: number): BlockMatch | null => {
   return { block: { type: 'code', language, value: code.join('\n') }, nextIndex: cursor };
 };
 
-const parseHeadingBlock = (line: string, index: number): BlockMatch | null => {
+const parseHeadingBlock = (line: string, index: number): BlockMatch | undefined => {
   const heading = line.match(/^\s*(#{1,4})\s+(.+?)\s*#*\s*$/);
-  if (!heading) return null;
+  if (!heading) return undefined;
   return {
     block: { type: 'heading', level: heading[1].length as 1 | 2 | 3 | 4, children: parseInline(heading[2]) },
     nextIndex: index + 1,
   };
 };
 
-const parseRuleBlock = (line: string, index: number): BlockMatch | null => {
-  if (!isRule(line)) return null;
+const parseRuleBlock = (line: string, index: number): BlockMatch | undefined => {
+  if (!isRule(line)) return undefined;
   return { block: { type: 'rule' }, nextIndex: index + 1 };
 };
 
-const parseBlockquoteBlock = (lines: string[], index: number): BlockMatch | null => {
-  if (!/^\s*>/.test(lines[index])) return null;
+const parseBlockquoteBlock = (lines: string[], index: number): BlockMatch | undefined => {
+  if (!/^\s*>/.test(lines[index])) return undefined;
   const quote: string[] = [];
   let cursor = index;
   while (cursor < lines.length && (/^\s*>/.test(lines[cursor]) || isBlank(lines[cursor]))) {
@@ -200,9 +200,9 @@ const parseBlockquoteBlock = (lines: string[], index: number): BlockMatch | null
   return { block: { type: 'blockquote', children: parseMarkdown(quote.join('\n')) }, nextIndex: cursor };
 };
 
-const parseTableBlock = (lines: string[], index: number): BlockMatch | null => {
+const parseTableBlock = (lines: string[], index: number): BlockMatch | undefined => {
   const line = lines[index];
-  if (!line.includes('|') || index + 1 >= lines.length || !isTableDelimiter(lines[index + 1])) return null;
+  if (!line.includes('|') || index + 1 >= lines.length || !isTableDelimiter(lines[index + 1])) return undefined;
   const headers = splitTableRow(line);
   const rows: InlineNode[][][] = [];
   let cursor = index + 2;
@@ -213,9 +213,9 @@ const parseTableBlock = (lines: string[], index: number): BlockMatch | null => {
   return { block: { type: 'table', headers, rows }, nextIndex: cursor };
 };
 
-const parseListBlock = (lines: string[], index: number): BlockMatch | null => {
+const parseListBlock = (lines: string[], index: number): BlockMatch | undefined => {
   const firstList = listMatch(lines[index]);
-  if (!firstList) return null;
+  if (!firstList) return undefined;
   const ordered = Boolean(firstList[2]);
   const items: BlockNode[][] = [];
   let cursor = index;

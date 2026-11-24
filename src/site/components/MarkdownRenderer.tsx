@@ -6,15 +6,47 @@ import { createElement, type ReactNode } from 'react';
 import { parseMarkdown, type BlockNode, type InlineNode } from '../../content/markdown';
 import { useI18n } from '../providers/i18n';
 
-type ImageState = { count: number };
+type RenderContext = {
+  t: (value: string) => string;
+  href: (value: string) => string;
+  firstImage?: InlineNode;
+};
 
-const renderInline = (
-  nodes: InlineNode[],
-  t: (value: string) => string,
-  href: (value: string) => string,
-  imageState: ImageState,
-  keyPrefix = 'inline'
-): ReactNode[] =>
+const findFirstImageInInline = (nodes: InlineNode[]): InlineNode | undefined => {
+  for (const node of nodes) {
+    if (node.type === 'image') return node;
+    if (node.type === 'strong' || node.type === 'emphasis' || node.type === 'link') {
+      const nested = findFirstImageInInline(node.children);
+      if (nested) return nested;
+    }
+  }
+  return undefined;
+};
+
+const findFirstImageInBlocks = (blocks: BlockNode[]): InlineNode | undefined => {
+  for (const block of blocks) {
+    if (block.type === 'heading' || block.type === 'paragraph') {
+      const match = findFirstImageInInline(block.children);
+      if (match) return match;
+    } else if (block.type === 'blockquote') {
+      const match = findFirstImageInBlocks(block.children);
+      if (match) return match;
+    } else if (block.type === 'list') {
+      for (const item of block.items) {
+        const match = findFirstImageInBlocks(item);
+        if (match) return match;
+      }
+    } else if (block.type === 'table') {
+      for (const cell of [...block.headers, ...block.rows.flat()]) {
+        const match = findFirstImageInInline(cell);
+        if (match) return match;
+      }
+    }
+  }
+  return undefined;
+};
+
+const renderInline = (nodes: InlineNode[], context: RenderContext, keyPrefix = 'inline'): ReactNode[] =>
   nodes.map((node, index) => {
     const key = `${keyPrefix}-${index}`;
     switch (node.type) {
@@ -32,12 +64,12 @@ const renderInline = (
           .split('\n')
           .flatMap((part, partIndex) => [
             partIndex > 0 ? <br key={`${key}-break-${partIndex}`} /> : null,
-            part ? <span key={`${key}-${partIndex}`}>{t(part)}</span> : null,
+            part ? <span key={`${key}-${partIndex}`}>{context.t(part)}</span> : null,
           ]);
       case 'strong':
-        return <strong key={key}>{renderInline(node.children, t, href, imageState, key)}</strong>;
+        return <strong key={key}>{renderInline(node.children, context, key)}</strong>;
       case 'emphasis':
-        return <em key={key}>{renderInline(node.children, t, href, imageState, key)}</em>;
+        return <em key={key}>{renderInline(node.children, context, key)}</em>;
       case 'code':
         return <code key={key}>{node.value}</code>;
       case 'link':
@@ -45,29 +77,27 @@ const renderInline = (
           const number = node.href.slice('#reference-'.length);
           return (
             <sup className="paper-citation" key={key}>
-              <a href={node.href} aria-label={`${t('参考文献')} ${number}`}>
+              <a href={node.href} aria-label={`${context.t('参考文献')} ${number}`}>
                 [{number}]
               </a>
             </sup>
           );
         }
         return (
-          <a href={href(node.href)} key={key} rel={node.href.startsWith('http') ? 'noreferrer' : undefined}>
-            {renderInline(node.children, t, href, imageState, key)}
+          <a href={context.href(node.href)} key={key} rel={node.href.startsWith('http') ? 'noreferrer' : undefined}>
+            {renderInline(node.children, context, key)}
           </a>
         );
-      case 'image': {
-        const isFirst = imageState.count++ === 0;
+      case 'image':
         return (
           <ArticleImage
             key={key}
             src={node.href}
-            alt={t(node.alt ?? '')}
+            alt={context.t(node.alt ?? '')}
             sizes="(max-width: 720px) calc(100vw - 40px), 780px"
-            fetchPriority={isFirst ? 'high' : undefined}
+            fetchPriority={node === context.firstImage ? 'high' : undefined}
           />
         );
-      }
       default:
         return null;
     }
@@ -82,37 +112,29 @@ const paragraphVariant = (children: InlineNode[]): { id?: string; className?: st
   return {};
 };
 
-const renderBlocks = (
-  blocks: BlockNode[],
-  t: (value: string) => string,
-  href: (value: string) => string,
-  imageState: ImageState,
-  keyPrefix = 'block'
-): ReactNode[] =>
+const renderBlocks = (blocks: BlockNode[], context: RenderContext, keyPrefix = 'block'): ReactNode[] =>
   blocks.map((block, index) => {
     const key = `${keyPrefix}-${index}`;
     switch (block.type) {
       case 'heading': {
-        return createElement(`h${block.level}`, { key }, renderInline(block.children, t, href, imageState, key));
+        return createElement(`h${block.level}`, { key }, renderInline(block.children, context, key));
       }
       case 'paragraph': {
         const variant = paragraphVariant(block.children);
         return (
           <p id={variant.id} className={variant.className} key={key}>
-            {renderInline(block.children, t, href, imageState, key)}
+            {renderInline(block.children, context, key)}
           </p>
         );
       }
       case 'blockquote':
-        return <blockquote key={key}>{renderBlocks(block.children, t, href, imageState, key)}</blockquote>;
+        return <blockquote key={key}>{renderBlocks(block.children, context, key)}</blockquote>;
       case 'list': {
         const List = block.ordered ? 'ol' : 'ul';
         return (
           <List key={key}>
             {block.items.map((item, itemIndex) => (
-              <li key={`${key}-item-${itemIndex}`}>
-                {renderBlocks(item, t, href, imageState, `${key}-item-${itemIndex}`)}
-              </li>
+              <li key={`${key}-item-${itemIndex}`}>{renderBlocks(item, context, `${key}-item-${itemIndex}`)}</li>
             ))}
           </List>
         );
@@ -125,7 +147,7 @@ const renderBlocks = (
                 <tr>
                   {block.headers.map((header, headerIndex) => (
                     <th key={`${key}-header-${headerIndex}`}>
-                      {renderInline(header, t, href, imageState, `${key}-header-${headerIndex}`)}
+                      {renderInline(header, context, `${key}-header-${headerIndex}`)}
                     </th>
                   ))}
                 </tr>
@@ -135,7 +157,7 @@ const renderBlocks = (
                   <tr key={`${key}-row-${rowIndex}`}>
                     {row.map((cell, cellIndex) => (
                       <td key={`${key}-row-${rowIndex}-cell-${cellIndex}`}>
-                        {renderInline(cell, t, href, imageState, `${key}-row-${rowIndex}-cell-${cellIndex}`)}
+                        {renderInline(cell, context, `${key}-row-${rowIndex}-cell-${cellIndex}`)}
                       </td>
                     ))}
                   </tr>
@@ -175,6 +197,7 @@ const renderBlocks = (
 
 export const MarkdownRenderer = ({ source }: { source: string }) => {
   const { t, href } = useI18n();
-  const imageState: ImageState = { count: 0 };
-  return <>{renderBlocks(parseMarkdown(source), t, href, imageState)}</>;
+  const blocks = parseMarkdown(source);
+  const firstImage = findFirstImageInBlocks(blocks);
+  return <>{renderBlocks(blocks, { t, href, firstImage })}</>;
 };

@@ -5,7 +5,7 @@ import { SiteImage } from '../components/site-image';
 import { HomeHero, HomeLaunchProvider, HomeProductsLaunch } from '../components/home-hero';
 import { homeBrands } from '../../data/home-intro';
 
-import { ActivitySection } from './activities';
+import { HomeActivityHighlights } from './activities';
 import { homeContent, productsBeforeLaunch } from '../../data/page-content';
 import { usePublishedNews } from '../providers/content-context';
 import type { NewsSummary } from '../../content/types';
@@ -70,7 +70,7 @@ export const HomeWelcomeRest = ({ items }: { items: ActivitySummary[] }) => {
           </small>
         </div>
       </section>
-      <ActivitySection items={items.filter((item) => item.showOnHome !== false)} />
+      <HomeActivityHighlights items={items.filter((item) => item.showOnHome !== false)} />
     </>
   );
 };

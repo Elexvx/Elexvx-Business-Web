@@ -1,5 +1,6 @@
 'use client';
 
+import type { ReactNode } from 'react';
 import type { NewsSummary } from '../../content/types';
 import { LocalizedTitle, useI18n, type Locale } from '../providers/i18n';
 import { SiteImage } from './site-image';
@@ -31,6 +32,136 @@ type ArticleCardProps = {
   | { variant: 'feature'; imageLinkLabel?: string }
 );
 
+type CardViewModel = {
+  href: string;
+  rawTitle: string;
+  titleText: ReactNode;
+  heading: ReactNode;
+  summary: ReactNode;
+  localizedCategory: string;
+  date: ReactNode;
+  inlineMeta: ReactNode;
+  cardClass: (layout: string) => string;
+  renderImage: (options?: { className?: string; sizes?: string; width?: number; height?: number }) => ReactNode;
+};
+
+function EditorialArticleCard({
+  view,
+  showCover,
+  imageSizes,
+}: {
+  view: CardViewModel;
+  showCover?: boolean;
+  imageSizes?: string;
+}) {
+  const meta = (
+    <div className={showCover ? 'research-index-card-meta' : 'research-index-meta'}>
+      {view.localizedCategory && <strong>{view.localizedCategory}</strong>}
+      {view.date}
+    </div>
+  );
+  const copy = (
+    <div className="research-index-copy">
+      <h2 className="article-card-title">{view.titleText}</h2>
+      {view.summary}
+      {showCover && meta}
+    </div>
+  );
+
+  return (
+    <a
+      className={view.cardClass(showCover ? 'research-index-row research-index-row-media' : 'research-index-row')}
+      href={view.href}
+    >
+      {showCover ? (
+        <>
+          {view.renderImage({
+            className: 'research-index-media',
+            sizes: imageSizes ?? '(max-width: 720px) calc(100vw - 40px), 320px',
+          })}
+          {copy}
+        </>
+      ) : (
+        <>
+          {meta}
+          <div className="research-index-entry">{copy}</div>
+        </>
+      )}
+    </a>
+  );
+}
+
+function FeatureArticleCard({
+  view,
+  imageLinkLabel,
+  localizedTitle,
+}: {
+  view: CardViewModel;
+  imageLinkLabel?: string;
+  localizedTitle: string;
+}) {
+  return (
+    <article className={view.cardClass('home-product-feature')}>
+      <a className="home-product-media" href={view.href} aria-label={imageLinkLabel ?? localizedTitle}>
+        {view.renderImage({
+          width: 1600,
+          height: 1600,
+          sizes: '(max-width: 720px) 80vw, (max-width: 1024px) 45vw, 420px',
+        })}
+      </a>
+      <div className="home-media-card-body home-product-copy">
+        {imageLinkLabel ? (
+          view.heading
+        ) : (
+          <h3 className="article-card-title">
+            <a href={view.href}>{view.titleText}</a>
+          </h3>
+        )}
+        {view.localizedCategory && <p className="eyebrow">{view.localizedCategory}</p>}
+        {view.summary}
+      </div>
+    </article>
+  );
+}
+
+function DefaultArticleCard({
+  view,
+  isNews,
+  imageSizes,
+  hasMeta,
+}: {
+  view: CardViewModel;
+  isNews: boolean;
+  imageSizes?: string;
+  hasMeta: boolean;
+}) {
+  const defaultSizes = isNews
+    ? '(max-width: 640px) 112px, 178px'
+    : '(max-width: 720px) calc(100vw - 40px), (max-width: 1068px) 46vw, 440px';
+
+  return (
+    <a
+      className={view.cardClass(isNews ? 'home-media-card home-news-card news-card' : 'home-media-card')}
+      href={view.href}
+    >
+      <div className="home-media-card-media">{view.renderImage({ sizes: imageSizes ?? defaultSizes })}</div>
+      <div className="home-media-card-body">
+        {view.heading}
+        {hasMeta &&
+          (isNews ? (
+            <p className="article-card-meta home-news-card-meta">
+              {view.localizedCategory && <span>{view.localizedCategory}</span>}
+              {view.date}
+            </p>
+          ) : (
+            <p className="article-card-meta eyebrow">{view.inlineMeta}</p>
+          ))}
+        {view.summary}
+      </div>
+    </a>
+  );
+}
+
 /** Pages supply content; variants own the card markup and presentation hooks. */
 export function ArticleCard(props: ArticleCardProps) {
   const {
@@ -57,140 +188,80 @@ export function ArticleCard(props: ArticleCardProps) {
       {variant === 'news' || variant === 'editorial' ? formatArticleDate(publishedAt, locale) : publishedAt}
     </time>
   );
-  const inlineMeta = (
-    <>
-      {localizedCategory}
-      {localizedCategory && date && ' · '}
-      {date}
-    </>
-  );
-  const cardClass = (layout: string) => ['article-card', layout, className].filter(Boolean).join(' ');
-  const image = (options?: { className?: string; sizes?: string; width?: number; height?: number }) => (
-    <SiteImage
-      src={cover || fallbackCover}
-      alt={coverAlt}
-      sizes={imageSizes}
-      fetchPriority={imagePriority === 'high' ? 'high' : undefined}
-      {...options}
+  const view: CardViewModel = {
+    href,
+    rawTitle: title,
+    titleText,
+    heading,
+    summary,
+    localizedCategory,
+    date,
+    inlineMeta: (
+      <>
+        {localizedCategory}
+        {localizedCategory && date && ' · '}
+        {date}
+      </>
+    ),
+    cardClass: (layout) => ['article-card', layout, className].filter(Boolean).join(' '),
+    renderImage: (options) => (
+      <SiteImage
+        src={cover || fallbackCover}
+        alt={coverAlt}
+        sizes={imageSizes}
+        fetchPriority={imagePriority === 'high' ? 'high' : undefined}
+        {...options}
+      />
+    ),
+  };
+
+  if (props.variant === 'editorial') {
+    return <EditorialArticleCard view={view} showCover={props.showCover} imageSizes={imageSizes} />;
+  }
+  if (props.variant === 'feature') {
+    return <FeatureArticleCard view={view} imageLinkLabel={props.imageLinkLabel} localizedTitle={t(title)} />;
+  }
+  if (props.variant === 'highlight') {
+    return (
+      <article className={view.cardClass('activity-highlight')}>
+        <a href={href}>
+          {view.renderImage()}
+          <div>
+            {heading}
+            <p className="article-card-meta">{view.inlineMeta}</p>
+          </div>
+        </a>
+      </article>
+    );
+  }
+  if (props.variant === 'related') {
+    return (
+      <a className={view.cardClass('article-card-related')} href={href}>
+        {view.renderImage({ sizes: imageSizes ?? '(max-width: 720px) calc(100vw - 40px), 440px' })}
+        {heading}
+        <p className="article-card-meta">{view.inlineMeta}</p>
+      </a>
+    );
+  }
+  if (props.variant === 'compact') {
+    return (
+      <a className={view.cardClass('insight-list-item')} href={href}>
+        <span className="insight-list-date">{date}</span>
+        <span>
+          <strong className="article-card-title">{titleText}</strong>
+          {excerpt && <span className="article-card-excerpt insight-list-meta">{t(excerpt)}</span>}
+        </span>
+      </a>
+    );
+  }
+  return (
+    <DefaultArticleCard
+      view={view}
+      isNews={variant === 'news'}
+      imageSizes={imageSizes}
+      hasMeta={Boolean(category || publishedAt)}
     />
   );
-
-  switch (props.variant) {
-    case 'editorial': {
-      const meta = (
-        <div className={props.showCover ? 'research-index-card-meta' : 'research-index-meta'}>
-          {localizedCategory && <strong>{localizedCategory}</strong>}
-          {date}
-        </div>
-      );
-      const copy = (
-        <div className="research-index-copy">
-          <h2 className="article-card-title">{titleText}</h2>
-          {summary}
-          {props.showCover && meta}
-        </div>
-      );
-      return (
-        <a
-          className={cardClass(props.showCover ? 'research-index-row research-index-row-media' : 'research-index-row')}
-          href={href}
-        >
-          {props.showCover ? (
-            <>
-              {image({
-                className: 'research-index-media',
-                sizes: imageSizes ?? '(max-width: 720px) calc(100vw - 40px), 320px',
-              })}
-              {copy}
-            </>
-          ) : (
-            <>
-              {meta}
-              <div className="research-index-entry">{copy}</div>
-            </>
-          )}
-        </a>
-      );
-    }
-    case 'feature':
-      return (
-        <article className={cardClass('home-product-feature')}>
-          <a className="home-product-media" href={href} aria-label={props.imageLinkLabel ?? t(title)}>
-            {image({ width: 1600, height: 1600, sizes: '(max-width: 720px) 80vw, (max-width: 1024px) 45vw, 420px' })}
-          </a>
-          <div className="home-media-card-body home-product-copy">
-            {props.imageLinkLabel ? (
-              heading
-            ) : (
-              <h3 className="article-card-title">
-                <a href={href}>{titleText}</a>
-              </h3>
-            )}
-            {localizedCategory && <p className="eyebrow">{localizedCategory}</p>}
-            {summary}
-          </div>
-        </article>
-      );
-    case 'highlight':
-      return (
-        <article className={cardClass('activity-highlight')}>
-          <a href={href}>
-            {image()}
-            <div>
-              {heading}
-              <p className="article-card-meta">{inlineMeta}</p>
-            </div>
-          </a>
-        </article>
-      );
-    case 'related':
-      return (
-        <a className={cardClass('article-card-related')} href={href}>
-          {image({ sizes: imageSizes ?? '(max-width: 720px) calc(100vw - 40px), 440px' })}
-          {heading}
-          <p className="article-card-meta">{inlineMeta}</p>
-        </a>
-      );
-    case 'compact':
-      return (
-        <a className={cardClass('insight-list-item')} href={href}>
-          <span className="insight-list-date">{date}</span>
-          <span>
-            <strong className="article-card-title">{titleText}</strong>
-            {excerpt && <span className="article-card-excerpt insight-list-meta">{t(excerpt)}</span>}
-          </span>
-        </a>
-      );
-    default: {
-      const news = variant === 'news';
-      return (
-        <a className={cardClass(news ? 'home-media-card home-news-card news-card' : 'home-media-card')} href={href}>
-          <div className="home-media-card-media">
-            {image({
-              sizes:
-                imageSizes ??
-                (news
-                  ? '(max-width: 640px) 112px, 178px'
-                  : '(max-width: 720px) calc(100vw - 40px), (max-width: 1068px) 46vw, 440px'),
-            })}
-          </div>
-          <div className="home-media-card-body">
-            {heading}
-            {(category || publishedAt) &&
-              (news ? (
-                <p className="article-card-meta home-news-card-meta">
-                  {localizedCategory && <span>{localizedCategory}</span>}
-                  {date}
-                </p>
-              ) : (
-                <p className="article-card-meta eyebrow">{inlineMeta}</p>
-              ))}
-            {summary}
-          </div>
-        </a>
-      );
-    }
-  }
 }
 
 export function NewsCard({

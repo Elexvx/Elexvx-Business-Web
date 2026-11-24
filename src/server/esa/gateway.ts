@@ -133,7 +133,8 @@ async function handleStatusApi(request: Request, url: URL, env: EsaEnvironment):
       'Cache-Control': 'public, max-age=30, stale-while-revalidate=300',
       'Server-Timing': `uptime-robot;dur=${Date.now() - started}`,
     });
-  } catch {
+  } catch (error) {
+    console.error('status.fetch.failed', error instanceof Error ? error.message : String(error));
     return json({ code: 502, message: '监控服务请求失败，请稍后重试', source: 'api' }, 502);
   }
 }
@@ -148,7 +149,8 @@ async function handleIndexNowApi(request: Request, env: EsaEnvironment, manifest
       return json({ ok: false, message: 'Publish notification storage not configured.' }, 503);
     await notifyPublishedContent(env.INDEXNOW_KV_NAMESPACE, manifest);
     return json({ ok: true, message: 'Published URLs notified; receipt does not guarantee indexing.' });
-  } catch {
+  } catch (error) {
+    console.error('indexnow.notify.failed', error instanceof Error ? error.message : String(error));
     return json({ ok: false, message: 'IndexNow submission failed; the next visit will retry.' }, 502);
   }
 }

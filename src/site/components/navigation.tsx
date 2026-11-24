@@ -33,6 +33,7 @@ export const GlobalNav = ({
     navRef,
     mobileMenuButtonRef,
     activateGroup,
+    openGroupAndFocusFirstLink,
     scheduleOpen,
     cancelScheduledOpen,
     closeDesktopMenu,
@@ -85,7 +86,7 @@ export const GlobalNav = ({
                 onKeyDown={(event) => {
                   if (event.key !== 'ArrowDown') return;
                   event.preventDefault();
-                  activateGroup(group.id, event.currentTarget, true);
+                  openGroupAndFocusFirstLink(group.id, event.currentTarget);
                 }}
                 onClick={closeDesktopMenu}
               >

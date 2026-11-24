@@ -58,22 +58,22 @@ const postIndexNow = async (
 export const submitIndexNowUrls = async (urls: string[], verificationUrl?: string | false) =>
   postIndexNow(urls, verificationUrl);
 
-const parseSitemapEntryUrl = (entry: string, cutoff: number, includeAll: boolean): string | null => {
+const parseSitemapEntryUrl = (entry: string, cutoff: number, includeAll: boolean): string | undefined => {
   const location = entry.match(/<loc>([\s\S]*?)<\/loc>/i)?.[1];
-  if (!location) return null;
+  if (!location) return undefined;
 
   let url: URL;
   try {
     url = new URL(decodeXmlEntities(location.trim()));
   } catch {
-    return null;
+    return undefined;
   }
   if (url.protocol !== 'https:' || url.host !== host || url.search || url.hash || !contentPath.test(url.pathname)) {
-    return null;
+    return undefined;
   }
   const lastmod = entry.match(/<lastmod>([\s\S]*?)<\/lastmod>/i)?.[1];
   const lastModifiedAt = lastmod ? Date.parse(decodeXmlEntities(lastmod.trim())) : Number.NaN;
-  if (!includeAll && (!Number.isFinite(lastModifiedAt) || lastModifiedAt < cutoff)) return null;
+  if (!includeAll && (!Number.isFinite(lastModifiedAt) || lastModifiedAt < cutoff)) return undefined;
   return url.href;
 };
 
@@ -91,7 +91,7 @@ export const selectIndexNowUrls = (
   const includeAll = Boolean(options.includeAll);
   const urls = [...xml.matchAll(/<url\b[^>]*>([\s\S]*?)<\/url>/gi)]
     .map(([, entry]) => parseSitemapEntryUrl(entry, cutoff, includeAll))
-    .filter((value): value is string => value !== null);
+    .filter((value): value is string => value !== undefined);
 
   return [...new Set(urls)];
 };

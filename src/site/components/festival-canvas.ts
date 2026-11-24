@@ -185,54 +185,63 @@ const drawRibbon = (ctx: CanvasRenderingContext2D, ribbon: RibbonParticle) => {
   ctx.restore();
 };
 
+export type StepBounds = {
+  width: number;
+  height: number;
+  elapsed: number;
+  dt: number;
+};
+
+type SwayingParticle = {
+  x: number;
+  y: number;
+  speedY: number;
+  driftX: number;
+  swayAmp: number;
+  swayFreq: number;
+  swayPhase: number;
+};
+
+const advanceSwayingParticle = (
+  particle: SwayingParticle,
+  bounds: StepBounds,
+  swayFactor: number,
+  wrapMarginPx: number
+) => {
+  particle.y += particle.speedY * bounds.dt;
+  particle.x +=
+    (particle.driftX +
+      Math.sin(bounds.elapsed * particle.swayFreq + particle.swayPhase) * particle.swayAmp * swayFactor) *
+    bounds.dt;
+  if (particle.y > bounds.height + wrapMarginPx) {
+    particle.y = -wrapMarginPx;
+    particle.x = Math.random() * bounds.width;
+  }
+  if (particle.x > bounds.width + wrapMarginPx) particle.x = -wrapMarginPx;
+  else if (particle.x < -wrapMarginPx) particle.x = bounds.width + wrapMarginPx;
+};
+
 export const stepAndDrawSnowFlakes = (
   ctx: CanvasRenderingContext2D,
   flakes: SnowFlake[],
-  width: number,
-  height: number,
-  elapsed: number,
-  dt: number,
+  bounds: StepBounds,
   theme: ColorTheme
 ) => {
   for (const flake of flakes) {
-    if (dt > 0) {
-      flake.y += flake.speedY * dt;
-      flake.x +=
-        (flake.driftX + Math.sin(elapsed * flake.swayFreq + flake.swayPhase) * flake.swayAmp * SNOW_SWAY_FACTOR) * dt;
-      flake.rotation += flake.spin * dt;
-      if (flake.y > height + SNOW_WRAP_MARGIN_PX) {
-        flake.y = -SNOW_WRAP_MARGIN_PX;
-        flake.x = Math.random() * width;
-      }
-      if (flake.x > width + SNOW_WRAP_MARGIN_PX) flake.x = -SNOW_WRAP_MARGIN_PX;
-      else if (flake.x < -SNOW_WRAP_MARGIN_PX) flake.x = width + SNOW_WRAP_MARGIN_PX;
+    if (bounds.dt > 0) {
+      advanceSwayingParticle(flake, bounds, SNOW_SWAY_FACTOR, SNOW_WRAP_MARGIN_PX);
+      flake.rotation += flake.spin * bounds.dt;
     }
     drawSnowFlake(ctx, flake, theme);
   }
 };
 
-export const stepAndDrawRibbons = (
-  ctx: CanvasRenderingContext2D,
-  ribbons: RibbonParticle[],
-  width: number,
-  height: number,
-  elapsed: number,
-  dt: number
-) => {
+export const stepAndDrawRibbons = (ctx: CanvasRenderingContext2D, ribbons: RibbonParticle[], bounds: StepBounds) => {
   for (const ribbon of ribbons) {
-    if (dt > 0) {
-      ribbon.y += ribbon.speedY * dt;
-      ribbon.x +=
-        (ribbon.driftX + Math.sin(elapsed * ribbon.swayFreq + ribbon.swayPhase) * ribbon.swayAmp * RIBBON_SWAY_FACTOR) *
-        dt;
-      ribbon.angle += ribbon.spin * dt;
-      ribbon.flipPhase += ribbon.flipSpeed * dt;
-      if (ribbon.y > height + RIBBON_WRAP_MARGIN_PX) {
-        ribbon.y = -RIBBON_WRAP_MARGIN_PX;
-        ribbon.x = Math.random() * width;
-      }
-      if (ribbon.x > width + RIBBON_WRAP_MARGIN_PX) ribbon.x = -RIBBON_WRAP_MARGIN_PX;
-      else if (ribbon.x < -RIBBON_WRAP_MARGIN_PX) ribbon.x = width + RIBBON_WRAP_MARGIN_PX;
+    if (bounds.dt > 0) {
+      advanceSwayingParticle(ribbon, bounds, RIBBON_SWAY_FACTOR, RIBBON_WRAP_MARGIN_PX);
+      ribbon.angle += ribbon.spin * bounds.dt;
+      ribbon.flipPhase += ribbon.flipSpeed * bounds.dt;
     }
     drawRibbon(ctx, ribbon);
   }

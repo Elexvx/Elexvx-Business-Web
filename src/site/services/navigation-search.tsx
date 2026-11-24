@@ -13,12 +13,13 @@ const SEARCH_PLACEHOLDER = '搜索入口或关键词';
 type SearchScope = 'internal' | 'web';
 type SearchLink = { id: string; name: string; url: string; description: string; tags: string[] };
 type SearchConfig = ServiceNavigationConfig['search'];
+type SearchEngine = SearchConfig['engines'][number];
 
-function readStoredValue(key: string): string | null {
+function readStoredValue(key: string): string | undefined {
   try {
-    return window.localStorage.getItem(key);
+    return window.localStorage.getItem(key) ?? undefined;
   } catch {
-    return null;
+    return undefined;
   }
 }
 
@@ -30,7 +31,7 @@ function writeStoredValue(key: string, value: string) {
   }
 }
 
-function buildSearchUrl(engine: SearchConfig['engines'][number] | undefined, query: string): string | undefined {
+function buildSearchUrl(engine: SearchEngine | undefined, query: string): string | undefined {
   if (!engine || !query.trim()) return undefined;
   const url = new URL(engine.baseUrl);
   url.searchParams.set(engine.queryParam, query.trim());
@@ -49,28 +50,9 @@ const DIRECTORY_SEARCH_LINKS: SearchLink[] = serviceNavigationLinks.map((link) =
   tags: link.tags,
 }));
 
-export function DirectorySearch({ searchConfig }: { searchConfig: SearchConfig }) {
+function useDirectorySearchPreferences(defaultEngine: string, enabledSearchEngines: SearchEngine[]) {
   const [scope, setScope] = useState<SearchScope>('internal');
-  const [engineId, setEngineId] = useState(searchConfig.defaultEngine);
-  const [query, setQuery] = useState('');
-  const [activeSuggestion, setActiveSuggestion] = useState(-1);
-  const [suggestionsOpen, setSuggestionsOpen] = useState(false);
-  const inputRef = useRef<HTMLInputElement>(null);
-  const enabledSearchEngines = useMemo(
-    () => searchConfig.engines.filter((engine) => searchConfig.enabledEngines.includes(engine.name)),
-    [searchConfig]
-  );
-  const listboxId = 'navigation-search-suggestions';
-  const suggestions = useMemo(() => {
-    const normalized = query.trim().toLocaleLowerCase('zh-CN');
-    if (!normalized || scope !== 'internal') return [];
-    return DIRECTORY_SEARCH_LINKS.filter((link) =>
-      [link.name, link.description, ...link.tags].join(' ').toLocaleLowerCase('zh-CN').includes(normalized)
-    ).slice(0, searchConfig.maxSuggestions);
-  }, [query, scope, searchConfig.maxSuggestions]);
-
-  const selectedEngine = enabledSearchEngines.find((engine) => engine.name === engineId) ?? enabledSearchEngines[0];
-  const suggestionsVisible = suggestionsOpen && scope === 'internal' && suggestions.length > 0;
+  const [engineId, setEngineId] = useState(defaultEngine);
 
   useEffect(() => {
     const storedScope = readStoredValue(SCOPE_STORAGE_KEY);
@@ -86,6 +68,67 @@ export function DirectorySearch({ searchConfig }: { searchConfig: SearchConfig }
   useEffect(() => {
     writeStoredValue(ENGINE_STORAGE_KEY, engineId);
   }, [engineId]);
+
+  return { scope, setScope, engineId, setEngineId };
+}
+
+function SearchSuggestionsList({
+  listboxId,
+  suggestions,
+  activeSuggestion,
+  onSelect,
+}: {
+  listboxId: string;
+  suggestions: SearchLink[];
+  activeSuggestion: number;
+  onSelect: (link: SearchLink) => void;
+}) {
+  return (
+    <div className="service-search-suggestions" id={listboxId} role="listbox">
+      {suggestions.map((link, index) => (
+        <button
+          className={index === activeSuggestion ? 'is-active' : ''}
+          id={`navigation-suggestion-${index}`}
+          key={link.id}
+          role="option"
+          aria-selected={index === activeSuggestion}
+          type="button"
+          onMouseDown={(event) => event.preventDefault()}
+          onClick={() => onSelect(link)}
+        >
+          <span className="service-suggestion-name">{link.name}</span>
+          <span className="service-suggestion-description">{link.description || '打开链接'}</span>
+        </button>
+      ))}
+    </div>
+  );
+}
+
+export function DirectorySearch({ searchConfig }: { searchConfig: SearchConfig }) {
+  const [query, setQuery] = useState('');
+  const [activeSuggestion, setActiveSuggestion] = useState(-1);
+  const [suggestionsOpen, setSuggestionsOpen] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const enabledSearchEngines = useMemo(
+    () => searchConfig.engines.filter((engine) => searchConfig.enabledEngines.includes(engine.name)),
+    [searchConfig]
+  );
+  const { scope, setScope, engineId, setEngineId } = useDirectorySearchPreferences(
+    searchConfig.defaultEngine,
+    enabledSearchEngines
+  );
+
+  const listboxId = 'navigation-search-suggestions';
+  const suggestions = useMemo(() => {
+    const normalized = query.trim().toLocaleLowerCase('zh-CN');
+    if (!normalized || scope !== 'internal') return [];
+    return DIRECTORY_SEARCH_LINKS.filter((link) =>
+      [link.name, link.description, ...link.tags].join(' ').toLocaleLowerCase('zh-CN').includes(normalized)
+    ).slice(0, searchConfig.maxSuggestions);
+  }, [query, scope, searchConfig.maxSuggestions]);
+
+  const selectedEngine = enabledSearchEngines.find((engine) => engine.name === engineId) ?? enabledSearchEngines[0];
+  const suggestionsVisible = suggestionsOpen && scope === 'internal' && suggestions.length > 0;
 
   const openInternalResult = (link: SearchLink) => {
     setQuery(link.name);
@@ -191,25 +234,14 @@ export function DirectorySearch({ searchConfig }: { searchConfig: SearchConfig }
             role="combobox"
             value={query}
           />
-          {suggestionsVisible ? (
-            <div className="service-search-suggestions" id={listboxId} role="listbox">
-              {suggestions.map((link, index) => (
-                <button
-                  className={index === activeSuggestion ? 'is-active' : ''}
-                  id={`navigation-suggestion-${index}`}
-                  key={link.id}
-                  role="option"
-                  aria-selected={index === activeSuggestion}
-                  type="button"
-                  onMouseDown={(event) => event.preventDefault()}
-                  onClick={() => openInternalResult(link)}
-                >
-                  <span className="service-suggestion-name">{link.name}</span>
-                  <span className="service-suggestion-description">{link.description || '打开链接'}</span>
-                </button>
-              ))}
-            </div>
-          ) : null}
+          {suggestionsVisible && (
+            <SearchSuggestionsList
+              listboxId={listboxId}
+              suggestions={suggestions}
+              activeSuggestion={activeSuggestion}
+              onSelect={openInternalResult}
+            />
+          )}
         </div>
         <button className="service-search-submit" type="submit">
           <SearchOutlined aria-hidden="true" />

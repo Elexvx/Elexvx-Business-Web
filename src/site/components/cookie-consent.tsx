@@ -26,7 +26,7 @@ export const CookieConsent = () => {
   const [managing, setManaging] = useState(false);
   const [preferences, setPreferences] = useState<CookiePreferences>(defaultPreferences);
   const consentRef = useRef<HTMLDivElement>(null);
-  const english = locale === 'en';
+  const isEnglish = locale === 'en';
 
   useEffect(() => {
     try {
@@ -78,7 +78,7 @@ export const CookieConsent = () => {
       <ModalContent
         ref={consentRef}
         className="cookie-consent"
-        aria-label={english ? 'Cookie preferences' : 'Cookie 偏好设置'}
+        aria-label={isEnglish ? 'Cookie preferences' : 'Cookie 偏好设置'}
         onInteractOutside={(event) => event.preventDefault()}
         onEscapeKeyDown={(event) => {
           if (!managing) return;
@@ -89,11 +89,11 @@ export const CookieConsent = () => {
         <div className="cookie-consent-inner">
           <div className="cookie-consent-copy">
             <Dialog.Title asChild>
-              <h2>{english ? 'We use cookies' : '我们使用 Cookie'}</h2>
+              <h2>{isEnglish ? 'We use cookies' : '我们使用 Cookie'}</h2>
             </Dialog.Title>
             <Dialog.Description asChild>
               <p>
-                {english
+                {isEnglish
                   ? 'We use necessary cookies to keep the site working. Optional analytics and marketing preferences can be changed at any time from the footer.'
                   : '我们使用必要 Cookie 确保网站正常运行。分析与营销属于可选项，你可以随时通过页脚中的 Cookie 设置调整偏好。'}
               </p>
@@ -104,19 +104,19 @@ export const CookieConsent = () => {
             <div className="cookie-preferences">
               <div className="cookie-preference-row">
                 <div>
-                  <strong>{english ? 'Necessary' : '必要 Cookie'}</strong>
-                  <span>{english ? 'Required for core site functions.' : '用于网站核心功能。'}</span>
+                  <strong>{isEnglish ? 'Necessary' : '必要 Cookie'}</strong>
+                  <span>{isEnglish ? 'Required for core site functions.' : '用于网站核心功能。'}</span>
                 </div>
-                <span className="cookie-required-label">{english ? 'Always on' : '始终启用'}</span>
+                <span className="cookie-required-label">{isEnglish ? 'Always on' : '始终启用'}</span>
               </div>
               <label className="cookie-preference-row">
                 <div>
-                  <strong>{english ? 'Analytics' : '分析 Cookie'}</strong>
-                  <span>{english ? 'Helps us understand site usage.' : '用于了解网站使用情况。'}</span>
+                  <strong>{isEnglish ? 'Analytics' : '分析 Cookie'}</strong>
+                  <span>{isEnglish ? 'Helps us understand site usage.' : '用于了解网站使用情况。'}</span>
                 </div>
                 <Switch.Root
                   className="ui-switch"
-                  aria-label={english ? 'Analytics cookies' : '分析 Cookie'}
+                  aria-label={isEnglish ? 'Analytics cookies' : '分析 Cookie'}
                   checked={preferences.analytics}
                   onCheckedChange={(checked) => setPreferences((current) => ({ ...current, analytics: checked }))}
                 >
@@ -125,12 +125,12 @@ export const CookieConsent = () => {
               </label>
               <label className="cookie-preference-row">
                 <div>
-                  <strong>{english ? 'Marketing' : '营销 Cookie'}</strong>
-                  <span>{english ? 'Supports relevant campaign measurement.' : '用于相关推广效果衡量。'}</span>
+                  <strong>{isEnglish ? 'Marketing' : '营销 Cookie'}</strong>
+                  <span>{isEnglish ? 'Supports relevant campaign measurement.' : '用于相关推广效果衡量。'}</span>
                 </div>
                 <Switch.Root
                   className="ui-switch"
-                  aria-label={english ? 'Marketing cookies' : '营销 Cookie'}
+                  aria-label={isEnglish ? 'Marketing cookies' : '营销 Cookie'}
                   checked={preferences.marketing}
                   onCheckedChange={(checked) => setPreferences((current) => ({ ...current, marketing: checked }))}
                 >
@@ -139,31 +139,31 @@ export const CookieConsent = () => {
               </label>
               <div className="cookie-consent-actions">
                 <button className="cookie-button" type="button" onClick={() => setManaging(false)}>
-                  {english ? 'Back' : '返回'}
+                  {isEnglish ? 'Back' : '返回'}
                 </button>
                 <button
                   className="cookie-button cookie-button-primary"
                   type="button"
                   onClick={() => savePreferences(preferences)}
                 >
-                  {english ? 'Save preferences' : '保存设置'}
+                  {isEnglish ? 'Save preferences' : '保存设置'}
                 </button>
               </div>
             </div>
           ) : (
             <div className="cookie-consent-actions">
               <button className="cookie-button" type="button" onClick={() => setManaging(true)}>
-                {english ? 'Manage cookies' : '管理 Cookie'}
+                {isEnglish ? 'Manage cookies' : '管理 Cookie'}
               </button>
               <button className="cookie-button" type="button" onClick={() => savePreferences(defaultPreferences)}>
-                {english ? 'Reject optional' : '拒绝非必要'}
+                {isEnglish ? 'Reject optional' : '拒绝非必要'}
               </button>
               <button
                 className="cookie-button cookie-button-primary"
                 type="button"
                 onClick={() => savePreferences({ necessary: true, analytics: true, marketing: true })}
               >
-                {english ? 'Accept all' : '全部接受'}
+                {isEnglish ? 'Accept all' : '全部接受'}
               </button>
             </div>
           )}

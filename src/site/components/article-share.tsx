@@ -12,7 +12,7 @@ type CardTask = { key: string; result: Promise<string>; value?: string };
 
 export function ArticleShare() {
   const { locale } = useI18n();
-  const en = locale === 'en';
+  const isEnglish = locale === 'en';
   const dialogId = useId();
   const triggerRef = useRef<HTMLElement | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -53,17 +53,19 @@ export function ArticleShare() {
       try {
         if (!navigator.clipboard?.writeText) throw new Error('Clipboard unavailable');
         await navigator.clipboard.writeText(current.url);
-        if (request === requestRef.current) setStatus(en ? 'Link copied.' : '网页链接已复制。');
+        if (request === requestRef.current) setStatus(isEnglish ? 'Link copied.' : '网页链接已复制。');
       } catch {
         if (request === requestRef.current) {
-          setStatus(en ? 'Select and copy the link below.' : '请长按或选中下方链接复制。');
+          setStatus(isEnglish ? 'Select and copy the link below.' : '请长按或选中下方链接复制。');
         }
       }
       return;
     }
 
     const key = JSON.stringify([locale, current]);
-    const savedHint = en ? 'Long-press to save, or download below.' : '长按图片保存，或点击下方下载，再发送给朋友。';
+    const savedHint = isEnglish
+      ? 'Long-press to save, or download below.'
+      : '长按图片保存，或点击下方下载，再发送给朋友。';
     let task = cardTaskRef.current;
     if (task?.key !== key) {
       task = { key, result: import('../sharing/card').then(({ createShareCard }) => createShareCard(current, locale)) };
@@ -76,7 +78,7 @@ export function ArticleShare() {
     }
 
     setBusy(true);
-    setStatus(en ? 'Creating card…' : '正在生成卡片…');
+    setStatus(isEnglish ? 'Creating card…' : '正在生成卡片…');
     try {
       task.value = await task.result;
       if (request !== requestRef.current) return;
@@ -86,7 +88,9 @@ export function ArticleShare() {
       if (cardTaskRef.current === task) cardTaskRef.current = null;
       if (request === requestRef.current) {
         setStatus(
-          en ? 'Could not create card. Try again or copy the link below.' : '卡片生成失败，请重试，或复制下方链接分享。'
+          isEnglish
+            ? 'Could not create card. Try again or copy the link below.'
+            : '卡片生成失败，请重试，或复制下方链接分享。'
         );
       }
     } finally {
@@ -101,8 +105,8 @@ export function ArticleShare() {
         if (!next) close();
       }}
     >
-      <section className="article-share" aria-label={en ? 'Share article' : '转发文章'}>
-        <span className="article-share-label">{en ? 'Share' : '转发'}</span>
+      <section className="article-share" aria-label={isEnglish ? 'Share article' : '转发文章'}>
+        <span className="article-share-label">{isEnglish ? 'Share' : '转发'}</span>
         <div className="article-share-options">
           <button
             type="button"
@@ -111,7 +115,7 @@ export function ArticleShare() {
             onClick={(event) => void open('link', event.currentTarget)}
           >
             <LinkOutlined aria-hidden="true" />
-            <span>{en ? 'Web link' : '网页'}</span>
+            <span>{isEnglish ? 'Web link' : '网页'}</span>
           </button>
           <button
             type="button"
@@ -120,7 +124,7 @@ export function ArticleShare() {
             onClick={(event) => void open('card', event.currentTarget)}
           >
             <QrcodeOutlined aria-hidden="true" />
-            <span>{en ? 'QR card' : '二维码卡片'}</span>
+            <span>{isEnglish ? 'QR card' : '二维码卡片'}</span>
           </button>
         </div>
       </section>
@@ -137,10 +141,10 @@ export function ArticleShare() {
       >
         <header>
           <Dialog.Title asChild>
-            <h2>{mode === 'link' ? (en ? 'Web link' : '网页链接') : en ? 'QR card' : '二维码卡片'}</h2>
+            <h2>{mode === 'link' ? (isEnglish ? 'Web link' : '网页链接') : isEnglish ? 'QR card' : '二维码卡片'}</h2>
           </Dialog.Title>
           <Dialog.Close asChild>
-            <button type="button" aria-label={en ? 'Close' : '关闭'}>
+            <button type="button" aria-label={isEnglish ? 'Close' : '关闭'}>
               <CloseOutlined aria-hidden="true" />
             </button>
           </Dialog.Close>
@@ -153,7 +157,7 @@ export function ArticleShare() {
         {(mode === 'link' || (!busy && !card)) && (
           <input
             ref={inputRef}
-            aria-label={en ? 'Page link' : '页面链接'}
+            aria-label={isEnglish ? 'Page link' : '页面链接'}
             value={url}
             readOnly
             onFocus={(e) => e.currentTarget.select()}
@@ -161,14 +165,14 @@ export function ArticleShare() {
         )}
         {mode === 'card' && !busy && !card && (
           <button className="article-share-retry" type="button" onClick={() => void open('card')}>
-            {en ? 'Try again' : '重新生成'}
+            {isEnglish ? 'Try again' : '重新生成'}
           </button>
         )}
         {mode === 'card' && card && (
           <div className="article-share-card">
-            <img src={card} alt={en ? 'Article card with QR code' : '包含文章标题、封面和二维码的分享卡片'} />
+            <img src={card} alt={isEnglish ? 'Article card with QR code' : '包含文章标题、封面和二维码的分享卡片'} />
             <a href={card} download="elexvx-share.png">
-              {en ? 'Download card' : '下载卡片'}
+              {isEnglish ? 'Download card' : '下载卡片'}
             </a>
           </div>
         )}

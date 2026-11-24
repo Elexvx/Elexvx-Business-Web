@@ -15,6 +15,7 @@ import { classNames } from './ui';
 import { prefersReducedMotion } from './use-hero-launch-phase';
 
 const DIGIT_TRANSITION_MS = 280;
+const INITIAL_WAIT_PROGRESS = 0.12;
 
 const HeroParticles = dynamic(() => import('./hero-particles').then((module) => module.HeroParticles), {
   ssr: false,
@@ -162,7 +163,7 @@ export const HeroWaitingStage = ({
     { key: 'seconds', value: mounted ? padUnit(snapshot.seconds) : '--', label: t('秒') },
   ];
 
-  const progress = mounted ? snapshot.progress : 0.12;
+  const progress = mounted ? snapshot.progress : INITIAL_WAIT_PROGRESS;
 
   return (
     <>

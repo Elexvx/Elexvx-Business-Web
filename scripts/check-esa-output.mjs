@@ -4,6 +4,9 @@ import { pathToFileURL } from 'node:url';
 import { decodeHtmlEntities, decodeXmlEntities } from '../src/content/html-entities.mjs';
 import { CANONICAL_ORIGIN } from '../src/data/site-origins-constants.mjs';
 
+const MIN_HEADING_LENGTH = 2;
+const MIN_MAIN_TEXT_LENGTH = 24;
+
 function parseAttributes(tag) {
   const attributes = new Map();
   const body = tag.replace(/^<\w+\b|\s*\/?\s*>$/g, '');
@@ -36,8 +39,13 @@ function parseSitemap(xml) {
 }
 
 function normalizedUrl(value, origin) {
-  const url = new URL(value);
-  if (url.origin !== origin || url.search || url.hash) return null;
+  let url;
+  try {
+    url = new URL(value);
+  } catch {
+    return undefined;
+  }
+  if (url.origin !== origin || url.search || url.hash) return undefined;
   url.pathname = url.pathname.replace(/\/+$/, '') || '/';
   return `${url.origin}${url.pathname}`;
 }
@@ -120,20 +128,12 @@ async function collectHtmlFiles(directory) {
 function languageMap(links, origin) {
   return links
     .filter((link) => link.kind === 'alternate')
-    .map((link) => {
-      let normalized = null;
-      try {
-        normalized = normalizedUrl(link.href, origin);
-      } catch {
-        // The caller reports malformed or relative links with page context.
-      }
-      return { ...link, normalized };
-    });
+    .map((link) => ({ ...link, normalized: normalizedUrl(link.href, origin) }));
 }
 
 function expectedCounterpart(pathname) {
   if (pathname === '/en' || pathname === '/en/') return '/';
-  if (!pathname.startsWith('/en/')) return null;
+  if (!pathname.startsWith('/en/')) return undefined;
   return pathname.replace(/^\/en(?=\/)/, '');
 }
 
@@ -158,81 +158,84 @@ function expectedBackLanguage(sourceUrl, language) {
 
 function redirectFallbackFile(root, source) {
   const asUrl = new URL(source, CANONICAL_ORIGIN);
-  if (asUrl.origin !== CANONICAL_ORIGIN || asUrl.search || asUrl.hash) return null;
+  if (asUrl.origin !== CANONICAL_ORIGIN || asUrl.search || asUrl.hash) return undefined;
   try {
     return staticFileForUrl(root, asUrl.href);
   } catch {
-    return null;
+    return undefined;
   }
+}
+
+function validateCanonicalLink({ url, identity, origin, links, errors }) {
+  const canonicalLinks = links.filter((link) => link.kind === 'canonical');
+  if (canonicalLinks.length !== 1) {
+    errors.push(`Published page must have exactly one canonical link: ${url} (found ${canonicalLinks.length})`);
+    return;
+  }
+  const canonicalIdentity = normalizedUrl(canonicalLinks[0].href, origin);
+  if (canonicalIdentity !== identity) {
+    errors.push(`Canonical does not match sitemap URL: ${url} -> ${canonicalLinks[0].href || '(empty)'}`);
+  }
+}
+
+function validateMainContent({ url, html, errors }) {
+  const main = html.match(/<main\b[^>]*>([\s\S]*?)<\/main\s*>/i)?.[1] ?? '';
+  const mainText = pageText(main);
+  const heading = main.match(/<h1\b[^>]*>([\s\S]*?)<\/h1\s*>/i)?.[1] ?? '';
+  const headingText = pageText(heading);
+  if (!main || headingText.length < MIN_HEADING_LENGTH || mainText.length < MIN_MAIN_TEXT_LENGTH) {
+    errors.push(`Published page has no valid main content (needs a meaningful h1 and body text): ${url}`);
+  }
+}
+
+async function resolveSitemapTarget({ staticRoot, url, origin, pages, errors }) {
+  const identity = normalizedUrl(url, origin);
+  if (!identity) {
+    errors.push(`Sitemap URL must use ${origin} and have no query or fragment: ${url}`);
+    return undefined;
+  }
+  if (pages.has(identity)) {
+    errors.push(`Duplicate sitemap URL after trailing-slash normalization: ${url}`);
+    return undefined;
+  }
+
+  let file;
+  try {
+    file = staticFileForUrl(staticRoot, url);
+  } catch (error) {
+    errors.push(error.message);
+    return undefined;
+  }
+  if (!(await existsAsFile(file))) {
+    errors.push(`Sitemap target has no static HTML file: ${url} -> ${path.relative(staticRoot, file)}`);
+    return undefined;
+  }
+
+  return { identity, file };
 }
 
 async function validateSitemapPages({ staticRoot, origin, urls, errors }) {
   const pages = new Map();
 
   for (const url of urls) {
-    let identity;
-    try {
-      identity = normalizedUrl(url, origin);
-    } catch {
-      identity = null;
-    }
-    if (!identity) {
-      errors.push(`Sitemap URL must use ${origin} and have no query or fragment: ${url}`);
-      continue;
-    }
-    if (pages.has(identity)) {
-      errors.push(`Duplicate sitemap URL after trailing-slash normalization: ${url}`);
-      continue;
-    }
+    const target = await resolveSitemapTarget({ staticRoot, url, origin, pages, errors });
+    if (!target) continue;
 
-    let file;
-    try {
-      file = staticFileForUrl(staticRoot, url);
-    } catch (error) {
-      errors.push(error.message);
-      continue;
-    }
-    if (!(await existsAsFile(file))) {
-      errors.push(`Sitemap target has no static HTML file: ${url} -> ${path.relative(staticRoot, file)}`);
-      continue;
-    }
-
-    const html = await readFile(file, 'utf8');
+    const html = await readFile(target.file, 'utf8');
     if (/\bid\s*=\s*(["'])__next_error__\1/i.test(html)) {
       errors.push(`Published page is a Next.js error document: ${url}`);
     }
 
     const links = linksFromHtml(html);
-    const canonicalLinks = links.filter((link) => link.kind === 'canonical');
-    if (canonicalLinks.length !== 1) {
-      errors.push(`Published page must have exactly one canonical link: ${url} (found ${canonicalLinks.length})`);
-    } else {
-      let canonicalIdentity;
-      try {
-        canonicalIdentity = normalizedUrl(canonicalLinks[0].href, origin);
-      } catch {
-        canonicalIdentity = null;
-      }
-      if (canonicalIdentity !== identity) {
-        errors.push(`Canonical does not match sitemap URL: ${url} -> ${canonicalLinks[0].href || '(empty)'}`);
-      }
-    }
-
+    validateCanonicalLink({ url, identity: target.identity, origin, links, errors });
     if (isNoindexDocument(html)) {
       errors.push(`Sitemap page is marked noindex: ${url}`);
     }
+    validateMainContent({ url, html, errors });
 
-    const main = html.match(/<main\b[^>]*>([\s\S]*?)<\/main\s*>/i)?.[1] ?? '';
-    const mainText = pageText(main);
-    const heading = main.match(/<h1\b[^>]*>([\s\S]*?)<\/h1\s*>/i)?.[1] ?? '';
-    const headingText = pageText(heading);
-    if (!main || headingText.length < 2 || mainText.length < 24) {
-      errors.push(`Published page has no valid main content (needs a meaningful h1 and body text): ${url}`);
-    }
-
-    pages.set(identity, {
+    pages.set(target.identity, {
       url,
-      file,
+      file: target.file,
       html,
       alternates: languageMap(links, origin),
     });
@@ -267,51 +270,59 @@ async function validateNoStrayErrorHtml({ staticRoot, sitemapFiles, errors }) {
   }
 }
 
-async function validateReciprocalHreflangs({ staticRoot, origin, pages, errors }) {
-  const loadedAlternates = new Map();
-  for (const page of pages.values()) {
-    for (const alternate of page.alternates) {
-      if (!alternate.href) {
-        errors.push(`Alternate ${alternate.language || '(missing language)'} has no href: ${page.url}`);
-        continue;
-      }
-      if (!alternate.normalized) {
-        errors.push(
-          `Alternate target must use ${origin} and have no query or fragment: ${page.url} -> ${alternate.href}`
-        );
-        continue;
-      }
+async function resolveAlternateTargetFile(staticRoot, href) {
+  try {
+    const file = staticFileForUrl(staticRoot, href);
+    return (await existsAsFile(file)) ? file : undefined;
+  } catch {
+    return undefined;
+  }
+}
 
-      let targetFile;
-      try {
-        targetFile = staticFileForUrl(staticRoot, alternate.href);
-      } catch {
-        targetFile = null;
-      }
-      if (!targetFile || !(await existsAsFile(targetFile))) {
-        errors.push(`Hreflang target has no static HTML file: ${page.url} -> ${alternate.href}`);
-        continue;
-      }
-
-      if (!loadedAlternates.has(alternate.normalized)) {
-        const targetPage = pages.get(alternate.normalized);
-        const targetHtml = targetPage?.html ?? (await readFile(targetFile, 'utf8'));
-        loadedAlternates.set(alternate.normalized, languageMap(linksFromHtml(targetHtml), origin));
-      }
-      if (languageCode(alternate.language) === 'x-default') continue;
-
-      const backLanguage = expectedBackLanguage(page.url, alternate.language);
-      const reciprocalLinks = loadedAlternates.get(alternate.normalized);
-      const hasBacklink = reciprocalLinks.some(
-        (backlink) =>
-          backlink.normalized === normalizedUrl(page.url, origin) &&
-          (!backLanguage || languageCode(backlink.language) === backLanguage)
+async function validatePageAlternates({ page, staticRoot, origin, pages, loadedAlternates, errors }) {
+  for (const alternate of page.alternates) {
+    if (!alternate.href) {
+      errors.push(`Alternate ${alternate.language || '(missing language)'} has no href: ${page.url}`);
+      continue;
+    }
+    if (!alternate.normalized) {
+      errors.push(
+        `Alternate target must use ${origin} and have no query or fragment: ${page.url} -> ${alternate.href}`
       );
-      if (!hasBacklink) {
-        errors.push(`Hreflang is not reciprocal: ${page.url} (${alternate.language}) -> ${alternate.href}`);
-      }
+      continue;
+    }
+
+    const targetFile = await resolveAlternateTargetFile(staticRoot, alternate.href);
+    if (!targetFile) {
+      errors.push(`Hreflang target has no static HTML file: ${page.url} -> ${alternate.href}`);
+      continue;
+    }
+
+    if (!loadedAlternates.has(alternate.normalized)) {
+      const targetPage = pages.get(alternate.normalized);
+      const targetHtml = targetPage?.html ?? (await readFile(targetFile, 'utf8'));
+      loadedAlternates.set(alternate.normalized, languageMap(linksFromHtml(targetHtml), origin));
+    }
+    if (languageCode(alternate.language) === 'x-default') continue;
+
+    const backLanguage = expectedBackLanguage(page.url, alternate.language);
+    const reciprocalLinks = loadedAlternates.get(alternate.normalized);
+    const hasBacklink = reciprocalLinks.some(
+      (backlink) =>
+        backlink.normalized === normalizedUrl(page.url, origin) &&
+        (!backLanguage || languageCode(backlink.language) === backLanguage)
+    );
+    if (!hasBacklink) {
+      errors.push(`Hreflang is not reciprocal: ${page.url} (${alternate.language}) -> ${alternate.href}`);
     }
   }
+}
+
+function validatePublishedBilingualPairs({ origin, pages, errors }) {
+  const hasAlternate = (source, language, target) =>
+    source.alternates.some(
+      (alternate) => languageCode(alternate.language) === language && alternate.normalized === target
+    );
 
   // The generated sitemap intentionally omits English versions of standalone
   // service utilities. Every actual zh/en pair in the sitemap must still link
@@ -320,14 +331,12 @@ async function validateReciprocalHreflangs({ staticRoot, origin, pages, errors }
     const pathname = new URL(page.url).pathname;
     if (!pathname.startsWith('/en/') && pathname !== '/en/') continue;
     const chinesePath = expectedCounterpart(pathname);
+    if (!chinesePath) continue;
     const chineseIdentity = `${origin}${chinesePath.replace(/\/+$/, '') || '/'}`;
     const chinesePage = pages.get(chineseIdentity);
     if (!chinesePage) continue;
     const englishIdentity = `${origin}${pathname.replace(/\/+$/, '') || '/'}`;
-    const hasAlternate = (source, language, target) =>
-      source.alternates.some(
-        (alternate) => languageCode(alternate.language) === language && alternate.normalized === target
-      );
+
     if (!hasAlternate(page, 'en', englishIdentity)) {
       errors.push(`English page is missing its self hreflang alternate: ${page.url}`);
     }
@@ -341,6 +350,14 @@ async function validateReciprocalHreflangs({ staticRoot, origin, pages, errors }
       errors.push(`Chinese page is missing its English hreflang alternate: ${chinesePage.url}`);
     }
   }
+}
+
+async function validateReciprocalHreflangs({ staticRoot, origin, pages, errors }) {
+  const loadedAlternates = new Map();
+  for (const page of pages.values()) {
+    await validatePageAlternates({ page, staticRoot, origin, pages, loadedAlternates, errors });
+  }
+  validatePublishedBilingualPairs({ origin, pages, errors });
 }
 
 async function validateRedirects({ staticRoot, sourceRedirects, errors }) {

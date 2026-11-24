@@ -14,7 +14,8 @@ export const existingEnglish: Record<string, string> = {
   林汐智觉: 'Linxi Cognitive Tech',
   桐谷霁屿: 'Tongu Jiyu',
   生态合作伙伴: 'Ecosystem partners',
-  '注：排名不分先后，以上均为生态合作伙伴': 'Note: The brands above are ecosystem partners, listed in no particular order.',
+  '注：排名不分先后，以上均为生态合作伙伴':
+    'Note: The brands above are ecosystem partners, listed in no particular order.',
   集米荟: 'Jimihui',
   集数财务: 'Jishu Financial',
   'Elexvx 工作空间': 'Elexvx Workspace',

@@ -295,16 +295,12 @@
   "/activities/jinxi-2026/arrival-1.jpg": {
     "width": 480,
     "height": 479,
-    "variants": [
-      { "src": "/optimized/d91737cae2aa0fd7-480.webp", "width": 480 }
-    ]
+    "variants": [{ "src": "/optimized/d91737cae2aa0fd7-480.webp", "width": 480 }]
   },
   "/activities/jinxi-2026/arrival-2.jpg": {
     "width": 480,
     "height": 479,
-    "variants": [
-      { "src": "/optimized/dbd743d7a7aa1ecf-480.webp", "width": 480 }
-    ]
+    "variants": [{ "src": "/optimized/dbd743d7a7aa1ecf-480.webp", "width": 480 }]
   },
   "/activities/jinxi-2026/award-commercial-ppt-original.png": {
     "width": 1448,
@@ -448,9 +444,7 @@
   "/activities/jinxi-2026/review-notes.jpg": {
     "width": 480,
     "height": 480,
-    "variants": [
-      { "src": "/optimized/8086ab017b01f7ef-480.webp", "width": 480 }
-    ]
+    "variants": [{ "src": "/optimized/8086ab017b01f7ef-480.webp", "width": 480 }]
   },
   "/activities/jinxi-2026/roundtable-discussion.jpg": {
     "width": 1440,
@@ -1795,9 +1789,7 @@
   "/visuals/news/security-officer-guides/applicant-declaration.webp": {
     "width": 402,
     "height": 711,
-    "variants": [
-      { "src": "/optimized/43bc20a69ce97d4d-402.webp", "width": 402 }
-    ]
+    "variants": [{ "src": "/optimized/43bc20a69ce97d4d-402.webp", "width": 402 }]
   },
   "/visuals/news/security-officer-guides/complete-registration.webp": {
     "width": 376,
@@ -2029,9 +2021,7 @@
   "/visuals/services/documentation.jpg": {
     "width": 450,
     "height": 450,
-    "variants": [
-      { "src": "/optimized/f14fc0e6acfeee6f-450.webp", "width": 450 }
-    ]
+    "variants": [{ "src": "/optimized/f14fc0e6acfeee6f-450.webp", "width": 450 }]
   },
   "/visuals/services/status.png": {
     "width": 1200,

@@ -51,13 +51,14 @@ export const FestivalAnimation = ({ effect }: { effect: 'snow' | 'ribbon' }) => 
     const renderFrame = (dt: number) => {
       ctx.clearRect(0, 0, width, height);
       elapsed += dt;
+      const bounds = { width, height, elapsed, dt };
 
       if (effect === 'snow') {
-        stepAndDrawSnowFlakes(ctx, snowFlakes, width, height, elapsed, dt, themeRef.current);
+        stepAndDrawSnowFlakes(ctx, snowFlakes, bounds, themeRef.current);
         return;
       }
 
-      stepAndDrawRibbons(ctx, ribbons, width, height, elapsed, dt);
+      stepAndDrawRibbons(ctx, ribbons, bounds);
     };
 
     const stopLoop = () => {

@@ -51,7 +51,8 @@ const storeStatusData = (data: StatusData, historyDays: number) => {
 async function parseResponse(response: Response): Promise<StatusApiResponse> {
   try {
     return (await response.json()) as StatusApiResponse;
-  } catch {
+  } catch (error) {
+    console.warn('status.response.invalid_json', error instanceof Error ? error.message : String(error));
     return { code: response.status, message: '服务状态接口返回了无效响应', source: 'api' };
   }
 }

@@ -104,30 +104,54 @@ export const NewsPage = ({ initialCategory = 'all', page = 1 }: { initialCategor
   );
 };
 
-export const InsightPage = ({ insight }: { insight: Insight }) => {
+const ArticleDetailHeader = ({
+  kickerDate,
+  eyebrow,
+  title,
+  excerpt,
+  author,
+  readingTime,
+}: {
+  kickerDate: React.ReactNode;
+  eyebrow: React.ReactNode;
+  title: React.ReactNode;
+  excerpt: string;
+  author: string;
+  readingTime: number;
+}) => {
   const { t, locale } = useI18n();
+  return (
+    <header className="article-header">
+      <div className="article-kicker">
+        <span>{kickerDate}</span>
+        <Eyebrow>{eyebrow}</Eyebrow>
+      </div>
+      <h1>{title}</h1>
+      <p className="article-excerpt">{t(excerpt)}</p>
+      <div className="article-meta">
+        <span>{t(author)}</span>
+        <span>{locale === 'en' ? `${readingTime} min read` : `${readingTime} 分钟阅读`}</span>
+      </div>
+    </header>
+  );
+};
+
+export const InsightPage = ({ insight }: { insight: Insight }) => {
+  const { t } = useI18n();
   const allInsights = useInsights();
   if (insight.status !== 'published') return <NotFoundPage />;
   const direction = insight.directionSlug ? getDirection(insight.directionSlug) : undefined;
   return (
     <SiteShell activePath="/insights">
       <article className="article-layout">
-        <header className="article-header">
-          <div className="article-kicker">
-            <span>
-              <Translated>{insight.publishedAt}</Translated>
-            </span>
-            <Eyebrow>{direction?.englishTitle ?? 'ELEXVX RESEARCH'}</Eyebrow>
-          </div>
-          <h1>
-            <Title text={insight.title} />
-          </h1>
-          <p className="article-excerpt">{t(insight.excerpt)}</p>
-          <div className="article-meta">
-            <span>{t(insight.author)}</span>
-            <span>{locale === 'en' ? `${insight.readingTime} min read` : `${insight.readingTime} 分钟阅读`}</span>
-          </div>
-        </header>
+        <ArticleDetailHeader
+          kickerDate={<Translated>{insight.publishedAt}</Translated>}
+          eyebrow={direction?.englishTitle ?? 'ELEXVX RESEARCH'}
+          title={<Title text={insight.title} />}
+          excerpt={insight.excerpt}
+          author={insight.author}
+          readingTime={insight.readingTime}
+        />
         <ArticleBody source={insight.body}>
           <ArticleMetadata author={insight.author} keywords={insight.keywords} keywordsEn={insight.keywordsEn} />
         </ArticleBody>
@@ -150,20 +174,14 @@ export const NewsItemPage = ({ item }: { item: NewsItem }) => {
   return (
     <SiteShell activePath="/news">
       <article className="article-layout article-layout-news">
-        <header className="article-header">
-          <div className="article-kicker">
-            <span>{formatArticleDate(item.publishedAt, locale)}</span>
-            <Eyebrow>
-              <Translated>{item.category}</Translated>
-            </Eyebrow>
-          </div>
-          <h1>{t(item.title)}</h1>
-          <p className="article-excerpt">{t(item.excerpt)}</p>
-          <div className="article-meta">
-            <span>{t(item.author)}</span>
-            <span>{locale === 'en' ? `${item.readingTime} min read` : `${item.readingTime} 分钟阅读`}</span>
-          </div>
-        </header>
+        <ArticleDetailHeader
+          kickerDate={formatArticleDate(item.publishedAt, locale)}
+          eyebrow={<Translated>{item.category}</Translated>}
+          title={t(item.title)}
+          excerpt={item.excerpt}
+          author={item.author}
+          readingTime={item.readingTime}
+        />
         <ArticleBody source={item.body}>
           <ArticleMetadata author={item.author} keywords={item.tags} keywordsEn={item.tags.map((tag) => t(tag))} />
         </ArticleBody>

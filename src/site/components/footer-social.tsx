@@ -56,11 +56,11 @@ export const FooterSocial = () => {
   const { locale } = useI18n();
   const { theme } = useTheme();
   const [open, setOpen] = useState<string | null>(null);
-  const english = locale === 'en';
+  const isEnglish = locale === 'en';
   return (
-    <div className="footer-social" aria-label={english ? 'Social accounts' : '社交账号'}>
+    <div className="footer-social" aria-label={isEnglish ? 'Social accounts' : '社交账号'}>
       {channels.map((channel) => {
-        const label = english ? channel.en : channel.zh;
+        const label = isEnglish ? channel.en : channel.zh;
         const expanded = open === channel.id;
         return (
           <div
@@ -81,7 +81,7 @@ export const FooterSocial = () => {
             <button
               type="button"
               className="footer-social-trigger"
-              aria-label={english ? `Follow on ${label}` : `${label}关注方式`}
+              aria-label={isEnglish ? `Follow on ${label}` : `${label}关注方式`}
               aria-expanded={expanded}
               aria-controls={`footer-social-${channel.id}`}
               onFocus={() => setOpen(channel.id)}
@@ -96,14 +96,14 @@ export const FooterSocial = () => {
             >
               <div className="footer-social-panel-heading">
                 <strong>{label}</strong>
-                {!channel.qr && <span>{english ? 'Demo' : '演示'}</span>}
+                {!channel.qr && <span>{isEnglish ? 'Demo' : '演示'}</span>}
               </div>
               {channel.qr ? (
                 expanded && (
                   <SiteImage
                     className="footer-social-qr"
                     src={channel.qr[theme]}
-                    alt={english ? `Hongxiang Shangdao ${label} QR code` : `宏翔商道${label}扫码图`}
+                    alt={isEnglish ? `Hongxiang Shangdao ${label} QR code` : `宏翔商道${label}扫码图`}
                     width={channel.qr.size}
                     height={channel.qr.size}
                     loading="eager"
@@ -113,11 +113,13 @@ export const FooterSocial = () => {
                 <>
                   <p className="footer-social-account">@elexvx_demo</p>
                   <p>
-                    {english
+                    {isEnglish
                       ? `Open ${label}, search for the account ID, then select Follow.`
                       : `打开${label}，搜索上方账号，进入主页后点击关注。`}
                   </p>
-                  <small>{english ? 'Sample account for demonstration only.' : '示例账号，仅用于展示关注方式。'}</small>
+                  <small>
+                    {isEnglish ? 'Sample account for demonstration only.' : '示例账号，仅用于展示关注方式。'}
+                  </small>
                 </>
               )}
             </div>

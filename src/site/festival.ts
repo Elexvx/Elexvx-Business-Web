@@ -1,9 +1,5 @@
 export type FestivalEffect = 'none' | 'memorial' | 'snow' | 'ribbon';
 
-const FESTIVAL_QUERY_PARAM = 'festival';
-const MS_PER_DAY = 86_400_000;
-const FESTIVAL_EFFECT_VALUES = ['none', 'memorial', 'snow', 'ribbon'] as const satisfies ReadonlyArray<FestivalEffect>;
-
 /**
  * National memorial days (MM-DD) where the whole site renders in solemn grayscale.
  * - 05-12: May 12 National Disaster Prevention and Reduction / Wenchuan Earthquake Memorial Day
@@ -63,161 +59,133 @@ const LUNAR_NEW_YEAR_DATES: Readonly<Record<number, string>> = {
   2050: '2050-01-23',
 };
 
-const VALID_FESTIVAL_EFFECTS = new Set<FestivalEffect>(FESTIVAL_EFFECT_VALUES);
-const MEMORIAL_SET = new Set<string>(FESTIVAL_MEMORIAL_DATES);
-const SNOW_SET = new Set<string>(FESTIVAL_SNOW_DATES);
-const NEW_YEAR_SET = new Set<string>(FESTIVAL_NEW_YEAR_DATES);
+const FESTIVAL_CONFIG = {
+  queryParam: 'festival',
+  msPerDay: 86_400_000,
+  effectValues: ['none', 'memorial', 'snow', 'ribbon'] as const satisfies ReadonlyArray<FestivalEffect>,
+  memorialDates: FESTIVAL_MEMORIAL_DATES,
+  snowDates: FESTIVAL_SNOW_DATES,
+  newYearDates: FESTIVAL_NEW_YEAR_DATES,
+  lunarNewYearDates: LUNAR_NEW_YEAR_DATES,
+} as const;
 
-const pad2 = (value: number) => String(value).padStart(2, '0');
+type FestivalConfig = typeof FESTIVAL_CONFIG;
 
-export const parseFestivalOverride = (search?: string | null): FestivalEffect | null => {
-  if (!search) return null;
-  const match = search.match(new RegExp(`(?:^|[?&])${FESTIVAL_QUERY_PARAM}=([^&#]*)`, 'i'));
-  if (!match) return null;
-  try {
-    const candidate = decodeURIComponent(match[1]).trim().toLowerCase() as FestivalEffect;
-    return VALID_FESTIVAL_EFFECTS.has(candidate) ? candidate : null;
-  } catch {
-    return null;
-  }
-};
+// Keep this factory self-contained (no module-level captures) because
+// createFestivalInitializerScript() serializes it directly into the inline <Script>.
+function createFestivalResolver(config: FestivalConfig) {
+  const validEffects = new Set<string>(config.effectValues);
+  const memorialSet = new Set<string>(config.memorialDates);
+  const snowSet = new Set<string>(config.snowDates);
+  const newYearSet = new Set<string>(config.newYearDates);
+  const queryPattern = new RegExp(`(?:^|[?&])${config.queryParam}=([^&#]*)`, 'i');
 
-const getCalendarDateParts = (
-  date: Date = new Date(),
-  timeZoneOffsetMinutes?: number
-): { year: number; month: number; day: number } => {
-  if (typeof timeZoneOffsetMinutes === 'number') {
-    const shifted = new Date(date.getTime() + timeZoneOffsetMinutes * 60_000);
-    return {
-      year: shifted.getUTCFullYear(),
-      month: shifted.getUTCMonth() + 1,
-      day: shifted.getUTCDate(),
-    };
-  }
-  return {
-    year: date.getFullYear(),
-    month: date.getMonth() + 1,
-    day: date.getDate(),
-  };
-};
+  const pad2 = (value: number) => (value < 10 ? `0${value}` : String(value));
 
-const getIntlChineseLunarParts = (year: number, month: number, day: number): { month: number; day: number } | null => {
-  try {
-    const formatter = new Intl.DateTimeFormat('en-US-u-ca-chinese', {
-      timeZone: 'UTC',
-      month: 'numeric',
-      day: 'numeric',
-    });
-    const parts = formatter.formatToParts(new Date(Date.UTC(year, month - 1, day, 12, 0, 0)));
-    const lunarMonth = Number(parts.find((part) => part.type === 'month')?.value);
-    const lunarDay = Number(parts.find((part) => part.type === 'day')?.value);
-    if (!Number.isInteger(lunarMonth) || !Number.isInteger(lunarDay)) return null;
-    return { month: lunarMonth, day: lunarDay };
-  } catch {
-    return null;
-  }
-};
-
-export const isLunarNewYearWindow = (year: number, month: number, day: number): boolean => {
-  const springFestivalIso = LUNAR_NEW_YEAR_DATES[year];
-  if (springFestivalIso) {
-    const [targetYear, targetMonth, targetDay] = springFestivalIso.split('-').map(Number);
-    const currentUtcDay = Date.UTC(year, month - 1, day);
-    const festivalUtcDay = Date.UTC(targetYear, targetMonth - 1, targetDay);
-    const diffDays = Math.round((currentUtcDay - festivalUtcDay) / MS_PER_DAY);
-    return diffDays >= -1 && diffDays <= 6;
-  }
-
-  const today = getIntlChineseLunarParts(year, month, day);
-  if (today && today.month === 1 && today.day >= 1 && today.day <= 7) return true;
-  const tomorrowDate = new Date(Date.UTC(year, month - 1, day + 1));
-  const tomorrow = getIntlChineseLunarParts(
-    tomorrowDate.getUTCFullYear(),
-    tomorrowDate.getUTCMonth() + 1,
-    tomorrowDate.getUTCDate()
-  );
-  return Boolean(tomorrow && tomorrow.month === 1 && tomorrow.day === 1);
-};
-
-export const resolveFestivalEffect = (
-  date: Date = new Date(),
-  search?: string | null,
-  timeZoneOffsetMinutes?: number
-): FestivalEffect => {
-  const override = parseFestivalOverride(search);
-  if (override !== null) return override;
-
-  const { year, month, day } = getCalendarDateParts(date, timeZoneOffsetMinutes);
-  const monthDay = `${pad2(month)}-${pad2(day)}`;
-
-  // Memorial grayscale always takes highest priority over celebratory effects.
-  if (MEMORIAL_SET.has(monthDay)) return 'memorial';
-  if (NEW_YEAR_SET.has(monthDay) || isLunarNewYearWindow(year, month, day)) return 'ribbon';
-  if (SNOW_SET.has(monthDay)) return 'snow';
-  return 'none';
-};
-
-// SYNC CONTRACT: Keep parseOverride(), isLunarNewYear(), and resolve() in sync with
-// parseFestivalOverride(), isLunarNewYearWindow(), and resolveFestivalEffect() above.
-// Must remain a self-contained IIFE template string (no module imports) for <Script strategy="beforeInteractive">.
-export const createFestivalInitializerScript = (): string => `(() => {
-  const memorialDates = new Set(${JSON.stringify(FESTIVAL_MEMORIAL_DATES)});
-  const snowDates = new Set(${JSON.stringify(FESTIVAL_SNOW_DATES)});
-  const newYearDates = new Set(${JSON.stringify(FESTIVAL_NEW_YEAR_DATES)});
-  const lunarNewYearDates = ${JSON.stringify(LUNAR_NEW_YEAR_DATES)};
-  const validEffects = new Set(${JSON.stringify(FESTIVAL_EFFECT_VALUES)});
-  const parseOverride = (search) => {
+  const parseOverride = (search?: string | null): FestivalEffect | null => {
     if (!search) return null;
-    const match = search.match(/(?:^|[?&])${FESTIVAL_QUERY_PARAM}=([^&#]*)/i);
+    const match = search.match(queryPattern);
     if (!match) return null;
     try {
-      const value = decodeURIComponent(match[1]).trim().toLowerCase();
-      return validEffects.has(value) ? value : null;
+      const candidate = decodeURIComponent(match[1]).trim().toLowerCase();
+      return validEffects.has(candidate) ? (candidate as FestivalEffect) : null;
     } catch {
       return null;
     }
   };
-  const isLunarNewYear = (year, month, day) => {
-    const iso = lunarNewYearDates[year];
-    if (iso) {
-      const parts = iso.split('-');
-      const diff = Math.round(
-        (Date.UTC(year, month - 1, day) - Date.UTC(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]))) / ${MS_PER_DAY}
-      );
-      return diff >= -1 && diff <= 6;
-    }
-    try {
-      const fmt = new Intl.DateTimeFormat('en-US-u-ca-chinese', { timeZone: 'UTC', month: 'numeric', day: 'numeric' });
-      const read = (y, m, d) => {
-        const parts = fmt.formatToParts(new Date(Date.UTC(y, m - 1, d, 12, 0, 0)));
-        const lm = Number((parts.find((p) => p.type === 'month') || {}).value);
-        const ld = Number((parts.find((p) => p.type === 'day') || {}).value);
-        return Number.isInteger(lm) && Number.isInteger(ld) ? { m: lm, d: ld } : null;
+
+  const getCalendarDateParts = (
+    date: Date,
+    timeZoneOffsetMinutes?: number
+  ): { year: number; month: number; day: number } => {
+    if (typeof timeZoneOffsetMinutes === 'number') {
+      const shifted = new Date(date.getTime() + timeZoneOffsetMinutes * 60_000);
+      return {
+        year: shifted.getUTCFullYear(),
+        month: shifted.getUTCMonth() + 1,
+        day: shifted.getUTCDate(),
       };
-      const today = read(year, month, day);
-      if (today && today.m === 1 && today.d >= 1 && today.d <= 7) return true;
-      const next = new Date(Date.UTC(year, month - 1, day + 1));
-      const tomorrow = read(next.getUTCFullYear(), next.getUTCMonth() + 1, next.getUTCDate());
-      return Boolean(tomorrow && tomorrow.m === 1 && tomorrow.d === 1);
+    }
+    return {
+      year: date.getFullYear(),
+      month: date.getMonth() + 1,
+      day: date.getDate(),
+    };
+  };
+
+  const getIntlChineseLunarParts = (
+    year: number,
+    month: number,
+    day: number
+  ): { month: number; day: number } | null => {
+    try {
+      const formatter = new Intl.DateTimeFormat('en-US-u-ca-chinese', {
+        timeZone: 'UTC',
+        month: 'numeric',
+        day: 'numeric',
+      });
+      const parts = formatter.formatToParts(new Date(Date.UTC(year, month - 1, day, 12, 0, 0)));
+      const lunarMonth = Number(parts.find((part) => part.type === 'month')?.value);
+      const lunarDay = Number(parts.find((part) => part.type === 'day')?.value);
+      if (!Number.isInteger(lunarMonth) || !Number.isInteger(lunarDay)) return null;
+      return { month: lunarMonth, day: lunarDay };
     } catch {
-      return false;
+      return null;
     }
   };
-  const resolve = () => {
-    const override = parseOverride(typeof window !== 'undefined' && window.location ? window.location.search : '');
+
+  const isLunarNewYearWindow = (year: number, month: number, day: number): boolean => {
+    const springFestivalIso = config.lunarNewYearDates[year];
+    if (springFestivalIso) {
+      const [targetYear, targetMonth, targetDay] = springFestivalIso.split('-').map(Number);
+      const currentUtcDay = Date.UTC(year, month - 1, day);
+      const festivalUtcDay = Date.UTC(targetYear, targetMonth - 1, targetDay);
+      const diffDays = Math.round((currentUtcDay - festivalUtcDay) / config.msPerDay);
+      return diffDays >= -1 && diffDays <= 6;
+    }
+
+    const today = getIntlChineseLunarParts(year, month, day);
+    if (today && today.month === 1 && today.day >= 1 && today.day <= 7) return true;
+    const tomorrowDate = new Date(Date.UTC(year, month - 1, day + 1));
+    const tomorrow = getIntlChineseLunarParts(
+      tomorrowDate.getUTCFullYear(),
+      tomorrowDate.getUTCMonth() + 1,
+      tomorrowDate.getUTCDate()
+    );
+    return Boolean(tomorrow && tomorrow.month === 1 && tomorrow.day === 1);
+  };
+
+  const resolveEffect = (
+    date: Date = new Date(),
+    search?: string | null,
+    timeZoneOffsetMinutes?: number
+  ): FestivalEffect => {
+    const override = parseOverride(search);
     if (override !== null) return override;
-    const now = new Date();
-    const year = now.getFullYear();
-    const month = now.getMonth() + 1;
-    const day = now.getDate();
-    const pad = (n) => (n < 10 ? '0' + n : String(n));
-    const key = pad(month) + '-' + pad(day);
-    if (memorialDates.has(key)) return 'memorial';
-    if (newYearDates.has(key) || isLunarNewYear(year, month, day)) return 'ribbon';
-    if (snowDates.has(key)) return 'snow';
+
+    const { year, month, day } = getCalendarDateParts(date, timeZoneOffsetMinutes);
+    const monthDay = `${pad2(month)}-${pad2(day)}`;
+
+    // Memorial grayscale always takes highest priority over celebratory effects.
+    if (memorialSet.has(monthDay)) return 'memorial';
+    if (newYearSet.has(monthDay) || isLunarNewYearWindow(year, month, day)) return 'ribbon';
+    if (snowSet.has(monthDay)) return 'snow';
     return 'none';
   };
-  const effect = resolve();
+
+  return { parseOverride, isLunarNewYearWindow, resolveEffect };
+}
+
+const festivalResolver = createFestivalResolver(FESTIVAL_CONFIG);
+
+export const parseFestivalOverride = festivalResolver.parseOverride;
+export const isLunarNewYearWindow = festivalResolver.isLunarNewYearWindow;
+export const resolveFestivalEffect = festivalResolver.resolveEffect;
+
+export const createFestivalInitializerScript = (): string => `(() => {
+  const resolver = (${createFestivalResolver.toString()})(${JSON.stringify(FESTIVAL_CONFIG)});
+  const search = typeof window !== 'undefined' && window.location ? window.location.search : '';
+  const effect = resolver.resolveEffect(new Date(), search);
   if (effect === 'none') delete document.documentElement.dataset.festival;
   else document.documentElement.dataset.festival = effect;
 })();`;

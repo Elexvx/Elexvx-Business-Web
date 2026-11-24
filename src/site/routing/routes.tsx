@@ -268,7 +268,7 @@ const publicationRoutes = (insights: Insight[], news: NewsItem[]): SiteRoute[] =
   ...publishedResearch.map((item) => ({
     path: `/research/${item.slug}`,
     meta: articleMeta(item),
-    render: () => <ActivityPage item={item} related={researchItems} research />,
+    render: () => <ActivityPage item={item} related={researchItems} section="research" />,
   })),
   ...publishedActivities
     .filter((item) => !item.externalUrl)

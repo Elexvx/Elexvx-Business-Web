@@ -30,7 +30,7 @@ const parsePathname = (rawUrl = '/') => {
     const normalizedStart = rawUrl.startsWith('/') ? rawUrl.replace(/^\/+/, '/') : `/${rawUrl}`;
     return new URL(normalizedStart, 'http://127.0.0.1').pathname;
   } catch {
-    return null;
+    return undefined;
   }
 };
 
@@ -39,17 +39,17 @@ const safeResolveAsset = (assetRoot: string, pathname: string) => {
   try {
     decoded = decodeURIComponent(pathname);
   } catch {
-    return null;
+    return undefined;
   }
 
   if (decoded.includes('\0') || decoded.split(/[\\/]/).includes('..')) {
-    return null;
+    return undefined;
   }
 
   const candidate = resolve(assetRoot, `.${normalize(decoded)}`);
   const fromRoot = relative(assetRoot, candidate);
   if (isAbsolute(fromRoot) || fromRoot === '..' || fromRoot.startsWith(`..${sep}`)) {
-    return null;
+    return undefined;
   }
 
   return candidate;
@@ -61,7 +61,7 @@ const statSafe = async (target: string) => {
   } catch (error) {
     const code = (error as NodeJS.ErrnoException).code;
     if (code === 'ENOENT' || code === 'ENOTDIR') {
-      return null;
+      return undefined;
     }
     throw error;
   }
@@ -69,10 +69,10 @@ const statSafe = async (target: string) => {
 
 const findAssetFile = async (assetRoot: string, pathname: string) => {
   const candidate = safeResolveAsset(assetRoot, pathname);
-  if (!candidate) return null;
+  if (!candidate) return undefined;
 
   const candidateStat = await statSafe(candidate);
-  if (!candidateStat) return null;
+  if (!candidateStat) return undefined;
 
   if (candidateStat.isFile()) {
     return { file: candidate, size: candidateStat.size };
@@ -86,7 +86,7 @@ const findAssetFile = async (assetRoot: string, pathname: string) => {
     }
   }
 
-  return null;
+  return undefined;
 };
 
 export async function startHumiteDevAssetServer(

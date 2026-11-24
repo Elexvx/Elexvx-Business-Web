@@ -57,21 +57,20 @@ export function useNavigationMenus(visibleNavigationGroups: NavigationGroup[]) {
     });
   };
 
-  const activateGroup = (groupId: string, trigger: HTMLAnchorElement, focusFirstLink = false) => {
-    if (restoringDesktopFocusRef.current) return;
+  const prepareGroupActivation = (groupId: string, trigger: HTMLAnchorElement) => {
+    if (restoringDesktopFocusRef.current) return undefined;
     const nextGroup = visibleNavigationGroups.find((group) => group.id === groupId);
-    if (!nextGroup) return;
-
+    if (!nextGroup) return undefined;
     clearInteractionTimers();
     desktopTriggerRef.current = trigger;
-    setPendingFocusGroup(focusFirstLink ? groupId : null);
-    if (focusFirstLink) {
-      clearContentTransition();
-      setPanelGroup(nextGroup);
-      setPanelContentVisible(true);
-      setOpenGroup(groupId);
-      return;
-    }
+    return nextGroup;
+  };
+
+  const activateGroup = (groupId: string, trigger: HTMLAnchorElement) => {
+    const nextGroup = prepareGroupActivation(groupId, trigger);
+    if (!nextGroup) return;
+
+    setPendingFocusGroup(null);
     if (openGroup && panelGroup && panelGroup.id !== groupId) {
       clearContentTransition();
       setPanelContentVisible(false);
@@ -94,6 +93,17 @@ export function useNavigationMenus(visibleNavigationGroups: NavigationGroup[]) {
         return;
       }
     }
+    setOpenGroup(groupId);
+  };
+
+  const openGroupAndFocusFirstLink = (groupId: string, trigger: HTMLAnchorElement) => {
+    const nextGroup = prepareGroupActivation(groupId, trigger);
+    if (!nextGroup) return;
+
+    clearContentTransition();
+    setPendingFocusGroup(groupId);
+    setPanelGroup(nextGroup);
+    setPanelContentVisible(true);
     setOpenGroup(groupId);
   };
 
@@ -191,6 +201,7 @@ export function useNavigationMenus(visibleNavigationGroups: NavigationGroup[]) {
     navRef,
     mobileMenuButtonRef,
     activateGroup,
+    openGroupAndFocusFirstLink,
     scheduleOpen,
     cancelScheduledOpen,
     closeDesktopMenu,
