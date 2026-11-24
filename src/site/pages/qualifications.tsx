@@ -29,11 +29,7 @@ export const QualificationsPage = () => {
     <SiteShell activePath="/company">
       <ArticleGallery watermark>
         <section className="team-page qualifications-page">
-          <CompanyIntro
-            eyebrow="ELEXVX QUALIFICATIONS"
-            title="企业资质"
-            description="每一项资质与知识产权，都是可以被核验的能力记录。"
-          />
+          <CompanyIntro centered title="企业资质" description="每一项资质与知识产权，都是可以被核验的能力记录。" />
           {qualificationCategories.map((category, categoryIndex) => {
             const categoryItems = qualifications.filter((item) => item.category === category.id);
             return (

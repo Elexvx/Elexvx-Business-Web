@@ -7,19 +7,6 @@
   color: var(--color-ink);
 }
 
-.site-shell-openai .design-guide > .company-intro {
-  max-width: var(--page-max-width);
-  text-align: center;
-}
-
-.site-shell-openai .design-guide > .company-intro :is(h1, .company-intro-description) {
-  margin-inline: auto;
-}
-
-.site-shell-openai .design-guide > .company-intro .company-intro-actions {
-  justify-content: center;
-}
-
 .design-download {
   display: inline-flex;
   align-items: center;

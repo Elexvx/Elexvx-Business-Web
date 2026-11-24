@@ -8,11 +8,7 @@ import { DesignLayoutSection, DesignReferenceSection, DesignSpecimenSection } fr
 export const DesignPage = () => (
   <SiteShell activePath="/company/design">
     <article className="design-guide">
-      <CompanyIntro
-        eyebrow="ELEXVX DESIGN"
-        title="官网设计规范"
-        description="从信息层级到页面边界，让复杂内容保持清楚、安静、可读。"
-      >
+      <CompanyIntro centered title="官网设计规范" description="从信息层级到页面边界，让复杂内容保持清楚、安静、可读。">
         <a className="design-download" href="/company/design/design.md" download="design.md">
           <Translated>{'下载 design.md ↓'}</Translated>
         </a>

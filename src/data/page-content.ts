@@ -12,7 +12,7 @@ type HeroMedia = {
 };
 
 export type PageHeroContent = {
-  eyebrow: string;
+  eyebrow?: string;
   title: string;
   description: string;
   primaryAction: ContentAction;
@@ -239,7 +239,6 @@ export const pageContent = {
   },
   company: {
     hero: {
-      eyebrow: 'ELEXVX COMPANY',
       title: '关于我们',
       description: '我们是一家跨行业研发公司，以 AI 与数据智能为核心，把真实问题做成可验证的技术系统。',
       primaryAction: { label: '查看并行业务', href: '/business' },
@@ -249,7 +248,6 @@ export const pageContent = {
   },
   business: {
     hero: {
-      eyebrow: 'ELEXVX COMPANY / BUSINESS',
       title: '并行业务',
       description: '公司主体承接多元业务，研究主线继续回答更复杂的问题。',
       primaryAction: { label: '联系公司', href: '/contact' },
@@ -274,7 +272,6 @@ export const pageContent = {
   },
   team: {
     hero: {
-      eyebrow: 'ELEXVX TEAM',
       title: '团队',
       description: '研究、工程与现场经验，在同一个问题上相遇。',
       primaryAction: { label: '查看加入机会', href: '/careers' },
@@ -284,7 +281,6 @@ export const pageContent = {
   },
   careers: {
     hero: {
-      eyebrow: 'ELEXVX CAREERS',
       title: '加入 Elexvx',
       description: '和认真做事的人一起，把真实问题变成可以使用的系统。',
       primaryAction: { label: '联系招聘团队', href: '/contact' },
@@ -294,7 +290,6 @@ export const pageContent = {
   },
   contact: {
     hero: {
-      eyebrow: 'ELEXVX CONTACT',
       title: '联系我们',
       description: '从一个真实问题开始，让一次对话走向可验证的合作。',
       primaryAction: { label: '发送合作邮件', href: `mailto:${primaryContactEmail}` },
@@ -304,7 +299,6 @@ export const pageContent = {
   },
   brand: {
     hero: {
-      eyebrow: 'ELEXVX BRAND',
       title: '品牌',
       description: '每一次表达，都应保持清楚、一致、可辨认。',
       primaryAction: { label: '回到研究首页', href: '/' },

@@ -18,7 +18,7 @@ export const TeamPage = () => {
   return (
     <SiteShell activePath="/company">
       <section className="team-page">
-        <CompanyIntro eyebrow="ELEXVX TEAM" title="团队" description="研究、工程与现场经验，在同一个问题上相遇。" />
+        <CompanyIntro centered title="团队" description="研究、工程与现场经验，在同一个问题上相遇。" />
         {teamGroups.map(({ id, zh, en }, groupIndex) => {
           const members = teamMembers.filter((member) => member.group === id);
           const headingId = `team-${id}`;

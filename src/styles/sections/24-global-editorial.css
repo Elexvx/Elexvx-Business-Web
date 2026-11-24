@@ -112,6 +112,19 @@
   justify-content: flex-start;
 }
 
+.site-shell-openai .company-intro.company-intro-centered {
+  text-align: center;
+}
+
+.site-shell-openai .company-intro.company-intro-centered :is(h1, .company-intro-description) {
+  margin-inline: auto;
+}
+
+.site-shell-openai .company-intro.company-intro-centered .company-intro-actions,
+.site-shell-openai .company-intro.company-intro-centered .page-hero-actions {
+  justify-content: center;
+}
+
 .site-shell-openai :is(.team-page, .design-guide, .careers-page):has(> .company-intro) {
   padding-top: var(--page-entry-space);
 }

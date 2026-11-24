@@ -1,5 +1,6 @@
 'use client';
 
+import type { ReactNode } from 'react';
 import { ArticleCard } from '../components/article-card';
 import { IndexHeading } from '../components/index-heading';
 import { useArticleCategoryFilter } from '../providers/category-filter';
@@ -41,10 +42,13 @@ function ActivityCard({
   );
 }
 
-const ActivityHighlights = ({ items }: { items: ActivitySummary[] }) => {
+const ActivityHighlights = ({ heading, items }: { heading?: ReactNode; items: ActivitySummary[] }) => {
   return (
     <div className="activity-highlights">
-      {items[0] && <ActivityCard item={items[0]} placement="lead" />}
+      <div className="activity-highlights-lead-column">
+        {heading}
+        {items[0] && <ActivityCard item={items[0]} placement="lead" />}
+      </div>
       {items.length > 1 && (
         <div className="activity-highlights-side">
           {items.slice(1, 4).map((item) => (
@@ -74,38 +78,39 @@ export const ActivitySection = ({
   const shown = page
     ? entries.filter((item) => category === 'all' || item.categorySlug === category)
     : entries.slice(0, 4);
+  const homeHeading = (
+    <div className="home-section-topline">
+      <h2 className="activity-section-heading" id="activity-section-title">
+        {locale === 'en' ? 'Recent activities' : '最近活动'}
+      </h2>
+    </div>
+  );
   return (
     <section className="home-latest-activity" aria-labelledby="activity-section-title">
-      {page ? (
-        <IndexHeading
-          id="activity-section-title"
-          title={locale === 'en' ? 'Activities' : '活动'}
-          category={t(categories.find((item) => item.id === category)?.label || '')}
-        />
-      ) : (
-        <div className="home-section-topline">
-          <h2 className="activity-section-heading" id="activity-section-title">
-            {locale === 'en' ? 'Recent activities' : '最近活动'}
-          </h2>
-        </div>
-      )}
       {page && (
-        <nav className="research-index-tabs index-category-tabs" aria-label={t('活动分类')}>
-          {[{ id: 'all', label: '全部' }, ...categories].map(({ id, label }) => (
-            <a
-              key={id}
-              href={categoryHref(id)}
-              className={`research-index-tab ${category === id ? 'research-index-tab-active' : ''}`}
-              aria-current={category === id ? 'page' : undefined}
-            >
-              {t(label || '')}
-            </a>
-          ))}
-        </nav>
+        <>
+          <IndexHeading
+            id="activity-section-title"
+            title={locale === 'en' ? 'Activities' : '活动'}
+            category={t(categories.find((item) => item.id === category)?.label || '')}
+          />
+          <nav className="research-index-tabs index-category-tabs" aria-label={t('活动分类')}>
+            {[{ id: 'all', label: '全部' }, ...categories].map(({ id, label }) => (
+              <a
+                key={id}
+                href={categoryHref(id)}
+                className={`research-index-tab ${category === id ? 'research-index-tab-active' : ''}`}
+                aria-current={category === id ? 'page' : undefined}
+              >
+                {t(label || '')}
+              </a>
+            ))}
+          </nav>
+        </>
       )}
       {shown.length ? (
         !page ? (
-          <ActivityHighlights items={shown} />
+          <ActivityHighlights heading={homeHeading} items={shown} />
         ) : (
           <div className="home-media-grid home-products-grid">
             {shown.map((item, index) => (
@@ -114,7 +119,10 @@ export const ActivitySection = ({
           </div>
         )
       ) : (
-        <HomeEmptyContent />
+        <>
+          {!page && homeHeading}
+          <HomeEmptyContent />
+        </>
       )}
     </section>
   );

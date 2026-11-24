@@ -17,7 +17,7 @@ import { PageHero, BusinessCard, NotFoundPage } from './shared';
 
 export const CompanyPage = () => (
   <SiteShell activePath="/company" className="company-overview">
-    <PageHero content={pageContent.company.hero} />
+    <PageHero content={pageContent.company.hero} centered />
     <ResearchTile tone="light" eyebrow="ABOUT ELEXVX" title="我们是谁？">
       <div className="company-introduction">
         {companyContent.introduction.map((paragraph) => (
@@ -71,7 +71,7 @@ export const CompanyPage = () => (
 
 export const BusinessPage = () => (
   <SiteShell activePath="/company">
-    <PageHero content={pageContent.business.hero} />
+    <PageHero content={pageContent.business.hero} centered />
     <section className="research-tile research-tile-light">
       <div className="business-grid">
         {businessLines.map((line) => (
@@ -88,8 +88,8 @@ export const BusinessLinePage = ({ slug }: { slug: string }) => {
   return (
     <SiteShell activePath="/company">
       <PageHero
+        centered
         content={{
-          eyebrow: line.englishTitle,
           title: line.title,
           description: line.summary,
           primaryAction: pageContent.businessLine.primaryAction,
@@ -238,11 +238,7 @@ const ContactOfficesSection = () => {
 export const ContactPage = () => (
   <SiteShell activePath="/contact">
     <section className="team-page contact-page">
-      <CompanyIntro
-        eyebrow="ELEXVX CONTACT"
-        title="联系我们"
-        description="从一个真实问题开始，让一次对话走向可验证的合作。"
-      />
+      <CompanyIntro centered title="联系我们" description="从一个真实问题开始，让一次对话走向可验证的合作。" />
       <ContactEmailsSection />
       <ContactOfficesSection />
     </section>
@@ -251,7 +247,7 @@ export const ContactPage = () => (
 
 export const BrandPage = () => (
   <SiteShell activePath="/company" className="company-overview brand-overview">
-    <PageHero content={pageContent.brand.hero} />
+    <PageHero content={pageContent.brand.hero} centered />
     <ResearchTile tone="light" title="核心视觉资产" description="官方提供的标准化商标文件，可根据场景选择合适版本。">
       <div className="brand-original-gallery">
         {[

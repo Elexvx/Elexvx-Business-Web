@@ -76,7 +76,15 @@ export const HomeEmptyContent = () => {
   );
 };
 
-export const PageHero = ({ content, className }: { content: PageHeroContent; className?: string }) => {
+export const PageHero = ({
+  content,
+  className,
+  centered = false,
+}: {
+  content: PageHeroContent;
+  className?: string;
+  centered?: boolean;
+}) => {
   const { t } = useI18n();
   return (
     <section className={classNames('page-hero', className)}>
@@ -85,6 +93,7 @@ export const PageHero = ({ content, className }: { content: PageHeroContent; cla
           eyebrow={content.eyebrow}
           title={<Title text={content.title} />}
           description={t(content.description)}
+          centered={centered}
         >
           <div className="page-hero-actions">
             <ActionButton href={content.primaryAction.href}>

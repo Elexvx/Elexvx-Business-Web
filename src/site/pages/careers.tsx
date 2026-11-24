@@ -24,7 +24,7 @@ export const CareersPage = () => {
   return (
     <SiteShell activePath="/careers">
       <div className="careers-page">
-        <CompanyIntro eyebrow="ELEXVX CAREERS" title="加入 Elexvx" description={careersContent.intro}>
+        <CompanyIntro centered title="加入 Elexvx" description={careersContent.intro}>
           {jobs.length > 0 && <ActionButton href="#open-roles">查看热招职位</ActionButton>}
         </CompanyIntro>
         <section className="careers-culture" aria-labelledby="culture-title">
