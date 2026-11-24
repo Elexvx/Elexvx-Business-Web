@@ -11,6 +11,7 @@ import {
 } from '../src/site/components/hero-schedule';
 import { HomeHero, HomeLaunchProvider } from '../src/site/components/home-hero';
 import { HomeStaticMain } from '../src/site/components/home-static-main';
+import { ShowcaseFrame } from '../src/site/components/showcase-frame';
 import { HomeWelcomeRest } from '../src/site/pages/home';
 import { LanguageProvider } from '../src/site/providers/i18n';
 
@@ -157,10 +158,27 @@ describe('HomeHero rendering', () => {
     expect(html).toContain('<h1>准备好了吗<br/>下一幕开始</h1>');
     expect(html).toContain('<p class="home-product-description">这是发布后的示例文案。</p>');
     expect(html).toContain('id="humite-preview"');
-    expect(html).toContain('<div class="home-mac-screen"><noscript><iframe src="/example/index.html"');
+    expect(html).toContain('<div class="home-mac-screen">');
+    expect(html).toContain('home-mac-facade');
+    expect(html).toContain('进入 3D 预览');
+    expect(html).toContain('<noscript><iframe src="/example/index.html"');
     expect(html.split('<noscript>')[0]).not.toContain('<iframe');
     expect(html).not.toContain('home-hero-particles');
     expect(html).not.toContain('role="timer"');
+  });
+
+  it('translates the 3D showcase facade in English when rendered directly', () => {
+    const html = renderToStaticMarkup(
+      <LanguageProvider locale="en" path="/en/" autoRedirect={false}>
+        <ShowcaseFrame src="/example/index.html" title="3D Showcase Simulation" />
+      </LanguageProvider>
+    );
+
+    expect(html).toContain('Interactive 3D preview');
+    expect(html).toContain('Launch 3D preview');
+    expect(html).toContain('3D Showcase Simulation');
+    expect(html.split('<noscript>')[0]).not.toContain('<iframe');
+    expect(html).not.toMatch(/[\u4e00-\u9fff]/);
   });
 
   it('translates all waiting stage copy into English on /en/', () => {

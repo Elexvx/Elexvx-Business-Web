@@ -1,6 +1,7 @@
 import { runInNewContext } from 'node:vm';
 import { describe, expect, it } from 'vitest';
 
+import { getNextThemeMode } from '../src/site/providers/theme-provider';
 import {
   createThemeInitializerScript,
   DEFAULT_SUN_LOCATION,
@@ -188,5 +189,27 @@ describe('theme preference resolution', () => {
         expect(element.style.colorScheme).toBe(expected);
       }
     }
+  });
+
+  it('resolves pre-dawn Shanghai time as dark and cycles back to automatic mode', () => {
+    const preDawnInstant = Date.parse('2026-11-25T03:19:41+08:00');
+    const ZonedShanghai = createZonedDateClass(preDawnInstant, 'Asia/Shanghai');
+
+    expect(getSolarTheme(new ZonedShanghai(), DEFAULT_SUN_LOCATION)).toBe('dark');
+    const initialized = runThemeInitializer({
+      instantMs: preDawnInstant,
+      timeZone: 'Asia/Shanghai',
+      pathname: '/company/',
+      localStorage: { getItem: () => null },
+    });
+    expect(initialized.dataset.theme).toBe('dark');
+
+    expect(getNextThemeMode('auto', 'dark')).toBe('light');
+    expect(getNextThemeMode('light', 'dark')).toBe('dark');
+    expect(getNextThemeMode('dark', 'dark')).toBe('auto');
+
+    expect(getNextThemeMode('auto', 'light')).toBe('dark');
+    expect(getNextThemeMode('dark', 'light')).toBe('light');
+    expect(getNextThemeMode('light', 'light')).toBe('auto');
   });
 });

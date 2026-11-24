@@ -170,7 +170,7 @@ export const ActivityPage = ({
             <time dateTime={item.publishedAt}>
               <Translated>{item.publishedAt}</Translated>
             </time>
-            <Eyebrow>{isResearch ? 'ELEXVX RESEARCH' : 'ELEXVX ACTIVITIES'}</Eyebrow>
+            <Eyebrow>{isResearch ? t('研究文章') : t('活动报道')}</Eyebrow>
           </div>
           <h1>{t(item.title)}</h1>
           <p className="article-excerpt">{t(item.excerpt)}</p>

@@ -11,7 +11,7 @@ export function StatusHistory({ data }: { data: StatusData }) {
     <section className="service-status-panel" aria-labelledby="service-history-title">
       <header className="service-status-panel-heading">
         <div>
-          <Eyebrow>HISTORY / {serviceNavigationConfig.status.historyDays} DAYS</Eyebrow>
+          <Eyebrow>历史记录 / {serviceNavigationConfig.status.historyDays} 天</Eyebrow>
           <h2 id="service-history-title">历史可用性</h2>
         </div>
         <span>每个条代表一天的可用率</span>

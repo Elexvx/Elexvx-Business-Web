@@ -14,7 +14,7 @@ import { ActionButton, classNames, Eyebrow } from '../components/index';
 import { LocalizedText as T, LocalizedTitle as Title, Translated, useI18n } from '../providers/i18n';
 
 export const ProjectCard = ({ project }: { project: Project }) => {
-  const { t, href } = useI18n();
+  const { t, href, locale } = useI18n();
   return (
     <article className="project-card">
       {project.image && (
@@ -29,28 +29,25 @@ export const ProjectCard = ({ project }: { project: Project }) => {
         </div>
       )}
       <Eyebrow>
-        <Translated>{`PROJECT / ${project.status.toUpperCase()}`}</Translated>
+        {locale === 'en' ? `PROJECT / ${t(project.status).toUpperCase()}` : `项目 / ${t(project.status)}`}
       </Eyebrow>
       <h2>
         <Title text={project.title} />
       </h2>
-      <p className="card-english">
-        <Translated>{project.englishTitle}</Translated>
-      </p>
       <p>{t(project.output)}</p>
       <div className="project-card-details">
         <div>
-          <span className="project-card-detail-label">THE QUESTION</span>
+          <span className="project-card-detail-label">{t('核心问题')}</span>
           <p>{t(project.problem)}</p>
         </div>
         <div>
-          <span className="project-card-detail-label">THE APPROACH</span>
+          <span className="project-card-detail-label">{t('技术路径')}</span>
           <p>{t(project.approach)}</p>
         </div>
       </div>
       <div className="card-footer">
         <span className="card-index">
-          <Translated>{`${project.evidence.length} EVIDENCE`}</Translated>
+          {locale === 'en' ? `${project.evidence.length} EVIDENCE` : `${project.evidence.length} 项证据`}
         </span>
         {!isDisabledPath(`/projects/${project.slug}`) && (
           <a className="card-link" href={href(`/projects/${project.slug}`)}>
@@ -127,20 +124,17 @@ export const InsightList = ({ insights }: { insights: InsightSummary[] }) => (
 );
 
 export const ScenarioCard = ({ scenario }: { scenario: Scenario }) => {
-  const { t, href } = useI18n();
+  const { t, href, locale } = useI18n();
   return (
     <article className="scenario-card">
-      <Eyebrow>SCENARIO</Eyebrow>
+      <Eyebrow>{locale === 'en' ? 'SCENARIO' : '行业场景'}</Eyebrow>
       <h2>
         <Title text={scenario.title} />
       </h2>
-      <p className="card-english">
-        <Translated>{scenario.englishTitle}</Translated>
-      </p>
       <p>{t(scenario.summary)}</p>
       <div className="card-footer">
         <span className="card-index">
-          <Translated>{`${scenario.projectSlugs.length} PROJECTS`}</Translated>
+          {locale === 'en' ? `${scenario.projectSlugs.length} PROJECTS` : `${scenario.projectSlugs.length} 个项目`}
         </span>
         <a className="card-link" href={href(`/scenarios/${scenario.slug}`)}>
           {t('查看场景')}
@@ -151,19 +145,16 @@ export const ScenarioCard = ({ scenario }: { scenario: Scenario }) => {
 };
 
 export const BusinessCard = ({ line }: { line: BusinessLine }) => {
-  const { t, href } = useI18n();
+  const { t, href, locale } = useI18n();
   return (
     <article className="business-card">
-      <Eyebrow>COMPANY BUSINESS</Eyebrow>
+      <Eyebrow>{locale === 'en' ? 'COMPANY BUSINESS' : '并行业务'}</Eyebrow>
       <h2>
         <Title text={line.title} />
       </h2>
-      <p className="card-english">
-        <Translated>{line.englishTitle}</Translated>
-      </p>
       <p>{t(line.summary)}</p>
       <div className="card-footer">
-        <span className="card-index">PARALLEL LINE</span>
+        <span className="card-index">{locale === 'en' ? 'PARALLEL LINE' : '并行业务线'}</span>
         <a className="card-link" href={href(line.href)}>
           {t('进入业务')}
         </a>
@@ -172,13 +163,16 @@ export const BusinessCard = ({ line }: { line: BusinessLine }) => {
   );
 };
 
-export const EmptyState = ({ text }: { text: string }) => (
-  <div className="empty-state">
-    <span>CONTENT IN PROGRESS</span>
-    <strong>
-      <T text={text} />
-    </strong>
-  </div>
-);
+export const EmptyState = ({ text }: { text: string }) => {
+  const { locale } = useI18n();
+  return (
+    <div className="empty-state">
+      <span>{locale === 'en' ? 'CONTENT IN PROGRESS' : '内容建设中'}</span>
+      <strong>
+        <T text={text} />
+      </strong>
+    </div>
+  );
+};
 
 export const NotFoundPage = () => <ErrorPage code={404} />;

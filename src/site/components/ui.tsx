@@ -83,19 +83,19 @@ export const TechnicalFigure = ({
   const { t } = useI18n();
   const figureContent = {
     network: {
-      eyebrow: 'RESEARCH MAP',
+      eyebrow: '研究图谱',
       title: '研究系统 / 真实问题',
       description: '这里将替换为研究方向、问题与方法之间的真实关系图。',
       asset: '研究方向关系图',
     },
     signal: {
-      eyebrow: 'PROJECT EVIDENCE',
+      eyebrow: '项目证据',
       title: '项目系统 / 证据边界',
       description: '这里将替换为真实项目现场、系统截图或技术架构图。',
       asset: '项目现场或系统架构图',
     },
     boundary: {
-      eyebrow: 'METHOD MAP',
+      eyebrow: '方法图谱',
       title: '方向 → 方法 → 输出',
       description: '这里将替换为已核验的研究流程或成果素材。',
       asset: '研究流程 / 输出关系图',
@@ -106,14 +106,14 @@ export const TechnicalFigure = ({
     <figure className={classNames('technical-figure', `technical-figure-${variant}`)}>
       <div className="technical-figure-head">
         <div>
-          <p className="technical-figure-eyebrow">{figureContent.eyebrow}</p>
+          <p className="technical-figure-eyebrow">{t(figureContent.eyebrow)}</p>
           <figcaption>{t(label ?? figureContent.title)}</figcaption>
         </div>
-        <span className="technical-figure-status">REAL ASSET / PENDING</span>
+        <span className="technical-figure-status">{t('真实素材 / 待补充')}</span>
       </div>
       <div className="technical-figure-body">
         <div className="technical-figure-state">
-          <span className="technical-figure-state-label">CONTENT STATE</span>
+          <span className="technical-figure-state-label">{t('内容状态')}</span>
           <strong>{t('结构已保留')}</strong>
           <p>{t(figureContent.description)}</p>
         </div>

@@ -55,7 +55,7 @@ export const CaseStudyPage = ({ item, related }: { item: CaseStudy; related: Cas
           <ArticleMetadata author={item.author} keywords={item.keywords} keywordsEn={item.keywordsEn} />
         </ArticleBody>
         <div className="article-evidence">
-          <Eyebrow>CASE STUDY</Eyebrow>
+          <Eyebrow>{locale === 'en' ? 'CASE STUDY' : '合作案例'}</Eyebrow>
           <span>{locale === 'en' ? 'Publishing systems' : '出版数字化'}</span>
           <a href={href('/')}>{locale === 'en' ? 'Back to home' : '返回首页'}</a>
         </div>

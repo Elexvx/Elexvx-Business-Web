@@ -13,7 +13,21 @@ import {
 } from '../theme';
 
 export type { ColorTheme } from '../theme';
-type ThemeMode = 'auto' | ColorTheme;
+export type ThemeMode = 'auto' | ColorTheme;
+
+/**
+ * Advances theme mode through automatic, manual override, and back to automatic
+ * so users can always inspect or recover sunrise/sunset auto-switching.
+ */
+export function getNextThemeMode(currentMode: ThemeMode, solarTheme: ColorTheme): ThemeMode {
+  if (currentMode === 'auto') {
+    return solarTheme === 'dark' ? 'light' : 'dark';
+  }
+  if (currentMode !== solarTheme) {
+    return solarTheme;
+  }
+  return 'auto';
+}
 
 const AUTOMATIC_THEME_REFRESH_INTERVAL_MS = 60_000;
 
@@ -23,6 +37,7 @@ type ThemeContextValue = {
   setTheme: (theme: ColorTheme) => void;
   setAutomaticTheme: () => void;
   toggleTheme: () => void;
+  cycleThemeMode: () => void;
 };
 
 const ThemeContext = createContext<ThemeContextValue | null>(null);
@@ -98,16 +113,25 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
     };
   }, [applyMode]);
 
-  const setMode = (nextMode: ThemeMode) => {
-    applyMode(nextMode);
-    try {
-      window.localStorage.setItem(THEME_STORAGE_KEY, nextMode);
-    } catch {
-      // Theme switching should continue to work when storage is unavailable.
-    }
-  };
+  const setMode = useCallback(
+    (nextMode: ThemeMode) => {
+      applyMode(nextMode);
+      try {
+        if (nextMode === 'auto') window.localStorage.removeItem(THEME_STORAGE_KEY);
+        else window.localStorage.setItem(THEME_STORAGE_KEY, nextMode);
+      } catch {
+        // Theme switching should continue to work when storage is unavailable.
+      }
+    },
+    [applyMode]
+  );
 
-  const setTheme = (nextTheme: ColorTheme) => setMode(nextTheme);
+  const setTheme = useCallback((nextTheme: ColorTheme) => setMode(nextTheme), [setMode]);
+
+  const cycleThemeMode = useCallback(() => {
+    const solarTheme = getSolarTheme(new Date(), sunLocationRef.current);
+    setMode(getNextThemeMode(mode, solarTheme));
+  }, [mode, setMode]);
 
   const value = useMemo<ThemeContextValue>(
     () => ({
@@ -116,8 +140,9 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
       setTheme,
       setAutomaticTheme: () => setMode('auto'),
       toggleTheme: () => setTheme(theme === 'dark' ? 'light' : 'dark'),
+      cycleThemeMode,
     }),
-    [theme, mode]
+    [theme, mode, setTheme, setMode, cycleThemeMode]
   );
 
   return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;

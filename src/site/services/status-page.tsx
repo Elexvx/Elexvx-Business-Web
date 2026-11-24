@@ -20,7 +20,7 @@ export const StatusPage = ({ history = false }: { history?: boolean }) => {
       <div className="service-status-main">
         <header className="service-status-heading">
           <div>
-            <Eyebrow>ELEXVX / PLATFORM STATUS</Eyebrow>
+            <Eyebrow>平台服务状态</Eyebrow>
             <h1>{history ? '历史可用性' : '服务状态'}</h1>
             <p>{history ? `查看最近 ${historyDays} 天的服务运行记录` : serviceNavigationConfig.status.description}</p>
           </div>

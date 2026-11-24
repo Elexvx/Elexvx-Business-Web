@@ -1,5 +1,4 @@
 'use client';
-import { Switch } from 'radix-ui';
 import { useState } from 'react';
 import { PlusOutlined } from '@ant-design/icons';
 import { SiteImage } from './site-image';
@@ -139,36 +138,43 @@ function FooterRegistrations({
 }
 
 function FooterThemeToggle({ locale }: { locale: Locale }) {
-  const { theme, mode, toggleTheme } = useTheme();
+  const { theme, mode, cycleThemeMode } = useTheme();
   const isEnglish = locale === 'en';
   const isDark = theme === 'dark';
   const isAuto = mode === 'auto';
+  const themeNameZh = isDark ? '深色' : '浅色';
+  const themeNameEn = isDark ? 'Dark' : 'Light';
 
   const ariaLabel = isEnglish
     ? `${isAuto ? 'Automatic' : 'Manual'} ${theme} mode`
-    : `${isAuto ? '自动' : '手动'}${isDark ? '深色' : '浅色'}模式`;
+    : `${isAuto ? '自动' : '手动'}${themeNameZh}模式`;
 
   const title = isEnglish
     ? isAuto
-      ? 'Theme follows local sunrise and sunset. Click to set a manual mode.'
-      : `Manual theme. Click to switch to ${isDark ? 'light' : 'dark'} mode.`
+      ? 'Theme follows local sunrise and sunset. Click to switch manually.'
+      : `Manual ${theme} mode. Click to switch or return to automatic day/night mode.`
     : isAuto
-      ? '主题随本地日出日落自动切换，点击可手动设置。'
-      : `手动模式，点击切换到${isDark ? '浅色' : '深色'}模式。`;
+      ? '主题随本地日出日落自动切换，点击可切换为手动模式。'
+      : `当前为手动${themeNameZh}模式，点击可切换或恢复日夜自动切换。`;
 
-  const label = isEnglish ? (isDark ? 'Dark mode' : 'Light mode') : isDark ? '深色模式' : '浅色模式';
+  const label = isEnglish
+    ? isAuto
+      ? `Auto (${themeNameEn})`
+      : `${themeNameEn} mode`
+    : isAuto
+      ? `自动（${themeNameZh}）`
+      : `${themeNameZh}模式`;
 
   return (
-    <Switch.Root
+    <button
       className="footer-cookie-settings"
       type="button"
       aria-label={ariaLabel}
-      checked={isDark}
       title={title}
-      onCheckedChange={toggleTheme}
+      onClick={cycleThemeMode}
     >
       <span>{label}</span>
-    </Switch.Root>
+    </button>
   );
 }
 

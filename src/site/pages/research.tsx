@@ -238,6 +238,7 @@ export const ResearchPage = ({
 };
 
 export const ResearchDirectionPage = ({ slug }: { slug: string }) => {
+  const { locale } = useI18n();
   const direction = getDirection(slug);
   if (!direction) return <NotFoundPage />;
   const directionProjects = projects.filter((project) => project.directionSlug === direction.slug);
@@ -246,7 +247,7 @@ export const ResearchDirectionPage = ({ slug }: { slug: string }) => {
     <SiteShell activePath="/research">
       <PageHero
         content={{
-          eyebrow: direction.englishTitle,
+          eyebrow: locale === 'en' ? direction.englishTitle : direction.title,
           title: direction.question,
           description: direction.summary,
           primaryAction: pageContent.direction.primaryAction,

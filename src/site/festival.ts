@@ -183,6 +183,7 @@ export const isLunarNewYearWindow = festivalResolver.isLunarNewYearWindow;
 export const resolveFestivalEffect = festivalResolver.resolveEffect;
 
 export const createFestivalInitializerScript = (): string => `(() => {
+  const __name = (target) => target;
   const resolver = (${createFestivalResolver.toString()})(${JSON.stringify(FESTIVAL_CONFIG)});
   const search = typeof window !== 'undefined' && window.location ? window.location.search : '';
   const effect = resolver.resolveEffect(new Date(), search);

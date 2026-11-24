@@ -58,7 +58,7 @@ const ShowcasePreview = ({ showcase }: { showcase: NonNullable<ProductShowcaseCo
   const { t } = useI18n();
   return (
     <section className="lumira-section" id={showcase.id} aria-labelledby={showcase.titleId}>
-      <p className="eyebrow">{showcase.eyebrow}</p>
+      <p className="eyebrow">{t(showcase.eyebrow)}</p>
       <h2 id={showcase.titleId}>
         <Translated>{showcase.title}</Translated>
       </h2>
@@ -82,7 +82,9 @@ const ShowcasePreview = ({ showcase }: { showcase: NonNullable<ProductShowcaseCo
 
 const ShowcaseStack = ({ stack }: { stack: ProductShowcaseContent['stack'] }) => (
   <section className="lumira-section" aria-labelledby={stack.titleId}>
-    <p className="eyebrow">TECHNOLOGY STACK</p>
+    <p className="eyebrow">
+      <Translated>{'技术栈'}</Translated>
+    </p>
     <h2 id={stack.titleId}>
       <Translated>{stack.title}</Translated>
     </h2>

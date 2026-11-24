@@ -82,7 +82,7 @@ export const homeContent = {
   },
   latestActivity: {
     enabled: true,
-    eyebrow: 'LATEST ACTIVITY',
+    eyebrow: '最新活动',
     status: '正在进行',
     title: 'Elexvx 最新活动',
     description: '当前活动正在进行中，进展、参与方式和后续安排会在这里持续更新。',
@@ -116,7 +116,7 @@ export const productsBeforeLaunch = homeContent.product.items.filter((item) => i
 export const pageContent = {
   research: {
     hero: {
-      eyebrow: 'ELEXVX RESEARCH',
+      eyebrow: '研究主页',
       title: '我们研究什么，决定我们如何研发。',
       description: '研究方向共同构成 Elexvx Research 面向真实世界的技术问题地图。',
       primaryAction: { label: '查看技术成果', href: '/projects' },
@@ -128,38 +128,38 @@ export const pageContent = {
     primaryAction: { label: '查看相关成果', href: '/projects' },
     secondaryAction: { label: '全部研究方向', href: '/research' },
     methods: {
-      eyebrow: 'METHODS',
+      eyebrow: '研究方法',
       title: '研究方法，是方向变成能力的地方。',
       description: '公开内容会逐步说明我们如何采集信息、建立模型、验证系统，以及哪些问题仍然没有答案。',
     },
-    outputs: { eyebrow: 'OUTPUTS', title: '从这个方向已经产生了什么。' },
-    insights: { eyebrow: 'RELATED INSIGHTS', title: '把方向变成可以被阅读的研究记录。' },
+    outputs: { eyebrow: '研究成果', title: '从这个方向已经产生了什么。' },
+    insights: { eyebrow: '相关文章', title: '把方向变成可以被阅读的研究记录。' },
     emptyOutputs: '相关成果正在整理，首版先保留研究结构和公开边界。',
     emptyInsights: '相关技术文章正在整理。',
   },
   capabilities: {
     hero: {
-      eyebrow: 'R&D CAPABILITIES',
+      eyebrow: '研发能力',
       title: '让研发过程可以被看见、被复盘、被继续。',
       description: '我们同时做可复用的自主产品，也承接面向真实问题的定制研发；共同点是把过程和边界说清楚。',
       primaryAction: startCollaborationAction,
       secondaryAction: { label: '查看项目成果', href: '/projects' },
       media: visuals.system,
     },
-    loop: { eyebrow: 'THE R&D LOOP', title: '每一次交付，都应该成为下一次研发的起点。' },
+    loop: { eyebrow: '研发闭环', title: '每一次交付，都应该成为下一次研发的起点。' },
     delivery: {
       tone: 'light',
-      eyebrow: 'DELIVERY MODES',
+      eyebrow: '交付方式',
       title: '从可复用产品，到定制研发。',
       description: '两种方式服务于同一个目标：在具体场景中形成可被验证的技术成果。',
       items: [
         {
-          eyebrow: '01 / REUSABLE',
+          eyebrow: '01 / 可复用',
           title: '自主产品',
           description: '把反复出现的问题沉淀为可以被复用、被迭代的产品能力。',
         },
         {
-          eyebrow: '02 / CUSTOM',
+          eyebrow: '02 / 定制化',
           title: '定制研发',
           description: '从合作方的真实问题出发，共同完成问题定义、系统构建和场景验证。',
         },
@@ -168,27 +168,27 @@ export const pageContent = {
   },
   projects: {
     hero: {
-      eyebrow: 'PROJECTS & OUTCOMES',
+      eyebrow: '项目与成果',
       title: '用可说明的成果，回答研究有没有进入现实。',
       description: '这里展示产品、原型与项目系统；每一项内容都会注明阶段和证据边界。',
       primaryAction: startCollaborationAction,
       secondaryAction: { label: '研究方向', href: '/research' },
       media: visuals.system,
     },
-    list: { eyebrow: 'PUBLIC OUTPUTS', title: '目前公开的项目结构。' },
+    list: { eyebrow: '公开成果', title: '目前公开的项目结构。' },
   },
   project: {
     primaryAction: startCollaborationAction,
     secondaryAction: { label: '全部项目成果', href: '/projects' },
-    question: { tone: 'dark', eyebrow: 'THE QUESTION', title: '问题先于方案。' } satisfies TileContent,
+    question: { tone: 'dark', eyebrow: '核心问题', title: '问题先于方案。' } satisfies TileContent,
     approach: {
       tone: 'light',
-      eyebrow: 'THE APPROACH',
+      eyebrow: '技术路径',
       title: '把数据、模型和工作流放进同一个系统。',
     } satisfies TileContent,
     evidence: {
       tone: 'parchment',
-      eyebrow: 'EVIDENCE',
+      eyebrow: '公开证据',
       title: '证据必须和结论放在一起。',
       description:
         '当前项目以内部技术材料作为公开内容的基础；后续会在素材和审核完成后补充更完整的图像、文档与评测记录。',
@@ -206,7 +206,7 @@ export const pageContent = {
   },
   scenarios: {
     hero: {
-      eyebrow: 'INDUSTRY SCENARIOS',
+      eyebrow: '行业场景',
       title: '技术能力只有进入场景，才会遇到真正的问题。',
       description: '我们以场景组织研发问题，而不是用行业标签替代对现场的理解。',
       primaryAction: { label: '查看项目成果', href: '/projects' },
@@ -219,23 +219,23 @@ export const pageContent = {
     secondaryAction: { label: '全部行业场景', href: '/scenarios' },
     question: {
       tone: 'dark',
-      eyebrow: 'SCENARIO / QUESTION',
+      eyebrow: '场景问题',
       title: '先理解现场，再决定系统。',
       description: '场景页用于说明问题的环境、参与者、约束与可验证输出；它不是一张服务价目表。',
     } satisfies TileContent,
-    projects: { eyebrow: 'RELATED PROJECTS', title: '在这个场景中产生的成果。' },
+    projects: { eyebrow: '相关项目', title: '在这个场景中产生的成果。' },
     emptyProjects: '相关项目正在整理。',
   },
   news: {
     hero: {
-      eyebrow: 'LATEST UPDATES',
+      eyebrow: '最新动态',
       title: '最近新闻',
       description: '公司公告、业务动态与阶段性记录统一收录在这里，并按发布时间持续更新。',
       primaryAction: { label: '回到首页', href: '/' },
       secondaryAction: { label: '技术文章', href: '/research' },
       media: visuals.research,
     },
-    list: { eyebrow: 'NEWSROOM', title: '按时间查看全部动态。' },
+    list: { eyebrow: '新闻动态', title: '按时间查看全部动态。' },
   },
   company: {
     hero: {
@@ -260,7 +260,7 @@ export const pageContent = {
     secondaryAction: { label: '全部并行业务', href: '/business' },
     detail: {
       tone: 'parchment',
-      eyebrow: 'COMPANY BUSINESS',
+      eyebrow: '并行业务',
       title: '独立呈现，清晰承接。',
       description:
         '这部分内容属于 Elexvx 公司主体的并行业务，不会冒充 Elexvx Research 的研究成果。首版保留结构和入口，具体服务内容后续按正式材料补充。',
@@ -308,7 +308,7 @@ export const pageContent = {
   },
   archive: {
     hero: {
-      eyebrow: 'ARCHIVE',
+      eyebrow: '旧文归档',
       title: '旧内容保留，但不代表新的研究主线。',
       description: '旧文章进入独立归档区；它们不参与首页、研究方向和新博客的内容排序。',
       primaryAction: { label: '阅读新技术文章', href: '/research' },
@@ -317,11 +317,11 @@ export const pageContent = {
     },
     legacy: {
       tone: 'dark',
-      eyebrow: 'LEGACY CONTENT',
+      eyebrow: '历史内容',
       title: '归档区正在整理。',
       description: '旧站内容包含公司动态、业务宣传和早期技术材料；后续会按来源、时间和证据边界逐项整理。',
     } satisfies TileContent,
-    status: 'NO INDEX',
+    status: '不参与索引',
     state: '不把旧叙事当作新定位',
   },
 } as const;

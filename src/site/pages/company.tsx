@@ -18,7 +18,7 @@ import { PageHero, BusinessCard, NotFoundPage } from './shared';
 export const CompanyPage = () => (
   <SiteShell activePath="/company" className="company-overview">
     <PageHero content={pageContent.company.hero} centered />
-    <ResearchTile tone="light" eyebrow="ABOUT ELEXVX" title="我们是谁？">
+    <ResearchTile tone="light" title="我们是谁？">
       <div className="company-introduction">
         {companyContent.introduction.map((paragraph) => (
           <p key={paragraph}>
@@ -124,7 +124,6 @@ const ContactEmailsSection = () => {
   return (
     <section className="contact-section" aria-labelledby="contact-departments-title">
       <div className="contact-section-heading">
-        <span className="eyebrow">ELEXVX / EMAIL</span>
         <h2 id="contact-departments-title">
           <Translated>{'部门邮箱'}</Translated>
         </h2>
@@ -188,7 +187,6 @@ const ContactOfficesSection = () => {
   return (
     <section className="contact-section" aria-labelledby="contact-offices-title">
       <div className="contact-section-heading">
-        <span className="eyebrow">ELEXVX / LOCATIONS</span>
         <h2 id="contact-offices-title">
           <Translated>{'办公地点'}</Translated>
         </h2>

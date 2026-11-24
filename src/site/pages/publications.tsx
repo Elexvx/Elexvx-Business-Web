@@ -146,7 +146,7 @@ export const InsightPage = ({ insight }: { insight: Insight }) => {
       <article className="article-layout">
         <ArticleDetailHeader
           kickerDate={<Translated>{insight.publishedAt}</Translated>}
-          eyebrow={direction?.englishTitle ?? 'ELEXVX RESEARCH'}
+          eyebrow={direction ? t(direction.title) : t('研究文章')}
           title={<Title text={insight.title} />}
           excerpt={insight.excerpt}
           author={insight.author}
@@ -156,7 +156,7 @@ export const InsightPage = ({ insight }: { insight: Insight }) => {
           <ArticleMetadata author={insight.author} keywords={insight.keywords} keywordsEn={insight.keywordsEn} />
         </ArticleBody>
         <div className="article-evidence">
-          <Eyebrow>EVIDENCE</Eyebrow>
+          <Eyebrow>{t('公开证据')}</Eyebrow>
           {insight.evidence.map((item) => (
             <span key={item.label}>{t(item.label)}</span>
           ))}

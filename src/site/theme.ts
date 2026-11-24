@@ -29,27 +29,29 @@ const SOLAR_THEME_CONFIG = {
 
 type SolarThemeConfig = typeof SOLAR_THEME_CONFIG;
 
-// Keep this function self-contained (no module-level captures) because
-// createThemeInitializerScript() serializes it directly into the inline <Script>.
+// Keep this function self-contained without nested function definitions so
+// createThemeInitializerScript() serializes cleanly across both SWC and esbuild (keepNames).
 function resolveSolarThemeWithConfig(date: Date, location: SunLocation, config: SolarThemeConfig): ColorTheme {
   const radians = Math.PI / 180;
-  const normalizeHours = (hours: number) => ((hours % config.hoursInDay) + config.hoursInDay) % config.hoursInDay;
-  const normalizeDegrees = (degrees: number) =>
-    ((degrees % config.degreesInCircle) + config.degreesInCircle) % config.degreesInCircle;
-
   const longitudeHour = location.longitude / 15;
   const solarDate = new Date(date.getTime() + longitudeHour * config.msPerHour);
   const start = Date.UTC(solarDate.getUTCFullYear(), 0, 0);
   const current = Date.UTC(solarDate.getUTCFullYear(), solarDate.getUTCMonth(), solarDate.getUTCDate());
   const ordinalDay = Math.floor((current - start) / config.msPerDay);
 
-  const utcSolarHour = (rising: boolean): number | undefined => {
+  let sunriseUtc: number | undefined;
+  let sunsetUtc: number | undefined;
+
+  for (const rising of [true, false]) {
     const approximateTime = ordinalDay + ((rising ? 6 : 18) - longitudeHour) / config.hoursInDay;
     const meanAnomaly = 0.9856 * approximateTime - 3.289;
-    const trueLongitude = normalizeDegrees(
-      meanAnomaly + 1.916 * Math.sin(meanAnomaly * radians) + 0.02 * Math.sin(2 * meanAnomaly * radians) + 282.634
-    );
-    const rightAscension = normalizeDegrees(Math.atan(0.91764 * Math.tan(trueLongitude * radians)) / radians);
+    const rawTrueLongitude =
+      meanAnomaly + 1.916 * Math.sin(meanAnomaly * radians) + 0.02 * Math.sin(2 * meanAnomaly * radians) + 282.634;
+    const trueLongitude =
+      ((rawTrueLongitude % config.degreesInCircle) + config.degreesInCircle) % config.degreesInCircle;
+    const rawRightAscension = Math.atan(0.91764 * Math.tan(trueLongitude * radians)) / radians;
+    const rightAscension =
+      ((rawRightAscension % config.degreesInCircle) + config.degreesInCircle) % config.degreesInCircle;
     const longitudeQuadrant = Math.floor(trueLongitude / 90) * 90;
     const rightAscensionQuadrant = Math.floor(rightAscension / 90) * 90;
     const adjustedRightAscension = (rightAscension + longitudeQuadrant - rightAscensionQuadrant) / 15;
@@ -59,17 +61,17 @@ function resolveSolarThemeWithConfig(date: Date, location: SunLocation, config: 
       (Math.cos(config.sunZenith * radians) - sineDeclination * Math.sin(location.latitude * radians)) /
       (cosineDeclination * Math.cos(location.latitude * radians));
 
-    if (cosineHourAngle > 1 || cosineHourAngle < -1) return undefined;
+    if (cosineHourAngle > 1 || cosineHourAngle < -1) continue;
 
     const hourAngle = rising
       ? config.degreesInCircle - Math.acos(cosineHourAngle) / radians
       : Math.acos(cosineHourAngle) / radians;
     const localMeanTime = hourAngle / 15 + adjustedRightAscension - 0.06571 * approximateTime - 6.622;
-    return normalizeHours(localMeanTime - longitudeHour);
-  };
-
-  const sunriseUtc = utcSolarHour(true);
-  const sunsetUtc = utcSolarHour(false);
+    const rawSolarHour = localMeanTime - longitudeHour;
+    const solarHour = ((rawSolarHour % config.hoursInDay) + config.hoursInDay) % config.hoursInDay;
+    if (rising) sunriseUtc = solarHour;
+    else sunsetUtc = solarHour;
+  }
 
   // Polar day/night has no ordinary sunrise or sunset. Keep a safe civil-time fallback there.
   if (sunriseUtc === undefined || sunsetUtc === undefined) {
@@ -77,11 +79,10 @@ function resolveSolarThemeWithConfig(date: Date, location: SunLocation, config: 
     return hour >= config.civilDaylightStartHour && hour < config.civilDaylightEndHour ? 'light' : 'dark';
   }
 
-  const currentSolarHour = normalizeHours(
-    date.getUTCHours() + date.getUTCMinutes() / config.minutesInHour + longitudeHour
-  );
-  const sunriseSolarHour = normalizeHours(sunriseUtc + longitudeHour);
-  const sunsetSolarHour = normalizeHours(sunsetUtc + longitudeHour);
+  const rawCurrentSolarHour = date.getUTCHours() + date.getUTCMinutes() / config.minutesInHour + longitudeHour;
+  const currentSolarHour = ((rawCurrentSolarHour % config.hoursInDay) + config.hoursInDay) % config.hoursInDay;
+  const sunriseSolarHour = (((sunriseUtc + longitudeHour) % config.hoursInDay) + config.hoursInDay) % config.hoursInDay;
+  const sunsetSolarHour = (((sunsetUtc + longitudeHour) % config.hoursInDay) + config.hoursInDay) % config.hoursInDay;
   const isDaylight =
     sunriseSolarHour < sunsetSolarHour
       ? currentSolarHour >= sunriseSolarHour && currentSolarHour < sunsetSolarHour
