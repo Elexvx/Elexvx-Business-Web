@@ -1,7 +1,10 @@
+import { createElement } from 'react';
+import { renderToStaticMarkup } from 'react-dom/server';
 import type { StatusMonitor } from '../src/data/service-status';
 import { navigationGroups } from '../src/data/research-navigation';
 import { serviceNavigation, serviceNavigationLinks } from '../src/data/service-navigation';
 import { documentationUrl, serviceRoutePaths } from '../src/data/service-routes';
+import { ServicesPage } from '../src/site/services/services-page';
 import { availabilityTone, formatDay, groupStatusMonitors } from '../src/site/services/status-utils';
 import esaRedirects from '../src/server/esa/redirects.json';
 import { describe, expect, it } from 'vitest';
@@ -135,5 +138,17 @@ describe('integrated service pages', () => {
         }),
       ])
     );
+  });
+
+  it('renders eager WebP card background images without hydration-gated previews', () => {
+    const html = renderToStaticMarkup(createElement(ServicesPage));
+
+    expect(html.match(/class="service-overview-card-bg"/g)).toHaveLength(3);
+    expect(html).toContain('src="/visuals/services/documentation.webp"');
+    expect(html).toContain('src="/visuals/services/navigation.webp"');
+    expect(html).toContain('loading="eager"');
+    expect(html.toLowerCase()).toContain('fetchpriority="high"');
+    expect(html).not.toContain('data-preview');
+    expect(html).not.toContain('/visuals/services/documentation.jpg');
   });
 });
