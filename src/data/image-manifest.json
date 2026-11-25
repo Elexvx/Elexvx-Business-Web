@@ -2457,14 +2457,15 @@
     ]
   },
   "/products/humite-library-preview.png": {
-    "width": 1024,
-    "height": 534,
+    "width": 2560,
+    "height": 1440,
     "variants": [
-      { "src": "/optimized/9bd56aa7cb6b1631-240.webp", "width": 240 },
-      { "src": "/optimized/9bd56aa7cb6b1631-480.webp", "width": 480 },
-      { "src": "/optimized/9bd56aa7cb6b1631-720.webp", "width": 720 },
-      { "src": "/optimized/9bd56aa7cb6b1631-960.webp", "width": 960 },
-      { "src": "/optimized/9bd56aa7cb6b1631-1024.webp", "width": 1024 }
+      { "src": "/optimized/d4fd420b9c3a4dfd-480.webp", "width": 480 },
+      { "src": "/optimized/d4fd420b9c3a4dfd-720.webp", "width": 720 },
+      { "src": "/optimized/d4fd420b9c3a4dfd-960.webp", "width": 960 },
+      { "src": "/optimized/d4fd420b9c3a4dfd-1440.webp", "width": 1440 },
+      { "src": "/optimized/d4fd420b9c3a4dfd-1920.webp", "width": 1920 },
+      { "src": "/optimized/d4fd420b9c3a4dfd-2560.webp", "width": 2560 }
     ]
   },
   "/visuals/humite-library/assets/runtime-v14/chongwen-carved.jpg": {

@@ -27,6 +27,12 @@ const HERO_WAIT_COPY = {
   description: '还不到亮相的时候，但值得等这一会儿。',
 } as const;
 
+export const HeroBackdrop = () => (
+  <div className="home-hero-backdrop" aria-hidden="true">
+    <HeroParticles />
+  </div>
+);
+
 const padUnit = (value: number) => String(value).padStart(2, '0');
 
 const RollingDigit = ({ digit }: { digit: string }) => {
@@ -112,14 +118,6 @@ export const HeroReleasedContent = ({
         </a>
       </div>
       <div className="home-mac-preview" id="humite-preview">
-        <div className="home-mac-toolbar">
-          <span className="home-mac-controls" aria-hidden="true">
-            <i />
-            <i />
-            <i />
-          </span>
-          <span>{t(homeIntro.showcase.label)}</span>
-        </div>
         <ShowcaseFrame
           src={homeIntro.showcase.path}
           title={t(homeIntro.showcase.title)}
@@ -171,53 +169,48 @@ export const HeroWaitingStage = ({
   const progress = mounted ? snapshot.progress : INITIAL_WAIT_PROGRESS;
 
   return (
-    <>
-      <div className={classNames('home-hero-wait-backdrop', exiting && 'is-exiting')} aria-hidden="true">
-        <HeroParticles />
-      </div>
-      <div className={classNames('home-hero-wait', exiting && 'is-exiting')} aria-hidden={exiting || undefined}>
-        <div className="home-product-intro-copy home-hero-wait-copy">
-          {exiting ? (
-            <p className="home-hero-wait-title-exit">
-              <LocalizedTitle text={HERO_WAIT_COPY.title} />
-            </p>
-          ) : (
-            <h1>
-              <LocalizedTitle text={HERO_WAIT_COPY.title} />
-            </h1>
-          )}
+    <div className={classNames('home-hero-wait', exiting && 'is-exiting')} aria-hidden={exiting || undefined}>
+      <div className="home-product-intro-copy home-hero-wait-copy">
+        {exiting ? (
+          <p className="home-hero-wait-title-exit">
+            <LocalizedTitle text={HERO_WAIT_COPY.title} />
+          </p>
+        ) : (
+          <h1>
+            <LocalizedTitle text={HERO_WAIT_COPY.title} />
+          </h1>
+        )}
 
-          <p className="home-product-description">{t(HERO_WAIT_COPY.description)}</p>
+        <p className="home-product-description">{t(HERO_WAIT_COPY.description)}</p>
 
-          <div className="home-countdown" role="timer" aria-label={t('发布倒计时')}>
-            {units.map((unit, index) => (
-              <div className="home-countdown-group" key={unit.key}>
-                {index > 0 && (
-                  <span className="home-countdown-sep" aria-hidden="true">
-                    :
-                  </span>
-                )}
-                <div className="home-countdown-unit">
-                  <span className="sr-only">{unit.value}</span>
-                  <span className="home-countdown-value" aria-hidden="true">
-                    {unit.value.split('').map((digit, digitIndex) => (
-                      <RollingDigit key={`${unit.key}-${unit.value.length - digitIndex}`} digit={digit} />
-                    ))}
-                  </span>
-                  <span className="home-countdown-label">{unit.label}</span>
-                </div>
+        <div className="home-countdown" role="timer" aria-label={t('发布倒计时')}>
+          {units.map((unit, index) => (
+            <div className="home-countdown-group" key={unit.key}>
+              {index > 0 && (
+                <span className="home-countdown-sep" aria-hidden="true">
+                  :
+                </span>
+              )}
+              <div className="home-countdown-unit">
+                <span className="sr-only">{unit.value}</span>
+                <span className="home-countdown-value" aria-hidden="true">
+                  {unit.value.split('').map((digit, digitIndex) => (
+                    <RollingDigit key={`${unit.key}-${unit.value.length - digitIndex}`} digit={digit} />
+                  ))}
+                </span>
+                <span className="home-countdown-label">{unit.label}</span>
               </div>
-            ))}
-          </div>
-
-          <div className="home-hero-wait-meta">
-            <div className="home-hero-wait-track" aria-hidden="true">
-              <span className="home-hero-wait-fill" style={{ transform: `scaleX(${progress})` }} />
             </div>
-            <HomeReleaseSchedule launch={launch} mounted={mounted} localTimeZone={localTimeZone} />
+          ))}
+        </div>
+
+        <div className="home-hero-wait-meta">
+          <div className="home-hero-wait-track" aria-hidden="true">
+            <span className="home-hero-wait-fill" style={{ transform: `scaleX(${progress})` }} />
           </div>
+          <HomeReleaseSchedule launch={launch} mounted={mounted} localTimeZone={localTimeZone} />
         </div>
       </div>
-    </>
+    </div>
   );
 };

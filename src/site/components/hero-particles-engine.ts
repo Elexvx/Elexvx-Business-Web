@@ -15,6 +15,7 @@ type ParticleFrame = {
 
 const SEED = 20261201;
 const AREA_PER_PARTICLE = 1350;
+const COMPACT_AREA_PER_PARTICLE = 900;
 const MAX_PARTICLES = 760;
 const RAMP_STEPS = 48;
 const PLACEMENT_ATTEMPTS_MULTIPLIER = 14;
@@ -28,6 +29,17 @@ const MIN_VERTICAL_STRETCH = 0.92;
 const MAX_VERTICAL_STRETCH = 1.48;
 const MIN_PARTICLE_SCALE = 0.77;
 const MAX_PARTICLE_SCALE = 1.1;
+
+const COMPACT_WIDTH_MIN = 420;
+const COMPACT_WIDTH_MAX = 760;
+const COMPACT_PARTICLE_SCALE = 0.96;
+const COMPACT_RADIUS_BOOST = 0.1;
+const COMPACT_CREST_WIDTH_BOOST = 0.042;
+const COMPACT_WAKE_WIDTH_BOOST = 0.045;
+const COMPACT_BASE_ALPHA_BOOST = 0.11;
+const COMPACT_LINE_WIDTH_BOOST = 0.35;
+const COMPACT_HALF_LENGTH_BOOST = 0.18;
+const COMPACT_COPY_ATTENUATION_BOOST = 0.09;
 
 const DRIFT_AMP_PX = 8;
 const DRIFT_BAND_WEIGHT = 0.052;
@@ -47,6 +59,13 @@ const ENERGY_HALF_LENGTH_GAIN = 3.9;
 
 const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value));
 
+const smoothstep = (min: number, max: number, value: number) => {
+  const t = clamp((value - min) / (max - min), 0, 1);
+  return t * t * (3 - 2 * t);
+};
+
+const getCompactFactor = (width: number) => 1 - smoothstep(COMPACT_WIDTH_MIN, COMPACT_WIDTH_MAX, width);
+
 const createSeededRandom = (seed: number) => {
   let state = seed >>> 0;
   return () => {
@@ -57,7 +76,9 @@ const createSeededRandom = (seed: number) => {
 
 export const buildParticles = (width: number, height: number): Particle[] => {
   const area = width * height;
-  const count = clamp(Math.round(area / AREA_PER_PARTICLE), 1, MAX_PARTICLES);
+  const compact = getCompactFactor(width);
+  const areaPerParticle = AREA_PER_PARTICLE + (COMPACT_AREA_PER_PARTICLE - AREA_PER_PARTICLE) * compact;
+  const count = clamp(Math.round(area / areaPerParticle), 1, MAX_PARTICLES);
   const spacingSquared = (area / count) * POISSON_SPACING_RATIO;
   const random = createSeededRandom(SEED);
   const particles: Particle[] = [];
@@ -112,11 +133,6 @@ export const advanceSpring = (axis: SpringAxis, target: number, response: number
   axis.velocity = (axis.velocity - response * momentum * seconds) * decay;
 };
 
-const smoothstep = (min: number, max: number, value: number) => {
-  const t = clamp((value - min) / (max - min), 0, 1);
-  return t * t * (3 - 2 * t);
-};
-
 type FieldFrameMetrics = {
   width: number;
   height: number;
@@ -127,12 +143,19 @@ type FieldFrameMetrics = {
   centerY: number;
   radius: number;
   sizeScale: number;
+  crestWidth: number;
+  wakeWidth: number;
+  baseAlpha: number;
+  baseLineWidth: number;
+  baseHalfLength: number;
+  minCopyAttenuation: number;
   headingX: number;
   headingY: number;
 };
 
 const computeFieldMetrics = ({ width, height, time, center }: ParticleFrame): FieldFrameMetrics => {
   const fieldSize = Math.min(width, height * FIELD_HEIGHT_WEIGHT);
+  const compact = getCompactFactor(width);
   const heading = time * 0.28 - 0.6 + Math.sin(time * 0.49) * 0.3;
   return {
     width,
@@ -142,8 +165,19 @@ const computeFieldMetrics = ({ width, height, time, center }: ParticleFrame): Fi
     verticalStretch: clamp(height / width, MIN_VERTICAL_STRETCH, MAX_VERTICAL_STRETCH),
     centerX: center.x * width,
     centerY: center.y * height,
-    radius: fieldSize * (0.28 + 0.031 * Math.sin(time * 0.72) + 0.012 * Math.sin(time * 1.31 + 0.7)),
-    sizeScale: clamp(fieldSize / FIELD_REFERENCE_SIZE, MIN_PARTICLE_SCALE, MAX_PARTICLE_SCALE),
+    radius:
+      fieldSize *
+      (0.28 + COMPACT_RADIUS_BOOST * compact + 0.031 * Math.sin(time * 0.72) + 0.012 * Math.sin(time * 1.31 + 0.7)),
+    sizeScale: Math.max(
+      clamp(fieldSize / FIELD_REFERENCE_SIZE, MIN_PARTICLE_SCALE, MAX_PARTICLE_SCALE),
+      COMPACT_PARTICLE_SCALE * compact
+    ),
+    crestWidth: CREST_WIDTH + COMPACT_CREST_WIDTH_BOOST * compact,
+    wakeWidth: WAKE_WIDTH + COMPACT_WAKE_WIDTH_BOOST * compact,
+    baseAlpha: BASE_ALPHA + COMPACT_BASE_ALPHA_BOOST * compact,
+    baseLineWidth: BASE_LINE_WIDTH + COMPACT_LINE_WIDTH_BOOST * compact,
+    baseHalfLength: BASE_HALF_LENGTH + COMPACT_HALF_LENGTH_BOOST * compact,
+    minCopyAttenuation: 0.43 + COMPACT_COPY_ATTENUATION_BOOST * compact,
     headingX: Math.cos(heading),
     headingY: Math.sin(heading),
   };
@@ -169,8 +203,8 @@ const drawSingleParticle = (
 
   // Give the advancing arc a crest and a fainter wake that tapers out along the curve.
   const band = (distance - metrics.radius) / metrics.fieldSize + (driftX + driftY * 0.45) * DRIFT_BAND_WEIGHT;
-  const crest = Math.exp(-((band / CREST_WIDTH) ** 2));
-  const wake = Math.exp(-(((band + WAKE_LAG) / WAKE_WIDTH) ** 2));
+  const crest = Math.exp(-((band / metrics.crestWidth) ** 2));
+  const wake = Math.exp(-(((band + WAKE_LAG) / metrics.wakeWidth) ** 2));
   const leadingArc = 0.25 + smoothstep(-0.65, 0.82, alongWave) * 0.75;
   const trailingArc = smoothstep(-0.4, 0.9, acrossWave);
   const energy = crest * leadingArc * CREST_ENERGY_WEIGHT + wake * trailingArc * WAKE_ENERGY_WEIGHT;
@@ -179,18 +213,19 @@ const drawSingleParticle = (
   const x = px + (radialX - radialY * TANGENTIAL_SWIRL_RATIO) * offset;
   const y = py + (radialY + radialX * TANGENTIAL_SWIRL_RATIO) * offset * metrics.verticalStretch;
   const angle = Math.atan2(dy, dx) + 0.42 + driftX * 0.56 + driftY * 0.25;
-  const halfLength = (BASE_HALF_LENGTH + energy * ENERGY_HALF_LENGTH_GAIN) * particle.size * metrics.sizeScale;
+  const halfLength = (metrics.baseHalfLength + energy * ENERGY_HALF_LENGTH_GAIN) * particle.size * metrics.sizeScale;
   const tipX = Math.cos(angle) * halfLength;
   const tipY = Math.sin(angle) * halfLength;
 
   // Neighbors share a color because the ramp is sampled in space and time.
   const hue = 0.5 + Math.sin(x * 0.007 - y * 0.006 + metrics.time * 0.43 + driftY * 0.7) * 0.5;
   const copyDistance = Math.hypot((x / metrics.width - 0.5) * 2.8, (y / metrics.height - 0.48) * 2.5);
-  const copyAttenuation = 0.43 + smoothstep(0, 0.94, copyDistance) * 0.57;
+  const copyAttenuation =
+    metrics.minCopyAttenuation + smoothstep(0, 0.94, copyDistance) * (1 - metrics.minCopyAttenuation);
 
   context.strokeStyle = palette[Math.round(hue * (palette.length - 1))];
-  context.lineWidth = (BASE_LINE_WIDTH + energy * ENERGY_LINE_WIDTH_GAIN) * particle.size * metrics.sizeScale;
-  context.globalAlpha = (BASE_ALPHA + energy * ENERGY_ALPHA_GAIN) * copyAttenuation;
+  context.lineWidth = (metrics.baseLineWidth + energy * ENERGY_LINE_WIDTH_GAIN) * particle.size * metrics.sizeScale;
+  context.globalAlpha = clamp((metrics.baseAlpha + energy * ENERGY_ALPHA_GAIN) * copyAttenuation, 0, 1);
   context.beginPath();
   context.moveTo(x - tipX, y - tipY);
   context.lineTo(x + tipX, y + tipY);

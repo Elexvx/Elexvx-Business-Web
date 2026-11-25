@@ -163,7 +163,7 @@ describe('HomeHero rendering', () => {
     expect(html).toContain('进入 3D 预览');
     expect(html).toContain('<noscript><iframe src="/example/index.html"');
     expect(html.split('<noscript>')[0]).not.toContain('<iframe');
-    expect(html).not.toContain('home-hero-particles');
+    expect(html).toContain('home-hero-particles');
     expect(html).not.toContain('role="timer"');
   });
 
@@ -180,6 +180,7 @@ describe('HomeHero rendering', () => {
 
     expect(html).toContain('home-mac-facade--image');
     expect(html).toContain('home-mac-facade-image');
+    expect(html).not.toContain('home-mac-facade-fallback');
     expect(html).toContain('alt="3D Showcase Simulation"');
     expect(html).toContain('Launch 3D preview');
     expect(html).not.toContain('Interactive 3D preview');

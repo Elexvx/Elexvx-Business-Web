@@ -66,14 +66,6 @@ const ShowcasePreview = ({ showcase }: { showcase: NonNullable<ProductShowcaseCo
         <Translated>{showcase.description}</Translated>
       </p>
       <div className="home-mac-preview humite-showcase-frame">
-        <div className="home-mac-toolbar">
-          <span className="home-mac-controls" aria-hidden="true">
-            <i />
-            <i />
-            <i />
-          </span>
-          <span>{t(showcase.frameLabel)}</span>
-        </div>
         <ShowcaseFrame
           src={showcase.framePath}
           title={t(showcase.frameTitle)}

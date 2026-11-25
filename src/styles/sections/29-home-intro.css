@@ -27,13 +27,67 @@
 
 /* Only the particle/reveal stages need an outer clipping area. Keep the
    released iframe out of nested overflow clips when Safari scrolls it. */
+.home-product-intro.home-hero--revealing {
+  padding-top: 0;
+}
+
 .home-product-intro.home-hero--released {
+  padding-top: 0;
   overflow: visible;
 }
 
 .home-product-intro-copy {
+  position: relative;
+  z-index: 1;
   max-width: 900px;
   margin-inline: auto;
+}
+
+.home-hero-released .home-product-intro-copy {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  max-width: 1040px;
+  min-height: calc(100svh - 64px);
+  padding-block: clamp(48px, 8vh, 96px);
+}
+
+.home-product-intro .home-hero-released .home-release-link {
+  padding: 7px 18px 7px 7px;
+  font-size: 14px;
+}
+
+.home-hero-released .home-release-badge {
+  padding: 5px 12px;
+  font-size: 13px;
+}
+
+.site-shell-openai.site-shell-openai.site-shell-openai main .home-product-intro .home-hero-released h1 {
+  max-width: 1040px;
+  margin-top: 32px;
+  font-size: clamp(42px, calc(26px + 3.8vw), 76px);
+  line-height: 1.08;
+}
+
+.home-product-intro .home-hero-released .home-product-description {
+  max-width: 760px;
+  margin-top: 28px;
+  font-size: clamp(18px, calc(16px + 0.55vw), 24px);
+  line-height: 1.55;
+}
+
+.home-product-intro .home-hero-released .home-product-action {
+  min-height: 50px;
+  margin-top: 36px;
+  padding: 12px 28px;
+  font-size: 16px;
+}
+
+.home-hero-released .home-mac-preview {
+  margin-top: 0;
+  scroll-margin-top: 80px;
 }
 
 .home-product-intro .home-release-link {
@@ -112,62 +166,23 @@
 }
 
 .home-mac-preview {
-  --color-canvas: #ffffff;
-  --color-pearl: #f4f5f7;
-  color-scheme: light;
   width: 100%;
   margin: 64px auto 0;
   overflow: hidden;
   isolation: isolate;
-  border: 1px solid #d4d7df;
-  border-radius: var(--radius-sm);
-  background: var(--color-canvas);
-  /* Release the transform layer once the entrance finishes. Retaining it
-     can leave an embedded WebGL scene with a stale clip on mobile Safari. */
-  animation: home-mac-appear 850ms cubic-bezier(0.22, 1, 0.36, 1) backwards;
-}
-
-.home-mac-toolbar {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 40px;
-  border-bottom: 1px solid #e2e5e9;
-  background: #f6f7f9;
-  color: #6b7280;
-  font-size: 11px;
-  letter-spacing: 0.02em;
-}
-
-.home-mac-controls {
-  position: absolute;
-  left: 15px;
-  display: flex;
-  gap: 7px;
-}
-
-.home-mac-controls i {
-  width: 9px;
-  height: 9px;
-  border: 1px solid #0000000c;
-  border-radius: var(--radius-round);
-  corner-shape: round;
-  background: #ff6059;
-}
-
-.home-mac-controls i:nth-child(2) {
-  background: #ffbe2f;
-}
-.home-mac-controls i:nth-child(3) {
-  background: #28ca42;
+  border: 0;
+  border-radius: clamp(20px, 2vw, 32px);
+  background: transparent;
+  /* Driven by scroll progress and released once settled to avoid stale WebGL clips on Safari. */
+  transform-origin: center top;
+  will-change: transform;
 }
 
 .home-mac-screen {
   position: relative;
   display: block;
   width: 100%;
-  height: clamp(480px, 48vw, 680px);
+  height: clamp(360px, calc(100svh - 96px), 980px);
   background: #f4efe3;
 }
 
@@ -200,9 +215,22 @@
   position: relative;
   width: 100%;
   height: 100%;
+  margin: 0;
   padding: 0;
   overflow: hidden;
+  border: 0;
+  border-radius: 0;
   background: #201a16;
+  cursor: pointer;
+}
+
+.home-mac-facade--image:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: -2px;
+}
+
+.home-mac-facade--image[data-cursor-active='true'] {
+  cursor: none;
 }
 
 .home-mac-facade-image {
@@ -213,13 +241,34 @@
   object-position: center 48%;
 }
 
-.home-mac-facade-actions {
+.home-mac-facade-cursor {
   position: absolute;
-  inset: auto 0 0;
-  display: flex;
-  justify-content: center;
-  padding: 48px 20px 24px;
-  background: linear-gradient(to top, rgba(16, 14, 12, 0.56) 0%, rgba(16, 14, 12, 0) 100%);
+  top: 0;
+  left: 0;
+  z-index: 3;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 22px 14px 16px;
+  border: 1px solid rgba(33, 34, 38, 0.08);
+  border-radius: var(--radius-pill);
+  corner-shape: round;
+  background: #ffffff;
+  color: #000000;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1.4;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  will-change: transform, opacity;
+}
+
+@media (hover: none), (pointer: coarse) {
+  .home-mac-facade-cursor {
+    display: none !important;
+  }
 }
 
 .home-mac-facade-title {
@@ -475,17 +524,6 @@ html[data-theme='light'] .home-brand-mark[data-format='overlap-symbol'] img {
   }
 }
 
-@keyframes home-mac-appear {
-  from {
-    opacity: 0;
-    transform: translateY(64px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
 @media (max-width: 720px) {
   .home-product-intro .home-product-description {
     margin-top: 20px;
@@ -493,21 +531,18 @@ html[data-theme='light'] .home-brand-mark[data-format='overlap-symbol'] img {
   .home-product-intro .home-product-action {
     margin-top: 24px;
   }
+  .home-product-intro .home-hero-released .home-product-description {
+    margin-top: 22px;
+  }
+  .home-product-intro .home-hero-released .home-product-action {
+    margin-top: 28px;
+  }
   .home-mac-preview {
     margin-top: 44px;
-    border-radius: var(--radius-sm);
+    border-radius: var(--radius-md);
   }
-  .home-mac-toolbar {
-    height: 30px;
-    font-size: 9px;
-  }
-  .home-mac-controls {
-    left: 10px;
-    gap: 4px;
-  }
-  .home-mac-controls i {
-    width: 6px;
-    height: 6px;
+  .home-hero-released .home-mac-preview {
+    margin-top: 0;
   }
   .home-mac-facade {
     gap: 10px;
@@ -515,9 +550,6 @@ html[data-theme='light'] .home-brand-mark[data-format='overlap-symbol'] img {
   }
   .home-mac-facade--image {
     padding: 0;
-  }
-  .home-mac-facade-actions {
-    padding: 36px 16px 18px;
   }
   .site-shell-home .home-ecosystem {
     padding-top: var(--home-section-space-mobile);
@@ -557,11 +589,14 @@ html[data-theme='light'] .home-brand-mark[data-format='overlap-symbol'] img {
 
 @media (prefers-reduced-motion: reduce) {
   .home-mac-preview {
-    animation: none;
+    transform: none !important;
   }
   .home-product-intro :is(.home-release-link, .home-product-action),
   .home-mac-facade-button {
     transition: none;
+  }
+  .home-mac-facade-cursor {
+    display: none !important;
   }
 }
 
@@ -582,16 +617,20 @@ html[data-theme='light'] .home-brand-mark[data-format='overlap-symbol'] img {
   padding-bottom: clamp(64px, 10vh, 108px);
 }
 
-.home-hero-wait-backdrop {
+.home-hero-backdrop {
   position: absolute;
-  inset: 0;
+  top: 0;
+  inset-inline: 0;
   z-index: 0;
+  height: 100%;
   overflow: hidden;
   pointer-events: none;
 }
 
-.home-hero-wait-backdrop.is-exiting {
-  animation: home-hero-backdrop-exit 520ms var(--motion-ease-out) forwards;
+.home-product-intro:is(.home-hero--revealing, .home-hero--released) .home-hero-backdrop {
+  height: calc(100svh - 64px);
+  max-height: 100%;
+  mask-image: linear-gradient(to bottom, #000 0%, #000 86%, transparent 100%);
 }
 
 .home-hero-particles {
@@ -821,6 +860,7 @@ html[data-theme='light'] .home-countdown-unit {
 
 .home-hero-released {
   position: relative;
+  z-index: 1;
 }
 
 .home-hero-reveal-flash {
@@ -859,15 +899,6 @@ html[data-theme='light'] .home-hero-reveal-flash {
 .home-hero-released.is-settled
   :is(.home-release-link, h1, .home-product-description, .home-product-action, .home-mac-preview) {
   animation: none;
-}
-
-@keyframes home-hero-backdrop-exit {
-  from {
-    opacity: 1;
-  }
-  to {
-    opacity: 0;
-  }
 }
 
 @keyframes home-digit-enter {
@@ -987,7 +1018,6 @@ html[data-theme='light'] .home-hero-reveal-flash {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .home-hero-wait-backdrop.is-exiting,
   .home-digit-glyph.is-entering,
   .home-digit-glyph.is-leaving,
   .home-hero-wait-fill::after,

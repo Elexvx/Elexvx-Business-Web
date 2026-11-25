@@ -3,8 +3,7 @@ import type { HumiteReleaseContent } from '../src/data/humite-content.empty';
 const homeIntro = {
   release: 'Humite · 书林',
   title: '让好书相聚，让阅读归于自己。',
-  description:
-    'Humite 是面向家庭与个人的自托管数字藏书系统，将 NAS 中的 EPUB 与 PDF 映射进三维明式书楼「观文藏阁」，支持分类检索、在线阅读与划线批注。家人共享藏书，每个人拥有独立的阅读进度与私人笔记。',
+  description: '自托管家庭三维藏书阁，共享 NAS 藏书，独享阅读进度与笔记。',
   action: '了解 Humite',
   actionHref: '/products/humite',
   showcase: {
@@ -223,8 +222,8 @@ export const humiteContent: HumiteReleaseContent = {
   english: {
     三维明式书楼: '3D MING LIBRARY',
     '让好书相聚，让阅读归于自己。': 'Bring your books together. Make reading your own.',
-    'Humite 是面向家庭与个人的自托管数字藏书系统，将 NAS 中的 EPUB 与 PDF 映射进三维明式书楼「观文藏阁」，支持分类检索、在线阅读与划线批注。家人共享藏书，每个人拥有独立的阅读进度与私人笔记。':
-      'Humite is a self-hosted digital library for individuals and families. Map EPUB and PDF books from your NAS into the 3D Ming-style Guanwen Library, browse by subject, read online, and highlight and annotate while keeping reading progress and private notes personal.',
+    '自托管家庭三维藏书阁，共享 NAS 藏书，独享阅读进度与笔记。':
+      'Self-hosted 3D family digital library—share your NAS collection while keeping reading progress and notes private.',
     '了解 Humite': 'Discover Humite',
     'Humite · 书林': 'Humite · Your digital library',
     'Humite · 观文藏阁': 'Humite · Guanwen Library',

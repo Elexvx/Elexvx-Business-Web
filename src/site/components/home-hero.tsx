@@ -7,7 +7,7 @@ import { humiteLaunch } from '../../data/humite-launch.mjs';
 import { homeContent } from '../../data/page-content';
 import { useI18n } from '../providers/i18n';
 import type { HeroLaunchConfig } from './hero-schedule';
-import { HeroReleasedContent, HeroWaitingStage, HomeReleaseSchedule } from './home-hero-stages';
+import { HeroBackdrop, HeroReleasedContent, HeroWaitingStage, HomeReleaseSchedule } from './home-hero-stages';
 import { classNames } from './ui';
 import { useHeroLaunchPhase } from './use-hero-launch-phase';
 
@@ -66,6 +66,7 @@ export const HomeHero = ({
       aria-label={t('产品介绍')}
       data-hero-phase={phase}
     >
+      <HeroBackdrop />
       {phase !== 'released' && (
         <HeroWaitingStage
           launch={launch}

@@ -11,7 +11,8 @@ import {
   type Particle,
 } from './hero-particles-engine';
 
-const MAX_DEVICE_PIXEL_RATIO = 1.5;
+const DESKTOP_MAX_DPR = 1.5;
+const MOBILE_MAX_DPR = 3;
 const MAX_CANVAS_PIXELS = 2_500_000;
 const MOBILE_BREAKPOINT_PX = 720;
 const DESKTOP_FRAME_MS = 1000 / 60;
@@ -66,11 +67,8 @@ function measureCanvasViewport(canvas: HTMLCanvasElement): CanvasViewport {
   const rect = canvas.getBoundingClientRect();
   const width = Math.max(1, Math.round(rect.width));
   const height = Math.max(1, Math.round(rect.height));
-  const dpr = Math.min(
-    window.devicePixelRatio || 1,
-    MAX_DEVICE_PIXEL_RATIO,
-    Math.sqrt(MAX_CANVAS_PIXELS / (width * height))
-  );
+  const maxDpr = width <= MOBILE_BREAKPOINT_PX ? MOBILE_MAX_DPR : DESKTOP_MAX_DPR;
+  const dpr = Math.min(window.devicePixelRatio || 1, maxDpr, Math.sqrt(MAX_CANVAS_PIXELS / (width * height)));
   return { width, height, dpr };
 }
 

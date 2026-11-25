@@ -30,15 +30,21 @@ async function walk(root, dir, generated) {
       continue;
     }
     if (meta.width < 400) continue;
-    const hash = createHash('sha256').update(`${key}:${info.size}:${info.mtimeMs}:v2-q74`).digest('hex').slice(0, 16);
+    const isShowcasePreview = relativePath === 'products/humite-library-preview.png';
+    const hash = createHash('sha256')
+      .update(`${key}:${info.size}:${info.mtimeMs}:${isShowcasePreview ? 'v3-q92' : 'v2-q74'}`)
+      .digest('hex')
+      .slice(0, 16);
     const variants = [];
     const targetWidths = isEcosystemLogo
       ? [160, 480]
       : isNewsCoverWebp
         ? [360, 720]
-        : isManagedWebp
-          ? [240, 480, 720, 960, 1440]
-          : [240, 480, 720, 960, 1600];
+        : isShowcasePreview
+          ? [480, 720, 960, 1440, 1920, 2560]
+          : isManagedWebp
+            ? [240, 480, 720, 960, 1440]
+            : [240, 480, 720, 960, 1600];
     for (const width of [...new Set(targetWidths.map((w) => Math.min(w, meta.width)))]) {
       const name = `${hash}-${width}.webp`;
       const outPath = join(root, 'optimized', name);
@@ -51,7 +57,7 @@ async function walk(root, dir, generated) {
         await sharp(file)
           .rotate()
           .resize({ width, withoutEnlargement: true })
-          .webp({ quality: isNewsCoverWebp ? 76 : 74, effort: 6, smartSubsample: true })
+          .webp({ quality: isShowcasePreview ? 92 : isNewsCoverWebp ? 76 : 74, effort: 6, smartSubsample: true })
           .toFile(outPath);
       }
       variants.push({ src: '/optimized/' + name, width });
