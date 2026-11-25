@@ -74,7 +74,11 @@ const ShowcasePreview = ({ showcase }: { showcase: NonNullable<ProductShowcaseCo
           </span>
           <span>{t(showcase.frameLabel)}</span>
         </div>
-        <ShowcaseFrame src={showcase.framePath} title={t(showcase.frameTitle)} />
+        <ShowcaseFrame
+          src={showcase.framePath}
+          title={t(showcase.frameTitle)}
+          previewImage={showcase.framePreviewImage}
+        />
       </div>
     </section>
   );

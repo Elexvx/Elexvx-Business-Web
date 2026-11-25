@@ -11,6 +11,7 @@ const homeIntro = {
     path: '/visuals/humite-library/index.html?theme=light',
     label: 'Humite · 观文藏阁',
     title: 'Humite 观文藏阁 3D 漫游（模拟）',
+    previewImage: '/products/humite-library-preview.png',
   },
 };
 
@@ -69,6 +70,7 @@ export const humiteContent: HumiteReleaseContent = {
       frameLabel: homeIntro.showcase.label,
       framePath: homeIntro.showcase.path,
       frameTitle: homeIntro.showcase.title,
+      framePreviewImage: homeIntro.showcase.previewImage,
     },
     stack: {
       titleId: 'humite-stack-title',

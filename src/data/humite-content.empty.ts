@@ -7,7 +7,7 @@ export type HumiteReleaseContent = {
     description: string;
     action: string;
     actionHref: string;
-    showcase: { path: string; label: string; title: string };
+    showcase: { path: string; label: string; title: string; previewImage?: string };
   };
   card: { name: string; slug: string; image: string; href: string; category: string; description: string };
   showcase: ProductShowcaseContent;

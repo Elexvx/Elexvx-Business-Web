@@ -170,13 +170,19 @@ describe('HomeHero rendering', () => {
   it('translates the 3D showcase facade in English when rendered directly', () => {
     const html = renderToStaticMarkup(
       <LanguageProvider locale="en" path="/en/" autoRedirect={false}>
-        <ShowcaseFrame src="/example/index.html" title="3D Showcase Simulation" />
+        <ShowcaseFrame
+          src="/example/index.html"
+          title="3D Showcase Simulation"
+          previewImage="/products/humite-library-preview.png"
+        />
       </LanguageProvider>
     );
 
-    expect(html).toContain('Interactive 3D preview');
+    expect(html).toContain('home-mac-facade--image');
+    expect(html).toContain('home-mac-facade-image');
+    expect(html).toContain('alt="3D Showcase Simulation"');
     expect(html).toContain('Launch 3D preview');
-    expect(html).toContain('3D Showcase Simulation');
+    expect(html).not.toContain('Interactive 3D preview');
     expect(html.split('<noscript>')[0]).not.toContain('<iframe');
     expect(html).not.toMatch(/[\u4e00-\u9fff]/);
   });

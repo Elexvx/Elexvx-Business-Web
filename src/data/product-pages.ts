@@ -30,6 +30,7 @@ export type ProductShowcaseContent = {
     frameLabel: string;
     framePath: string;
     frameTitle: string;
+    framePreviewImage?: string;
   };
   stack: {
     titleId: string;

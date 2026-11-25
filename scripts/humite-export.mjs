@@ -6,7 +6,7 @@ import { isHumiteReleaseDue } from '../src/data/humite-launch.mjs';
 export const humiteAssetRoot = 'release-assets/humite';
 export const humiteScenePath = '/visuals/humite-library';
 export const humiteAssetPaths = Object.entries(imageManifest)
-  .filter(([path]) => path.startsWith(`${humiteScenePath}/`) || path === '/products/humite-cover-textured.png')
+  .filter(([path]) => path.startsWith(`${humiteScenePath}/`) || path.startsWith('/products/humite-'))
   .flatMap(([path, { variants }]) => [path, ...variants.map(({ src }) => src)]);
 
 export const isHumitePublicBuild = () => process.env.NEXT_PUBLIC_HUMITE_PUBLISHED !== 'false' && isHumiteReleaseDue();

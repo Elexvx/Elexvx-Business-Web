@@ -23,9 +23,6 @@ export const existingEnglish: Record<string, string> = {
   协作从这里开始: 'YOUR WORK, CONNECTED',
   交互演示: 'Interactive demo',
   演示导航: 'Demo navigation',
-  '交互式 3D 预览': 'Interactive 3D preview',
-  '按需加载三维场景，保持首页轻快流畅；点击后即可进入自由视角漫游与交互体验。':
-    'Loaded on demand to keep the page fast. Launch to explore with free-roam controls and interactive views.',
   '进入 3D 预览': 'Launch 3D preview',
   '演示数据，可点击菜单和项目体验。': 'Sample data. Select a menu or project to explore.',
   '仅展示示例内容，不连接真实业务数据。': 'Sample content only. No live business data is connected.',

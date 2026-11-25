@@ -120,7 +120,12 @@ export const HeroReleasedContent = ({
           </span>
           <span>{t(homeIntro.showcase.label)}</span>
         </div>
-        <ShowcaseFrame src={homeIntro.showcase.path} title={t(homeIntro.showcase.title)} />
+        <ShowcaseFrame
+          src={homeIntro.showcase.path}
+          title={t(homeIntro.showcase.title)}
+          previewImage={homeIntro.showcase.previewImage}
+          eager
+        />
       </div>
     </div>
   );

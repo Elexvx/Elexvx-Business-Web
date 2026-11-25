@@ -196,25 +196,30 @@
   text-align: center;
 }
 
-.home-mac-facade-mark {
-  display: grid;
-  place-items: center;
-  width: 52px;
-  height: 52px;
-  margin-bottom: 6px;
-  border: 1px solid rgba(168, 66, 43, 0.35);
-  outline: 1px solid rgba(168, 66, 43, 0.16);
-  outline-offset: 4px;
-  background: rgba(255, 252, 246, 0.72);
-  color: #a8422b;
+.home-mac-facade--image {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  overflow: hidden;
+  background: #201a16;
 }
 
-.home-mac-facade-eyebrow {
-  color: #7a3a27;
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+.home-mac-facade-image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 48%;
+}
+
+.home-mac-facade-actions {
+  position: absolute;
+  inset: auto 0 0;
+  display: flex;
+  justify-content: center;
+  padding: 48px 20px 24px;
+  background: linear-gradient(to top, rgba(16, 14, 12, 0.56) 0%, rgba(16, 14, 12, 0) 100%);
 }
 
 .home-mac-facade-title {
@@ -226,21 +231,14 @@
   line-height: 1.3;
 }
 
-.home-mac-facade-description {
-  max-width: 480px;
-  margin: 0;
-  color: #544d43;
-  font-size: 14px;
-  line-height: 1.65;
-  text-wrap: pretty;
-}
-
 .home-mac-facade-button {
   gap: 8px;
-  margin-top: 10px;
-  border: 1px solid #1d1d1f;
-  background: #1d1d1f;
+  margin-top: 0;
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  background: rgba(24, 24, 27, 0.88);
+  backdrop-filter: blur(10px);
   color: #ffffff;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.28);
   cursor: pointer;
   transition:
     background-color 180ms ease,
@@ -248,8 +246,8 @@
 }
 
 .home-mac-facade-button:focus-visible {
-  outline: 2px solid var(--color-focus);
-  outline-offset: 4px;
+  outline: 2px solid #ffffff;
+  outline-offset: 3px;
 }
 
 .home-mac-facade-button:active {
@@ -258,7 +256,7 @@
 
 @media (hover: hover) and (pointer: fine) {
   .home-mac-facade-button:hover {
-    background: #333336;
+    background: #18181b;
   }
 }
 
@@ -515,10 +513,11 @@ html[data-theme='light'] .home-brand-mark[data-format='overlap-symbol'] img {
     gap: 10px;
     padding: 24px 20px;
   }
-  .home-mac-facade-mark {
-    width: 44px;
-    height: 44px;
-    margin-bottom: 2px;
+  .home-mac-facade--image {
+    padding: 0;
+  }
+  .home-mac-facade-actions {
+    padding: 36px 16px 18px;
   }
   .site-shell-home .home-ecosystem {
     padding-top: var(--home-section-space-mobile);
