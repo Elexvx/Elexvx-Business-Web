@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { serviceNavigationConfig } from '../../data/service-navigation';
 import type { StatusApiResponse, StatusData } from '../../data/service-status';
+import { useI18n } from '../providers/i18n';
 import { createDemoStatusData } from './status-demo';
 
 interface StatusDataState {
@@ -64,6 +65,7 @@ async function sha256Hex(value: string): Promise<string> {
 }
 
 export function useStatusData(historyDays: number) {
+  const { t } = useI18n();
   const [state, setState] = useState<StatusDataState>({
     loading: true,
     refreshing: false,
@@ -100,7 +102,7 @@ export function useStatusData(historyDays: number) {
           if (mountedRef.current) setState({ loading: false, refreshing: false, passwordRequired: true });
           return;
         }
-        throw new Error(payload.message || '无法获取服务状态');
+        throw new Error(t(payload.message || '无法获取服务状态'));
       }
 
       if (mountedRef.current) {
@@ -120,13 +122,13 @@ export function useStatusData(historyDays: number) {
         }
         setState((current) => ({
           ...current,
-          error: error instanceof Error ? error.message : '无法获取服务状态',
+          error: error instanceof Error ? t(error.message) : t('无法获取服务状态'),
           loading: false,
           refreshing: false,
         }));
       }
     }
-  }, [historyDays]);
+  }, [historyDays, t]);
 
   const login = useCallback(
     async (password: string) => {
@@ -138,10 +140,10 @@ export function useStatusData(historyDays: number) {
         body: JSON.stringify({ password: passwordHash }),
       });
       const payload = await parseResponse(response);
-      if (!response.ok) throw new Error(payload.message || '登录失败');
+      if (!response.ok) throw new Error(t(payload.message || '登录失败'));
       await load();
     },
-    [load]
+    [load, t]
   );
 
   useEffect(() => {

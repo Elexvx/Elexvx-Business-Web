@@ -4,6 +4,7 @@ import { BookOutlined, CompassOutlined, LineChartOutlined } from '@ant-design/ic
 import type { ReactNode } from 'react';
 
 import { IndexHeading } from '../components/index-heading';
+import { useI18n } from '../providers/i18n';
 import { documentationUrl } from '../../data/service-routes';
 
 type ServiceDestination = {
@@ -46,37 +47,43 @@ const serviceDestinations: ServiceDestination[] = [
   },
 ];
 
-const ServiceDestinationCard = ({ destination }: { destination: ServiceDestination }) => (
-  <a className="service-overview-card" href={destination.href}>
-    <img
-      className="service-overview-card-bg"
-      src={destination.image}
-      alt=""
-      aria-hidden="true"
-      width={destination.imageWidth}
-      height={destination.imageHeight}
-      loading="eager"
-      decoding="async"
-      fetchPriority="high"
-    />
-    <span className="service-overview-card-icon">{destination.icon}</span>
-    <div className="service-overview-card-body">
-      <h2>{destination.title}</h2>
-      <p>{destination.description}</p>
-    </div>
-    <span className="service-overview-card-link">进入</span>
-  </a>
-);
-
-export const ServicesPage = () => (
-  <section className="service-overview" aria-labelledby="services-index-title">
-    <div className="service-overview-inner">
-      <IndexHeading id="services-index-title" title="服务" />
-      <div className="service-overview-grid">
-        {serviceDestinations.map((destination) => (
-          <ServiceDestinationCard destination={destination} key={destination.href} />
-        ))}
+const ServiceDestinationCard = ({ destination }: { destination: ServiceDestination }) => {
+  const { t, href } = useI18n();
+  return (
+    <a className="service-overview-card" href={href(destination.href)}>
+      <img
+        className="service-overview-card-bg"
+        src={destination.image}
+        alt=""
+        aria-hidden="true"
+        width={destination.imageWidth}
+        height={destination.imageHeight}
+        loading="eager"
+        decoding="async"
+        fetchPriority="high"
+      />
+      <span className="service-overview-card-icon">{destination.icon}</span>
+      <div className="service-overview-card-body">
+        <h2>{t(destination.title)}</h2>
+        <p>{t(destination.description)}</p>
       </div>
-    </div>
-  </section>
-);
+      <span className="service-overview-card-link">{t('进入')}</span>
+    </a>
+  );
+};
+
+export const ServicesPage = () => {
+  const { t } = useI18n();
+  return (
+    <section className="service-overview" aria-labelledby="services-index-title">
+      <div className="service-overview-inner">
+        <IndexHeading id="services-index-title" title={t('服务')} />
+        <div className="service-overview-grid">
+          {serviceDestinations.map((destination) => (
+            <ServiceDestinationCard destination={destination} key={destination.href} />
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+};

@@ -67,31 +67,36 @@ export const buildArticleStructuredData = ({
   });
 };
 
-export const siteStructuredData = (): string => {
+export const siteStructuredData = (locale: Locale = 'zh-CN'): string => {
+  const isEn = locale === 'en';
   const organizationId = `${siteIdentity.canonicalOrigin}/#organization`;
+  const name = isEn ? ENGLISH_BRAND_NAME : siteIdentity.seoName;
+  const description = isEn ? translateEnglish(siteIdentity.seoDescription) : siteIdentity.seoDescription;
   return serializeJsonLd({
     '@context': 'https://schema.org',
     '@graph': [
       {
         '@type': 'Organization',
         '@id': organizationId,
-        name: siteIdentity.seoName,
-        legalName: '宏翔商道（南京）科技发展有限公司',
-        alternateName: ['宏翔商道', 'Elexvx'],
-        description: siteIdentity.seoDescription,
-        url: `${siteIdentity.canonicalOrigin}/`,
+        name,
+        legalName: isEn
+          ? 'Hongxiang Shangdao (Nanjing) Technology Development Co., Ltd.'
+          : '宏翔商道（南京）科技发展有限公司',
+        alternateName: isEn ? ['Hongxiang Shangdao', 'Elexvx'] : ['宏翔商道', 'Elexvx'],
+        description,
+        url: isEn ? `${siteIdentity.canonicalOrigin}/en/` : `${siteIdentity.canonicalOrigin}/`,
         logo: `${siteIdentity.canonicalOrigin}/brand/elexvx-logo-black-600.webp`,
         email: primaryContactEmail,
       },
       {
         '@type': 'WebSite',
         '@id': `${siteIdentity.canonicalOrigin}/#website`,
-        name: siteIdentity.seoName,
-        alternateName: ['宏翔商道', 'Elexvx'],
-        description: siteIdentity.seoDescription,
-        url: `${siteIdentity.canonicalOrigin}/`,
+        name,
+        alternateName: isEn ? ['Hongxiang Shangdao', 'Elexvx'] : ['宏翔商道', 'Elexvx'],
+        description,
+        url: isEn ? `${siteIdentity.canonicalOrigin}/en/` : `${siteIdentity.canonicalOrigin}/`,
         publisher: { '@id': organizationId },
-        inLanguage: ['zh-CN', 'en'],
+        inLanguage: isEn ? ['en', 'zh-CN'] : ['zh-CN', 'en'],
       },
     ],
   });

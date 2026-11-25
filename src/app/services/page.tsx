@@ -1,4 +1,5 @@
 import { SiteShell } from '../../site/components/shell';
+import { LanguageProvider } from '../../site/providers/i18n';
 import { serviceMetadata } from '../../site/routing/metadata-base';
 import { ServicesPage } from '../../site/services/services-page';
 
@@ -10,8 +11,10 @@ export const metadata = serviceMetadata({
 
 export default function Page() {
   return (
-    <SiteShell activePath="/services" className="service-site-shell">
-      <ServicesPage />
-    </SiteShell>
+    <LanguageProvider locale="zh-CN" path="/services">
+      <SiteShell activePath="/services" className="service-site-shell">
+        <ServicesPage />
+      </SiteShell>
+    </LanguageProvider>
   );
 }

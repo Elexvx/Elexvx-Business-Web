@@ -28,7 +28,10 @@ export function GET() {
         { path: `/en${path}`, lastmod, title: route.meta.titleEn ?? translateEnglish(route.meta.title) },
       ];
     }),
-    ...serviceRoutePaths.map((path) => ({ path: `${path}/`, lastmod: undefined, title: serviceTitles[path] })),
+    ...serviceRoutePaths.flatMap((path) => [
+      { path: `${path}/`, lastmod: undefined, title: serviceTitles[path] },
+      { path: `/en${path}/`, lastmod: undefined, title: translateEnglish(serviceTitles[path]) },
+    ]),
   ];
   const urls = entries
     .map(({ path, lastmod, title }) => {

@@ -7,6 +7,7 @@ import { siteIdentity } from '../src/data/site';
 import { ENGLISH_BRAND_NAME } from '../src/data/site-origins';
 import { ROOT_METADATA_DEFAULTS } from '../src/site/routing/metadata-base';
 import { getStaticRoutes, redirectRoutes } from '../src/site/routing/routes';
+import { siteStructuredData } from '../src/site/seo/structured-data';
 import { translateEnglish } from '../src/site/translation';
 
 const distRoot = resolve(process.cwd(), 'dist');
@@ -27,6 +28,8 @@ const chineseCompanyNameHtml = escapeHtml(siteIdentity.companyName);
 const englishBrandNameHtml = escapeHtml(ENGLISH_BRAND_NAME);
 const chineseSiteDescriptionHtml = escapeHtml(siteIdentity.description);
 const englishSiteDescriptionHtml = escapeHtml(translateEnglish(siteIdentity.description));
+const chineseSiteStructuredData = siteStructuredData('zh-CN');
+const englishSiteStructuredData = siteStructuredData('en');
 
 const redirectDocument = (target: string) => {
   const safeTarget = escapeHtml(target);
@@ -107,7 +110,8 @@ const localizeDocumentLanguage = async (directory: string): Promise<void> => {
             /<html\b([^>]*)>/,
             (_, attributes: string) => `<html${attributes.replace(/\s+lang="[^"]*"/, '')} lang="en">`
           )
-          .replaceAll(chineseSiteDescriptionHtml, englishSiteDescriptionHtml),
+          .replaceAll(chineseSiteDescriptionHtml, englishSiteDescriptionHtml)
+          .replaceAll(chineseSiteStructuredData, englishSiteStructuredData),
         'utf8'
       );
     }

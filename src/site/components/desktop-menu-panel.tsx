@@ -23,7 +23,7 @@ export const DesktopMenuPanel = ({
     className={classNames('desktop-menu-panel', openGroup && 'is-open')}
     id="desktop-menu-panel"
     role="region"
-    aria-label={`${t(panelGroup.label)} navigation`}
+    aria-label={locale === 'en' ? `${t(panelGroup.label)} navigation` : `${panelGroup.label}导航`}
     aria-hidden={!openGroup}
   >
     <div className="desktop-menu-panel-inner" key={panelGroup.id}>

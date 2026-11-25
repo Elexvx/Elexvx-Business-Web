@@ -5,6 +5,7 @@ import { useEffect, useMemo, useRef, useState, type KeyboardEvent as ReactKeyboa
 
 import { serviceNavigationLinks, type ServiceNavigationConfig } from '../../data/service-navigation';
 import { SiteSelect } from '../components/primitives/select';
+import { useI18n } from '../providers/i18n';
 import { canonicalContentHref } from '../routing/content-href';
 
 const SCOPE_STORAGE_KEY = 'elexvx-navigation-scope';
@@ -77,11 +78,13 @@ function SearchSuggestionsList({
   suggestions,
   activeSuggestion,
   onSelect,
+  t,
 }: {
   listboxId: string;
   suggestions: SearchLink[];
   activeSuggestion: number;
   onSelect: (link: SearchLink) => void;
+  t: (text: string) => string;
 }) {
   return (
     <div className="service-search-suggestions" id={listboxId} role="listbox">
@@ -96,8 +99,10 @@ function SearchSuggestionsList({
           onMouseDown={(event) => event.preventDefault()}
           onClick={() => onSelect(link)}
         >
-          <span className="service-suggestion-name">{link.name}</span>
-          <span className="service-suggestion-description">{link.description || '打开链接'}</span>
+          <span className="service-suggestion-name">{t(link.name)}</span>
+          <span className="service-suggestion-description">
+            {link.description ? t(link.description) : t('打开链接')}
+          </span>
         </button>
       ))}
     </div>
@@ -105,6 +110,7 @@ function SearchSuggestionsList({
 }
 
 export function DirectorySearch({ searchConfig }: { searchConfig: SearchConfig }) {
+  const { locale, t } = useI18n();
   const [query, setQuery] = useState('');
   const [activeSuggestion, setActiveSuggestion] = useState(-1);
   const [suggestionsOpen, setSuggestionsOpen] = useState(false);
@@ -118,29 +124,41 @@ export function DirectorySearch({ searchConfig }: { searchConfig: SearchConfig }
     enabledSearchEngines
   );
 
+  const searchLocale = locale === 'en' ? 'en-US' : 'zh-CN';
   const listboxId = 'navigation-search-suggestions';
   const suggestions = useMemo(() => {
-    const normalized = query.trim().toLocaleLowerCase('zh-CN');
+    const normalized = query.trim().toLocaleLowerCase(searchLocale);
     if (!normalized || scope !== 'internal') return [];
     return DIRECTORY_SEARCH_LINKS.filter((link) =>
-      [link.name, link.description, ...link.tags].join(' ').toLocaleLowerCase('zh-CN').includes(normalized)
+      [link.name, t(link.name), link.description, t(link.description), ...link.tags, ...link.tags.map(t)]
+        .join(' ')
+        .toLocaleLowerCase(searchLocale)
+        .includes(normalized)
     ).slice(0, searchConfig.maxSuggestions);
-  }, [query, scope, searchConfig.maxSuggestions]);
+  }, [query, scope, searchConfig.maxSuggestions, searchLocale, t]);
 
   const selectedEngine = enabledSearchEngines.find((engine) => engine.name === engineId) ?? enabledSearchEngines[0];
   const suggestionsVisible = suggestionsOpen && scope === 'internal' && suggestions.length > 0;
+  const searchPlaceholder =
+    scope === 'internal' ? t(SEARCH_PLACEHOLDER) : t(selectedEngine?.placeholder ?? SEARCH_PLACEHOLDER);
 
   const openInternalResult = (link: SearchLink) => {
-    setQuery(link.name);
+    setQuery(t(link.name));
     setActiveSuggestion(-1);
     setSuggestionsOpen(false);
     openExternalUrl(link.url);
   };
 
   const findInternalResult = () => {
-    const normalized = query.trim().toLocaleLowerCase('zh-CN');
+    const normalized = query.trim().toLocaleLowerCase(searchLocale);
     if (!normalized) return undefined;
-    return DIRECTORY_SEARCH_LINKS.find((link) => link.name.toLocaleLowerCase('zh-CN') === normalized) ?? suggestions[0];
+    return (
+      DIRECTORY_SEARCH_LINKS.find(
+        (link) =>
+          link.name.toLocaleLowerCase(searchLocale) === normalized ||
+          t(link.name).toLocaleLowerCase(searchLocale) === normalized
+      ) ?? suggestions[0]
+    );
   };
 
   const submit = () => {
@@ -176,7 +194,7 @@ export function DirectorySearch({ searchConfig }: { searchConfig: SearchConfig }
   return (
     <form
       className="service-search"
-      aria-label="搜索工具"
+      aria-label={t('搜索工具')}
       onBlur={(event) => {
         if (!event.currentTarget.contains(event.relatedTarget as Node | null)) {
           setSuggestionsOpen(false);
@@ -219,7 +237,7 @@ export function DirectorySearch({ searchConfig }: { searchConfig: SearchConfig }
             aria-autocomplete="list"
             aria-controls={suggestionsVisible ? listboxId : undefined}
             aria-expanded={suggestionsVisible}
-            aria-label={scope === 'internal' ? '站内搜索' : '全网搜索'}
+            aria-label={t(scope === 'internal' ? '站内搜索' : '全网搜索')}
             autoComplete="off"
             onChange={(event) => {
               setQuery(event.target.value);
@@ -228,9 +246,7 @@ export function DirectorySearch({ searchConfig }: { searchConfig: SearchConfig }
             }}
             onFocus={() => setSuggestionsOpen(true)}
             onKeyDown={handleKeyDown}
-            placeholder={
-              scope === 'internal' ? SEARCH_PLACEHOLDER : (selectedEngine?.placeholder ?? SEARCH_PLACEHOLDER)
-            }
+            placeholder={searchPlaceholder}
             role="combobox"
             value={query}
           />
@@ -240,12 +256,13 @@ export function DirectorySearch({ searchConfig }: { searchConfig: SearchConfig }
               suggestions={suggestions}
               activeSuggestion={activeSuggestion}
               onSelect={openInternalResult}
+              t={t}
             />
           )}
         </div>
         <button className="service-search-submit" type="submit">
           <SearchOutlined aria-hidden="true" />
-          <span>搜索</span>
+          <span>{t('搜索')}</span>
         </button>
       </div>
     </form>

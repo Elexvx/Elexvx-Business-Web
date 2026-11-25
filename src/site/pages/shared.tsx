@@ -21,7 +21,7 @@ export const ProjectCard = ({ project }: { project: Project }) => {
         <div className="project-card-media">
           <SiteImage
             src={project.image}
-            alt={`${t(project.title)} abstract gradient visual`}
+            alt={locale === 'en' ? `${t(project.title)} abstract gradient visual` : `${project.title} 抽象渐变视觉图`}
             sizes="(max-width: 720px) calc(100vw - 40px), 640px"
             loading="lazy"
             decoding="async"

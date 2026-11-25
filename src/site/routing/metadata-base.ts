@@ -258,28 +258,38 @@ export const metadataForRoute = (meta: RouteMeta, path: string, locale: Locale =
   };
 };
 
-/** Builds metadata for standalone Chinese service pages without emitting hreflang alternates. */
+/** Builds localized metadata and reciprocal hreflang alternates for service utility pages. */
 export const serviceMetadata = ({
   title,
   description,
   path,
+  locale = 'zh-CN',
 }: {
   title: string;
   description: string;
   path: string;
+  locale?: Locale;
 }): Metadata => {
-  const pageTitleText = brandedPageTitle(title);
-  const canonical = `${CANONICAL_ORIGIN}${path}`;
+  const brand = localizedBrandName(locale);
+  const pageTitleText = brandedPageTitle(title, locale);
+  const normalizedBasePath = path.replace(/\/+$/, '') || '/';
+  const localizedPath = locale === 'en' ? `/en${path.startsWith('/') ? path : `/${path}`}` : path;
+  const canonical = `${CANONICAL_ORIGIN}${localizedPath}`;
   return {
     title: { absolute: pageTitleText },
     description,
-    alternates: { canonical },
+    applicationName: brand,
+    keywords: [...BRAND_KEYWORDS[locale]],
+    authors: [{ name: brand, url: siteIdentity.canonicalOrigin }],
+    creator: brand,
+    publisher: brand,
+    alternates: buildMetadataAlternates(normalizedBasePath, canonical),
     openGraph: {
       title: pageTitleText,
       description,
       url: canonical,
-      siteName: siteIdentity.seoName,
-      locale: 'zh_CN',
+      siteName: brand,
+      locale: locale === 'en' ? 'en_US' : 'zh_CN',
       type: 'website',
     },
     twitter: {

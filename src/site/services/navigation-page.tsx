@@ -1,3 +1,5 @@
+'use client';
+
 import PartitionOutlined from '@ant-design/icons-svg/es/asn/PartitionOutlined';
 import type { AbstractNode, IconDefinition } from '@ant-design/icons-svg/es/types';
 import { createElement, type ReactElement } from 'react';
@@ -9,6 +11,7 @@ import {
   type ServiceLink,
 } from '../../data/service-navigation';
 import { IndexHeading } from '../components/index-heading';
+import { useI18n } from '../providers/i18n';
 import { DirectorySearch } from './navigation-search';
 import { canonicalContentHref } from '../routing/content-href';
 
@@ -68,13 +71,14 @@ function LinkIcon({ link, eager = false }: { link: ServiceLink; eager?: boolean 
   );
 }
 
-function DirectoryRow({ link, eager = false }: { link: ServiceLink; eager?: boolean }) {
-  const description = link.description.trim();
+function DirectoryRow({ link, eager = false, t }: { link: ServiceLink; eager?: boolean; t: (text: string) => string }) {
+  const title = t(link.name);
+  const description = t(link.description.trim());
   return (
     <a
       className="service-directory-row"
       data-link-id={link.id}
-      data-search-tags={link.tags.join(' ')}
+      data-search-tags={link.tags.map(t).join(' ')}
       href={canonicalContentHref(link.url)}
       target="_blank"
       rel="noopener noreferrer"
@@ -83,35 +87,51 @@ function DirectoryRow({ link, eager = false }: { link: ServiceLink; eager?: bool
         <LinkIcon link={link} eager={eager} />
       </span>
       <span className="service-link-body">
-        <span className="service-link-title">{link.name}</span>
-        {description && description !== link.name && <span className="service-link-description">{description}</span>}
+        <span className="service-link-title">{title}</span>
+        {description && description !== title && <span className="service-link-description">{description}</span>}
       </span>
     </a>
   );
 }
 
-function DirectoryGrid({ links, eager = false }: { links: ServiceLink[]; eager?: boolean }) {
+function DirectoryGrid({
+  links,
+  eager = false,
+  t,
+}: {
+  links: ServiceLink[];
+  eager?: boolean;
+  t: (text: string) => string;
+}) {
   if (links.length === 0) return null;
   return (
     <div className="service-directory-grid">
       {links.map((link) => (
-        <DirectoryRow key={link.id} link={link} eager={eager} />
+        <DirectoryRow key={link.id} link={link} eager={eager} t={t} />
       ))}
     </div>
   );
 }
 
-function NavigationSection({ category, eager = false }: { category: ServiceCategory; eager?: boolean }) {
+function NavigationSection({
+  category,
+  eager = false,
+  t,
+}: {
+  category: ServiceCategory;
+  eager?: boolean;
+  t: (text: string) => string;
+}) {
   return (
     <section className="service-category" id={`category-${category.id}`} aria-labelledby={`heading-${category.id}`}>
       <h2 className="service-category-heading" id={`heading-${category.id}`}>
-        {category.category}
+        {t(category.category)}
       </h2>
-      <DirectoryGrid links={category.links} eager={eager} />
+      <DirectoryGrid links={category.links} eager={eager} t={t} />
       {category.subcategories.map((subcategory) => (
         <div className="service-subcategory" id={`subcategory-${subcategory.id}`} key={subcategory.id}>
-          <h3>{subcategory.name}</h3>
-          <DirectoryGrid links={subcategory.links} eager={eager} />
+          <h3>{t(subcategory.name)}</h3>
+          <DirectoryGrid links={subcategory.links} eager={eager} t={t} />
         </div>
       ))}
     </section>
@@ -119,21 +139,22 @@ function NavigationSection({ category, eager = false }: { category: ServiceCateg
 }
 
 export const NavigationPage = () => {
+  const { t } = useI18n();
   return (
     <>
       <section className="service-page-hero service-navigation-hero" aria-labelledby="service-navigation-title">
         <div className="service-page-hero-inner">
           <div className="service-page-hero-copy">
-            <IndexHeading id="service-navigation-title" title="企业服务导航" />
+            <IndexHeading id="service-navigation-title" title={t('企业服务导航')} />
           </div>
           <DirectorySearch searchConfig={serviceNavigationConfig.search} />
         </div>
       </section>
 
-      <section className="service-directory" aria-label="企业服务导航分类">
+      <section className="service-directory" aria-label={t('企业服务导航分类')}>
         <div className="service-directory-inner">
           {serviceNavigation.map((category, index) => (
-            <NavigationSection category={category} eager={index < 2} key={category.id} />
+            <NavigationSection category={category} eager={index < 2} key={category.id} t={t} />
           ))}
         </div>
       </section>

@@ -14,31 +14,28 @@ const sharedAllowRules = [
   /\.ui-visually-hidden/,
   /\.navigation-search/,
 ];
+const navigationAllowRules = [...sharedAllowRules, /\.service-page-hero/, /\.service-search/];
+const statusAllowRules = [
+  ...sharedAllowRules,
+  /\.status-performance-shell/,
+  /\.service-site-shell/,
+  /\.service-status-/,
+  /\.service-monitor-/,
+  /\.service-availability-/,
+  /\.service-group-uptime/,
+  /\.service-refresh-button/,
+  /\.service-history-action/,
+  /\.site-footer/,
+  /\.footer-/,
+  /\.sr-only/,
+];
 const pages = [
   { file: 'dist/index.html', allowRules: sharedAllowRules },
   { file: 'dist/en/index.html', allowRules: sharedAllowRules },
-  {
-    file: 'dist/navigation/index.html',
-    allowRules: [...sharedAllowRules, /\.service-page-hero/, /\.service-search/],
-  },
-  {
-    file: 'dist/status/index.html',
-    allowRules: [
-      ...sharedAllowRules,
-      /\.status-performance-shell/,
-      /\.service-site-shell/,
-      /\.service-status-/,
-      /\.service-monitor-/,
-      /\.service-availability-/,
-      /\.service-group-uptime/,
-      /\.service-refresh-button/,
-      /\.service-history-action/,
-      /\.site-footer/,
-      /\.footer-/,
-      /\.sr-only/,
-    ],
-    inlineFonts: false,
-  },
+  { file: 'dist/navigation/index.html', allowRules: navigationAllowRules },
+  { file: 'dist/en/navigation/index.html', allowRules: navigationAllowRules },
+  { file: 'dist/status/index.html', allowRules: statusAllowRules, inlineFonts: false },
+  { file: 'dist/en/status/index.html', allowRules: statusAllowRules, inlineFonts: false },
 ];
 
 for (const { file, allowRules, inlineFonts = true } of pages) {

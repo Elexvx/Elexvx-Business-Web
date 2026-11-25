@@ -1,6 +1,7 @@
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it, vi } from 'vitest';
 
+import { EnglishLanguageProvider } from '../src/site/providers/english-i18n';
 import { StatusErrorState, StatusLogin, StatusPanel, StatusSkeleton } from '../src/site/services/status-components';
 import { createDemoStatusData } from '../src/site/services/status-demo';
 
@@ -55,5 +56,19 @@ describe('status page accessibility', () => {
     expect(html).toContain(`<h2 id="${titleId}">暂时无法获取服务状态</h2>`);
     expect(html).toContain(`<p id="${descriptionId}">请求超时</p>`);
     expect(html).toContain('<button type="button">重新加载</button>');
+  });
+
+  it('localizes status panel and skeleton announcements in English', () => {
+    const html = renderToStaticMarkup(
+      <EnglishLanguageProvider path="/status">
+        <StatusSkeleton />
+        <StatusPanel data={createDemoStatusData(3)} onRefresh={vi.fn()} refreshing={false} />
+      </EnglishLanguageProvider>
+    );
+
+    expect(html).toContain('aria-label="Loading service status"');
+    expect(html).toContain('All systems operational');
+    expect(html).toContain('aria-label="Refresh status"');
+    expect(html).not.toMatch(/[\u4e00-\u9fff]/);
   });
 });

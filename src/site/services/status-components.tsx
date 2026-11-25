@@ -11,6 +11,7 @@ import {
   type StatusData,
   type StatusMonitor,
 } from '../../data/service-status';
+import { useI18n } from '../providers/i18n';
 import {
   availabilityTone,
   formatDay,
@@ -28,7 +29,8 @@ export function StatusDot({ tone }: { tone: StatusTone }) {
 }
 
 export function StatusSkeleton({ history = false }: { history?: boolean }) {
-  const label = history ? '正在加载历史可用性' : '正在加载服务状态';
+  const { t } = useI18n();
+  const label = t(history ? '正在加载历史可用性' : '正在加载服务状态');
 
   return (
     <div className="service-status-loading" role="status" aria-live="polite" aria-label={label}>
@@ -69,19 +71,35 @@ export function AvailabilityStrip({
   label: string;
   currentStatus: MonitorState;
 }) {
+  const { locale, t } = useI18n();
+  const isEn = locale === 'en';
   const visibleDays = days.slice(-serviceNavigationConfig.status.historyDays);
   const currentDayDown = isMonitorDown(currentStatus);
+  const localizedLabel = t(label);
 
   return (
-    <div className="service-availability-strip" aria-label={`${label}最近 ${days.length} 天可用性`} role="img">
+    <div
+      className="service-availability-strip"
+      aria-label={
+        isEn
+          ? `${localizedLabel} availability over the last ${days.length} days`
+          : `${localizedLabel}最近 ${days.length} 天可用性`
+      }
+      role="img"
+    >
       {visibleDays.map((day, index) => {
         const isLatestDay = index === visibleDays.length - 1;
         const markCurrentDayDown = isLatestDay && currentDayDown && day.percent === 0;
+        const dayLabel = isLatestDay ? (isEn ? 'Today' : '今天') : formatDay(day.date, locale);
         return (
           <span
             className={`service-availability-bar service-availability-${availabilityTone(day.percent, markCurrentDayDown)}`}
             key={`${day.date}-${index}`}
-            title={`${isLatestDay ? '今天' : formatDay(day.date)} · 可用率 ${formatPercent(day.percent)}`}
+            title={
+              isEn
+                ? `${dayLabel} · Availability ${formatPercent(day.percent)}`
+                : `${dayLabel} · 可用率 ${formatPercent(day.percent)}`
+            }
           />
         );
       })}
@@ -90,9 +108,10 @@ export function AvailabilityStrip({
 }
 
 function MonitorRow({ monitor }: { monitor: StatusMonitor }) {
+  const { locale, t } = useI18n();
   const tone = statusTone(monitor.status);
-  const name = monitorDisplayName(monitor.name);
-  const statusLabel = tone === 'healthy' ? '正常运行' : tone === 'error' ? '服务异常' : '状态未知';
+  const name = t(monitorDisplayName(monitor.name));
+  const statusLabel = t(tone === 'healthy' ? '正常运行' : tone === 'error' ? '服务异常' : '状态未知');
   return (
     <div className="service-monitor-row">
       <div className="service-monitor-identity">
@@ -110,7 +129,7 @@ function MonitorRow({ monitor }: { monitor: StatusMonitor }) {
           href={monitor.url}
           target="_blank"
           rel="noopener noreferrer"
-          aria-label={`打开${name}`}
+          aria-label={locale === 'en' ? `Open ${name}` : `打开${name}`}
         >
           <LinkOutlined aria-hidden="true" />
         </a>
@@ -120,17 +139,23 @@ function MonitorRow({ monitor }: { monitor: StatusMonitor }) {
 }
 
 function GroupLabel({ group }: { group: StatusGroup }) {
+  const { locale, t } = useI18n();
   const tone = statusTone(group.status);
+  const groupName = t(group.name);
+  const countLabel =
+    locale === 'en'
+      ? `${group.monitors.length} ${group.monitors.length === 1 ? 'component' : 'components'}`
+      : `${group.monitors.length} 个组件`;
   return (
     <div className="service-status-group-label">
       <div className="service-status-group-identity">
         <StatusDot tone={tone} />
         <div>
-          <strong>{group.name}</strong>
-          <span>{group.monitors.length} 个组件</span>
+          <strong>{groupName}</strong>
+          <span>{countLabel}</span>
         </div>
       </div>
-      <AvailabilityStrip days={group.days} label={group.name} currentStatus={group.status} />
+      <AvailabilityStrip days={group.days} label={groupName} currentStatus={group.status} />
       <span className="service-group-uptime">{formatPercent(group.percent)}</span>
     </div>
   );
@@ -145,11 +170,16 @@ function StatusSummary({
   onRefresh: () => void;
   refreshing: boolean;
 }) {
+  const { locale, t } = useI18n();
+  const isEn = locale === 'en';
   const hasErrors = data.summary.error > 0;
   const hasUnknown = data.summary.unknown > 0;
   const unavailable = data.monitors.filter((monitor) => isMonitorDown(monitor.status));
   const tone: StatusTone = hasErrors ? 'error' : hasUnknown ? 'warning' : 'healthy';
-  const title = hasErrors ? '部分系统出现异常' : hasUnknown ? '部分系统状态未知' : '所有系统运行正常';
+  const title = t(hasErrors ? '部分系统出现异常' : hasUnknown ? '部分系统状态未知' : '所有系统运行正常');
+  const updatedTime = formatStatusTime(data.timestamp, locale);
+  const affectedNames = unavailable.map((monitor) => t(monitorDisplayName(monitor.name))).join(isEn ? ', ' : '、');
+
   return (
     <div
       className={`service-status-summary service-status-summary-${tone}`}
@@ -164,17 +194,17 @@ function StatusSummary({
       <div>
         <h2 id="service-status-summary-title">{title}</h2>
         <div className="service-status-summary-details">
-          <span>最近更新：{formatStatusTime(data.timestamp)}</span>
+          <span>{isEn ? `Last updated: ${updatedTime}` : `最近更新：${updatedTime}`}</span>
           {unavailable.length > 0 ? (
-            <span>受影响服务：{unavailable.map((monitor) => monitorDisplayName(monitor.name)).join('、')}。</span>
+            <span>{isEn ? `Affected services: ${affectedNames}.` : `受影响服务：${affectedNames}。`}</span>
           ) : null}
         </div>
       </div>
       <button
         className={`service-refresh-button${refreshing ? ' is-refreshing' : ''}`}
         type="button"
-        aria-label={refreshing ? '正在刷新状态' : '刷新状态'}
-        title="刷新状态"
+        aria-label={t(refreshing ? '正在刷新状态' : '刷新状态')}
+        title={t('刷新状态')}
         onClick={() => void onRefresh()}
         disabled={refreshing}
       >
@@ -238,6 +268,7 @@ export function StatusPanel({
 }
 
 export function StatusLogin({ onLogin }: { onLogin: (password: string) => Promise<void> }) {
+  const { t } = useI18n();
   const id = useId();
   const titleId = `${id}-title`;
   const descriptionId = `${id}-description`;
@@ -256,7 +287,7 @@ export function StatusLogin({ onLogin }: { onLogin: (password: string) => Promis
     event.preventDefault();
     if (submittingRef.current) return;
     if (!password) {
-      setError('请输入访问密码');
+      setError(t('请输入访问密码'));
       return;
     }
     submittingRef.current = true;
@@ -265,7 +296,7 @@ export function StatusLogin({ onLogin }: { onLogin: (password: string) => Promis
     try {
       await onLogin(password);
     } catch (loginError) {
-      setError(loginError instanceof Error ? loginError.message : '登录失败');
+      setError(loginError instanceof Error ? t(loginError.message) : t('登录失败'));
     } finally {
       submittingRef.current = false;
       setSubmitting(false);
@@ -275,8 +306,8 @@ export function StatusLogin({ onLogin }: { onLogin: (password: string) => Promis
   return (
     <section className="service-login-panel" aria-labelledby={titleId}>
       <LockOutlined className="service-login-icon" aria-hidden="true" />
-      <h2 id={titleId}>服务状态受保护</h2>
-      <p id={descriptionId}>请输入访问密码后查看监控数据。</p>
+      <h2 id={titleId}>{t('服务状态受保护')}</h2>
+      <p id={descriptionId}>{t('请输入访问密码后查看监控数据。')}</p>
       {error ? (
         <p className="service-form-error" id={errorId} role="alert">
           {error}
@@ -284,13 +315,13 @@ export function StatusLogin({ onLogin }: { onLogin: (password: string) => Promis
       ) : null}
       <form onSubmit={submit} aria-busy={submitting} noValidate>
         <label>
-          <span className="sr-only">访问密码</span>
+          <span className="sr-only">{t('访问密码')}</span>
           <input
             ref={passwordRef}
             autoComplete="current-password"
             name="password"
             type="password"
-            placeholder="访问密码"
+            placeholder={t('访问密码')}
             required
             readOnly={submitting}
             aria-invalid={Boolean(error)}
@@ -303,7 +334,7 @@ export function StatusLogin({ onLogin }: { onLogin: (password: string) => Promis
           />
         </label>
         <button type="submit" disabled={submitting}>
-          {submitting ? '验证中…' : '登录'}
+          {t(submitting ? '验证中…' : '登录')}
         </button>
       </form>
     </section>
@@ -311,6 +342,7 @@ export function StatusLogin({ onLogin }: { onLogin: (password: string) => Promis
 }
 
 export function StatusErrorState({ error, onRetry }: { error?: string; onRetry: () => void }) {
+  const { t } = useI18n();
   const id = useId();
 
   return (
@@ -321,10 +353,10 @@ export function StatusErrorState({ error, onRetry }: { error?: string; onRetry: 
       aria-describedby={`${id}-description`}
     >
       <WarningFilled aria-hidden="true" />
-      <h2 id={`${id}-title`}>暂时无法获取服务状态</h2>
-      <p id={`${id}-description`}>{error || '请稍后重试'}</p>
+      <h2 id={`${id}-title`}>{t('暂时无法获取服务状态')}</h2>
+      <p id={`${id}-description`}>{error ? t(error) : t('请稍后重试')}</p>
       <button type="button" onClick={onRetry}>
-        重新加载
+        {t('重新加载')}
       </button>
     </section>
   );

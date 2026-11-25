@@ -526,6 +526,32 @@ export const existingEnglish: Record<string, string> = {
   项目证据: 'PROJECT EVIDENCE',
   方法图谱: 'METHOD MAP',
   '真实素材 / 待补充': 'REAL ASSET / PENDING',
+  分类: 'Categories',
+  了解更多: 'Explore more',
+  服务入口: 'Service portals',
+  探索活动: 'Explore activities',
+  '活动记录与交流。': 'Event recaps and community exchanges.',
+  '公司公告与最新新闻。': 'Company announcements and latest news.',
+  探索产品: 'Explore products',
+  '了解我们的产品。': 'Discover our products.',
+  '进入 Elexvx 服务中心': 'Enter Elexvx Service Center',
+  '访问帮助文档、企业服务导航与平台运行状态。':
+    'Access documentation, enterprise service navigation, and platform status.',
+  从问题到系统: 'From questions to systems',
+  '研究方向共同构成 Elexvx Research 面向真实世界的技术问题地图。':
+    'Research directions form Elexvx Research’s map of real-world technical problems.',
+  服务中心: 'Service Center',
+  企业服务导航: 'Enterprise Service Directory',
+  服务状态历史: 'Service Status History',
+  进入: 'Open',
+  '帮助文档、企业服务导航与服务状态的统一入口。':
+    'Unified portal for documentation, enterprise service links, and platform status.',
+  '前往 Elexvx 文档中心，查看使用指南与帮助内容。':
+    'Visit the Elexvx Documentation Center for user guides and support resources.',
+  '按工作场景查找企业系统、政务服务与公共平台入口。':
+    'Find enterprise systems, public administration portals, and shared tools by scenario.',
+  '查看企业服务、项目服务与公共服务的运行状态。':
+    'Check the live operational status of enterprise, project, and public services.',
 };
 
 export const translateWithDictionary = (value: string, english: Record<string, string>): string => {

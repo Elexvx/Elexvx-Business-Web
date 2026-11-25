@@ -4,7 +4,6 @@ import { createContext, Fragment, useContext, useEffect, type ReactNode } from '
 
 import { existingEnglish, translateWithDictionary } from '../translation-base';
 import { canonicalContentHref } from '../routing/content-href';
-import { serviceRoutePaths } from '../../data/service-routes';
 
 export type Locale = 'zh-CN' | 'en';
 
@@ -32,8 +31,7 @@ const shouldLocalizeEnglishHref = (locale: Locale, target: string): boolean => {
   if (locale !== 'en') return false;
   if (!isInternalHref(target)) return false;
   if (/^\/en(?:\/|$|[?#])/.test(target) || /\.[a-z0-9]+(?:[?#]|$)/i.test(target)) return false;
-  const pathname = target.split(/[?#]/, 1)[0].replace(/\/+$/, '');
-  return !serviceRoutePaths.some((route) => route === pathname);
+  return true;
 };
 
 export const LanguageProvider = ({

@@ -1,5 +1,6 @@
 import { isMonitorDown, isMonitorUp, MONITOR_STATE, statusConfig } from '../../data/service-status';
 import type { AvailabilityDay, MonitorState, StatusMonitor } from '../../data/service-status';
+import type { Locale } from '../providers/i18n';
 
 const HEALTHY_AVAILABILITY_PERCENT = 99.9;
 const WARNING_AVAILABILITY_PERCENT = 95;
@@ -9,8 +10,11 @@ const SECONDS_PER_HOUR = 3600;
 const SECONDS_PER_DAY = 24 * SECONDS_PER_HOUR;
 const MILLISECONDS_PER_SECOND = 1000;
 
-const statusDayFormatter = new Intl.DateTimeFormat('zh-CN', { month: 'short', day: 'numeric' });
-const statusDayLabelCache = new Map<number, string>();
+const statusDayFormatters: Record<Locale, Intl.DateTimeFormat> = {
+  'zh-CN': new Intl.DateTimeFormat('zh-CN', { month: 'short', day: 'numeric' }),
+  en: new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric' }),
+};
+const statusDayLabelCache = new Map<string, string>();
 
 export type StatusTone = 'healthy' | 'warning' | 'error' | 'unknown';
 
@@ -109,8 +113,8 @@ export function formatPercent(percent: number): string {
   return `${percent.toFixed(percent === Math.round(percent) ? 0 : 2)}%`;
 }
 
-export function formatStatusTime(timestamp: number): string {
-  return new Intl.DateTimeFormat('zh-CN', {
+export function formatStatusTime(timestamp: number, locale: Locale = 'zh-CN'): string {
+  return new Intl.DateTimeFormat(locale === 'en' ? 'en-US' : 'zh-CN', {
     month: '2-digit',
     day: '2-digit',
     hour: '2-digit',
@@ -120,25 +124,30 @@ export function formatStatusTime(timestamp: number): string {
   }).format(new Date(timestamp));
 }
 
-export function formatDay(timestamp: number): string {
-  const cachedLabel = statusDayLabelCache.get(timestamp);
+export function formatDay(timestamp: number, locale: Locale = 'zh-CN'): string {
+  const cacheKey = `${locale}:${timestamp}`;
+  const cachedLabel = statusDayLabelCache.get(cacheKey);
   if (cachedLabel) return cachedLabel;
 
-  const label = statusDayFormatter.format(new Date(timestamp * MILLISECONDS_PER_SECOND));
+  const label = statusDayFormatters[locale].format(new Date(timestamp * MILLISECONDS_PER_SECOND));
   if (statusDayLabelCache.size >= STATUS_DAY_CACHE_LIMIT) statusDayLabelCache.clear();
-  statusDayLabelCache.set(timestamp, label);
+  statusDayLabelCache.set(cacheKey, label);
   return label;
 }
 
-export function formatDuration(seconds: number): string {
+export function formatDuration(seconds: number, locale: Locale = 'zh-CN'): string {
   const days = Math.floor(seconds / SECONDS_PER_DAY);
   const hours = Math.floor((seconds % SECONDS_PER_DAY) / SECONDS_PER_HOUR);
   const minutes = Math.floor((seconds % SECONDS_PER_HOUR) / SECONDS_PER_MINUTE);
   const remainingSeconds = seconds % SECONDS_PER_MINUTE;
+  const units =
+    locale === 'en'
+      ? { day: 'd', hour: 'h', minute: 'm', second: 's' }
+      : { day: '天', hour: '小时', minute: '分钟', second: '秒' };
   const parts: string[] = [];
-  if (days > 0) parts.push(`${days}天`);
-  if (hours > 0 || days > 0) parts.push(`${hours}小时`);
-  if (minutes > 0 || hours > 0 || days > 0) parts.push(`${minutes}分钟`);
-  parts.push(`${remainingSeconds}秒`);
+  if (days > 0) parts.push(`${days}${units.day}`);
+  if (hours > 0 || days > 0) parts.push(`${hours}${units.hour}`);
+  if (minutes > 0 || hours > 0 || days > 0) parts.push(`${minutes}${units.minute}`);
+  parts.push(`${remainingSeconds}${units.second}`);
   return parts.join(' ');
 }
