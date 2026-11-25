@@ -1,3 +1,5 @@
+export const MAX_ESA_STATIC_FILES: number;
+
 export type EsaRedirectRule = {
   source: string;
   destination?: string;
@@ -10,10 +12,12 @@ export type EsaOutputCheckOptions = {
   origin?: string;
   redirects?: EsaRedirectRule[];
   redirectsFile?: string;
+  maxFiles?: number;
 };
 
 export type EsaOutputCheckResult = {
   pages: number;
+  files: number;
   errors: string[];
 };
 

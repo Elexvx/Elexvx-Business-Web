@@ -270,4 +270,19 @@ describe('ESA static output gate', () => {
     expect(result.errors.some((error) => error.includes('internal /_not-found/'))).toBe(true);
     expect(result.errors.some((error) => error.includes('static fallback that can shadow its redirect'))).toBe(true);
   });
+
+  it('fails when static assets exceed the configured platform file limit', async () => {
+    const root = await createRoot();
+    await writeRoute(root, '/contact/', page('/contact/', '联系我们'));
+    await writeSitemap(root, ['/contact/']);
+
+    const withinLimit = await inspectEsaOutput({ root, redirects: [], maxFiles: 2 });
+    expect(withinLimit.files).toBe(2);
+    expect(withinLimit.errors).toEqual([]);
+
+    await writeFile(path.join(root, 'extra.txt'), 'extra', 'utf8');
+    const overLimit = await inspectEsaOutput({ root, redirects: [], maxFiles: 2 });
+    expect(overLimit.files).toBe(3);
+    expect(overLimit.errors.some((error) => error.includes('platform limit'))).toBe(true);
+  });
 });

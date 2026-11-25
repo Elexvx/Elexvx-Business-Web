@@ -6,6 +6,23 @@ import { CANONICAL_ORIGIN } from '../src/data/site-origins-constants.mjs';
 
 const MIN_HEADING_LENGTH = 2;
 const MIN_MAIN_TEXT_LENGTH = 24;
+export const MAX_ESA_STATIC_FILES = 2000;
+
+async function countStaticFiles(directory) {
+  let entries;
+  try {
+    entries = await readdir(directory, { withFileTypes: true });
+  } catch {
+    return 0;
+  }
+  let count = 0;
+  for (const entry of entries) {
+    const entryPath = path.join(directory, entry.name);
+    if (entry.isDirectory()) count += await countStaticFiles(entryPath);
+    else if (entry.isFile()) count++;
+  }
+  return count;
+}
 
 function parseAttributes(tag) {
   const attributes = new Map();
@@ -375,6 +392,7 @@ export async function inspectEsaOutput({
   origin = CANONICAL_ORIGIN,
   redirects,
   redirectsFile = 'src/server/esa/redirects.json',
+  maxFiles = MAX_ESA_STATIC_FILES,
 } = {}) {
   const staticRoot = path.resolve(root);
   const errors = [];
@@ -386,9 +404,15 @@ export async function inspectEsaOutput({
     } catch (error) {
       return {
         pages: 0,
+        files: 0,
         errors: [`Cannot read ESA redirect rules: ${error.message}`],
       };
     }
+  }
+
+  const files = await countStaticFiles(staticRoot);
+  if (files > maxFiles) {
+    errors.push(`ESA static assets exceed the ${maxFiles}-file platform limit: found ${files} files.`);
   }
 
   const sitemapFile = path.join(staticRoot, 'sitemap.xml');
@@ -396,7 +420,7 @@ export async function inspectEsaOutput({
   try {
     urls = parseSitemap(await readFile(sitemapFile, 'utf8'));
   } catch (error) {
-    return { pages: 0, errors: [`Cannot read ESA sitemap at ${sitemapFile}: ${error.message}`] };
+    return { pages: 0, files, errors: [`Cannot read ESA sitemap at ${sitemapFile}: ${error.message}`] };
   }
   if (urls.length === 0) errors.push('sitemap.xml contains no <loc> URLs.');
 
@@ -406,7 +430,7 @@ export async function inspectEsaOutput({
   await validateReciprocalHreflangs({ staticRoot, origin, pages, errors });
   await validateRedirects({ staticRoot, sourceRedirects, errors });
 
-  return { pages: pages.size, errors };
+  return { pages: pages.size, files, errors };
 }
 
 export async function checkEsaOutput(options = {}) {
@@ -431,7 +455,7 @@ if (process.argv[1] && import.meta.url === pathToFileURL(path.resolve(process.ar
   try {
     const result = await checkEsaOutput({ root: readCliRoot(process.argv.slice(2)) });
     console.log(
-      `ESA static output check passed: ${result.pages} sitemap pages, metadata, language links, and static fallback rules.`
+      `ESA static output check passed: ${result.pages} sitemap pages, ${result.files}/${MAX_ESA_STATIC_FILES} static files, metadata, language links, and static fallback rules.`
     );
   } catch (error) {
     console.error(error.message);

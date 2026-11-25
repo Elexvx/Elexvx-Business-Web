@@ -7,6 +7,14 @@ import { humiteAssetRoot } from './humite-export.mjs';
 
 const manifest = {};
 
+const HOME_FEATURED_IMAGES = new Set([
+  'activities/aigc-training-2026/classroom-overview.jpg',
+  'activities/jimihui-enterprise-brand-ip-2026/event-program.webp',
+  'activities/jimihui-entrepreneur-salon-4-2025/group-photo.webp',
+  'activities/jinxi-2026/jinxi-2026-group-photo.jpg',
+  'products/humite-cover-textured.png',
+]);
+
 async function walk(root, dir, generated) {
   for (const entry of await readdir(dir, { withFileTypes: true })) {
     const file = join(dir, entry.name);
@@ -42,9 +50,11 @@ async function walk(root, dir, generated) {
         ? [360, 720]
         : isShowcasePreview
           ? [480, 720, 960, 1440, 1920, 2560]
-          : isManagedWebp
+          : HOME_FEATURED_IMAGES.has(relativePath)
             ? [240, 480, 720, 960, 1440]
-            : [240, 480, 720, 960, 1600];
+            : isManagedWebp
+              ? [480, 960, 1440]
+              : [480, 960, 1600];
     for (const width of [...new Set(targetWidths.map((w) => Math.min(w, meta.width)))]) {
       const name = `${hash}-${width}.webp`;
       const outPath = join(root, 'optimized', name);
