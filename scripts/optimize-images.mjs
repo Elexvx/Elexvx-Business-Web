@@ -16,6 +16,7 @@ async function walk(root, dir, generated) {
     }
     const relativePath = relative(root, file).split('\\').join('/');
     const isWebp = /\.webp$/i.test(file);
+    const isEcosystemLogo = relativePath.startsWith('brand/ecosystem/');
     const isNewsCoverWebp = isWebp && relativePath.startsWith('visuals/news/color-covers/');
     const isManagedWebp =
       isWebp && /^(?:activities|visuals\/news|visuals\/research\/color-covers)\//.test(relativePath);
@@ -31,7 +32,13 @@ async function walk(root, dir, generated) {
     if (meta.width < 400) continue;
     const hash = createHash('sha256').update(`${key}:${info.size}:${info.mtimeMs}:v2-q74`).digest('hex').slice(0, 16);
     const variants = [];
-    const targetWidths = isNewsCoverWebp ? [360, 720] : isManagedWebp ? [480, 960, 1440] : [480, 960, 1600];
+    const targetWidths = isEcosystemLogo
+      ? [160, 480]
+      : isNewsCoverWebp
+        ? [360, 720]
+        : isManagedWebp
+          ? [240, 480, 720, 960, 1440]
+          : [240, 480, 720, 960, 1600];
     for (const width of [...new Set(targetWidths.map((w) => Math.min(w, meta.width)))]) {
       const name = `${hash}-${width}.webp`;
       const outPath = join(root, 'optimized', name);

@@ -15,11 +15,11 @@ export const classNames = (...values: Array<string | false | null | undefined>) 
 export const Logo = ({ inverse = false, eager = false }: { inverse?: boolean; eager?: boolean }) => (
   <SiteImage
     loading={eager ? 'eager' : 'lazy'}
-    className="site-logo"
-    src={inverse ? '/brand/elexvx-logo-white-600.webp' : '/brand/elexvx-logo-black-600.webp'}
+    className={classNames('site-logo', inverse && 'site-logo-inverse')}
+    src="/brand/elexvx-logo-black-240.webp"
     alt="Elexvx"
-    width="112"
-    height="26"
+    width="240"
+    height="52"
   />
 );
 

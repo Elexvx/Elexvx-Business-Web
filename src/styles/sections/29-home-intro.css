@@ -465,7 +465,7 @@ html[data-theme='light'] .home-brand-mark[data-format='overlap-symbol'] img {
 .site-shell-home .home-partner-caption {
   display: block;
   margin: 24px 0 0;
-  color: color-mix(in srgb, var(--color-ink) 55%, var(--color-canvas));
+  color: var(--color-ink-muted);
   font-size: 11px;
   font-weight: 400;
   line-height: 1.6;

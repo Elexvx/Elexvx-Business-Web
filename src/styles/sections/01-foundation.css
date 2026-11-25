@@ -244,6 +244,11 @@ img {
 .site-logo {
   width: 96px;
   height: auto;
+  aspect-ratio: 240 / 52;
+}
+
+.site-logo-inverse {
+  filter: brightness(0) invert(1);
 }
 
 .brand-divider {

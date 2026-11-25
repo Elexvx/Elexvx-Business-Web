@@ -4,7 +4,6 @@ import { toInsightSummary, toNewsSummary } from '../content/summaries';
 import { ContentProvider } from '../site/providers/content-context';
 import routePaths from '../data/route-paths.json';
 import type { Metadata } from 'next';
-import Script from 'next/script';
 import '../styles/apple-system.css';
 import { siteIdentity } from '../data/site';
 import { DEFAULT_SHARE_IMAGE_PATH } from '../data/site-origins';
@@ -79,16 +78,8 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     <html lang="zh-CN" suppressHydrationWarning>
       <head>
         <JsonLdScript data={structuredData} />
-        <Script
-          id="elexvx-theme-initializer"
-          strategy="beforeInteractive"
-          dangerouslySetInnerHTML={{ __html: themeInitializer }}
-        />
-        <Script
-          id="elexvx-festival-initializer"
-          strategy="beforeInteractive"
-          dangerouslySetInnerHTML={{ __html: festivalInitializer }}
-        />
+        <script id="elexvx-theme-initializer" dangerouslySetInnerHTML={{ __html: themeInitializer }} />
+        <script id="elexvx-festival-initializer" dangerouslySetInnerHTML={{ __html: festivalInitializer }} />
       </head>
       <body>
         <ThemeProvider>

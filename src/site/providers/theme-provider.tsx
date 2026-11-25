@@ -71,9 +71,12 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   useEffect(() => {
-    const readyFrame = window.requestAnimationFrame(() => document.documentElement.classList.add('theme-ready'));
-
     applyMode(readStoredThemeMode() ?? 'auto');
+
+    let secondReadyFrame = 0;
+    const firstReadyFrame = window.requestAnimationFrame(() => {
+      secondReadyFrame = window.requestAnimationFrame(() => document.documentElement.classList.add('theme-ready'));
+    });
 
     const applyAutomaticTheme = () => {
       if (modeRef.current !== 'auto') return;
@@ -105,7 +108,8 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
     document.addEventListener('visibilitychange', handleVisibilityChange);
 
     return () => {
-      window.cancelAnimationFrame(readyFrame);
+      window.cancelAnimationFrame(firstReadyFrame);
+      window.cancelAnimationFrame(secondReadyFrame);
       window.clearInterval(automaticThemeTimer);
       window.removeEventListener('storage', handleStoredTheme);
       window.removeEventListener('focus', applyAutomaticTheme);
