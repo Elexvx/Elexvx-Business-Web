@@ -36,7 +36,7 @@ for (const redirect of redirects) {
 const publishedManifest = await readFile('dist/indexnow-manifest.json', 'utf8');
 if ((await readFile(`${output}/assets/${INDEXNOW_KEY}.txt`, 'utf8')).trim() !== INDEXNOW_KEY)
   throw new Error('Invalid deployed IndexNow key.');
-const notification = `<script>if(location.hostname==='www.elexvx.com'){window.addEventListener('load',()=>{const send=()=>fetch('/api/publish/',{credentials:'omit',cache:'no-store'}).catch(()=>{});if('requestIdleCallback'in window)requestIdleCallback(send,{timeout:5000});else setTimeout(send,3000);},{once:true});}</script>`;
+const notification = `<script>if(location.hostname==='www.elexvx.com'){window.addEventListener('load',()=>{let sent=false;const send=()=>{if(sent)return;sent=true;fetch('/api/publish/',{credentials:'omit',cache:'no-store'}).catch(()=>{});};for(const event of['pointerdown','keydown','scroll'])window.addEventListener(event,send,{once:true,passive:true});setTimeout(send,15000);},{once:true});}</script>`;
 async function addNotification(directory) {
   for (const entry of await readdir(directory, { withFileTypes: true })) {
     const path = `${directory}/${entry.name}`;

@@ -38,6 +38,9 @@ const pages = [
   { file: 'dist/en/status/index.html', allowRules: statusAllowRules, inlineFonts: false },
 ];
 
+const foundationCss = await readFile('src/styles/sections/01-foundation.css', 'utf8');
+const homeFontPath = foundationCss.match(/\/fonts\/source-han-sans\/home-[a-f0-9]+\.woff2/)?.[0];
+
 for (const { file, allowRules, inlineFonts = true } of pages) {
   const optimizer = new Beasties({
     path: resolve('dist'),
@@ -59,6 +62,11 @@ for (const { file, allowRules, inlineFonts = true } of pages) {
     criticalStyles.push(style);
     return '';
   });
-  await writeFile(file, withoutCriticalStyles.replace('</head>', `${criticalStyles.join('')}</head>`));
+  const isHomepage = file === 'dist/index.html' || file === 'dist/en/index.html';
+  const fontPreload =
+    isHomepage && homeFontPath && !withoutCriticalStyles.includes(`href="${homeFontPath}"`)
+      ? `<link rel="preload" as="font" type="font/woff2" href="${homeFontPath}" crossorigin="anonymous">`
+      : '';
+  await writeFile(file, withoutCriticalStyles.replace('</head>', `${fontPreload}${criticalStyles.join('')}</head>`));
 }
 console.log('Inlined route-specific critical CSS for the homepages, navigation, and status page.');

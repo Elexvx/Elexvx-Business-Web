@@ -15,9 +15,11 @@ type ParticleFrame = {
 
 const SEED = 20261201;
 const AREA_PER_PARTICLE = 1350;
-const COMPACT_AREA_PER_PARTICLE = 900;
+const COMPACT_AREA_PER_PARTICLE = 1200;
 const MAX_PARTICLES = 760;
-const RAMP_STEPS = 48;
+const RAMP_STEPS = 16;
+const TIER_COUNT = 4;
+const BUCKET_COUNT = TIER_COUNT * RAMP_STEPS;
 const PLACEMENT_ATTEMPTS_MULTIPLIER = 14;
 const POISSON_SPACING_RATIO = 0.54;
 const BASE_PARTICLE_SIZE = 0.68;
@@ -36,8 +38,8 @@ const COMPACT_PARTICLE_SCALE = 0.96;
 const COMPACT_RADIUS_BOOST = 0.1;
 const COMPACT_CREST_WIDTH_BOOST = 0.042;
 const COMPACT_WAKE_WIDTH_BOOST = 0.045;
-const COMPACT_BASE_ALPHA_BOOST = 0.11;
-const COMPACT_LINE_WIDTH_BOOST = 0.35;
+const COMPACT_BASE_ALPHA_BOOST = 0.13;
+const COMPACT_LINE_WIDTH_BOOST = 0.42;
 const COMPACT_HALF_LENGTH_BOOST = 0.18;
 const COMPACT_COPY_ATTENUATION_BOOST = 0.09;
 
@@ -57,6 +59,11 @@ const ENERGY_LINE_WIDTH_GAIN = 1.95;
 const BASE_HALF_LENGTH = 0.19;
 const ENERGY_HALF_LENGTH_GAIN = 3.9;
 
+const strokeBuckets: number[][] = Array.from({ length: BUCKET_COUNT }, () => []);
+const tierAlphaSum = new Float64Array(TIER_COUNT);
+const tierLineWidthSum = new Float64Array(TIER_COUNT);
+const tierParticleCount = new Int32Array(TIER_COUNT);
+
 const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value));
 
 const smoothstep = (min: number, max: number, value: number) => {
@@ -74,21 +81,63 @@ const createSeededRandom = (seed: number) => {
   };
 };
 
+function hasGridNeighbor(
+  particles: Particle[],
+  grid: Int32Array,
+  nextInCell: Int32Array,
+  cols: number,
+  rows: number,
+  col: number,
+  row: number,
+  x: number,
+  y: number,
+  spacingSquared: number
+): boolean {
+  const minRow = Math.max(0, row - 1);
+  const maxRow = Math.min(rows - 1, row + 1);
+  const minCol = Math.max(0, col - 1);
+  const maxCol = Math.min(cols - 1, col + 1);
+  for (let r = minRow; r <= maxRow; r++) {
+    for (let c = minCol; c <= maxCol; c++) {
+      let index = grid[r * cols + c];
+      while (index !== -1) {
+        const point = particles[index];
+        const dx = point.x - x;
+        const dy = point.y - y;
+        if (dx * dx + dy * dy < spacingSquared) return true;
+        index = nextInCell[index];
+      }
+    }
+  }
+  return false;
+}
+
 export const buildParticles = (width: number, height: number): Particle[] => {
   const area = width * height;
   const compact = getCompactFactor(width);
   const areaPerParticle = AREA_PER_PARTICLE + (COMPACT_AREA_PER_PARTICLE - AREA_PER_PARTICLE) * compact;
   const count = clamp(Math.round(area / areaPerParticle), 1, MAX_PARTICLES);
   const spacingSquared = (area / count) * POISSON_SPACING_RATIO;
+  const cellSize = Math.max(1, Math.sqrt(spacingSquared));
+  const cols = Math.max(1, Math.ceil(width / cellSize));
+  const rows = Math.max(1, Math.ceil(height / cellSize));
+  const grid = new Int32Array(cols * rows).fill(-1);
+  const nextInCell = new Int32Array(count);
   const random = createSeededRandom(SEED);
   const particles: Particle[] = [];
 
-  // Poisson disk placement keeps a minimum gap without leaving visible rows.
+  // Poisson disk placement via spatial grid keeps O(N) setup with no visible rows.
   for (let attempt = 0; attempt < count * PLACEMENT_ATTEMPTS_MULTIPLIER && particles.length < count; attempt++) {
     const x = random() * width;
     const y = random() * height;
-    const hasNeighbor = particles.some((point) => (point.x - x) ** 2 + (point.y - y) ** 2 < spacingSquared);
-    if (!hasNeighbor) particles.push({ x, y, size: BASE_PARTICLE_SIZE + random() * RANDOM_PARTICLE_SIZE_RANGE });
+    const col = Math.min(cols - 1, Math.floor(x / cellSize));
+    const row = Math.min(rows - 1, Math.floor(y / cellSize));
+    if (hasGridNeighbor(particles, grid, nextInCell, cols, rows, col, row, x, y, spacingSquared)) continue;
+    const index = particles.length;
+    particles.push({ x, y, size: BASE_PARTICLE_SIZE + random() * RANDOM_PARTICLE_SIZE_RANGE });
+    const cell = row * cols + col;
+    nextInCell[index] = grid[cell];
+    grid[cell] = index;
   }
   return particles;
 };
@@ -183,19 +232,14 @@ const computeFieldMetrics = ({ width, height, time, center }: ParticleFrame): Fi
   };
 };
 
-const drawSingleParticle = (
-  context: CanvasRenderingContext2D,
-  particle: Particle,
-  palette: readonly string[],
-  metrics: FieldFrameMetrics
-) => {
+const bucketParticle = (particle: Particle, colorSteps: number, metrics: FieldFrameMetrics) => {
   const driftX = Math.sin(particle.x * 0.008 + particle.y * 0.005 - metrics.time * 0.52);
   const driftY = Math.cos(particle.y * 0.009 - particle.x * 0.005 + metrics.time * 0.43);
   const px = particle.x + driftY * DRIFT_AMP_PX;
   const py = particle.y + driftX * DRIFT_AMP_PX;
   const dx = px - metrics.centerX;
   const dy = (py - metrics.centerY) / metrics.verticalStretch;
-  const distance = Math.hypot(dx, dy);
+  const distance = Math.sqrt(dx * dx + dy * dy);
   const radialX = dx / Math.max(1, distance);
   const radialY = dy / Math.max(1, distance);
   const alongWave = radialX * metrics.headingX + radialY * metrics.headingY;
@@ -219,17 +263,21 @@ const drawSingleParticle = (
 
   // Neighbors share a color because the ramp is sampled in space and time.
   const hue = 0.5 + Math.sin(x * 0.007 - y * 0.006 + metrics.time * 0.43 + driftY * 0.7) * 0.5;
-  const copyDistance = Math.hypot((x / metrics.width - 0.5) * 2.8, (y / metrics.height - 0.48) * 2.5);
+  const copyX = (x / metrics.width - 0.5) * 2.8;
+  const copyY = (y / metrics.height - 0.48) * 2.5;
+  const copyDistance = Math.sqrt(copyX * copyX + copyY * copyY);
   const copyAttenuation =
     metrics.minCopyAttenuation + smoothstep(0, 0.94, copyDistance) * (1 - metrics.minCopyAttenuation);
 
-  context.strokeStyle = palette[Math.round(hue * (palette.length - 1))];
-  context.lineWidth = (metrics.baseLineWidth + energy * ENERGY_LINE_WIDTH_GAIN) * particle.size * metrics.sizeScale;
-  context.globalAlpha = clamp((metrics.baseAlpha + energy * ENERGY_ALPHA_GAIN) * copyAttenuation, 0, 1);
-  context.beginPath();
-  context.moveTo(x - tipX, y - tipY);
-  context.lineTo(x + tipX, y + tipY);
-  context.stroke();
+  const alpha = clamp((metrics.baseAlpha + energy * ENERGY_ALPHA_GAIN) * copyAttenuation, 0, 1);
+  const lineWidth = (metrics.baseLineWidth + energy * ENERGY_LINE_WIDTH_GAIN) * particle.size * metrics.sizeScale;
+  const tier = Math.min(TIER_COUNT - 1, Math.floor(alpha * TIER_COUNT));
+  const colorIndex = Math.min(colorSteps - 1, Math.round(hue * (colorSteps - 1)));
+
+  tierAlphaSum[tier] += alpha;
+  tierLineWidthSum[tier] += lineWidth;
+  tierParticleCount[tier]++;
+  strokeBuckets[tier * colorSteps + colorIndex].push(x - tipX, y - tipY, x + tipX, y + tipY);
 };
 
 export const drawParticles = (
@@ -238,11 +286,36 @@ export const drawParticles = (
   palette: readonly string[],
   frame: ParticleFrame
 ) => {
-  context.clearRect(0, 0, frame.width, frame.height);
-  context.lineCap = 'round';
+  const colorSteps = palette.length;
+  for (let i = 0; i < BUCKET_COUNT; i++) strokeBuckets[i].length = 0;
+  tierAlphaSum.fill(0);
+  tierLineWidthSum.fill(0);
+  tierParticleCount.fill(0);
+
   const metrics = computeFieldMetrics(frame);
   for (const particle of particles) {
-    drawSingleParticle(context, particle, palette, metrics);
+    bucketParticle(particle, colorSteps, metrics);
+  }
+
+  context.clearRect(0, 0, frame.width, frame.height);
+  context.lineCap = 'round';
+  for (let tier = 0; tier < TIER_COUNT; tier++) {
+    const count = tierParticleCount[tier];
+    if (!count) continue;
+    context.globalAlpha = tierAlphaSum[tier] / count;
+    context.lineWidth = tierLineWidthSum[tier] / count;
+    const baseBucket = tier * colorSteps;
+    for (let colorIndex = 0; colorIndex < colorSteps; colorIndex++) {
+      const bucket = strokeBuckets[baseBucket + colorIndex];
+      if (!bucket.length) continue;
+      context.strokeStyle = palette[colorIndex];
+      context.beginPath();
+      for (let i = 0; i < bucket.length; i += 4) {
+        context.moveTo(bucket[i], bucket[i + 1]);
+        context.lineTo(bucket[i + 2], bucket[i + 3]);
+      }
+      context.stroke();
+    }
   }
   context.globalAlpha = 1;
 };

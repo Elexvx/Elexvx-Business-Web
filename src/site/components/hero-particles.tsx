@@ -12,14 +12,20 @@ import {
 } from './hero-particles-engine';
 
 const DESKTOP_MAX_DPR = 1.5;
-const MOBILE_MAX_DPR = 3;
-const MAX_CANVAS_PIXELS = 2_500_000;
+const MOBILE_MAX_DPR = 2;
+const DESKTOP_MAX_CANVAS_PIXELS = 2_500_000;
+const MOBILE_MAX_CANVAS_PIXELS = 950_000;
 const MOBILE_BREAKPOINT_PX = 720;
 const DESKTOP_FRAME_MS = 1000 / 60;
-const MOBILE_FRAME_MS = 1000 / 30;
+const MOBILE_FRAME_MS = 1000 / 24;
 const MAX_FRAME_DELTA_MS = 50;
 const MS_PER_SECOND = 1000;
 const RAF_ROUNDING_TOLERANCE_MS = 1;
+const FRAME_BUDGET_SLOW_MS = 14;
+const FRAME_BUDGET_FAST_MS = 8;
+const MAX_ADAPTIVE_FRAME_MS = 220;
+const IDLE_START_TIMEOUT_MS = 1500;
+const FALLBACK_START_DELAY_MS = 280;
 const POINTER_REST_WEIGHT = 0.24;
 const POINTER_ACTIVE_WEIGHT = 0.76;
 const POINTER_SPRING_RESPONSE = 10;
@@ -40,6 +46,7 @@ type SimulationState = {
   reducedMotion: boolean;
   rafId: number;
   lastTime: number;
+  adaptiveFrameMs: number;
   simulationTime: number;
   centerX: { position: number; velocity: number };
   centerY: { position: number; velocity: number };
@@ -56,6 +63,7 @@ function createInitialSimulation(): SimulationState {
     reducedMotion: false,
     rafId: 0,
     lastTime: 0,
+    adaptiveFrameMs: 0,
     simulationTime: 0,
     centerX: { position: initialCenter.x, velocity: 0 },
     centerY: { position: initialCenter.y, velocity: 0 },
@@ -67,8 +75,10 @@ function measureCanvasViewport(canvas: HTMLCanvasElement): CanvasViewport {
   const rect = canvas.getBoundingClientRect();
   const width = Math.max(1, Math.round(rect.width));
   const height = Math.max(1, Math.round(rect.height));
-  const maxDpr = width <= MOBILE_BREAKPOINT_PX ? MOBILE_MAX_DPR : DESKTOP_MAX_DPR;
-  const dpr = Math.min(window.devicePixelRatio || 1, maxDpr, Math.sqrt(MAX_CANVAS_PIXELS / (width * height)));
+  const isMobile = width <= MOBILE_BREAKPOINT_PX;
+  const maxDpr = isMobile ? MOBILE_MAX_DPR : DESKTOP_MAX_DPR;
+  const maxPixels = isMobile ? MOBILE_MAX_CANVAS_PIXELS : DESKTOP_MAX_CANVAS_PIXELS;
+  const dpr = Math.min(window.devicePixelRatio || 1, maxDpr, Math.sqrt(maxPixels / (width * height)));
   return { width, height, dpr };
 }
 
@@ -89,6 +99,14 @@ function updatePointerFromEvent(canvas: HTMLCanvasElement, event: PointerEvent, 
   pointer.active = true;
 }
 
+function updateAdaptivePacing(state: SimulationState, workMs: number) {
+  if (workMs > FRAME_BUDGET_SLOW_MS) {
+    state.adaptiveFrameMs = Math.min(MAX_ADAPTIVE_FRAME_MS, Math.max(state.adaptiveFrameMs, workMs * 4));
+  } else if (workMs < FRAME_BUDGET_FAST_MS && state.adaptiveFrameMs > 0) {
+    state.adaptiveFrameMs = Math.max(0, state.adaptiveFrameMs * 0.85 - 2);
+  }
+}
+
 export const HeroParticles = () => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
@@ -104,16 +122,18 @@ export const HeroParticles = () => {
     const state = createInitialSimulation();
     state.reducedMotion = Boolean(motionQuery?.matches);
 
-    const drawFrame = () =>
+    const drawFrame = () => {
       drawParticles(context, state.particles, state.palette, {
         width: state.viewport.width,
         height: state.viewport.height,
         time: state.simulationTime,
         center: { x: state.centerX.position, y: state.centerY.position },
       });
+      if (!canvas.dataset.ready) canvas.dataset.ready = 'true';
+    };
 
     const drawStillFrame = () => {
-      if (state.inView && !document.hidden && !state.rafId) drawFrame();
+      if (state.inView && !document.hidden && !state.rafId && state.viewport.width > 0) drawFrame();
     };
 
     const stopAnimation = () => {
@@ -140,12 +160,15 @@ export const HeroParticles = () => {
     };
 
     const tick = (now: number) => {
-      const frameInterval = state.viewport.width <= MOBILE_BREAKPOINT_PX ? MOBILE_FRAME_MS : DESKTOP_FRAME_MS;
-      const elapsed = state.lastTime ? now - state.lastTime : frameInterval;
+      const baseInterval = state.viewport.width <= MOBILE_BREAKPOINT_PX ? MOBILE_FRAME_MS : DESKTOP_FRAME_MS;
+      const frameInterval = Math.max(baseInterval, state.adaptiveFrameMs);
+      const elapsed = state.lastTime ? now - state.lastTime : baseInterval;
       // Allow small timestamp rounding differences on 60 Hz displays.
       if (elapsed >= frameInterval - RAF_ROUNDING_TOLERANCE_MS) {
         state.lastTime = now;
+        const start = performance.now();
         stepSimulation(elapsed);
+        updateAdaptivePacing(state, performance.now() - start);
       }
       state.rafId = window.requestAnimationFrame(tick);
     };
@@ -192,7 +215,6 @@ export const HeroParticles = () => {
       state.palette = resolvePalette();
       drawStillFrame();
     });
-    themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
 
     const visibilityObserver =
       typeof IntersectionObserver === 'function'
@@ -204,31 +226,52 @@ export const HeroParticles = () => {
             { threshold: INTERSECTION_THRESHOLD }
           )
         : undefined;
-    visibilityObserver?.observe(canvas);
 
     const resizeObserver = typeof ResizeObserver === 'function' ? new ResizeObserver(syncSize) : undefined;
-    resizeObserver?.observe(canvas);
-    window.addEventListener('resize', syncSize);
-    hero?.addEventListener('pointermove', handlePointerMove, { passive: true });
-    hero?.addEventListener('pointerleave', handlePointerLeave);
-    window.addEventListener('blur', handlePointerLeave);
-    document.addEventListener('visibilitychange', updateVisibility);
-    motionQuery?.addEventListener('change', handleMotionChange);
 
-    syncSize();
-    updateVisibility();
+    let cancelled = false;
+    let started = false;
+    let idleHandle = 0;
+    let startTimer = 0;
+
+    const startSimulation = () => {
+      if (cancelled || started) return;
+      started = true;
+      themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+      visibilityObserver?.observe(canvas);
+      resizeObserver?.observe(canvas);
+      window.addEventListener('resize', syncSize);
+      hero?.addEventListener('pointermove', handlePointerMove, { passive: true });
+      hero?.addEventListener('pointerleave', handlePointerLeave);
+      window.addEventListener('blur', handlePointerLeave);
+      document.addEventListener('visibilitychange', updateVisibility);
+      motionQuery?.addEventListener('change', handleMotionChange);
+      syncSize();
+      updateVisibility();
+    };
+
+    if (typeof window.requestIdleCallback === 'function') {
+      idleHandle = window.requestIdleCallback(startSimulation, { timeout: IDLE_START_TIMEOUT_MS });
+    } else {
+      startTimer = window.setTimeout(startSimulation, FALLBACK_START_DELAY_MS);
+    }
 
     return () => {
+      cancelled = true;
+      if (idleHandle && typeof window.cancelIdleCallback === 'function') window.cancelIdleCallback(idleHandle);
+      if (startTimer) window.clearTimeout(startTimer);
       stopAnimation();
       themeObserver.disconnect();
       visibilityObserver?.disconnect();
       resizeObserver?.disconnect();
-      window.removeEventListener('resize', syncSize);
-      hero?.removeEventListener('pointermove', handlePointerMove);
-      hero?.removeEventListener('pointerleave', handlePointerLeave);
-      window.removeEventListener('blur', handlePointerLeave);
-      document.removeEventListener('visibilitychange', updateVisibility);
-      motionQuery?.removeEventListener('change', handleMotionChange);
+      if (started) {
+        window.removeEventListener('resize', syncSize);
+        hero?.removeEventListener('pointermove', handlePointerMove);
+        hero?.removeEventListener('pointerleave', handlePointerLeave);
+        window.removeEventListener('blur', handlePointerLeave);
+        document.removeEventListener('visibilitychange', updateVisibility);
+        motionQuery?.removeEventListener('change', handleMotionChange);
+      }
     };
   }, []);
 

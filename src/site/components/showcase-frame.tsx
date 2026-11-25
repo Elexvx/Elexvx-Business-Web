@@ -56,7 +56,7 @@ function usePreviewScrollRise(facadeRef: RefObject<HTMLElement | null>, enabled:
       if (!rafId) rafId = window.requestAnimationFrame(update);
     };
 
-    update();
+    scheduleUpdate();
     window.addEventListener('scroll', scheduleUpdate, { passive: true });
     window.addEventListener('resize', scheduleUpdate, { passive: true });
 

@@ -35,7 +35,7 @@ function ActivityCard({
       title={item.title}
       cover={item.cover}
       imageSizes={placement === 'grid' ? undefined : highlightImageSizes[placement]}
-      imagePriority={priority || placement === 'lead' ? 'high' : undefined}
+      imagePriority={priority ? 'high' : undefined}
       category={placement === 'grid' && item.pinned ? `${t('置顶')} · ${t(category)}` : category}
       publishedAt={item.publishedAt}
     />

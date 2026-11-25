@@ -122,7 +122,6 @@ export const HeroReleasedContent = ({
           src={homeIntro.showcase.path}
           title={t(homeIntro.showcase.title)}
           previewImage={homeIntro.showcase.previewImage}
-          eager
         />
       </div>
     </div>

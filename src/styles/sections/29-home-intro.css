@@ -269,6 +269,9 @@
   .home-mac-facade-cursor {
     display: none !important;
   }
+  .home-hero-particles {
+    transition: none;
+  }
 }
 
 .home-mac-facade-title {
@@ -598,6 +601,9 @@ html[data-theme='light'] .home-brand-mark[data-format='overlap-symbol'] img {
   .home-mac-facade-cursor {
     display: none !important;
   }
+  .home-hero-particles {
+    transition: none;
+  }
 }
 
 /* Scheduled release waiting state and choreographed launch reveal. */
@@ -639,7 +645,13 @@ html[data-theme='light'] .home-brand-mark[data-format='overlap-symbol'] img {
   display: block;
   width: 100%;
   height: 100%;
+  opacity: 0;
+  transition: opacity 420ms ease-out;
   pointer-events: none;
+}
+
+.home-hero-particles[data-ready='true'] {
+  opacity: 1;
 }
 
 .home-hero-wait {
@@ -1492,4 +1504,30 @@ html[data-theme='light'] .home-hero-reveal-flash {
   .home-demo-project-name {
     gap: 6px;
   }
+}
+
+/* Defer layout and paint cost for below-the-fold homepage sections until approached. */
+.site-shell-home .home-ecosystem {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 760px;
+}
+
+.site-shell-home .home-latest-activity {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 720px;
+}
+
+.site-shell-home .home-news-section {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 780px;
+}
+
+.site-shell-home .home-products-section {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 620px;
+}
+
+.site-shell-home .home-company-section {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 340px;
 }
