@@ -11,8 +11,8 @@ import { describe, expect, it } from 'vitest';
 
 describe('integrated service pages', () => {
   it('keeps the navigation snapshot complete', () => {
-    expect(serviceNavigation).toHaveLength(6);
-    expect(serviceNavigationLinks).toHaveLength(29);
+    expect(serviceNavigation).toHaveLength(7);
+    expect(serviceNavigationLinks).toHaveLength(30);
     expect(serviceNavigationLinks.find((link) => link.name === 'AI雷达')).toMatchObject({
       url: 'https://codex-reset-radar.pages.dev/',
       description: 'Codex 模型与额度信息',
@@ -22,6 +22,11 @@ describe('integrated service pages', () => {
       url: 'https://antigravity.google.com/',
       description: 'Google 智能体开发平台',
       icon: '/images/logos/antigravity.webp',
+    });
+    expect(serviceNavigationLinks.find((link) => link.name === 'PageSpeed Insights')).toMatchObject({
+      url: 'https://pagespeed.web.dev/',
+      description: 'Google 网页性能诊断与优化工具',
+      icon: '/images/logos/pagespeed.webp',
     });
     expect(serviceNavigationLinks.find((link) => link.name === 'Google AI Studio')).toBeUndefined();
     expect(serviceNavigationLinks.find((link) => link.name === '四川版权综合服务平台')).toMatchObject({

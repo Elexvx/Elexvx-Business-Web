@@ -329,3 +329,15 @@ navigation:
         tags:
           - 单号转换
         status: available
+  - category: 开发工具
+    links:
+      - name: PageSpeed Insights
+        url: https://pagespeed.web.dev/
+        description: Google 网页性能诊断与优化工具
+        icon: /images/logos/pagespeed.webp
+        tags:
+          - Google
+          - 性能测试
+          - 测速
+          - SEO
+        status: available

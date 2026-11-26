@@ -390,6 +390,22 @@
         }
       ],
       "subcategories": []
+    },
+    {
+      "id": "开发工具",
+      "category": "开发工具",
+      "links": [
+        {
+          "id": "开发工具-pagespeed-insights-1",
+          "name": "PageSpeed Insights",
+          "url": "https://pagespeed.web.dev/",
+          "description": "Google 网页性能诊断与优化工具",
+          "icon": "/images/logos/pagespeed.webp",
+          "tags": ["Google", "性能测试", "测速", "SEO"],
+          "status": "available"
+        }
+      ],
+      "subcategories": []
     }
   ]
 }
