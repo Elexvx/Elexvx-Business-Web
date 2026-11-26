@@ -1,13 +1,13 @@
 'use client';
 
-import { LockOutlined } from '@ant-design/icons';
 import { createContext, useContext, type ReactNode } from 'react';
 import { homeIntro } from '../../data/home-intro';
 import { humiteLaunch } from '../../data/humite-launch.mjs';
 import { homeContent } from '../../data/page-content';
-import { useI18n } from '../providers/i18n';
+import { useI18n } from '../providers/i18n-context';
 import type { HeroLaunchConfig } from './hero-schedule';
 import { HeroBackdrop, HeroReleasedContent, HeroWaitingStage, HomeReleaseSchedule } from './home-hero-stages';
+import { LockIcon } from './inline-icons';
 import { classNames } from './ui';
 import { useHeroLaunchPhase } from './use-hero-launch-phase';
 
@@ -105,7 +105,7 @@ export const HomeProductsLaunch = ({ children, beforeLaunch }: { children: React
           <h2 id="products-title">{t(homeContent.product.title)}</h2>
         </div>
         <div className="home-products-locked">
-          <LockOutlined className="home-products-lock-icon" aria-hidden="true" />
+          <LockIcon className="home-products-lock-icon" />
           <p className="home-products-lock-message">{t('嘘，新品还在后台，到点就登场！')}</p>
           <HomeReleaseSchedule launch={launch} mounted={mounted} localTimeZone={localTimeZone} />
         </div>

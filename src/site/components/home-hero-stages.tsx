@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 
 import { homeIntro } from '../../data/home-intro';
 import { homeContent } from '../../data/page-content';
-import { LocalizedTitle, useI18n } from '../providers/i18n';
+import { LocalizedTitle, useI18n } from '../providers/i18n-context';
 import { ShowcaseFrame } from './showcase-frame';
 import {
   formatLocalReleaseTimestamp,
@@ -16,6 +16,7 @@ import { prefersReducedMotion } from './use-hero-launch-phase';
 
 const DIGIT_TRANSITION_MS = 280;
 const INITIAL_WAIT_PROGRESS = 0.12;
+const PARTICLES_FALLBACK_DELAY_MS = 6500;
 
 const HeroParticles = dynamic(() => import('./hero-particles').then((module) => module.HeroParticles), {
   ssr: false,
@@ -27,11 +28,52 @@ const HERO_WAIT_COPY = {
   description: '还不到亮相的时候，但值得等这一会儿。',
 } as const;
 
-export const HeroBackdrop = () => (
-  <div className="home-hero-backdrop" aria-hidden="true">
-    <HeroParticles />
-  </div>
-);
+export const HeroBackdrop = () => {
+  const [active, setActive] = useState(false);
+
+  useEffect(() => {
+    let fallbackTimer = 0;
+    const interactionEvents = ['pointerdown', 'pointermove', 'touchstart', 'keydown', 'scroll'] as const;
+
+    const cleanup = () => {
+      if (fallbackTimer) {
+        window.clearTimeout(fallbackTimer);
+        fallbackTimer = 0;
+      }
+      window.removeEventListener('load', scheduleFallback);
+      for (const eventName of interactionEvents) {
+        window.removeEventListener(eventName, activate);
+      }
+    };
+
+    const activate = () => {
+      cleanup();
+      setActive(true);
+    };
+
+    const scheduleFallback = () => {
+      if (fallbackTimer) return;
+      fallbackTimer = window.setTimeout(activate, PARTICLES_FALLBACK_DELAY_MS);
+    };
+
+    for (const eventName of interactionEvents) {
+      window.addEventListener(eventName, activate, { once: true, passive: true });
+    }
+    if (document.readyState === 'complete') {
+      scheduleFallback();
+    } else {
+      window.addEventListener('load', scheduleFallback, { once: true });
+    }
+
+    return cleanup;
+  }, []);
+
+  return (
+    <div className="home-hero-backdrop" aria-hidden="true">
+      {active ? <HeroParticles /> : <canvas className="home-hero-particles" aria-hidden="true" />}
+    </div>
+  );
+};
 
 const padUnit = (value: number) => String(value).padStart(2, '0');
 

@@ -8,7 +8,7 @@ import {
   type PointerEvent as ReactPointerEvent,
   type RefObject,
 } from 'react';
-import { useI18n } from '../providers/i18n';
+import { useI18n } from '../providers/i18n-context';
 import {
   advanceCursorMotion,
   computeScrollRise,

@@ -1,4 +1,4 @@
-import { LanguageProvider } from '../site/providers/i18n';
+import { LocaleProvider } from '../site/providers/i18n-context';
 import { SiteShell } from '../site/components/shell';
 import { HomeStaticMain } from '../site/components/home-static-main';
 import { isReleaseReached } from '../site/components/hero-schedule';
@@ -15,10 +15,10 @@ export const metadata = metadataForRoute(
 export default function Page() {
   const initialReleased = isReleaseReached(humiteLaunch);
   return (
-    <LanguageProvider locale="zh-CN" path="/">
+    <LocaleProvider locale="zh-CN" path="/">
       <SiteShell activePath="/" navTone="dark" className="site-shell-home">
         <HomeStaticMain markup={homeHtml['zh-CN']} initialReleased={initialReleased} />
       </SiteShell>
-    </LanguageProvider>
+    </LocaleProvider>
   );
 }

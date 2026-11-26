@@ -1,6 +1,6 @@
 'use client';
 import imageManifest from '../../data/image-manifest.json';
-import { useI18n } from '../providers/i18n';
+import { useI18n } from '../providers/i18n-context';
 import type { ImgHTMLAttributes } from 'react';
 
 /** Native lazy loading works in both Next.js and the static HTML export. */

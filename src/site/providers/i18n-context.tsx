@@ -1,0 +1,145 @@
+'use client';
+
+import { createContext, Fragment, useContext, useEffect, type ReactNode } from 'react';
+
+import { canonicalContentHref } from '../routing/content-href';
+
+export type Locale = 'zh-CN' | 'en';
+
+export const LANGUAGE_STORAGE_KEY = 'elexvx-language';
+
+export const translateTextWithDictionary = (value: string, dictionary?: Record<string, string>): string => {
+  if (!dictionary) return value;
+  if (dictionary[value] !== undefined) return dictionary[value];
+  const trimmed = value.trim();
+  if (dictionary[trimmed] !== undefined) return value.replace(trimmed, dictionary[trimmed]);
+  return value
+    .replace(/，|、/g, ', ')
+    .replace(/。/g, '.')
+    .replace(/；/g, '; ')
+    .replace(/：/g, ': ')
+    .replace(/！/g, '!')
+    .replace(/？/g, '?');
+};
+
+type I18nContextValue = {
+  locale: Locale;
+  t: (value: string) => string;
+  href: (value: string) => string;
+  switchHref: string;
+  dictionary?: Record<string, string>;
+  hasProvider?: boolean;
+};
+
+const I18nContext = createContext<I18nContextValue>({
+  locale: 'zh-CN',
+  t: (value) => value,
+  href: canonicalContentHref,
+  switchHref: '/en',
+});
+
+const isInternalHref = (value: string) => value.startsWith('/') && !value.startsWith('//');
+
+const shouldLocalizeEnglishHref = (locale: Locale, target: string): boolean => {
+  if (locale !== 'en') return false;
+  if (!isInternalHref(target)) return false;
+  if (/^\/en(?:\/|$|[?#])/.test(target) || /\.[a-z0-9]+(?:[?#]|$)/i.test(target)) return false;
+  return true;
+};
+
+export const LocaleProvider = ({
+  locale,
+  path,
+  children,
+  autoRedirect = false,
+  translations,
+  fallbackTranslations,
+}: {
+  locale: Locale;
+  path: string;
+  children: ReactNode;
+  autoRedirect?: boolean;
+  translations?: Record<string, string>;
+  fallbackTranslations?: Record<string, string>;
+}) => {
+  const parent = useContext(I18nContext);
+  const hasParentProvider = Boolean(parent.hasProvider);
+  const dictionary = translations ?? parent.dictionary ?? fallbackTranslations;
+  useEffect(() => {
+    if (!autoRedirect || locale === 'en' || path !== '/') return;
+    let preferredLocale: Locale;
+
+    try {
+      const storedLocale = window.localStorage.getItem(LANGUAGE_STORAGE_KEY);
+      preferredLocale =
+        storedLocale === 'zh-CN' || storedLocale === 'en'
+          ? storedLocale
+          : window.navigator.language.toLowerCase().startsWith('zh')
+            ? 'zh-CN'
+            : 'en';
+    } catch {
+      preferredLocale = window.navigator.language.toLowerCase().startsWith('zh') ? 'zh-CN' : 'en';
+    }
+
+    if (preferredLocale === locale) return;
+
+    const targetPath = preferredLocale === 'en' ? (path === '/' ? '/en' : `/en${path}`) : path;
+    window.location.replace(`${targetPath}${window.location.search}${window.location.hash}`);
+  }, [locale, path, autoRedirect]);
+
+  const href = (value: string) => {
+    const target = canonicalContentHref(value);
+    if (!shouldLocalizeEnglishHref(locale, target)) return target;
+    return target === '/' ? '/en' : `/en${target}`;
+  };
+  const switchHref = canonicalContentHref(locale === 'en' ? path : path === '/' ? '/en' : `/en${path}`);
+  const t = (value: string) => (locale === 'en' ? translateTextWithDictionary(value, dictionary) : value);
+
+  return (
+    <I18nContext.Provider value={{ locale, t, href, switchHref, dictionary, hasProvider: true }}>
+      {hasParentProvider ? (
+        children
+      ) : (
+        <div className="locale-root" lang={locale}>
+          {children}
+        </div>
+      )}
+    </I18nContext.Provider>
+  );
+};
+
+export const useI18n = () => useContext(I18nContext);
+
+export const LocalizedText = ({ children, text }: { children?: string; text?: string }) => {
+  const { t } = useI18n();
+  return <>{t(text ?? children ?? '')}</>;
+};
+
+export const LocalizedTitle = ({ children, text }: { children?: string; text?: string }) => {
+  const { t, locale } = useI18n();
+  const value = t(text ?? children ?? '');
+  if (locale === 'en') return <>{value}</>;
+  const segments = value
+    .split(/[，,。！？；：.!?;:]/u)
+    .map((segment) => segment.trim())
+    .filter(Boolean);
+
+  return (
+    <>
+      {segments.map((segment, index) => (
+        <Fragment key={`${segment}-${index}`}>
+          {index > 0 && <br />}
+          {segment}
+        </Fragment>
+      ))}
+    </>
+  );
+};
+
+/** Localize content values at their rendering boundary, including arrays of text. */
+export const Translated = ({ children }: { children: ReactNode }) => {
+  const { t } = useI18n();
+  const render = (node: ReactNode): ReactNode =>
+    typeof node === 'string' ? t(node) : Array.isArray(node) ? node.map(render) : node;
+  return <>{render(children)}</>;
+};

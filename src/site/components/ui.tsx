@@ -6,7 +6,7 @@ import { isDisabledPath } from '../../data/disabled-sections';
 
 import { type ReactNode } from 'react';
 
-import { LocalizedTitle as Title, useI18n } from '../providers/i18n';
+import { LocalizedTitle as Title, useI18n } from '../providers/i18n-context';
 
 type TileTone = 'light' | 'dark' | 'parchment';
 

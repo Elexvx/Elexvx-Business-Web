@@ -1,8 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { TikTokFilled, WechatFilled } from '@ant-design/icons';
-import { useI18n, type Locale } from '../providers/i18n';
+import { TikTokIcon, WechatIcon } from './inline-icons';
+import { useI18n, type Locale } from '../providers/i18n-context';
 import { useTheme } from '../providers/theme-provider';
 import { SiteImage } from './site-image';
 
@@ -40,9 +40,9 @@ type SocialChannelId = (typeof channels)[number]['id'];
 const SocialChannelIcon = ({ channelId, locale }: { channelId: SocialChannelId; locale: Locale }) => {
   switch (channelId) {
     case 'douyin':
-      return <TikTokFilled aria-hidden="true" />;
+      return <TikTokIcon />;
     case 'wechat':
-      return <WechatFilled aria-hidden="true" />;
+      return <WechatIcon />;
     case 'xiaohongshu':
       return (
         <span className="footer-social-rednote" aria-hidden="true">

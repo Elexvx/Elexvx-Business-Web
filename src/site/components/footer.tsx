@@ -1,13 +1,13 @@
 'use client';
 import { useState } from 'react';
-import { PlusOutlined } from '@ant-design/icons';
+import { PlusIcon } from './inline-icons';
 import { SiteImage } from './site-image';
 import { Logo } from './ui';
 import { FooterSocial } from './footer-social';
 
 import { siteIdentity } from '../../data/site';
 
-import { LANGUAGE_STORAGE_KEY, LocalizedTitle as Title, useI18n, type Locale } from '../providers/i18n';
+import { LANGUAGE_STORAGE_KEY, LocalizedTitle as Title, useI18n, type Locale } from '../providers/i18n-context';
 import { resolveOriginHref } from '../routing/content-href';
 import { useTheme } from '../providers/theme-provider';
 import { COOKIE_SETTINGS_EVENT } from './cookie-consent';
@@ -71,7 +71,7 @@ function FooterColumns({
                     onClick={() => onToggleGroup(column.id)}
                   >
                     <Title text={column.title} />
-                    <PlusOutlined aria-hidden="true" />
+                    <PlusIcon />
                   </button>
                 </h3>
                 <div className="footer-column-links" id={`footer-links-${column.id}`}>

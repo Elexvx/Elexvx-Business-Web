@@ -1,38 +1,54 @@
 'use client';
-import { Dialog, Switch } from 'radix-ui';
 
-import { useEffect, useRef, useState } from 'react';
-import { useI18n } from '../providers/i18n';
-import { ModalContent } from './primitives/modal';
+import dynamic from 'next/dynamic';
+import { useEffect, useState } from 'react';
+import { defaultCookiePreferences, type CookiePreferences } from './cookie-consent-dialog';
 
 const COOKIE_PREFERENCE_KEY = 'elexvx-cookie-preferences-v1';
 export const COOKIE_SETTINGS_EVENT = 'elexvx:open-cookie-settings';
+const COOKIE_BANNER_IDLE_MS = 8000;
 
-type CookiePreferences = {
-  necessary: true;
-  analytics: boolean;
-  marketing: boolean;
-};
-
-const defaultPreferences: CookiePreferences = {
-  necessary: true,
-  analytics: false,
-  marketing: false,
-};
+const CookieConsentDialog = dynamic(
+  () => import('./cookie-consent-dialog').then((module) => module.CookieConsentDialog),
+  { ssr: false }
+);
 
 export const CookieConsent = () => {
-  const { locale } = useI18n();
   const [visible, setVisible] = useState(false);
   const [managing, setManaging] = useState(false);
-  const [preferences, setPreferences] = useState<CookiePreferences>(defaultPreferences);
-  const consentRef = useRef<HTMLDivElement>(null);
-  const isEnglish = locale === 'en';
+  const [preferences, setPreferences] = useState<CookiePreferences>(defaultCookiePreferences);
 
   useEffect(() => {
+    let revealTimer = 0;
+    const interactionEvents = ['pointerdown', 'keydown', 'scroll'] as const;
+
+    const cleanupPendingReveal = () => {
+      if (revealTimer) {
+        window.clearTimeout(revealTimer);
+        revealTimer = 0;
+      }
+      for (const eventName of interactionEvents) {
+        window.removeEventListener(eventName, showOnFirstInteraction);
+      }
+    };
+
+    const showOnFirstInteraction = () => {
+      cleanupPendingReveal();
+      setVisible(true);
+    };
+
+    const scheduleBannerReveal = () => {
+      // Defer the first-visit banner until initial engagement or idle so it never blocks first paint / Speed Index.
+      for (const eventName of interactionEvents) {
+        window.addEventListener(eventName, showOnFirstInteraction, { once: true, passive: true });
+      }
+      revealTimer = window.setTimeout(showOnFirstInteraction, COOKIE_BANNER_IDLE_MS);
+    };
+
     try {
       const stored = window.localStorage.getItem(COOKIE_PREFERENCE_KEY);
       if (!stored) {
-        setVisible(true);
+        scheduleBannerReveal();
       } else {
         const parsed = JSON.parse(stored) as Partial<CookiePreferences>;
         setPreferences({
@@ -42,15 +58,19 @@ export const CookieConsent = () => {
         });
       }
     } catch {
-      setVisible(true);
+      scheduleBannerReveal();
     }
 
     const openSettings = () => {
+      cleanupPendingReveal();
       setManaging(true);
       setVisible(true);
     };
     window.addEventListener(COOKIE_SETTINGS_EVENT, openSettings);
-    return () => window.removeEventListener(COOKIE_SETTINGS_EVENT, openSettings);
+    return () => {
+      cleanupPendingReveal();
+      window.removeEventListener(COOKIE_SETTINGS_EVENT, openSettings);
+    };
   }, []);
 
   const savePreferences = (nextPreferences: CookiePreferences) => {
@@ -65,110 +85,17 @@ export const CookieConsent = () => {
     setVisible(false);
   };
 
-  useEffect(() => {
-    if (!visible) return;
-    const frame = window.requestAnimationFrame(() => {
-      consentRef.current?.querySelector<HTMLElement>('button:not([disabled])')?.focus({ preventScroll: true });
-    });
-    return () => window.cancelAnimationFrame(frame);
-  }, [visible, managing]);
+  if (!visible) return null;
 
   return (
-    <Dialog.Root open={visible} onOpenChange={setVisible} modal={false}>
-      <ModalContent
-        ref={consentRef}
-        className="cookie-consent"
-        aria-label={isEnglish ? 'Cookie preferences' : 'Cookie 偏好设置'}
-        onInteractOutside={(event) => event.preventDefault()}
-        onEscapeKeyDown={(event) => {
-          if (!managing) return;
-          event.preventDefault();
-          setManaging(false);
-        }}
-      >
-        <div className="cookie-consent-inner">
-          <div className="cookie-consent-copy">
-            <Dialog.Title asChild>
-              <h2>{isEnglish ? 'We use cookies' : '我们使用 Cookie'}</h2>
-            </Dialog.Title>
-            <Dialog.Description asChild>
-              <p>
-                {isEnglish
-                  ? 'We use necessary cookies to keep the site working. Optional analytics and marketing preferences can be changed at any time from the footer.'
-                  : '我们使用必要 Cookie 确保网站正常运行。分析与营销属于可选项，你可以随时通过页脚中的 Cookie 设置调整偏好。'}
-              </p>
-            </Dialog.Description>
-          </div>
-
-          {managing ? (
-            <div className="cookie-preferences">
-              <div className="cookie-preference-row">
-                <div>
-                  <strong>{isEnglish ? 'Necessary' : '必要 Cookie'}</strong>
-                  <span>{isEnglish ? 'Required for core site functions.' : '用于网站核心功能。'}</span>
-                </div>
-                <span className="cookie-required-label">{isEnglish ? 'Always on' : '始终启用'}</span>
-              </div>
-              <label className="cookie-preference-row">
-                <div>
-                  <strong>{isEnglish ? 'Analytics' : '分析 Cookie'}</strong>
-                  <span>{isEnglish ? 'Helps us understand site usage.' : '用于了解网站使用情况。'}</span>
-                </div>
-                <Switch.Root
-                  className="ui-switch"
-                  aria-label={isEnglish ? 'Analytics cookies' : '分析 Cookie'}
-                  checked={preferences.analytics}
-                  onCheckedChange={(checked) => setPreferences((current) => ({ ...current, analytics: checked }))}
-                >
-                  <Switch.Thumb className="ui-switch-thumb" />
-                </Switch.Root>
-              </label>
-              <label className="cookie-preference-row">
-                <div>
-                  <strong>{isEnglish ? 'Marketing' : '营销 Cookie'}</strong>
-                  <span>{isEnglish ? 'Supports relevant campaign measurement.' : '用于相关推广效果衡量。'}</span>
-                </div>
-                <Switch.Root
-                  className="ui-switch"
-                  aria-label={isEnglish ? 'Marketing cookies' : '营销 Cookie'}
-                  checked={preferences.marketing}
-                  onCheckedChange={(checked) => setPreferences((current) => ({ ...current, marketing: checked }))}
-                >
-                  <Switch.Thumb className="ui-switch-thumb" />
-                </Switch.Root>
-              </label>
-              <div className="cookie-consent-actions">
-                <button className="cookie-button" type="button" onClick={() => setManaging(false)}>
-                  {isEnglish ? 'Back' : '返回'}
-                </button>
-                <button
-                  className="cookie-button cookie-button-primary"
-                  type="button"
-                  onClick={() => savePreferences(preferences)}
-                >
-                  {isEnglish ? 'Save preferences' : '保存设置'}
-                </button>
-              </div>
-            </div>
-          ) : (
-            <div className="cookie-consent-actions">
-              <button className="cookie-button" type="button" onClick={() => setManaging(true)}>
-                {isEnglish ? 'Manage cookies' : '管理 Cookie'}
-              </button>
-              <button className="cookie-button" type="button" onClick={() => savePreferences(defaultPreferences)}>
-                {isEnglish ? 'Reject optional' : '拒绝非必要'}
-              </button>
-              <button
-                className="cookie-button cookie-button-primary"
-                type="button"
-                onClick={() => savePreferences({ necessary: true, analytics: true, marketing: true })}
-              >
-                {isEnglish ? 'Accept all' : '全部接受'}
-              </button>
-            </div>
-          )}
-        </div>
-      </ModalContent>
-    </Dialog.Root>
+    <CookieConsentDialog
+      visible={visible}
+      managing={managing}
+      preferences={preferences}
+      onOpenChange={setVisible}
+      onManagingChange={setManaging}
+      onPreferencesChange={setPreferences}
+      onSave={savePreferences}
+    />
   );
 };

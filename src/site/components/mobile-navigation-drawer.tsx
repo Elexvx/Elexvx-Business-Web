@@ -3,7 +3,7 @@ import { Dialog } from 'radix-ui';
 import { useRef, type RefObject } from 'react';
 
 import type { NavigationGroup } from '../../data/research-navigation';
-import type { Locale } from '../providers/i18n';
+import type { Locale } from '../providers/i18n-context';
 import { classNames } from './ui';
 import { ModalContent } from './primitives/modal';
 

@@ -24,8 +24,6 @@ const RAF_ROUNDING_TOLERANCE_MS = 1;
 const FRAME_BUDGET_SLOW_MS = 14;
 const FRAME_BUDGET_FAST_MS = 8;
 const MAX_ADAPTIVE_FRAME_MS = 220;
-const IDLE_START_TIMEOUT_MS = 1500;
-const FALLBACK_START_DELAY_MS = 280;
 const POINTER_REST_WEIGHT = 0.24;
 const POINTER_ACTIVE_WEIGHT = 0.76;
 const POINTER_SPRING_RESPONSE = 10;
@@ -229,49 +227,29 @@ export const HeroParticles = () => {
 
     const resizeObserver = typeof ResizeObserver === 'function' ? new ResizeObserver(syncSize) : undefined;
 
-    let cancelled = false;
-    let started = false;
-    let idleHandle = 0;
-    let startTimer = 0;
-
-    const startSimulation = () => {
-      if (cancelled || started) return;
-      started = true;
-      themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
-      visibilityObserver?.observe(canvas);
-      resizeObserver?.observe(canvas);
-      window.addEventListener('resize', syncSize);
-      hero?.addEventListener('pointermove', handlePointerMove, { passive: true });
-      hero?.addEventListener('pointerleave', handlePointerLeave);
-      window.addEventListener('blur', handlePointerLeave);
-      document.addEventListener('visibilitychange', updateVisibility);
-      motionQuery?.addEventListener('change', handleMotionChange);
-      syncSize();
-      updateVisibility();
-    };
-
-    if (typeof window.requestIdleCallback === 'function') {
-      idleHandle = window.requestIdleCallback(startSimulation, { timeout: IDLE_START_TIMEOUT_MS });
-    } else {
-      startTimer = window.setTimeout(startSimulation, FALLBACK_START_DELAY_MS);
-    }
+    themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+    visibilityObserver?.observe(canvas);
+    resizeObserver?.observe(canvas);
+    window.addEventListener('resize', syncSize);
+    hero?.addEventListener('pointermove', handlePointerMove, { passive: true });
+    hero?.addEventListener('pointerleave', handlePointerLeave);
+    window.addEventListener('blur', handlePointerLeave);
+    document.addEventListener('visibilitychange', updateVisibility);
+    motionQuery?.addEventListener('change', handleMotionChange);
+    syncSize();
+    updateVisibility();
 
     return () => {
-      cancelled = true;
-      if (idleHandle && typeof window.cancelIdleCallback === 'function') window.cancelIdleCallback(idleHandle);
-      if (startTimer) window.clearTimeout(startTimer);
       stopAnimation();
       themeObserver.disconnect();
       visibilityObserver?.disconnect();
       resizeObserver?.disconnect();
-      if (started) {
-        window.removeEventListener('resize', syncSize);
-        hero?.removeEventListener('pointermove', handlePointerMove);
-        hero?.removeEventListener('pointerleave', handlePointerLeave);
-        window.removeEventListener('blur', handlePointerLeave);
-        document.removeEventListener('visibilitychange', updateVisibility);
-        motionQuery?.removeEventListener('change', handleMotionChange);
-      }
+      window.removeEventListener('resize', syncSize);
+      hero?.removeEventListener('pointermove', handlePointerMove);
+      hero?.removeEventListener('pointerleave', handlePointerLeave);
+      window.removeEventListener('blur', handlePointerLeave);
+      document.removeEventListener('visibilitychange', updateVisibility);
+      motionQuery?.removeEventListener('change', handleMotionChange);
     };
   }, []);
 

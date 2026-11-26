@@ -40,7 +40,7 @@ async function walk(root, dir, generated) {
     if (meta.width < 400) continue;
     const isShowcasePreview = relativePath === 'products/humite-library-preview.png';
     const hash = createHash('sha256')
-      .update(`${key}:${info.size}:${info.mtimeMs}:${isShowcasePreview ? 'v3-q92' : 'v2-q74'}`)
+      .update(`${key}:${info.size}:${info.mtimeMs}:${isShowcasePreview ? 'v4-q74-80' : 'v2-q74'}`)
       .digest('hex')
       .slice(0, 16);
     const variants = [];
@@ -67,7 +67,11 @@ async function walk(root, dir, generated) {
         await sharp(file)
           .rotate()
           .resize({ width, withoutEnlargement: true })
-          .webp({ quality: isShowcasePreview ? 92 : isNewsCoverWebp ? 76 : 74, effort: 6, smartSubsample: true })
+          .webp({
+            quality: isShowcasePreview ? (width <= 960 ? 74 : 80) : isNewsCoverWebp ? 76 : 74,
+            effort: 6,
+            smartSubsample: true,
+          })
           .toFile(outPath);
       }
       variants.push({ src: '/optimized/' + name, width });

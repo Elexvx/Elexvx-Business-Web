@@ -1,10 +1,10 @@
 'use client';
 
-import { useSyncExternalStore } from 'react';
+import { useEffect, useState, useSyncExternalStore } from 'react';
 import { siteIdentity } from '../../data/site';
 import { ENGLISH_BRAND_NAME } from '../../data/site-origins';
 import { SiteShell } from './shell';
-import { LanguageProvider, useI18n, type Locale } from '../providers/i18n';
+import { LocaleProvider, useI18n, type Locale } from '../providers/i18n-context';
 
 const copy = {
   403: {
@@ -82,11 +82,25 @@ export function ErrorPage({
     </SiteShell>
   );
 
+  const needsLazyEnglish = english && !(hasProvider && parentLocale === targetLocale);
+  const [englishDictionary, setEnglishDictionary] = useState<Record<string, string> | undefined>();
+
+  useEffect(() => {
+    if (!needsLazyEnglish) return;
+    let cancelled = false;
+    import('../translation-base').then((module) => {
+      if (!cancelled) setEnglishDictionary(module.existingEnglish);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [needsLazyEnglish]);
+
   if (hasProvider && parentLocale === targetLocale) return shell;
 
   return (
-    <LanguageProvider locale={targetLocale} path={path} autoRedirect={false}>
+    <LocaleProvider locale={targetLocale} path={path} autoRedirect={false} translations={englishDictionary}>
       {shell}
-    </LanguageProvider>
+    </LocaleProvider>
   );
 }

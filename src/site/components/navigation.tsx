@@ -1,11 +1,11 @@
 'use client';
-import { MenuOutlined } from '@ant-design/icons';
 import { Dialog } from 'radix-ui';
 
-import { useI18n } from '../providers/i18n';
+import { useI18n } from '../providers/i18n-context';
 import { useVisibleNavigationGroups } from '../providers/content-context';
 import { resolveOriginHref } from '../routing/content-href';
 import { DesktopMenuPanel } from './desktop-menu-panel';
+import { MenuIcon } from './inline-icons';
 import { MobileNavigationDrawer } from './mobile-navigation-drawer';
 import { classNames, Logo } from './ui';
 import { useNavigationMenus } from './use-navigation-menus';
@@ -105,7 +105,7 @@ export const GlobalNav = ({
                 aria-expanded={menuOpen}
                 aria-controls="mobile-navigation"
               >
-                <MenuOutlined aria-hidden="true" />
+                <MenuIcon />
               </button>
             </Dialog.Trigger>
           </div>

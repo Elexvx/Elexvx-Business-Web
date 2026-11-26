@@ -1,5 +1,5 @@
 import type { NavigationGroup } from '../../data/research-navigation';
-import type { Locale } from '../providers/i18n';
+import type { Locale } from '../providers/i18n-context';
 import { classNames } from './ui';
 
 export const DesktopMenuPanel = ({
