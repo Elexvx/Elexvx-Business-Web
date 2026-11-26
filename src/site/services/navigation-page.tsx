@@ -87,8 +87,14 @@ function DirectoryRow({ link, eager = false, t }: { link: ServiceLink; eager?: b
         <LinkIcon link={link} eager={eager} />
       </span>
       <span className="service-link-body">
-        <span className="service-link-title">{title}</span>
-        {description && description !== title && <span className="service-link-description">{description}</span>}
+        <span className="service-link-title" title={title}>
+          {title}
+        </span>
+        {description && description !== title && (
+          <span className="service-link-description" title={description}>
+            {description}
+          </span>
+        )}
       </span>
     </a>
   );
