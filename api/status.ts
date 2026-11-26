@@ -1,11 +1,7 @@
-import { handleRequest } from '../src/server/esa/gateway';
+import { handleStatusApi } from '../src/server/status/status-api';
 
 export default {
   async fetch(request: Request): Promise<Response> {
-    return handleRequest(
-      request,
-      { waitUntil: () => undefined },
-      { UPTIMEROBOT_API_KEY: process.env.UPTIMEROBOT_API_KEY }
-    );
+    return handleStatusApi(request, new URL(request.url), process.env.UPTIMEROBOT_API_KEY);
   },
 };

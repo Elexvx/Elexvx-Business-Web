@@ -1,8 +1,7 @@
 import redirects from './redirects.json';
 import { isHumiteProductPath } from '../../data/humite-launch.mjs';
 import { ALLOWED_PUBLIC_HOSTS, CANONICAL_ORIGIN, PREVIEW_HOST } from '../../data/site-origins';
-import { STATUS_HISTORY_LIMITS } from '../../data/status-constants';
-import { fetchStatusData } from '../status/uptime-robot';
+import { handleStatusApi } from '../status/status-api';
 import { submitIndexNowUrls } from '../indexnow';
 
 export type EsaEnvironment = {
@@ -22,7 +21,6 @@ type ExecutionContext = { waitUntil(task: Promise<unknown>): void };
 export type PublishManifest = { version: string; urls: string[] };
 
 const MAX_PUBLISH_MANIFEST_URLS = 10_000;
-const STATUS_API_TIMEOUT_MS = 8_000;
 const PUBLISH_CHECK_COOLDOWN_MS = 600_000;
 const ESA_HOSTING_HEADER = 'ESA';
 const checkedAtByNamespace = new Map<string, number>();
@@ -115,30 +113,6 @@ export async function notifyPublishedContent(namespace: string, manifest: Publis
   await store.put(key, JSON.stringify({ status: result.status, submitted: result.urls.length, at: Date.now() }));
 }
 
-async function handleStatusApi(request: Request, url: URL, env: EsaEnvironment): Promise<Response> {
-  if (request.method !== 'GET') return json({ code: 405, message: 'Method not allowed' }, 405, { Allow: 'GET' });
-  if (!env.UPTIMEROBOT_API_KEY) return json({ code: 503, message: '监控服务尚未配置', source: 'api' }, 503);
-  try {
-    const started = Date.now();
-    const result = await fetchStatusData({
-      apiKey: env.UPTIMEROBOT_API_KEY,
-      historyDays:
-        url.searchParams.get('days') === String(STATUS_HISTORY_LIMITS.overviewDays)
-          ? STATUS_HISTORY_LIMITS.overviewDays
-          : STATUS_HISTORY_LIMITS.defaultDays,
-      timeoutMs: STATUS_API_TIMEOUT_MS,
-      deduplicateRequests: false,
-    });
-    return json({ code: 200, message: 'success', source: result.source, data: result.data }, 200, {
-      'Cache-Control': 'public, max-age=30, stale-while-revalidate=300',
-      'Server-Timing': `uptime-robot;dur=${Date.now() - started}`,
-    });
-  } catch (error) {
-    console.error('status.fetch.failed', error instanceof Error ? error.message : String(error));
-    return json({ code: 502, message: '监控服务请求失败，请稍后重试', source: 'api' }, 502);
-  }
-}
-
 async function handleIndexNowApi(request: Request, env: EsaEnvironment, manifest?: PublishManifest): Promise<Response> {
   if (request.method !== 'GET') return json({ ok: false, message: 'Method not allowed' }, 405, { Allow: 'GET' });
   if (!env.CRON_SECRET || request.headers.get('authorization') !== `Bearer ${env.CRON_SECRET}`) {
@@ -171,7 +145,7 @@ async function handleApi(
   manifest?: PublishManifest
 ): Promise<Response> {
   const path = url.pathname.replace(/\/$/, '');
-  if (path === '/api/status') return handleStatusApi(request, url, env);
+  if (path === '/api/status') return handleStatusApi(request, url, env.UPTIMEROBOT_API_KEY);
   if (path === '/api/indexnow') return handleIndexNowApi(request, env, manifest);
   if (path === '/api/login' || path === '/api/logout') return handleAuthApi(request, path);
   return json({ code: 404, message: 'Not found' }, 404);
