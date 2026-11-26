@@ -1,4 +1,4 @@
-import type { AvailabilityDay, StatusData, StatusMonitor } from '../../data/service-status';
+import type { AvailabilityDay, StatusData, StatusMonitor } from '../../data/service-status.ts';
 import {
   isMonitorDown,
   isMonitorUp,
@@ -6,7 +6,7 @@ import {
   STATUS_HISTORY_LIMITS,
   type MonitorState,
   type MonitorType,
-} from '../../data/status-constants';
+} from '../../data/status-constants.ts';
 
 const UPTIMEROBOT_DOWN_LOG_TYPE = 1;
 const UPTIMEROBOT_PAUSED_LOG_TYPE = 99;

@@ -1,5 +1,5 @@
-import { STATUS_HISTORY_LIMITS } from '../../data/status-constants';
-import { fetchStatusData } from './uptime-robot';
+import { STATUS_HISTORY_LIMITS } from '../../data/status-constants.ts';
+import { fetchStatusData } from './uptime-robot.ts';
 
 const STATUS_API_TIMEOUT_MS = 8_000;
 

@@ -1,4 +1,4 @@
-import { handleStatusApi } from '../src/server/status/status-api';
+import { handleStatusApi } from '../src/server/status/status-api.ts';
 
 export default {
   async fetch(request: Request): Promise<Response> {
