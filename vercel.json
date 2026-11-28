@@ -12,7 +12,142 @@
   },
   "redirects": [
     {
+      "source": "/",
+      "has": [
+        {
+          "type": "query",
+          "key": "feed",
+          "value": "rss2"
+        }
+      ],
+      "destination": "/rss.xml",
+      "permanent": true
+    },
+    {
+      "source": "/",
+      "has": [
+        {
+          "type": "query",
+          "key": "p"
+        }
+      ],
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/",
+      "has": [
+        {
+          "type": "query",
+          "key": "page_id"
+        }
+      ],
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/news",
+      "has": [
+        {
+          "type": "query",
+          "key": "category",
+          "value": "技术研究"
+        }
+      ],
+      "destination": "/news/",
+      "permanent": true
+    },
+    {
+      "source": "/news/",
+      "has": [
+        {
+          "type": "query",
+          "key": "category",
+          "value": "技术研究"
+        }
+      ],
+      "destination": "/news/",
+      "permanent": true
+    },
+    {
+      "source": "/activities",
+      "has": [
+        {
+          "type": "query",
+          "key": "category",
+          "value": "announcements"
+        }
+      ],
+      "destination": "/activities/",
+      "permanent": true
+    },
+    {
+      "source": "/activities/",
+      "has": [
+        {
+          "type": "query",
+          "key": "category",
+          "value": "announcements"
+        }
+      ],
+      "destination": "/activities/",
+      "permanent": true
+    },
+    {
+      "source": "/activities",
+      "has": [
+        {
+          "type": "query",
+          "key": "category",
+          "value": "workshops"
+        }
+      ],
+      "destination": "/activities/",
+      "permanent": true
+    },
+    {
+      "source": "/activities/",
+      "has": [
+        {
+          "type": "query",
+          "key": "category",
+          "value": "workshops"
+        }
+      ],
+      "destination": "/activities/",
+      "permanent": true
+    },
+    {
+      "source": "/activities",
+      "has": [
+        {
+          "type": "query",
+          "key": "category",
+          "value": "community"
+        }
+      ],
+      "destination": "/activities/",
+      "permanent": true
+    },
+    {
+      "source": "/activities/",
+      "has": [
+        {
+          "type": "query",
+          "key": "category",
+          "value": "community"
+        }
+      ],
+      "destination": "/activities/",
+      "permanent": true
+    },
+    {
       "source": "/services/docs",
+      "destination": "https://docs.elexvx.com/",
+      "permanent": true
+    },
+    {
+      "source": "/services/docs/",
       "destination": "https://docs.elexvx.com/",
       "permanent": true
     },
@@ -62,6 +197,78 @@
         }
       ],
       "destination": "/en/news/category/updates/",
+      "permanent": true
+    },
+    {
+      "source": "/news",
+      "has": [
+        {
+          "type": "query",
+          "key": "category",
+          "value": "公司动态"
+        }
+      ],
+      "destination": "/news/",
+      "permanent": true
+    },
+    {
+      "source": "/news/",
+      "has": [
+        {
+          "type": "query",
+          "key": "category",
+          "value": "公司动态"
+        }
+      ],
+      "destination": "/news/",
+      "permanent": true
+    },
+    {
+      "source": "/news",
+      "has": [
+        {
+          "type": "query",
+          "key": "category",
+          "value": "公告"
+        }
+      ],
+      "destination": "/news/",
+      "permanent": true
+    },
+    {
+      "source": "/news/",
+      "has": [
+        {
+          "type": "query",
+          "key": "category",
+          "value": "公告"
+        }
+      ],
+      "destination": "/news/",
+      "permanent": true
+    },
+    {
+      "source": "/en/activities",
+      "has": [
+        {
+          "type": "query",
+          "key": "category",
+          "value": "site-updates"
+        }
+      ],
+      "destination": "/en/activities/",
+      "permanent": true
+    },
+    {
+      "source": "/en/activities/",
+      "has": [
+        {
+          "type": "query",
+          "key": "category",
+          "value": "site-updates"
+        }
+      ],
+      "destination": "/en/activities/",
       "permanent": true
     },
     {
@@ -316,6 +523,72 @@
       "permanent": true
     },
     {
+      "source": "/:path*",
+      "has": [
+        {
+          "type": "host",
+          "value": "api.elexvx.com"
+        }
+      ],
+      "destination": "https://www.elexvx.com/:path*",
+      "permanent": true
+    },
+    {
+      "source": "/:path*",
+      "has": [
+        {
+          "type": "host",
+          "value": "blog.elexvx.com"
+        }
+      ],
+      "destination": "https://www.elexvx.com/:path*",
+      "permanent": true
+    },
+    {
+      "source": "/:section(news|research|activities|cases|insights|products|company|business|careers|contact|services|sitemap|archive|capabilities|projects|scenarios|en|latest-news|stories|technology|exam|blog|service|status|history)",
+      "has": [
+        {
+          "type": "host",
+          "value": "nav.elexvx.com"
+        }
+      ],
+      "destination": "https://www.elexvx.com/:section/",
+      "permanent": true
+    },
+    {
+      "source": "/:section(news|research|activities|cases|insights|products|company|business|careers|contact|services|sitemap|archive|capabilities|projects|scenarios|en|latest-news|stories|technology|exam|blog|service|status|history)/:path*",
+      "has": [
+        {
+          "type": "host",
+          "value": "nav.elexvx.com"
+        }
+      ],
+      "destination": "https://www.elexvx.com/:section/:path*",
+      "permanent": true
+    },
+    {
+      "source": "/:section(news|research|activities|cases|insights|products|company|business|careers|contact|services|sitemap|archive|capabilities|projects|scenarios|en|latest-news|stories|technology|exam|blog|service|navigation)",
+      "has": [
+        {
+          "type": "host",
+          "value": "status.elexvx.com"
+        }
+      ],
+      "destination": "https://www.elexvx.com/:section/",
+      "permanent": true
+    },
+    {
+      "source": "/:section(news|research|activities|cases|insights|products|company|business|careers|contact|services|sitemap|archive|capabilities|projects|scenarios|en|latest-news|stories|technology|exam|blog|service|navigation)/:path*",
+      "has": [
+        {
+          "type": "host",
+          "value": "status.elexvx.com"
+        }
+      ],
+      "destination": "https://www.elexvx.com/:section/:path*",
+      "permanent": true
+    },
+    {
       "source": "/",
       "has": [
         {
@@ -405,116 +678,231 @@
     },
     {
       "source": "/products/bookkin",
-      "destination": "/products/humite",
+      "destination": "/products/humite/",
+      "permanent": true
+    },
+    {
+      "source": "/products/bookkin/",
+      "destination": "/products/humite/",
       "permanent": true
     },
     {
       "source": "/en/products/bookkin",
-      "destination": "/en/products/humite",
+      "destination": "/en/products/humite/",
+      "permanent": true
+    },
+    {
+      "source": "/en/products/bookkin/",
+      "destination": "/en/products/humite/",
       "permanent": true
     },
     {
       "source": "/service/ai-design",
-      "destination": "/research",
+      "destination": "/research/",
+      "permanent": true
+    },
+    {
+      "source": "/service/ai-design/",
+      "destination": "/research/",
       "permanent": true
     },
     {
       "source": "/service/hr-services",
-      "destination": "/business/human-resources",
+      "destination": "/business/human-resources/",
+      "permanent": true
+    },
+    {
+      "source": "/service/hr-services/",
+      "destination": "/business/human-resources/",
       "permanent": true
     },
     {
       "source": "/service/trademark-agency",
-      "destination": "/business/intellectual-property",
+      "destination": "/business/intellectual-property/",
+      "permanent": true
+    },
+    {
+      "source": "/service/trademark-agency/",
+      "destination": "/business/intellectual-property/",
       "permanent": true
     },
     {
       "source": "/service/supply-chain",
-      "destination": "/business/supply-chain",
+      "destination": "/business/supply-chain/",
+      "permanent": true
+    },
+    {
+      "source": "/service/supply-chain/",
+      "destination": "/business/supply-chain/",
       "permanent": true
     },
     {
       "source": "/company/about",
-      "destination": "/company",
+      "destination": "/company/",
+      "permanent": true
+    },
+    {
+      "source": "/company/about/",
+      "destination": "/company/",
       "permanent": true
     },
     {
       "source": "/company/leadership",
-      "destination": "/company/team",
+      "destination": "/company/team/",
+      "permanent": true
+    },
+    {
+      "source": "/company/leadership/",
+      "destination": "/company/team/",
       "permanent": true
     },
     {
       "source": "/company/contact",
-      "destination": "/contact",
+      "destination": "/contact/",
+      "permanent": true
+    },
+    {
+      "source": "/company/contact/",
+      "destination": "/contact/",
       "permanent": true
     },
     {
       "source": "/company/careers",
-      "destination": "/careers",
+      "destination": "/careers/",
+      "permanent": true
+    },
+    {
+      "source": "/company/careers/",
+      "destination": "/careers/",
       "permanent": true
     },
     {
       "source": "/blog",
-      "destination": "/research",
+      "destination": "/research/",
+      "permanent": true
+    },
+    {
+      "source": "/blog/",
+      "destination": "/research/",
       "permanent": true
     },
     {
       "source": "/technology",
-      "destination": "/news",
+      "destination": "/news/",
+      "permanent": true
+    },
+    {
+      "source": "/technology/",
+      "destination": "/news/",
       "permanent": true
     },
     {
       "source": "/stories",
-      "destination": "/news",
+      "destination": "/news/",
+      "permanent": true
+    },
+    {
+      "source": "/stories/",
+      "destination": "/news/",
       "permanent": true
     },
     {
       "source": "/latest-news",
-      "destination": "/news",
+      "destination": "/news/",
+      "permanent": true
+    },
+    {
+      "source": "/latest-news/",
+      "destination": "/news/",
       "permanent": true
     },
     {
       "source": "/exam",
-      "destination": "/news",
+      "destination": "/news/",
+      "permanent": true
+    },
+    {
+      "source": "/exam/",
+      "destination": "/news/",
       "permanent": true
     },
     {
       "source": "/latest-news/2026-01-01-01",
-      "destination": "/news/2026-01-01-01",
+      "destination": "/news/2026-01-01-01/",
+      "permanent": true
+    },
+    {
+      "source": "/latest-news/2026-01-01-01/",
+      "destination": "/news/2026-01-01-01/",
       "permanent": true
     },
     {
       "source": "/latest-news/2026-01-14-01",
-      "destination": "/news/2026-01-14-01",
+      "destination": "/news/2026-01-14-01/",
+      "permanent": true
+    },
+    {
+      "source": "/latest-news/2026-01-14-01/",
+      "destination": "/news/2026-01-14-01/",
       "permanent": true
     },
     {
       "source": "/latest-news/2026-06-09-01",
-      "destination": "/news/2026-06-09-01",
+      "destination": "/news/2026-06-09-01/",
+      "permanent": true
+    },
+    {
+      "source": "/latest-news/2026-06-09-01/",
+      "destination": "/news/2026-06-09-01/",
       "permanent": true
     },
     {
       "source": "/latest-news/2025-07-16-01",
-      "destination": "/news/2025-07-16-01",
+      "destination": "/news/2025-07-16-01/",
+      "permanent": true
+    },
+    {
+      "source": "/latest-news/2025-07-16-01/",
+      "destination": "/news/2025-07-16-01/",
       "permanent": true
     },
     {
       "source": "/latest-news/2025-07-17-01",
-      "destination": "/news/2025-07-17-01",
+      "destination": "/news/2025-07-17-01/",
+      "permanent": true
+    },
+    {
+      "source": "/latest-news/2025-07-17-01/",
+      "destination": "/news/2025-07-17-01/",
       "permanent": true
     },
     {
       "source": "/latest-news/2025-08-21-01",
-      "destination": "/news/2025-08-21-01",
+      "destination": "/news/2025-08-21-01/",
+      "permanent": true
+    },
+    {
+      "source": "/latest-news/2025-08-21-01/",
+      "destination": "/news/2025-08-21-01/",
       "permanent": true
     },
     {
       "source": "/latest-news/2024-12-31-01",
-      "destination": "/news/2024-12-31-01",
+      "destination": "/news/2024-12-31-01/",
+      "permanent": true
+    },
+    {
+      "source": "/latest-news/2024-12-31-01/",
+      "destination": "/news/2024-12-31-01/",
       "permanent": true
     },
     {
       "source": "/stories/2025-07-01-01",
+      "destination": "/news/stories-2025-07-01-01/",
+      "permanent": true
+    },
+    {
+      "source": "/stories/2025-07-01-01/",
       "destination": "/news/stories-2025-07-01-01/",
       "permanent": true
     },
@@ -524,43 +912,368 @@
       "permanent": true
     },
     {
+      "source": "/technology/2025-07-01-01/",
+      "destination": "/news/technology-2025-07-01-01/",
+      "permanent": true
+    },
+    {
       "source": "/company/team/tjc",
-      "destination": "/company/team/taojincheng",
+      "destination": "/company/team/taojincheng/",
+      "permanent": true
+    },
+    {
+      "source": "/company/team/tjc/",
+      "destination": "/company/team/taojincheng/",
       "permanent": true
     },
     {
       "source": "/company/team/mxh",
-      "destination": "/company/team/mengxiaohua",
+      "destination": "/company/team/mengxiaohua/",
+      "permanent": true
+    },
+    {
+      "source": "/company/team/mxh/",
+      "destination": "/company/team/mengxiaohua/",
       "permanent": true
     },
     {
       "source": "/company/team/gkr",
-      "destination": "/company/team/gongkairui",
+      "destination": "/company/team/gongkairui/",
+      "permanent": true
+    },
+    {
+      "source": "/company/team/gkr/",
+      "destination": "/company/team/gongkairui/",
       "permanent": true
     },
     {
       "source": "/en/company/team/tjc",
-      "destination": "/en/company/team/taojincheng",
+      "destination": "/en/company/team/taojincheng/",
+      "permanent": true
+    },
+    {
+      "source": "/en/company/team/tjc/",
+      "destination": "/en/company/team/taojincheng/",
       "permanent": true
     },
     {
       "source": "/en/company/team/mxh",
-      "destination": "/en/company/team/mengxiaohua",
+      "destination": "/en/company/team/mengxiaohua/",
+      "permanent": true
+    },
+    {
+      "source": "/en/company/team/mxh/",
+      "destination": "/en/company/team/mengxiaohua/",
       "permanent": true
     },
     {
       "source": "/en/company/team/gkr",
-      "destination": "/en/company/team/gongkairui",
+      "destination": "/en/company/team/gongkairui/",
       "permanent": true
     },
     {
-      "source": "/products/bookkin",
-      "destination": "/products/humite",
+      "source": "/en/company/team/gkr/",
+      "destination": "/en/company/team/gongkairui/",
       "permanent": true
     },
     {
-      "source": "/en/products/bookkin",
-      "destination": "/en/products/humite",
+      "source": "/company/leadership/tjc",
+      "destination": "/company/team/taojincheng/",
+      "permanent": true
+    },
+    {
+      "source": "/company/leadership/tjc/",
+      "destination": "/company/team/taojincheng/",
+      "permanent": true
+    },
+    {
+      "source": "/company/leadership/mxh",
+      "destination": "/company/team/mengxiaohua/",
+      "permanent": true
+    },
+    {
+      "source": "/company/leadership/mxh/",
+      "destination": "/company/team/mengxiaohua/",
+      "permanent": true
+    },
+    {
+      "source": "/company/leadership/gkr",
+      "destination": "/company/team/gongkairui/",
+      "permanent": true
+    },
+    {
+      "source": "/company/leadership/gkr/",
+      "destination": "/company/team/gongkairui/",
+      "permanent": true
+    },
+    {
+      "source": "/company/team/xuxingjian",
+      "destination": "/company/team/",
+      "permanent": true
+    },
+    {
+      "source": "/company/team/xuxingjian/",
+      "destination": "/company/team/",
+      "permanent": true
+    },
+    {
+      "source": "/en/company/team/xuxingjian",
+      "destination": "/en/company/team/",
+      "permanent": true
+    },
+    {
+      "source": "/en/company/team/xuxingjian/",
+      "destination": "/en/company/team/",
+      "permanent": true
+    },
+    {
+      "source": "/company/job/hotel_receptionist",
+      "destination": "/careers/",
+      "permanent": true
+    },
+    {
+      "source": "/company/job/hotel_receptionist/",
+      "destination": "/careers/",
+      "permanent": true
+    },
+    {
+      "source": "/careers/StartupMentor",
+      "destination": "/careers/",
+      "permanent": true
+    },
+    {
+      "source": "/careers/StartupMentor/",
+      "destination": "/careers/",
+      "permanent": true
+    },
+    {
+      "source": "/en/careers/hotel_receptionist",
+      "destination": "/en/careers/",
+      "permanent": true
+    },
+    {
+      "source": "/en/careers/hotel_receptionist/",
+      "destination": "/en/careers/",
+      "permanent": true
+    },
+    {
+      "source": "/exam/2025-07-08-01",
+      "destination": "/news/",
+      "permanent": true
+    },
+    {
+      "source": "/exam/2025-07-08-01/",
+      "destination": "/news/",
+      "permanent": true
+    },
+    {
+      "source": "/news/exam-2025-07-08-01",
+      "destination": "/news/",
+      "permanent": true
+    },
+    {
+      "source": "/news/exam-2025-07-08-01/",
+      "destination": "/news/",
+      "permanent": true
+    },
+    {
+      "source": "/tag/:path*",
+      "destination": "/news/",
+      "permanent": true
+    },
+    {
+      "source": "/activities/website-permissions-redesign-2026",
+      "destination": "/activities/",
+      "permanent": true
+    },
+    {
+      "source": "/activities/website-permissions-redesign-2026/",
+      "destination": "/activities/",
+      "permanent": true
+    },
+    {
+      "source": "/en/activities/website-permissions-redesign-2026",
+      "destination": "/en/activities/",
+      "permanent": true
+    },
+    {
+      "source": "/en/activities/website-permissions-redesign-2026/",
+      "destination": "/en/activities/",
+      "permanent": true
+    },
+    {
+      "source": "/zh",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/zh/",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/zh/blog",
+      "destination": "/research/",
+      "permanent": true
+    },
+    {
+      "source": "/zh/blog/",
+      "destination": "/research/",
+      "permanent": true
+    },
+    {
+      "source": "/en/blog",
+      "destination": "/en/research/",
+      "permanent": true
+    },
+    {
+      "source": "/en/blog/",
+      "destination": "/en/research/",
+      "permanent": true
+    },
+    {
+      "source": "/zh/docs",
+      "destination": "/services/",
+      "permanent": true
+    },
+    {
+      "source": "/zh/docs/",
+      "destination": "/services/",
+      "permanent": true
+    },
+    {
+      "source": "/en/docs",
+      "destination": "/en/services/",
+      "permanent": true
+    },
+    {
+      "source": "/en/docs/",
+      "destination": "/en/services/",
+      "permanent": true
+    },
+    {
+      "source": "/homes/startup",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/homes/startup/",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/research-2",
+      "destination": "/research/",
+      "permanent": true
+    },
+    {
+      "source": "/research-2/",
+      "destination": "/research/",
+      "permanent": true
+    },
+    {
+      "source": "/en/services-3",
+      "destination": "/en/services/",
+      "permanent": true
+    },
+    {
+      "source": "/en/services-3/",
+      "destination": "/en/services/",
+      "permanent": true
+    },
+    {
+      "source": "/about",
+      "destination": "/company/",
+      "permanent": true
+    },
+    {
+      "source": "/about/",
+      "destination": "/company/",
+      "permanent": true
+    },
+    {
+      "source": "/leadership",
+      "destination": "/company/team/",
+      "permanent": true
+    },
+    {
+      "source": "/leadership/",
+      "destination": "/company/team/",
+      "permanent": true
+    },
+    {
+      "source": "/brand",
+      "destination": "/company/brand/",
+      "permanent": true
+    },
+    {
+      "source": "/brand/",
+      "destination": "/company/brand/",
+      "permanent": true
+    },
+    {
+      "source": "/newsroom",
+      "destination": "/news/",
+      "permanent": true
+    },
+    {
+      "source": "/newsroom/",
+      "destination": "/news/",
+      "permanent": true
+    },
+    {
+      "source": "/categories",
+      "destination": "/research/",
+      "permanent": true
+    },
+    {
+      "source": "/categories/",
+      "destination": "/research/",
+      "permanent": true
+    },
+    {
+      "source": "/intro.html",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/careers/software_agent",
+      "destination": "/careers/",
+      "permanent": true
+    },
+    {
+      "source": "/careers/software_agent/",
+      "destination": "/careers/",
+      "permanent": true
+    },
+    {
+      "source": "/careers/llm",
+      "destination": "/careers/",
+      "permanent": true
+    },
+    {
+      "source": "/careers/llm/",
+      "destination": "/careers/",
+      "permanent": true
+    },
+    {
+      "source": "/careers/hotel_receptionist",
+      "destination": "/careers/",
+      "permanent": true
+    },
+    {
+      "source": "/careers/hotel_receptionist/",
+      "destination": "/careers/",
+      "permanent": true
+    },
+    {
+      "source": "/careers/patent_agent",
+      "destination": "/careers/",
+      "permanent": true
+    },
+    {
+      "source": "/careers/patent_agent/",
+      "destination": "/careers/",
       "permanent": true
     }
   ],
@@ -643,6 +1356,24 @@
         {
           "key": "Cache-Control",
           "value": "public, max-age=43200, must-revalidate"
+        }
+      ]
+    },
+    {
+      "source": "/sitemap.xsl",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=43200, must-revalidate"
+        }
+      ]
+    },
+    {
+      "source": "/(?:en/)?(?:403|404|500|archive)(?:/.*)?",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
         }
       ]
     },

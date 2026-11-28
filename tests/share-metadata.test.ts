@@ -4,10 +4,15 @@ import { loadInsights } from '../src/content/loader';
 import { loadNews } from '../src/content/news-loader';
 import { nextMetadata } from '../src/site/routing/metadata';
 import { getStaticRoutes } from '../src/site/routing/routes';
+import { metadata as servicesZhMetadata } from '../src/app/services/page';
+import { metadata as servicesEnMetadata } from '../src/app/en/services/page';
+import { metadata as navigationZhMetadata } from '../src/app/navigation/page';
+import { metadata as statusZhMetadata } from '../src/app/status/page';
 import { brandedHomepageTitle, brandedPageTitle, metadataForRoute } from '../src/site/routing/metadata-base';
 import { insightArticleStructuredData } from '../src/site/seo/insight-article-json-ld';
 import { newsArticleStructuredData } from '../src/site/seo/news-article-json-ld';
 import { activityArticleStructuredData } from '../src/site/seo/activity-article-json-ld';
+import { buildBreadcrumbStructuredData, buildSoftwareApplicationStructuredData } from '../src/site/seo/structured-data';
 import { publishedResearch } from '../src/data/research-articles';
 
 describe('static share metadata', () => {
@@ -83,8 +88,14 @@ describe('static share metadata', () => {
     expect(products.title).toEqual({ absolute: '宏翔商道-Elexvx — 产品 — 产品项目' });
     expect(activities.openGraph?.title).toBe('宏翔商道-Elexvx — 活动 — 项目合作');
     expect(activities.twitter?.title).toBe('宏翔商道-Elexvx — 活动 — 项目合作');
-    expect(activities.description?.length).toBeGreaterThanOrEqual(80);
-    expect(products.description?.length).toBeGreaterThanOrEqual(80);
+    expect(activities.description?.length).toBeGreaterThanOrEqual(110);
+    expect(products.description?.length).toBeGreaterThanOrEqual(110);
+    expect(nextMetadata('/').description?.length).toBeGreaterThanOrEqual(110);
+    expect(nextMetadata('/').description?.length).toBeLessThanOrEqual(160);
+    expect(String(servicesZhMetadata.description).length).toBeGreaterThanOrEqual(110);
+    expect(String(servicesEnMetadata.description).length).toBeGreaterThanOrEqual(120);
+    expect(String(navigationZhMetadata.description).length).toBeGreaterThanOrEqual(110);
+    expect(String(statusZhMetadata.description).length).toBeGreaterThanOrEqual(110);
     expect(firstNews.description).not.toBe(secondNews.description);
   });
   it('uses one localized page-title pattern across all generated routes', () => {
@@ -106,6 +117,17 @@ describe('static share metadata', () => {
         }
         expect(data.openGraph?.title, `${locale} ${route.path} Open Graph title`).toBe(absoluteTitle);
         expect(data.twitter?.title, `${locale} ${route.path} Twitter title`).toBe(absoluteTitle);
+        if (route.meta.robots !== 'noindex,nofollow') {
+          expect(data.description?.length, `${locale} ${route.path} description min`).toBeGreaterThanOrEqual(
+            locale === 'en' ? 120 : 110
+          );
+          expect(data.description?.length, `${locale} ${route.path} description max`).toBeLessThanOrEqual(
+            locale === 'en' ? 180 : 160
+          );
+          expect(data.description, `${locale} ${route.path} no boilerplate`).not.toMatch(
+            /本页属于|页面主题：|This official .* page provides|Page focus:/
+          );
+        }
       }
     }
   });
@@ -188,6 +210,46 @@ describe('static share metadata', () => {
       url: 'https://www.elexvx.com/en/insights/metadata-test/',
       inLanguage: 'en',
       keywords: ['metadata test'],
+    });
+  });
+
+  it('emits localized BreadcrumbList and SoftwareApplication JSON-LD', () => {
+    const breadcrumb = JSON.parse(
+      buildBreadcrumbStructuredData({
+        path: '/company/team/taojincheng',
+        locale: 'en',
+        title: 'Tao Jincheng',
+      })
+    );
+    expect(breadcrumb).toMatchObject({
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.elexvx.com/en/' },
+        { '@type': 'ListItem', position: 2, name: 'Company and business', item: 'https://www.elexvx.com/en/company/' },
+        { '@type': 'ListItem', position: 3, name: 'Team', item: 'https://www.elexvx.com/en/company/team/' },
+        {
+          '@type': 'ListItem',
+          position: 4,
+          name: 'Tao Jincheng',
+          item: 'https://www.elexvx.com/en/company/team/taojincheng/',
+        },
+      ],
+    });
+    expect(JSON.stringify(breadcrumb)).not.toMatch(/[\u4e00-\u9fff]/u);
+
+    const software = JSON.parse(
+      buildSoftwareApplicationStructuredData({
+        path: '/products/humite',
+        locale: 'en',
+        name: 'Humite',
+        description: 'Self-hosted digital library',
+      })
+    );
+    expect(software).toMatchObject({
+      '@type': 'SoftwareApplication',
+      name: 'Humite',
+      url: 'https://www.elexvx.com/en/products/humite/',
+      inLanguage: 'en',
     });
   });
 });

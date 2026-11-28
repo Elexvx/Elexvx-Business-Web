@@ -1,19 +1,22 @@
 import type { Insight, NewsItem } from '../../content/types';
 import { publishedActivities } from '../../data/activities';
+import { homeContent } from '../../data/page-content';
 import { publishedResearch } from '../../data/research-articles';
 import type { Locale } from '../providers/i18n';
+import { resolveRoute } from '../routing/routes';
 import { ActivityArticleJsonLd } from './activity-article-json-ld';
 import { InsightArticleJsonLd } from './insight-article-json-ld';
 import { NewsArticleJsonLd } from './news-article-json-ld';
+import { buildBreadcrumbStructuredData, buildSoftwareApplicationStructuredData, JsonLdScript } from './structured-data';
 
-export const RouteArticleJsonLd = ({
+const articleJsonLd = ({
   path,
-  locale = 'zh-CN',
+  locale,
   insights,
   news,
 }: {
   path: string;
-  locale?: Locale;
+  locale: Locale;
   insights: Insight[];
   news: NewsItem[];
 }) => {
@@ -35,5 +38,51 @@ export const RouteArticleJsonLd = ({
     if (item) return <NewsArticleJsonLd item={item} locale={locale} />;
   }
 
+  const product = homeContent.product.items.find((item) => path === item.href);
+  if (product) {
+    return (
+      <JsonLdScript
+        data={buildSoftwareApplicationStructuredData({
+          path,
+          locale,
+          name: product.name,
+          description: product.description,
+          image: product.image,
+        })}
+      />
+    );
+  }
+
   return null;
+};
+
+export const RouteArticleJsonLd = ({
+  path,
+  locale = 'zh-CN',
+  insights,
+  news,
+}: {
+  path: string;
+  locale?: Locale;
+  insights: Insight[];
+  news: NewsItem[];
+}) => {
+  const route = resolveRoute(path, insights, news);
+  const breadcrumb =
+    path !== '/' && route.meta.robots !== 'noindex,nofollow' ? (
+      <JsonLdScript
+        data={buildBreadcrumbStructuredData({
+          path,
+          locale,
+          title: locale === 'en' && route.meta.titleEn ? route.meta.titleEn : route.meta.title,
+        })}
+      />
+    ) : null;
+
+  return (
+    <>
+      {breadcrumb}
+      {articleJsonLd({ path, locale, insights, news })}
+    </>
+  );
 };

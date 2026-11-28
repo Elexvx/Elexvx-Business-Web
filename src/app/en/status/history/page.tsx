@@ -8,7 +8,7 @@ import { translateEnglish } from '../../../../site/translation';
 
 export const metadata = serviceMetadata({
   title: translateEnglish('服务状态历史'),
-  description: `View service uptime records for the last ${serviceNavigationConfig.status.historyDays} days.`,
+  description: `Review daily uptime records, outage durations, and long-term availability trends over the last ${serviceNavigationConfig.status.historyDays} days across all Hongxiang Shangdao-Elexvx services.`,
   path: '/status/history/',
   locale: 'en',
 });

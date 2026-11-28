@@ -54,8 +54,7 @@ const ServiceDestinationCard = ({ destination }: { destination: ServiceDestinati
       <img
         className="service-overview-card-bg"
         src={destination.image}
-        alt=""
-        aria-hidden="true"
+        alt={t(destination.title)}
         width={destination.imageWidth}
         height={destination.imageHeight}
         loading="eager"

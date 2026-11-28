@@ -1,2 +1,6 @@
 User-agent: *
-Disallow:
+Allow: /
+Disallow: /archive
+Disallow: /en/archive
+
+Sitemap: https://www.elexvx.com/sitemap.xml

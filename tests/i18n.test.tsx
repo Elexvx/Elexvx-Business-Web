@@ -79,7 +79,7 @@ describe('English publishing', () => {
     );
     expect(html).toContain('<h1>This page could not be found</h1>');
     expect(html).toContain('href="/en/">Return home</a>');
-    expect(html).toContain('href="/en/research">Explore research</a>');
+    expect(html).toContain('href="/en/research/">Explore research</a>');
     expect(html).toContain('<meta name="robots" content="noindex,nofollow"/>');
     expect(englishNotFoundMetadata.robots).toMatchObject({
       index: false,

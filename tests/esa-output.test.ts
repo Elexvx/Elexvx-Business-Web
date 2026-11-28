@@ -42,7 +42,11 @@ function page(route: string, title: string, alternates: Array<{ language: string
 
 async function writeSitemap(root: string, routes: string[]) {
   const entries = routes.map((route) => `<url><loc>${origin}${route}</loc></url>`).join('');
-  await writeFile(path.join(root, 'sitemap.xml'), `<?xml version="1.0"?><urlset>${entries}</urlset>`, 'utf8');
+  await writeFile(
+    path.join(root, 'sitemap.xml'),
+    `<?xml version="1.0"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${entries}</urlset>`,
+    'utf8'
+  );
 }
 
 async function createLocalizedPair(root: string) {
@@ -284,5 +288,19 @@ describe('ESA static output gate', () => {
     const overLimit = await inspectEsaOutput({ root, redirects: [], maxFiles: 2 });
     expect(overLimit.files).toBe(3);
     expect(overLimit.errors.some((error) => error.includes('platform limit'))).toBe(true);
+  });
+
+  it('fails when sitemap.xml contains non-standard tags inside <url>', async () => {
+    const root = await createRoot();
+    await writeRoute(root, '/contact/', page('/contact/', '联系我们'));
+    await writeFile(
+      path.join(root, 'sitemap.xml'),
+      `<?xml version="1.0"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>${origin}/contact/</loc><a xmlns="http://www.w3.org/1999/xhtml" href="/contact/">Contact</a></url></urlset>`,
+      'utf8'
+    );
+
+    const result = await inspectEsaOutput({ root, redirects: [] });
+
+    expect(result.errors.some((error) => error.includes('invalid tag <a> inside <url>'))).toBe(true);
   });
 });

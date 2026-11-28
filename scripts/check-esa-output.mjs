@@ -51,6 +51,23 @@ function linksFromHtml(html) {
   return links;
 }
 
+const ALLOWED_SITEMAP_URL_CHILDREN = new Set(['loc', 'lastmod', 'changefreq', 'priority', 'xhtml:link']);
+
+function validateSitemapXml(xml, errors) {
+  if (!/<urlset\b[^>]*xmlns="http:\/\/www\.sitemaps\.org\/schemas\/sitemap\/0\.9"/i.test(xml)) {
+    errors.push('sitemap.xml must declare the standard Sitemap 0.9 namespace.');
+  }
+  const urlBlocks = [...xml.matchAll(/<url\b[^>]*>([\s\S]*?)<\/url\s*>/gi)];
+  for (const [, block] of urlBlocks) {
+    for (const tagMatch of block.matchAll(/<([a-z_][\w:-]*)(?=[\s/>])/gi)) {
+      const tagName = tagMatch[1].toLowerCase();
+      if (!ALLOWED_SITEMAP_URL_CHILDREN.has(tagName)) {
+        errors.push(`sitemap.xml contains invalid tag <${tagMatch[1]}> inside <url>.`);
+      }
+    }
+  }
+}
+
 function parseSitemap(xml) {
   return [...xml.matchAll(/<loc\b[^>]*>([\s\S]*?)<\/loc\s*>/gi)].map((match) => decodeXmlEntities(match[1].trim()));
 }
@@ -416,9 +433,12 @@ export async function inspectEsaOutput({
   }
 
   const sitemapFile = path.join(staticRoot, 'sitemap.xml');
+  let sitemapXml;
   let urls;
   try {
-    urls = parseSitemap(await readFile(sitemapFile, 'utf8'));
+    sitemapXml = await readFile(sitemapFile, 'utf8');
+    validateSitemapXml(sitemapXml, errors);
+    urls = parseSitemap(sitemapXml);
   } catch (error) {
     return { pages: 0, files, errors: [`Cannot read ESA sitemap at ${sitemapFile}: ${error.message}`] };
   }

@@ -1,4 +1,3 @@
-import { serviceNavigationConfig } from '../../../data/service-navigation';
 import { CANONICAL_ORIGIN } from '../../../data/site-origins';
 import { SiteShell } from '../../../site/components/shell';
 import { EnglishLanguageProvider } from '../../../site/providers/english-i18n';
@@ -8,7 +7,8 @@ import { translateEnglish } from '../../../site/translation';
 
 export const metadata = serviceMetadata({
   title: translateEnglish('服务状态'),
-  description: translateEnglish(serviceNavigationConfig.status.description),
+  description:
+    'Monitor real-time operational status, availability rates, and service health across Hongxiang Shangdao-Elexvx enterprise platforms, project deployments, and public services.',
   path: '/status/',
   locale: 'en',
 });

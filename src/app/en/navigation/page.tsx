@@ -8,7 +8,8 @@ import { translateEnglish } from '../../../site/translation';
 
 export const metadata = serviceMetadata({
   title: translateEnglish(serviceNavigationConfig.seo.defaultTitle),
-  description: translateEnglish(serviceNavigationConfig.site.description),
+  description:
+    'Curated Hongxiang Shangdao-Elexvx directory aggregating 30 enterprise systems, government portals, IP and corporate credit lookups, AI development platforms, and public media tools.',
   path: '/navigation/',
   locale: 'en',
 });

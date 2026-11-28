@@ -49,7 +49,7 @@ function ServiceIcon({ definition }: { definition: IconDefinition }) {
   );
 }
 
-function LinkIcon({ link, eager = false }: { link: ServiceLink; eager?: boolean }) {
+function LinkIcon({ link, eager = false, t }: { link: ServiceLink; eager?: boolean; t: (text: string) => string }) {
   if (!link.icon) {
     return (
       <span className="service-link-icon-fallback" aria-hidden="true">
@@ -62,7 +62,7 @@ function LinkIcon({ link, eager = false }: { link: ServiceLink; eager?: boolean 
     <img
       className="service-link-icon"
       src={link.icon}
-      alt=""
+      alt={t(link.name)}
       width={44}
       height={44}
       loading={eager ? 'eager' : 'lazy'}
@@ -84,7 +84,7 @@ function DirectoryRow({ link, eager = false, t }: { link: ServiceLink; eager?: b
       rel="noopener noreferrer"
     >
       <span className="service-link-icon-frame">
-        <LinkIcon link={link} eager={eager} />
+        <LinkIcon link={link} eager={eager} t={t} />
       </span>
       <span className="service-link-body">
         <span className="service-link-title" title={title}>

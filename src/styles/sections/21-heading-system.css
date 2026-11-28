@@ -112,3 +112,10 @@
   margin-bottom: 32px;
   flex-wrap: wrap;
 }
+.index-category-intro {
+  margin: -12px 0 28px;
+  max-width: 52rem;
+  color: var(--ink-muted, rgba(110, 110, 115, 1));
+  font-size: 0.98rem;
+  line-height: 1.65;
+}

@@ -542,13 +542,158 @@
     "permanent": true
   },
   {
-    "source": "/products/bookkin",
-    "destination": "/products/humite",
+    "source": "/company/leadership/tjc",
+    "destination": "/company/team/taojincheng",
     "permanent": true
   },
   {
-    "source": "/en/products/bookkin",
-    "destination": "/en/products/humite",
+    "source": "/company/leadership/mxh",
+    "destination": "/company/team/mengxiaohua",
+    "permanent": true
+  },
+  {
+    "source": "/company/leadership/gkr",
+    "destination": "/company/team/gongkairui",
+    "permanent": true
+  },
+  {
+    "source": "/company/team/xuxingjian",
+    "destination": "/company/team",
+    "permanent": true
+  },
+  {
+    "source": "/en/company/team/xuxingjian",
+    "destination": "/en/company/team",
+    "permanent": true
+  },
+  {
+    "source": "/company/job/hotel_receptionist",
+    "destination": "/careers",
+    "permanent": true
+  },
+  {
+    "source": "/careers/StartupMentor",
+    "destination": "/careers",
+    "permanent": true
+  },
+  {
+    "source": "/en/careers/hotel_receptionist",
+    "destination": "/en/careers",
+    "permanent": true
+  },
+  {
+    "source": "/exam/2025-07-08-01",
+    "destination": "/news",
+    "permanent": true
+  },
+  {
+    "source": "/news/exam-2025-07-08-01",
+    "destination": "/news",
+    "permanent": true
+  },
+  {
+    "source": "/tag/gong1-shi4-gong1-gao4",
+    "destination": "/news",
+    "permanent": true
+  },
+  {
+    "source": "/activities/website-permissions-redesign-2026",
+    "destination": "/activities",
+    "permanent": true
+  },
+  {
+    "source": "/en/activities/website-permissions-redesign-2026",
+    "destination": "/en/activities",
+    "permanent": true
+  },
+  {
+    "source": "/zh",
+    "destination": "/",
+    "permanent": true
+  },
+  {
+    "source": "/zh/blog",
+    "destination": "/research",
+    "permanent": true
+  },
+  {
+    "source": "/en/blog",
+    "destination": "/en/research",
+    "permanent": true
+  },
+  {
+    "source": "/zh/docs",
+    "destination": "/services",
+    "permanent": true
+  },
+  {
+    "source": "/en/docs",
+    "destination": "/en/services",
+    "permanent": true
+  },
+  {
+    "source": "/homes/startup",
+    "destination": "/",
+    "permanent": true
+  },
+  {
+    "source": "/research-2",
+    "destination": "/research",
+    "permanent": true
+  },
+  {
+    "source": "/en/services-3",
+    "destination": "/en/services",
+    "permanent": true
+  },
+  {
+    "source": "/about",
+    "destination": "/company",
+    "permanent": true
+  },
+  {
+    "source": "/leadership",
+    "destination": "/company/team",
+    "permanent": true
+  },
+  {
+    "source": "/brand",
+    "destination": "/company/brand",
+    "permanent": true
+  },
+  {
+    "source": "/newsroom",
+    "destination": "/news",
+    "permanent": true
+  },
+  {
+    "source": "/categories",
+    "destination": "/research",
+    "permanent": true
+  },
+  {
+    "source": "/intro.html",
+    "destination": "/",
+    "permanent": true
+  },
+  {
+    "source": "/careers/software_agent",
+    "destination": "/careers",
+    "permanent": true
+  },
+  {
+    "source": "/careers/llm",
+    "destination": "/careers",
+    "permanent": true
+  },
+  {
+    "source": "/careers/hotel_receptionist",
+    "destination": "/careers",
+    "permanent": true
+  },
+  {
+    "source": "/careers/patent_agent",
+    "destination": "/careers",
     "permanent": true
   }
 ]

@@ -65,13 +65,27 @@ const NewsPagination = ({ category, page, totalPages }: { category: string; page
   );
 };
 
+const NEWS_CATEGORY_DESCRIPTIONS: Record<string, Record<'zh-CN' | 'en', string>> = {
+  updates: {
+    'zh-CN':
+      '集中发布宏翔商道-Elexvx 的公司公告、业务调整、对外合作与年度重要节点信息，便于客户、合作伙伴及公众查阅官方正式记录。',
+    en: 'Official announcements, organizational updates, external partnerships, and annual milestones published by Hongxiang Shangdao-Elexvx.',
+  },
+  guides: {
+    'zh-CN':
+      '面向业务办理与公共服务场景整理的实用操作指南，覆盖报名流程、报考资格、费用标准与证件使用说明，持续结合最新规则校准更新。',
+    en: 'Practical step-by-step registration and certification guides covering eligibility, fee schedules, and credential usage for public service workflows.',
+  },
+};
+
 export const NewsPage = ({ initialCategory = 'all', page = 1 }: { initialCategory?: string; page?: number }) => {
   const news = usePublishedNews();
-  const { t } = useI18n();
+  const { locale, t } = useI18n();
   const categories = articleCategories('news', news);
   const [category, , categoryHref] = useArticleCategoryFilter('news', categories, initialCategory);
   const matching = newsInCategory(news, category);
   const visible = matching.slice((page - 1) * newsPageSize, page * newsPageSize);
+  const categorySummary = NEWS_CATEGORY_DESCRIPTIONS[category]?.[locale];
   return (
     <SiteShell activePath="/news" className="site-shell-news">
       <section className="research-tile research-tile-light news-index-section" aria-labelledby="news-page-title">
@@ -80,6 +94,7 @@ export const NewsPage = ({ initialCategory = 'all', page = 1 }: { initialCategor
           title={t('最近新闻')}
           category={t(categories.find((item) => item.id === category)?.label || '')}
         />
+        {categorySummary && <p className="index-category-intro">{categorySummary}</p>}
         <nav className="research-index-tabs index-category-tabs" aria-label={t('新闻分类')}>
           {[{ id: 'all', label: '全部' }, ...categories].map(({ id, label }) => (
             <a

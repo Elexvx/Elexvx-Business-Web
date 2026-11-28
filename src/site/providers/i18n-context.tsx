@@ -35,7 +35,7 @@ const I18nContext = createContext<I18nContextValue>({
   locale: 'zh-CN',
   t: (value) => value,
   href: canonicalContentHref,
-  switchHref: '/en',
+  switchHref: '/en/',
 });
 
 const isInternalHref = (value: string) => value.startsWith('/') && !value.startsWith('//');
@@ -83,16 +83,16 @@ export const LocaleProvider = ({
 
     if (preferredLocale === locale) return;
 
-    const targetPath = preferredLocale === 'en' ? (path === '/' ? '/en' : `/en${path}`) : path;
-    window.location.replace(`${targetPath}${window.location.search}${window.location.hash}`);
+    const targetPath = preferredLocale === 'en' ? (path === '/' ? '/en/' : `/en${path}`) : path;
+    window.location.replace(`${canonicalContentHref(targetPath)}${window.location.search}${window.location.hash}`);
   }, [locale, path, autoRedirect]);
 
   const href = (value: string) => {
     const target = canonicalContentHref(value);
     if (!shouldLocalizeEnglishHref(locale, target)) return target;
-    return target === '/' ? '/en' : `/en${target}`;
+    return target === '/' ? '/en/' : `/en${target}`;
   };
-  const switchHref = canonicalContentHref(locale === 'en' ? path : path === '/' ? '/en' : `/en${path}`);
+  const switchHref = canonicalContentHref(locale === 'en' ? path : path === '/' ? '/en/' : `/en${path}`);
   const t = (value: string) => (locale === 'en' ? translateTextWithDictionary(value, dictionary) : value);
 
   return (

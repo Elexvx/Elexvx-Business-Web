@@ -83,6 +83,46 @@ const matchRedirectDestination = (url: URL): string | undefined => {
   return undefined;
 };
 
+const SHARED_ASSET_PREFIXES = [
+  '/_next/',
+  '/fonts/',
+  '/brand/',
+  '/images/',
+  '/optimized/',
+  '/assets/',
+  '/visuals/',
+  '/share/',
+];
+
+const SERVICE_HOST_ALLOWED_PATHS: Record<string, ReadonlySet<string>> = {
+  'nav.elexvx.com': new Set([
+    '/',
+    '/navigation',
+    '/navigation/',
+    '/sitemap.xml',
+    '/robots.txt',
+    '/navigation-sitemap.xml',
+    '/navigation-robots.txt',
+    '/sitemap.xsl',
+    '/favicon.ico',
+  ]),
+  'status.elexvx.com': new Set([
+    '/',
+    '/history',
+    '/history/',
+    '/status',
+    '/status/',
+    '/status/history',
+    '/status/history/',
+    '/sitemap.xml',
+    '/robots.txt',
+    '/status-sitemap.xml',
+    '/status-robots.txt',
+    '/sitemap.xsl',
+    '/favicon.ico',
+  ]),
+};
+
 export function resolveRedirect(url: URL): string | undefined {
   if (!(ALLOWED_PUBLIC_HOSTS as readonly string[]).includes(url.hostname)) {
     return CANONICAL_ORIGIN + url.pathname + url.search;
@@ -93,7 +133,17 @@ export function resolveRedirect(url: URL): string | undefined {
   if (url.pathname !== '/' && url.pathname.endsWith('/')) {
     const withoutSlash = new URL(url);
     withoutSlash.pathname = url.pathname.slice(0, -1);
-    return matchRedirectDestination(withoutSlash);
+    const matched = matchRedirectDestination(withoutSlash);
+    if (matched) return matched;
+  }
+  const allowedServicePaths = SERVICE_HOST_ALLOWED_PATHS[url.hostname];
+  if (
+    allowedServicePaths &&
+    !allowedServicePaths.has(url.pathname) &&
+    !url.pathname.startsWith('/api/') &&
+    !SHARED_ASSET_PREFIXES.some((prefix) => url.pathname.startsWith(prefix))
+  ) {
+    return CANONICAL_ORIGIN + url.pathname + url.search;
   }
   return undefined;
 }
@@ -179,6 +229,14 @@ function handlePublishTrigger(
 // A category route also receives unknown categories: canonicalize these to the
 // unfiltered list instead of returning a missing page.
 function canonicalizeCategoryQuery(url: URL): Response | undefined {
+  if (url.pathname === '/' && url.searchParams.get('feed') === 'rss2') {
+    const rssUrl = new URL('/rss.xml', url);
+    return createRedirectResponse(rssUrl.href);
+  }
+  if (url.pathname === '/' && (url.searchParams.has('p') || url.searchParams.has('page_id'))) {
+    const homeUrl = new URL('/', url);
+    return createRedirectResponse(homeUrl.href);
+  }
   if (!/^\/(?:en\/)?(?:news|research|activities)\/?$/.test(url.pathname) || !url.searchParams.has('category')) {
     return undefined;
   }

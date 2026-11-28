@@ -90,6 +90,22 @@ export const HomeActivityHighlights = ({ items }: { items: ActivitySummary[] }) 
   );
 };
 
+const ACTIVITY_CATEGORY_DESCRIPTIONS: Record<string, Record<'zh-CN' | 'en', string>> = {
+  'technical-exchange': {
+    'zh-CN': '记录人工智能与数字化工具在真实课堂、工作流与行业实践中的技术讲解、实操演示与经验交流现场。',
+    en: 'Reports from technical workshops, live demonstrations, and classroom exchanges focused on applying AI tools in real workflows.',
+  },
+  roadshows: {
+    'zh-CN': '整理企业项目路演、现场点评与商业模式研讨纪要，聚焦真实客户需求、产品落地路径与产业资源对接。',
+    en: 'Recaps from entrepreneurship roadshows and expert review sessions covering customer needs, product delivery, and partnership matching.',
+  },
+  'entrepreneur-exchanges': {
+    'zh-CN':
+      '汇集跨行业企业家沙龙、圆桌分享与品牌建设对话纪要，呈现多领域企业在资源协同、合规经营与合作拓展中的实践观察。',
+    en: 'Summaries of cross-industry entrepreneur salons and roundtables exploring brand building, compliance, and collaborative growth.',
+  },
+};
+
 export const ActivityDirectorySection = ({
   items,
   initialCategory = 'all',
@@ -103,6 +119,7 @@ export const ActivityDirectorySection = ({
   const shown = sortActivitiesByPinnedAndDate(items).filter(
     (item) => category === 'all' || item.categorySlug === category
   );
+  const categorySummary = ACTIVITY_CATEGORY_DESCRIPTIONS[category]?.[locale];
 
   return (
     <section className="home-latest-activity" aria-labelledby="activity-section-title">
@@ -111,6 +128,7 @@ export const ActivityDirectorySection = ({
         title={locale === 'en' ? 'Activities' : '活动'}
         category={t(categories.find((item) => item.id === category)?.label || '')}
       />
+      {categorySummary && <p className="index-category-intro">{categorySummary}</p>}
       <nav className="research-index-tabs index-category-tabs" aria-label={t('活动分类')}>
         {[{ id: 'all', label: '全部' }, ...categories].map(({ id, label }) => (
           <a

@@ -92,9 +92,11 @@ function FooterColumns({
 
 function FooterRegistrations({
   registrations,
+  locale,
   t,
 }: {
   registrations: Array<[string, { number: string; url: string }]>;
+  locale: Locale;
   t: (text: string) => string;
 }) {
   if (registrations.length === 0) return null;
@@ -108,7 +110,7 @@ function FooterRegistrations({
               <SiteImage
                 className="footer-registration-icon"
                 src="/images/public-security-registration-icon.png"
-                alt=""
+                alt={locale === 'en' ? 'Public security registration badge' : '公安备案图标'}
                 width={20}
                 height={20}
               />
@@ -312,7 +314,7 @@ export const Footer = ({ linkOrigin }: { linkOrigin?: string }) => {
         <div className="footer-legal">
           <div className="footer-identity">
             <span>{t('© 2026 由宏翔商道 / Elexvx® 设计，并保留所有权利。')}</span>
-            <FooterRegistrations registrations={registrations} t={t} />
+            <FooterRegistrations registrations={registrations} locale={locale} t={t} />
           </div>
           <div className="footer-legal-meta">
             <a className="footer-sitemap-link" href={resolveHref('/sitemap.xml')}>

@@ -1,16 +1,13 @@
 import { siteIdentity } from '../../data/site';
 
-const contentPath =
-  /^\/(?:en\/)?(?:(?:research|news|activities)(?:\/(?:category\/)?[^/.]+)?|insights\/[^/.]+|news\/(?:category\/[^/.]+\/)?page\/\d+|sitemap)\/?$/;
-
-/** Match content links to the trailing-slash URLs published in canonical metadata and the sitemap. */
+/** Match internal page routes (excluding API endpoints and static asset files) to trailing-slash canonical URLs. */
 export const canonicalContentHref = (value: string) => {
   const origin = value.startsWith(`${siteIdentity.canonicalOrigin}/`) ? siteIdentity.canonicalOrigin : '';
   const relative = value.slice(origin.length);
+  if (!relative.startsWith('/') || relative.startsWith('//')) return value;
   const pathname = relative.split(/[?#]/, 1)[0];
-  return contentPath.test(pathname)
-    ? `${origin}${pathname.replace(/\/?$/, '/')}${relative.slice(pathname.length)}`
-    : value;
+  if (pathname === '/' || pathname.startsWith('/api/') || /\.[a-z0-9]+$/i.test(pathname)) return value;
+  return `${origin}${pathname.replace(/\/?$/, '/')}${relative.slice(pathname.length)}`;
 };
 
 /** Resolves an internal localized path against an optional alternate host origin. */

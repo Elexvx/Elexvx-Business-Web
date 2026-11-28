@@ -102,5 +102,84 @@ export const siteStructuredData = (locale: Locale = 'zh-CN'): string => {
   });
 };
 
+export type BreadcrumbInput = {
+  path: string;
+  locale: Locale;
+  title: string;
+};
+
+const BREADCRUMB_PARENTS: Array<{ prefix: string; path: string; label: Record<Locale, string> }> = [
+  { prefix: '/research/', path: '/research', label: { 'zh-CN': '研究方向', en: 'Research' } },
+  { prefix: '/insights/', path: '/research', label: { 'zh-CN': '研究方向', en: 'Research' } },
+  { prefix: '/activities/', path: '/activities', label: { 'zh-CN': '活动', en: 'Activities' } },
+  { prefix: '/news/', path: '/news', label: { 'zh-CN': '最新动态', en: 'Latest updates' } },
+  { prefix: '/products/', path: '/products', label: { 'zh-CN': '产品', en: 'Products' } },
+  { prefix: '/company/', path: '/company', label: { 'zh-CN': '公司与业务', en: 'Company and business' } },
+  { prefix: '/company/team/', path: '/company/team', label: { 'zh-CN': '团队', en: 'Team' } },
+  { prefix: '/business/', path: '/business', label: { 'zh-CN': '并行业务', en: 'Business' } },
+  { prefix: '/careers/', path: '/careers', label: { 'zh-CN': '加入 Elexvx', en: 'Join Elexvx' } },
+];
+
+/** Builds schema.org BreadcrumbList JSON-LD for non-root indexable pages. */
+export const buildBreadcrumbStructuredData = ({ path, locale, title }: BreadcrumbInput): string => {
+  const localePrefix = locale === 'en' ? '/en' : '';
+  const toUrl = (targetPath: string) =>
+    `${siteIdentity.canonicalOrigin}${localePrefix}${targetPath === '/' ? '/' : `${targetPath}/`}`;
+  const items: Array<{ name: string; item: string }> = [{ name: locale === 'en' ? 'Home' : '首页', item: toUrl('/') }];
+  for (const parent of BREADCRUMB_PARENTS) {
+    if (path.startsWith(parent.prefix) && path !== parent.path) {
+      items.push({ name: parent.label[locale], item: toUrl(parent.path) });
+    }
+  }
+  const cleanTitle = localizeStructuredText(title, locale)
+    .replace(/\s*·\s*Elexvx Research$/u, '')
+    .trim();
+  items.push({ name: cleanTitle, item: toUrl(path) });
+
+  return serializeJsonLd({
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: items.map((entry, index) => ({
+      '@type': 'ListItem',
+      position: index + 1,
+      name: entry.name,
+      item: entry.item,
+    })),
+  });
+};
+
+export type SoftwareProductInput = {
+  path: string;
+  locale: Locale;
+  name: string;
+  description: string;
+  image?: string;
+};
+
+/** Builds schema.org SoftwareApplication JSON-LD for published product detail pages. */
+export const buildSoftwareApplicationStructuredData = ({
+  path,
+  locale,
+  name,
+  description,
+  image,
+}: SoftwareProductInput): string => {
+  const localePrefix = locale === 'en' ? '/en' : '';
+  const url = `${siteIdentity.canonicalOrigin}${localePrefix}${path}/`;
+  return serializeJsonLd({
+    '@context': 'https://schema.org',
+    '@type': 'SoftwareApplication',
+    '@id': `${url}#software`,
+    name: localizeStructuredText(name, locale),
+    description: localizeStructuredText(description, locale),
+    url,
+    image: new URL(image || DEFAULT_SHARE_IMAGE_PATH, siteIdentity.canonicalOrigin).href,
+    applicationCategory: 'UtilitiesApplication',
+    operatingSystem: 'Web, Docker, Linux, macOS, Windows',
+    publisher: { '@id': `${siteIdentity.canonicalOrigin}/#organization` },
+    inLanguage: locale,
+  });
+};
+
 export const JsonLdScript = ({ data }: { data: string }) =>
   createElement('script', { type: 'application/ld+json', dangerouslySetInnerHTML: { __html: data } });

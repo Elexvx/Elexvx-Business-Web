@@ -6,7 +6,8 @@ import { translateEnglish } from '../../../site/translation';
 
 export const metadata = serviceMetadata({
   title: translateEnglish('服务中心'),
-  description: translateEnglish('帮助文档、企业服务导航与服务状态的统一入口。'),
+  description:
+    'Unified Hongxiang Shangdao-Elexvx Service Center providing direct access to the 30-link Enterprise Service Directory, real-time service uptime monitoring, and 60-day availability history.',
   path: '/services/',
   locale: 'en',
 });

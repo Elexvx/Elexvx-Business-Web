@@ -46,6 +46,12 @@ describe('single ESA project', () => {
     expect(resolveRedirect(new URL('https://nav.elexvx.com/robots.txt'))).toBe(
       'https://nav.elexvx.com/navigation-robots.txt'
     );
+    expect(resolveRedirect(new URL('https://status.elexvx.com/news/technology-2025-07-01-01/'))).toBe(
+      'https://www.elexvx.com/news/technology-2025-07-01-01/'
+    );
+    expect(resolveRedirect(new URL('https://nav.elexvx.com/research/'))).toBe('https://www.elexvx.com/research/');
+    expect(resolveRedirect(new URL('https://status.elexvx.com/status/history/'))).toBeUndefined();
+    expect(resolveRedirect(new URL('https://nav.elexvx.com/navigation/'))).toBeUndefined();
     expect(resolveRedirect(new URL('https://www.elexvx.com/company/about/?ref=old'))).toBe(
       'https://www.elexvx.com/company/?ref=old'
     );
@@ -100,6 +106,14 @@ describe('single ESA project', () => {
     const response = await handleRequest(request('/research/?category=unknown&ref=old'), createContext(), {});
     expect(response.status).toBe(308);
     expect(response.headers.get('location')).toBe('https://www.elexvx.com/research/?ref=old');
+
+    const rssResponse = await handleRequest(request('/?feed=rss2'), createContext(), {});
+    expect(rssResponse.status).toBe(308);
+    expect(rssResponse.headers.get('location')).toBe('https://www.elexvx.com/rss.xml');
+
+    const wpResponse = await handleRequest(request('/?page_id=192'), createContext(), {});
+    expect(wpResponse.status).toBe(308);
+    expect(wpResponse.headers.get('location')).toBe('https://www.elexvx.com/');
   });
 
   it('restricts methods and keeps the manual IndexNow endpoint authenticated', async () => {

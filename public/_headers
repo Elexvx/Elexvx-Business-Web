@@ -25,6 +25,9 @@
 /sitemap.xml
   Cache-Control: public, max-age=43200, must-revalidate
 
+/sitemap.xsl
+  Cache-Control: public, max-age=43200, must-revalidate
+
 /rss.xml
   Cache-Control: public, max-age=43200, must-revalidate
 

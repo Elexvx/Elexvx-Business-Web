@@ -38,13 +38,11 @@ export const HomeWelcomeRest = ({ items }: { items: ActivitySummary[] }) => {
                     data-brand={brand.name}
                     data-format={format}
                     data-colorful={brand.colorful || undefined}
-                    role="img"
-                    aria-label={t(brand.name)}
                   >
                     <SiteImage
                       className={darkSrc ? 'home-brand-light' : undefined}
                       src={src}
-                      alt=""
+                      alt={t(brand.name)}
                       width={width}
                       height={height}
                       sizes="48px"
@@ -53,7 +51,8 @@ export const HomeWelcomeRest = ({ items }: { items: ActivitySummary[] }) => {
                       <SiteImage
                         className="home-brand-dark"
                         src={darkSrc}
-                        alt=""
+                        alt={t(brand.name)}
+                        aria-hidden="true"
                         width={width}
                         height={height}
                         sizes="48px"

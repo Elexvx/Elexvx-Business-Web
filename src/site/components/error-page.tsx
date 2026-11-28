@@ -65,7 +65,7 @@ export function ErrorPage({
                 {english ? 'Return home' : '返回首页'}
               </a>
               {code !== 500 && (
-                <a className="status-secondary" href={href(code === 403 ? '/contact' : '/research')}>
+                <a className="status-secondary" href={href(code === 403 ? '/contact/' : '/research/')}>
                   {english
                     ? code === 403
                       ? 'Contact us'

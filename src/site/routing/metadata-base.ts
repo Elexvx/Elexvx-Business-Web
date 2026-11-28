@@ -40,9 +40,8 @@ export const ROOT_METADATA_DEFAULTS: Record<
 
 const METADATA_LIMITS = {
   titleMin: { 'zh-CN': 18, en: 36 },
-  descriptionMin: { 'zh-CN': 80, en: 120 },
   descriptionMax: { 'zh-CN': 160, en: 180 },
-  minClippedDescription: 24,
+  minClippedDescription: 48,
 } as const;
 
 const EXACT_TITLE_CONTEXTS: Record<string, Record<Locale, string>> = {
@@ -55,9 +54,13 @@ const EXACT_TITLE_CONTEXTS: Record<string, Record<Locale, string>> = {
   '/company/brand': { 'zh-CN': '品牌规范', en: 'Brand guidelines' },
   '/company/team': { 'zh-CN': '团队介绍', en: 'Team information' },
   '/contact': { 'zh-CN': '合作联系', en: 'Contact and collaboration' },
+  '/navigation': { 'zh-CN': '企业服务导航', en: 'Enterprise service directory' },
   '/news': { 'zh-CN': '公司动态', en: 'Company updates' },
   '/products': { 'zh-CN': '产品项目', en: 'Products and projects' },
   '/research': { 'zh-CN': 'AI 与数据智能', en: 'AI and data intelligence' },
+  '/services': { 'zh-CN': '服务中心', en: 'Service center' },
+  '/status': { 'zh-CN': '服务状态', en: 'Service status' },
+  '/status/history': { 'zh-CN': '服务状态历史', en: 'Service status history' },
 };
 
 const PREFIX_TITLE_CONTEXTS: Array<[prefix: string, labels: Record<Locale, string>]> = [
@@ -115,46 +118,30 @@ const enrichTitle = (title: string, path: string, locale: Locale) => {
 
 const withBrandDescription = (description: string, locale: Locale) => {
   const brand = localizedBrandName(locale);
-  if (description.includes(brand)) return description;
-  return locale === 'en' ? `${description} Official website of ${brand}.` : `${description} ${brand}官方网站。`;
+  const normalized = description.trim();
+  if (normalized.includes(brand)) return normalized;
+  const suffix = locale === 'en' ? ` Official website of ${brand}.` : ` ${brand}官方网站。`;
+  return normalized.length + suffix.length <= METADATA_LIMITS.descriptionMax[locale]
+    ? `${normalized}${suffix}`
+    : normalized;
 };
 
-const compactDescription = (description: string, title: string, locale: Locale) => {
-  const maximumLength = METADATA_LIMITS.descriptionMax[locale];
-  if (description.length <= maximumLength) return description;
-
-  const brand = localizedBrandName(locale);
-  const pageContext = locale === 'en' ? ` Page focus: ${title}.` : ` 页面主题：“${title}”。`;
-  const brandSuffix = locale === 'en' ? ` Official website of ${brand}.` : ` ${brand}官方网站。`;
-  const source = description.replace(pageContext, '').replace(brandSuffix, '').trim();
-  const suffix = `${pageContext}${brandSuffix}`;
-  const availableLength = Math.max(METADATA_LIMITS.minClippedDescription, maximumLength - suffix.length - 1);
-  const clipped = source
-    .slice(0, availableLength)
-    .trim()
-    .replace(/\s+\S*$/u, '')
-    .trim();
-  return `${clipped}…${suffix}`;
-};
-
-const enrichDescription = (description: string, title: string, path: string, locale: Locale) => {
-  if (path === '/') return description;
-  const minimumDescriptionLength = METADATA_LIMITS.descriptionMin[locale];
-  const pageContext = locale === 'en' ? `Page focus: ${title}.` : `页面主题：“${title}”。`;
-  const shouldAddPageContext = path.startsWith('/news/') || description.length < minimumDescriptionLength;
-  const contextualDescription =
-    shouldAddPageContext && !description.includes(title) ? `${description} ${pageContext}` : description;
-  if (contextualDescription.length >= minimumDescriptionLength) {
-    return compactDescription(contextualDescription, title, locale);
+const clipText = (text: string, limit: number, locale: Locale) => {
+  if (text.length <= limit) return text;
+  const slice = text.slice(0, limit - 1).trim();
+  const sentenceEnd = Math.max(slice.lastIndexOf('。'), slice.lastIndexOf('. '));
+  if (sentenceEnd >= Math.floor(limit * 0.65)) {
+    return slice.slice(0, sentenceEnd + 1).trim();
   }
-  const brand = localizedBrandName(locale);
-  const context = titleContext(path, locale).toLowerCase();
-  const supplement =
-    locale === 'en'
-      ? ` This official ${context} page provides relevant background and contact information from ${brand}.`
-      : `本页属于${context}，提供官方背景、公开资料与相关联系入口，帮助了解主题内容及后续合作方式，信息以${brand}官方网站发布内容为准。`;
-  return compactDescription(`${contextualDescription}${supplement}`, title, locale);
+  const clipped = (locale === 'en' ? slice.replace(/\s+\S*$/u, '') : slice.replace(/[，、；：,.;:\s]+$/u, '')).trim();
+  return `${clipped || slice}…`;
 };
+
+const compactDescription = (description: string, _title: string, locale: Locale) =>
+  clipText(description.trim(), METADATA_LIMITS.descriptionMax[locale], locale);
+
+const enrichDescription = (description: string, title: string, _path: string, locale: Locale) =>
+  compactDescription(description, title, locale);
 
 const buildMetadataAlternates = (path: string, canonical: string): NonNullable<Metadata['alternates']> => {
   const suffix = path === '/' ? '/' : `${path}/`;
@@ -275,9 +262,15 @@ export const serviceMetadata = ({
   const normalizedBasePath = path.replace(/\/+$/, '') || '/';
   const localizedPath = locale === 'en' ? `/en${path.startsWith('/') ? path : `/${path}`}` : path;
   const canonical = `${CANONICAL_ORIGIN}${localizedPath}`;
+  const enrichedDescription = enrichDescription(
+    withBrandDescription(description, locale),
+    normalizedPageName(title),
+    normalizedBasePath,
+    locale
+  );
   return {
     title: { absolute: pageTitleText },
-    description,
+    description: enrichedDescription,
     applicationName: brand,
     keywords: [...BRAND_KEYWORDS[locale]],
     authors: [{ name: brand, url: siteIdentity.canonicalOrigin }],
@@ -286,7 +279,7 @@ export const serviceMetadata = ({
     alternates: buildMetadataAlternates(normalizedBasePath, canonical),
     openGraph: {
       title: pageTitleText,
-      description,
+      description: enrichedDescription,
       url: canonical,
       siteName: brand,
       locale: locale === 'en' ? 'en_US' : 'zh_CN',
@@ -295,9 +288,9 @@ export const serviceMetadata = ({
     twitter: {
       card: 'summary_large_image',
       title: pageTitleText,
-      description,
+      description: enrichedDescription,
       images: [DEFAULT_SHARE_IMAGE_PATH],
     },
-    robots: { index: true, follow: true },
+    robots: buildMetadataRobots(false),
   };
 };

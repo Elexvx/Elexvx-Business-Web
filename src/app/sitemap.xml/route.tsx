@@ -4,16 +4,8 @@ import { loadNews } from '../../content/news-loader';
 import { serviceRoutePaths } from '../../data/service-routes';
 import { siteIdentity } from '../../data/site';
 import { getStaticRoutes } from '../../site/routing/routes';
-import { translateEnglish } from '../../site/translation';
 
 export const dynamic = 'force-static';
-
-const serviceTitles: Record<(typeof serviceRoutePaths)[number], string> = {
-  '/services': '服务中心',
-  '/navigation': '企业服务导航',
-  '/status': '服务状态',
-  '/status/history': '服务状态历史',
-};
 
 export function GET() {
   const indexableRoutes = getStaticRoutes(loadInsights(), loadNews())
@@ -22,27 +14,38 @@ export function GET() {
   const entries = [
     ...indexableRoutes.flatMap((route) => {
       const path = route.path === '/' ? '/' : `${route.path}/`;
+      const enPath = `/en${path}`;
       const lastmod = route.meta.updatedAt ?? route.meta.publishedAt;
       return [
-        { path, lastmod, title: route.meta.title },
-        { path: `/en${path}`, lastmod, title: route.meta.titleEn ?? translateEnglish(route.meta.title) },
+        { path, lastmod, zhPath: path, enPath },
+        { path: enPath, lastmod, zhPath: path, enPath },
       ];
     }),
-    ...serviceRoutePaths.flatMap((path) => [
-      { path: `${path}/`, lastmod: undefined, title: serviceTitles[path] },
-      { path: `/en${path}/`, lastmod: undefined, title: translateEnglish(serviceTitles[path]) },
-    ]),
+    ...serviceRoutePaths.flatMap((routePath) => {
+      const path = `${routePath}/`;
+      const enPath = `/en${path}`;
+      return [
+        { path, lastmod: undefined, zhPath: path, enPath },
+        { path: enPath, lastmod: undefined, zhPath: path, enPath },
+      ];
+    }),
   ];
   const urls = entries
-    .map(({ path, lastmod, title }) => {
+    .map(({ path, lastmod, zhPath, enPath }) => {
       const loc = escapeXml(siteIdentity.canonicalOrigin + path);
+      const zhHref = escapeXml(siteIdentity.canonicalOrigin + zhPath);
+      const enHref = escapeXml(siteIdentity.canonicalOrigin + enPath);
       const date = lastmod ? `<lastmod>${escapeXml(lastmod)}</lastmod>` : '';
-      return `  <url><loc>${loc}</loc>${date}<a xmlns="http://www.w3.org/1999/xhtml" href="${escapeXml(path)}">${escapeXml(title)}</a></url>`;
+      const alternates =
+        `<xhtml:link rel="alternate" hreflang="zh-CN" href="${zhHref}"/>` +
+        `<xhtml:link rel="alternate" hreflang="en" href="${enHref}"/>` +
+        `<xhtml:link rel="alternate" hreflang="x-default" href="${zhHref}"/>`;
+      return `  <url><loc>${loc}</loc>${date}${alternates}</url>`;
     })
     .join('\n');
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
-<?xml-stylesheet type="text/css" href="/sitemap.css"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<?xml-stylesheet type="text/xsl" href="/sitemap.xsl"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
 ${urls}
 </urlset>
 `;
