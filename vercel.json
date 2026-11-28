@@ -1369,7 +1369,34 @@
       ]
     },
     {
-      "source": "/(?:en/)?(?:403|404|500|archive)(?:/.*)?",
+      "source": "/(403|404|500|archive)",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
+        }
+      ]
+    },
+    {
+      "source": "/(403|404|500|archive)/(.*)",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
+        }
+      ]
+    },
+    {
+      "source": "/en/(403|404|500|archive)",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
+        }
+      ]
+    },
+    {
+      "source": "/en/(403|404|500|archive)/(.*)",
       "headers": [
         {
           "key": "X-Robots-Tag",

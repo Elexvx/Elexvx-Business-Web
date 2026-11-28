@@ -1,4 +1,13 @@
+import fs from 'node:fs';
+import { createRequire } from 'node:module';
+import path from 'node:path';
 import redirects from '../src/server/esa/redirects.json';
+
+const require = createRequire(import.meta.url);
+const { compile, pathToRegexp } = require('next/dist/compiled/path-to-regexp') as {
+  compile: (pattern: string) => unknown;
+  pathToRegexp: (pattern: string) => RegExp;
+};
 import { isHumiteProductPath } from '../src/data/humite-launch.mjs';
 import { ALLOWED_PUBLIC_HOSTS } from '../src/data/site-origins';
 import { handleRequest } from '../src/server/esa/gateway';
@@ -134,5 +143,23 @@ describe('redirect configuration', () => {
     );
 
     expect(aiHostRedirect?.permanent).toBe(true);
+  });
+
+  it('uses valid path-to-regexp source and destination patterns in vercel.json', () => {
+    const raw = fs.readFileSync(path.resolve(process.cwd(), 'vercel.json'), 'utf8');
+    const config = JSON.parse(raw) as {
+      redirects?: Array<{ source: string; destination?: string }>;
+      rewrites?: Array<{ source: string; destination?: string }>;
+      headers?: Array<{ source: string }>;
+    };
+
+    for (const rule of [...(config.redirects ?? []), ...(config.rewrites ?? []), ...(config.headers ?? [])]) {
+      expect(rule.source).not.toContain('(?:');
+      expect(() => pathToRegexp(rule.source)).not.toThrow();
+      const destination = 'destination' in rule ? rule.destination : undefined;
+      if (typeof destination === 'string' && !destination.startsWith('http')) {
+        expect(() => compile(destination)).not.toThrow();
+      }
+    }
   });
 });
